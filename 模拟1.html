@@ -1,0 +1,2729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>潮南教师招聘刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --primary-color: #4361ee;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #ff9e00;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #e9ecef;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 100px;
+            min-height: 100vh;
+        }
+        
+        /* 顶部区域 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+        
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 18px;
+        }
+        
+        .progress-info {
+            flex: 1;
+            margin: 0 16px;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .font-control {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .font-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            border: none;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        
+        /* 主要内容区 */
+        .main-container {
+            padding-top: 80px;
+            padding-bottom: 120px;
+        }
+        
+        .question-card {
+            background-color: var(--card-bg);
+            margin: 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .question-type {
+            font-size: 12px;
+            color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .question-content {
+            padding: 16px;
+        }
+        
+        /* 选项区域 */
+        .options-container {
+            padding: 0 16px 16px;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background-color: var(--card-bg);
+        }
+        
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .option-item.correct {
+            border-color: var(--success-color);
+            background-color: rgba(76, 201, 240, 0.05);
+        }
+        
+        .option-item.wrong {
+            border-color: var(--danger-color);
+            background-color: rgba(247, 37, 133, 0.05);
+        }
+        
+        .option-marker {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        
+        .selected .option-marker {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .correct .option-marker {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .wrong .option-marker {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .option-text {
+            flex: 1;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        /* 多选题特殊样式 */
+        .multi-select-hint {
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 0 16px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .multi-select-hint i {
+            color: var(--warning-color);
+        }
+        
+        /* 判断题特殊样式 */
+        .judge-container {
+            display: flex;
+            gap: 12px;
+            padding: 0 16px 16px;
+        }
+        
+        .judge-btn {
+            flex: 1;
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            background-color: var(--card-bg);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 56px;
+        }
+        
+        .judge-btn.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .judge-btn.correct {
+            border-color: var(--success-color);
+            background-color: rgba(76, 201, 240, 0.05);
+        }
+        
+        .judge-btn.wrong {
+            border-color: var(--danger-color);
+            background-color: rgba(247, 37, 133, 0.05);
+        }
+        
+        /* 答案解析区域 */
+        .answer-container {
+            margin: 0 16px 16px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .answer-header {
+            padding: 16px;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .answer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+        
+        .answer-status.correct {
+            color: var(--success-color);
+        }
+        
+        .answer-status.wrong {
+            color: var(--danger-color);
+        }
+        
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .answer-content {
+            padding: 16px;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: none;
+        }
+        
+        .answer-content.expanded {
+            display: block;
+        }
+        
+        .answer-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .answer-text {
+            font-size: 16px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+        }
+        
+        .explanation {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        /* 底部操作区 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--card-bg);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--radius);
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            min-height: 50px;
+        }
+        
+        .prev-btn {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin-right: 8px;
+        }
+        
+        .next-btn {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: 8px;
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* 字体大小调整 */
+        .font-small .question-title { font-size: 16px; }
+        .font-small .option-text { font-size: 14px; }
+        .font-small .answer-text { font-size: 14px; }
+        .font-small .explanation { font-size: 13px; }
+        .font-small .judge-btn { font-size: 14px; }
+        
+        .font-large .question-title { font-size: 20px; }
+        .font-large .option-text { font-size: 18px; }
+        .font-large .answer-text { font-size: 18px; }
+        .font-large .explanation { font-size: 17px; }
+        .font-large .judge-btn { font-size: 16px; }
+        
+        /* 完成提示 */
+        .completion-message {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+        
+        .completion-icon {
+            font-size: 60px;
+            color: var(--success-color);
+            margin-bottom: 20px;
+        }
+        
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .completion-stats {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-item {
+            background-color: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value.correct { color: var(--success-color); }
+        .stat-value.wrong { color: var(--danger-color); }
+        .stat-value.rate { color: var(--primary-color); }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .restart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        /* 题型标签 */
+        .type-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .type-tag.single { background-color: rgba(67, 97, 238, 0.1); color: var(--primary-color); }
+        .type-tag.multiple { background-color: rgba(255, 158, 0, 0.1); color: var(--warning-color); }
+        .type-tag.judge { background-color: rgba(76, 201, 240, 0.1); color: var(--success-color); }
+        
+        /* 响应式调整 */
+        @media (min-width: 768px) {
+            body {
+                max-width: 500px;
+                margin: 0 auto;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .header, .footer {
+                max-width: 500px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* 题目列表面板 */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .overlay.visible {
+            display: flex;
+        }
+        .sheet-panel {
+            background: #fff;
+            width: 100%;
+            max-width: 480px;
+            max-height: 75vh;
+            border-radius: 20px 20px 0 0;
+            padding: 16px 14px 20px;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: #d1d1d6;
+            border-radius: 10px;
+            margin: 0 auto 14px;
+        }
+        .sheet-title {
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            border: 2px solid transparent;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 36px;
+            min-height: 36px;
+        }
+        .sheet-item.unanswered {
+            background: #f0f0f5;
+            color: #888;
+        }
+        .sheet-item.correct-dot {
+            background: #E8F8ED;
+            color: #34C759;
+            border-color: #34C759;
+        }
+        .sheet-item.wrong-dot {
+            background: #FFECEB;
+            color: #FF3B30;
+            border-color: #FF3B30;
+        }
+        .sheet-item.current-dot {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            font-weight: 700;
+        }
+        .sheet-section-label {
+            grid-column: 1 / -1;
+            font-size: 11px;
+            font-weight: 600;
+            color: #999;
+            text-align: left;
+            padding: 6px 0 2px;
+            letter-spacing: 0.3px;
+        }
+        .sheet-close {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 14px;
+            background: #f5f5f7;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            color: var(--text-primary);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body class="font-medium">
+    <!-- 顶部区域 -->
+    <div class="header">
+        <a href="#" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="progress-info">
+            <div class="progress-text">
+                <span>潮南教师招聘模拟题</span>
+                <span id="progress-text">1/110</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0.91%"></div>
+            </div>
+        </div>
+        <div class="font-control">
+            <button class="font-btn" id="font-decrease">
+                <i class="fas fa-font"></i><sub>-</sub>
+            </button>
+            <button class="font-btn" id="font-increase">
+                <i class="fas fa-font"></i><sup>+</sup>
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="main-container">
+        <!-- 题目卡片 -->
+        <div class="question-card" id="question-card">
+            <div class="question-header">
+                <div class="question-type" id="question-type">
+                    <span class="type-tag single">单选题</span>
+                    第1题/共60题
+                </div>
+                <div class="question-title" id="question-title">我国的教育萌芽始于（）。</div>
+            </div>
+            <div class="question-content">
+                <p id="question-description">请在每道题列出的四个选项中选出一个最佳选项。</p>
+            </div>
+            
+            <div class="options-container" id="options-container">
+                <!-- 选项将通过JS动态生成 -->
+            </div>
+            
+            <!-- 判断题选项 -->
+            <div class="judge-container" id="judge-container" style="display: none;">
+                <!-- 判断题选项将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 答案解析区域 -->
+        <div class="answer-container" id="answer-container" style="display: none;">
+            <div class="answer-header" id="answer-toggle">
+                <div class="answer-status" id="answer-status">
+                    <i class="fas fa-check-circle"></i>
+                    <span>回答正确</span>
+                </div>
+                <div class="toggle-icon" id="toggle-icon">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="answer-content" id="answer-content">
+                <span class="answer-label">正确答案</span>
+                <div class="answer-text" id="correct-answer">D. 原始社会初期</div>
+                
+                <span class="answer-label">解析</span>
+                <div class="explanation" id="explanation-text">
+                    本题考查教育的发展。教育萌芽始于原始社会初期。原始社会是人类社会的起点，在原始人群与自然抗争的生存斗争中，取食方法、自卫手段和群居生活所必须共同遵守的风俗习惯，在原始人群共同生活的过程中模仿、传承，以面对面的方式得以交流，这种交往就是原始的教育，就是处于萌芽状态的教育。
+                </div>
+            </div>
+        </div>
+
+        <!-- 完成提示 -->
+        <div class="completion-message" id="completion-message">
+            <div class="completion-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="completion-title">恭喜完成所有题目！</div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value correct" id="correct-count">0</div>
+                    <div class="stat-label">答对题数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value wrong" id="wrong-count">0</div>
+                    <div class="stat-label">答错题数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value rate" id="accuracy-rate">0%</div>
+                    <div class="stat-label">正确率</div>
+                </div>
+            </div>
+            
+            <button class="restart-btn" id="restart-btn">重新开始</button>
+        </div>
+    </div>
+
+    <!-- 底部操作区 -->
+    <div class="footer">
+        <button class="nav-btn prev-btn" id="prev-btn">
+            <i class="fas fa-chevron-left"></i>
+            上一题
+        </button>
+        <button class="nav-btn next-btn" id="next-btn">
+            下一题
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- 题单覆盖层 -->
+    <div class="overlay" id="overlay">
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">📋 题目列表（点击跳转）</div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+            <button class="sheet-close" id="sheetClose">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 题库数据 - 基于提供的文档
+        const questions = [
+            // 第一部分 单选题（60题）
+            {
+                id: 1,
+                type: "single",
+                typeName: "单选题",
+                title: "我国的教育萌芽始于（）。",
+                options: [
+                    { id: "A", text: "原始社会末期" },
+                    { id: "B", text: "原始社会中期" },
+                    { id: "C", text: "奴隶社会" },
+                    { id: "D", text: "原始社会初期" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查教育的发展。教育萌芽始于原始社会初期。原始社会是人类社会的起点，在原始人群与自然抗争的生存斗争中，取食方法、自卫手段和群居生活所必须共同遵守的风俗习惯，在原始人群共同生活的过程中模仿、传承，以面对面的方式得以交流，这种交往就是原始的教育，就是处于萌芽状态的教育。"
+            },
+            {
+                id: 2,
+                type: "single",
+                typeName: "单选题",
+                title: "被誉为“课程理论之父”的教育家是（）。",
+                options: [
+                    { id: "A", text: "泰勒" },
+                    { id: "B", text: "杜威" },
+                    { id: "C", text: "布鲁姆" },
+                    { id: "D", text: "斯塔克" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查课程理论的代表人物。泰勒于1949年出版了《课程与教学的基本原理》一书，由此确立了科学化课程开发理论，被誉为“课程理论之父”。"
+            },
+            {
+                id: 3,
+                type: "single",
+                typeName: "单选题",
+                title: "“性相近，习相远”的意思是，人出生的时候都是一样善良的，但是后来的脾气秉性都变得不相同。这句话是孔子对（）的概括。",
+                options: [
+                    { id: "A", text: "教育目的" },
+                    { id: "B", text: "教育作用" },
+                    { id: "C", text: "教育对象" },
+                    { id: "D", text: "教育任务" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查古语。“性相近，习相远”的意思是：“人刚生下来的时候，先天本性互相之间是接近的，而后天习染积久养成的习性，却互相之间差异甚大”，体现了后天的教育和社会环境对人的作用。"
+            },
+            {
+                id: 4,
+                type: "single",
+                typeName: "单选题",
+                title: "被称为“俄国教师的教师”的教育家是（）。",
+                options: [
+                    { id: "A", text: "别林斯基" },
+                    { id: "B", text: "乌申斯基" },
+                    { id: "C", text: "苏霍姆林斯基" },
+                    { id: "D", text: "托尔斯泰" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查乌申斯基。乌申斯基是19世纪俄国著名的资产阶级民主主义教育家，被誉为“俄国教师的教师”“俄国教育科学的创始人”“俄罗斯教育心理学的奠基人”。代表作是《人是教育的对象》，这本著作被认为“奠定了俄国教育科学的科学研究基础”。"
+            },
+            {
+                id: 5,
+                type: "single",
+                typeName: "单选题",
+                title: "（）是第一个提出教育心理学化的思想家。",
+                options: [
+                    { id: "A", text: "卢梭" },
+                    { id: "B", text: "裴斯泰洛齐" },
+                    { id: "C", text: "福禄贝尔" },
+                    { id: "D", text: "赫尔巴特" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查裴斯泰洛齐。裴斯泰洛齐被称为“慈爱的儿童之父”。他主张教育遵循自然、使儿童自然发展，最早提出了“教育心理学化”的主张，是西方教育史上第一位将“教育与生产劳动相结合”这一思想付诸实践的教育家。"
+            },
+            {
+                id: 6,
+                type: "single",
+                typeName: "单选题",
+                title: "标志教育学作为一门独立规范学科诞生和建立的教育家及其著作，对应正确的是（）。",
+                options: [
+                    { id: "A", text: "赫尔巴特与《普通教育学》" },
+                    { id: "B", text: "赫尔巴特与《教育论》" },
+                    { id: "C", text: "夸美纽斯与《大教学论》" },
+                    { id: "D", text: "夸美纽斯与《民主主义与教育》" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查教育思想家与其著作的对应。德国教育家赫尔巴特的《普通教育学》（1806）标志着教育学已成为一门独立的学科，标志着规范教育学的建立。"
+            },
+            {
+                id: 7,
+                type: "single",
+                typeName: "单选题",
+                title: "（）出自《论语》，体现了不分贵贱、对各类人都可以进行教育。",
+                options: [
+                    { id: "A", text: "因材施教" },
+                    { id: "B", text: "有教无类" },
+                    { id: "C", text: "天下为公" },
+                    { id: "D", text: "性相近，习相远" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查孔子的教育思想。孔子主张“有教无类”，主张打破少数奴隶主贵族对文化教育的垄断，扩大受教育的对象，只要本人愿意，人人都可以接受教育。"
+            },
+            {
+                id: 8,
+                type: "single",
+                typeName: "单选题",
+                title: "下列关于封建社会教育表述正确的是（）。\n①官学和私学是我国封建社会学校教育的基本类型\n②我国封建社会的教育内容以“四书五经”为主\n③欧洲骑士教育的目的是培养封建骑士，教育内容是“骑士七技”，即骑马、游泳、击剑、打猎、标枪、下棋、吟诗\n④鲜明的民主性是封建社会教育的重要特征",
+                options: [
+                    { id: "A", text: "①③④" },
+                    { id: "B", text: "②③④" },
+                    { id: "C", text: "①②④" },
+                    { id: "D", text: "①②③" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查封建社会教育的特征。西周以后，学校教育制度已经发展到比较完备的形式，建立了典型的政教合一的官学体系。到了春秋战国时期，官学衰微，私学大兴。官学和私学是封建社会学校教育的基本类型。封建社会的教育内容：中国以“四书五经”为主，欧洲以“七艺”“骑士七技”为主。封建社会教育的特点有：①阶级性和等级性；②道统性；③专制性；④刻板性；⑤象征性。民主性不是封建社会教育的特征。"
+            },
+            {
+                id: 9,
+                type: "single",
+                typeName: "单选题",
+                title: "关于教育的三要素的关系，说法正确的是（）。",
+                options: [
+                    { id: "A", text: "教育的三要素，是指教育者、教育影响、教育内容" },
+                    { id: "B", text: "教育内容是教育者选择和施加教育影响的对象" },
+                    { id: "C", text: "这三个要素相互独立没有影响" },
+                    { id: "D", text: "教育影响是教育者对受教育者作用的桥梁" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查教育活动的基本要素。教育活动的基本要素包括教育者、受教育者、教育影响，A项错误。受教育者是教育实践活动的对象，是学习的主体，B项错误。教育的三个基本要素既相互独立，又相互联系，构成一个完整的系统，C项错误。教育影响是置于教育者和受教育者之间的一切中介的总和，是构建于教育者和受教育者之间的桥梁。"
+            },
+            {
+                id: 10,
+                type: "single",
+                typeName: "单选题",
+                title: "一方面，由于人们的思想意识往往落后于存在，教育的内容和思想也往往落后于政治经济制度和生产力发展。另一方面，由于认识了社会发展的规律，根据社会发展的趋势，预见到教育发展的方向，在旧的政治经济制度下，也可能出现新的教育思想。这体现了教育的（）。",
+                options: [
+                    { id: "A", text: "可控性" },
+                    { id: "B", text: "相对独立性" },
+                    { id: "C", text: "能动性" },
+                    { id: "D", text: "超前性" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查教育的相对独立性。教育的相对独立性指教育虽然会受到政治、经济的影响，但是也有其自身发展的规律。其中不平衡性是指教育与政治经济制度和生产力的发展并非完全同步，一种情况是由于人们的思想意识往往落后于存在，教育的思想和内容也往往落后于政治经济制度和生产力的发展，另一种情况是由于认识了社会发展的规律，根据社会发展的趋势，预见到教育发展的方向，在旧的政治经济制度下，也可能出现新的教育思想。"
+            },
+            {
+                id: 11,
+                type: "single",
+                typeName: "单选题",
+                title: "元代高明在《琵琶记》中说，“十年寒窗无人问，一举成名天下知”，这句话揭示了教育的（）。",
+                options: [
+                    { id: "A", text: "政治功能" },
+                    { id: "B", text: "经济功能" },
+                    { id: "C", text: "社会功能" },
+                    { id: "D", text: "个体功能" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查教育的功能。题干的意思是十年的寒窗苦读无人问津，在科举考试中中举而名扬天下。这体现了教育对个体的促进发展作用。"
+            },
+            {
+                id: 12,
+                type: "single",
+                typeName: "单选题",
+                title: "教育活动的本质是特殊的（）。",
+                options: [
+                    { id: "A", text: "认识活动" },
+                    { id: "B", text: "实践活动" },
+                    { id: "C", text: "课堂活动" },
+                    { id: "D", text: "交往活动" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查教育的本质。教育的本质是一种有目的的培养人的社会实践活动，是一种在一定社会背景下发生的促使个体的社会化和社会的个性化的实践活动。"
+            },
+            {
+                id: 13,
+                type: "single",
+                typeName: "单选题",
+                title: "将课程分为必修课程与选修课程的标准是（）。",
+                options: [
+                    { id: "A", text: "课程的计划性" },
+                    { id: "B", text: "课程的组织类型" },
+                    { id: "C", text: "对课程的要求" },
+                    { id: "D", text: "课程的制定者" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查课程的分类。根据课程计划对课程实施的要求不同，可以划分为选修课程和必修课程。"
+            },
+            {
+                id: 14,
+                type: "single",
+                typeName: "单选题",
+                title: "陶行知主张（）的教育",
+                options: [
+                    { id: "A", text: "以教为中心" },
+                    { id: "B", text: "以家庭为中心" },
+                    { id: "C", text: "以学为中心" },
+                    { id: "D", text: "教学做合一" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查陶行知的教育思想。生活教育理论包括：(1)生活即教育（生活教育理论的核心）；(2)社会即学校；(3)教学做合一。"
+            },
+            {
+                id: 15,
+                type: "single",
+                typeName: "单选题",
+                title: "当人们对客观事物作出判断时，如果常常利用自己内部的参照，不易受外界环境的影响和干扰，这种人属于（）。",
+                options: [
+                    { id: "A", text: "场依存型" },
+                    { id: "B", text: "复合型" },
+                    { id: "C", text: "沉思型" },
+                    { id: "D", text: "场独立型" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查认知风格的分类。美国心理学家赫尔曼·威特金曾对“空军飞行员靠什么线索来确定自己是否坐直”的问题进行研究，把受环境影响大的称为“场依存性”，把不受或者很少受环境因素影响的称为“场独立性”。场依存性的学生是“外部定向者”，对事物作出判断时倾向于以外部参照（身外的客观事物）作为信息加工的依据，容易受周围人们，特别是权威人士的影响和干扰，善于察言观色。场独立性的学生是“内部定向者”：对客观事物作判断时，常常利用内在的参照（主体感觉），不易受外来的因素影响和干扰，独立对事物作出判断；场独立性的人善于分析和组织。题干中“常常利用自己内部的参照，不易受外界环境的影响和干扰”符合场独立型的描述。"
+            },
+            {
+                id: 16,
+                type: "single",
+                typeName: "单选题",
+                title: "长期量体裁衣的裁缝，能够做到不用量只用观察就知道人们衣服尺寸的大小。这是（）。",
+                options: [
+                    { id: "A", text: "早期经验对能力的影响" },
+                    { id: "B", text: "主观能动性对能力的影响" },
+                    { id: "C", text: "实践活动对能力的影响" },
+                    { id: "D", text: "遗传的作用" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查能力的影响因素。影响能力发展的因素有：(1)先天素质。先天素质是人们与生俱来的解剖生理特点，它包括感觉器官、运动器官以及神经系统和脑的特点。它是能力形成和发展的自然前提和物质基础。(2)早期经验。研究表明，早期阶段所获得的经验越多，能力发展得就越迅速，不少人把学龄前称为智力发展的一个关键期。(3)教育与教学，能力不是天生的，教育和教学对能力的发展起着主导作用。(4)社会实践。社会实践不仅是学习知识的重要途径，也是智力发展的重要途径。(5)主观努力（内在因素）。一个人要想发展能力，除必须积极地投入到实践中去之外，还要充分发挥自身的主观能动性——积极的个性心理特征，即理想、兴趣及勤奋和不怕困难的意志力。题干中的裁缝长期量体裁衣提高了自己的能力，这属于实践活动。"
+            },
+            {
+                id: 17,
+                type: "single",
+                typeName: "单选题",
+                title: "一锅煮、一刀切，违反了人的身心发展的哪个特点？（）",
+                options: [
+                    { id: "A", text: "发展的差异性" },
+                    { id: "B", text: "发展的不均衡性" },
+                    { id: "C", text: "发展的顺序性" },
+                    { id: "D", text: "发展的阶段性" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查身心发展的特点。学生心理发展的一般特征有：连续性与阶段性、定向性与顺序性、不平衡性、差异性。题干中“一锅煮、一刀切”违反了身心发展的年龄特征，体现年龄差异的是阶段性。阶段性特征是指在心理发展过程中，当某些代表新特征的量积累到一定程度时就会取代旧特征，从而处于优势的主导地位，表现为阶段性的间断现象。A项，差异性是指任何一个正常学生的心理发展总要经历一些共同的基本阶段，但在发展的速度、最终达到的水平以及发展的优势领域等方面往往不尽相同，表现出个体的差异性。B项，不均衡性是指心理的发展可以因进行的速度、到达的时间和最终达到的水平而表现出多样化的发展模式。C项，顺序性是指在正常条件下，心理的发展总是具有一定的方向性和先后顺序。尽管发展的速度可以有个别差异，会加速或延缓，但发展是不可逆的，阶段与阶段之间也是不可逾越的。"
+            },
+            {
+                id: 18,
+                type: "single",
+                typeName: "单选题",
+                title: "某环保宣传单位下属的一所小学，专门开设了一门与环保相关的课程，向本校学生宣传环保意识。这门课程属于（）。",
+                options: [
+                    { id: "A", text: "地方课程" },
+                    { id: "B", text: "隐性课程" },
+                    { id: "C", text: "校本课程" },
+                    { id: "D", text: "综合课程" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查校本课程。校本课程是学校在确保国家课程和地方课程有效实施的前提下，针对学生的兴趣和需要，结合学校的传统和优势及办学理念，充分利用学校和社区的课程资源，自主开发或选用的课程。其主导价值在于通过课程展示学校的办学宗旨和特色。题干中是小学开设了环保课程，属于校本课程。"
+            },
+            {
+                id: 19,
+                type: "single",
+                typeName: "单选题",
+                title: "关于数学教育，要求在小学时掌握基础的数字运算知识的基础上，在中学开始掌握方程的运算，这体现了课程目标的（）。",
+                options: [
+                    { id: "A", text: "跳跃性" },
+                    { id: "B", text: "递进性" },
+                    { id: "C", text: "完善性" },
+                    { id: "D", text: "层次性" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查课程目标的特点。递进性是指低年级课程目标是高年级课程目标的基础，没有低年级课程目标的实现，就难以达到高年级的课程目标。在小学掌握运算知识的基础上，中学继续掌握方程运算，符合递进性的定义。"
+            },
+            {
+                id: 20,
+                type: "single",
+                typeName: "单选题",
+                title: "下列属于形成性评价的是（）",
+                options: [
+                    { id: "A", text: "课堂小测验" },
+                    { id: "B", text: "入学摸底测验" },
+                    { id: "C", text: "期末考试" },
+                    { id: "D", text: "查阅入学前成绩" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查形成性评价。形成性评价是指在教学进程中对学生的知识掌握和能力发展进行的比较经常而及时的测评与反馈。例如，在一节课的教学中老师对学生的口头提问和随堂测验。"
+            },
+            {
+                id: 21,
+                type: "single",
+                typeName: "单选题",
+                title: "2018年5月2日，习近平总书记在北京大学师生座谈会上的讲话中指出，“师者，人之模范也”，这句话说明了教师的教育劳动的（）。",
+                options: [
+                    { id: "A", text: "复杂性" },
+                    { id: "B", text: "创造性" },
+                    { id: "C", text: "示范性" },
+                    { id: "D", text: "长期性" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查教师劳动的特点。“师者，人之模范也”的意思是说教师要做好为人师表的榜样角色，是教师劳动示范性的体现。"
+            },
+            {
+                id: 22,
+                type: "single",
+                typeName: "单选题",
+                title: "欧阳修手下有一个名叫吕公著的年轻人，吕公著的写作能力本来一般，但在欧阳修的言传身教下，吕公著的写作技巧得到了提升，体现了（）在人的身心发展中的作用。",
+                options: [
+                    { id: "A", text: "个体主观能动性" },
+                    { id: "B", text: "遗传基因" },
+                    { id: "C", text: "教育" },
+                    { id: "D", text: "外部环境" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查影响个体身心发展的因素。欧阳修对吕公著进行言传身教，帮助吕公著提升了写作技巧，主要体现了教育在人的身心发展中的作用。"
+            },
+            {
+                id: 23,
+                type: "single",
+                typeName: "单选题",
+                title: "在教育目的问题上，主张个人本位论的教育家是（）\n①法国思想家卢梭\n②英国的洛克\n③美国的罗杰斯\n④捷克的夸美纽斯\n⑤法国的涂尔干",
+                options: [
+                    { id: "A", text: "①②③④" },
+                    { id: "B", text: "①④⑤" },
+                    { id: "C", text: "①②③" },
+                    { id: "D", text: "②③④" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查教育目的本位论。夸美纽斯是宗教本位论的代表人物，涂尔干是社会本位论的代表人物。卢梭、洛克、罗杰斯均为个人本位论代表人物。"
+            },
+            {
+                id: 24,
+                type: "single",
+                typeName: "单选题",
+                title: "从胎儿到坟墓的教育反映了现代教育（）的特点。",
+                options: [
+                    { id: "A", text: "终身性" },
+                    { id: "B", text: "未来性" },
+                    { id: "C", text: "广泛性" },
+                    { id: "D", text: "全民性" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查教育的终身化。教育的终身化是适应科学知识的加速增长和人的持续发展要求而逐渐形成的一种教育思想和教育制度。它的本质在于，现代人的一生应该是终身学习、终身发展的一生。从胎儿到坟墓的教育反映了现代教育的终身性。"
+            },
+            {
+                id: 25,
+                type: "single",
+                typeName: "单选题",
+                title: "课程实施并不是固定不变的，可以根据实际情况进行调整。此观点是课程实施的（）",
+                options: [
+                    { id: "A", text: "参与制定取向" },
+                    { id: "B", text: "主体取向" },
+                    { id: "C", text: "互动调适取向" },
+                    { id: "D", text: "忠实取向" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查课程实施的取向。课程实施的互动调适取向将课程看成可以调整和改变的，在实施过程中，教师可以根据具体的条件和自己对课程的理解，对课程进行调整和改造。"
+            },
+            {
+                id: 26,
+                type: "single",
+                typeName: "单选题",
+                title: "罗杰斯是人本主义心理学的代表人物，他把在心理治疗中的非指导性治疗技术移植到教学过程中，提出了以学生自发学习为特征的非指导性教学，他认为在非指导性教学中，教师是作为（）存在的。",
+                options: [
+                    { id: "A", text: "传授者" },
+                    { id: "B", text: "促进者" },
+                    { id: "C", text: "引导者" },
+                    { id: "D", text: "管理者" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查罗杰斯的学习理论。罗杰斯主张用“学习的促进者”代替“教师”这个称谓。教师的任务是要为学生提供学习的手段和条件，促进个体自由地成长。学生中心模式又称为非指导模式，教师的角色是“助产士”或“催化剂”。"
+            },
+            {
+                id: 27,
+                type: "single",
+                typeName: "单选题",
+                title: "提出泛智教育思想，认为教育就是把一切事物交给一切人类的全部艺术的教育家是（）。",
+                options: [
+                    { id: "A", text: "杜威" },
+                    { id: "B", text: "布鲁纳" },
+                    { id: "C", text: "赫尔巴特" },
+                    { id: "D", text: "夸美纽斯" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查夸美纽斯的教育思想。教育学之父夸美纽斯在其著作《大教学论》中主张的教学思想是：“泛智教育”——把广泛的自然知识传授给普通的人。"
+            },
+            {
+                id: 28,
+                type: "single",
+                typeName: "单选题",
+                title: "教师在现实教育教学情境中进行反思探索，强调研究与行动一体化，使教师在工作过程中学习、思考、尝试和解决问题，这种研究方法是（）。",
+                options: [
+                    { id: "A", text: "教育比较研究法" },
+                    { id: "B", text: "教育实验研究法" },
+                    { id: "C", text: "教育行动研究法" },
+                    { id: "D", text: "教育调查研究法" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查行动研究。行动研究是教师和研究人员针对实践中的问题，综合运用各种有效的方法，以改进教育工作为目的的教育研究活动。它将教育理论和教育实践融为一体，将教育者和教育现实问题紧密结合，强调在“行动”中研究，在“情境”中研究，在“做”中研究。"
+            },
+            {
+                id: 29,
+                type: "single",
+                typeName: "单选题",
+                title: "美国心理学家孟禄提出了教育的（），认为教育起源于日常生活中儿童对成人的无意识模仿。",
+                options: [
+                    { id: "A", text: "神话起源说" },
+                    { id: "B", text: "劳动起源说" },
+                    { id: "C", text: "心理起源说" },
+                    { id: "D", text: "生物起源说" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查心理起源说。心理起源说的代表人物是美国心理学家孟禄。心理起源说认为教育起源于日常生活中儿童对成人的无意识模仿。心理起源说批判了“生物起源说”不区分人类教育与动物本能的庸俗教育观点，认为教育只存在于人类社会，而动物界不存在教育。"
+            },
+            {
+                id: 30,
+                type: "single",
+                typeName: "单选题",
+                title: "个体的有些方面在较早的年龄阶段就已达到较为成熟的发展水平，有些方面则要到较晚的年龄阶段，才能达到较为成熟的水平。这体现个体身心发展的基本规律是（）。",
+                options: [
+                    { id: "A", text: "顺序性" },
+                    { id: "B", text: "不平衡性" },
+                    { id: "C", text: "阶段性" },
+                    { id: "D", text: "个体差异性" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查身心发展的特点。学生心理发展的一般特征有：连续性与阶段性、定向性与顺序性、不平衡性、差异性。题干中体现了不同的方面发展不同步，体现了不平衡性的特点。不平衡性是指心理的发展可以因进行的速度、到达的时间和最终达到的水平而表现出多样化的发展模式。一方面，表现为个体不同系统在发展的速度上、发展的起讫时间与到达成熟时期上的不同进程；另一方面，也表现为同一机能特性在发展的不同时期有不同的发展速率。"
+            },
+            {
+                id: 31,
+                type: "single",
+                typeName: "单选题",
+                title: "下列说法对“教育对人的发展起主导作用”这一观点理解不正确的是（）。",
+                options: [
+                    { id: "A", text: "教育，特别是学校教育给人的影响，是全面系统和深刻的" },
+                    { id: "B", text: "学校有专门负责教育工作的教师" },
+                    { id: "C", text: "教育的发展对人的发展起决定性作用，好的教育一定能培养出优秀的学生" },
+                    { id: "D", text: "教育是一种有目的的培养人的活动" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查教育的作用。教育在人的身心发展中起主导作用，而不是决定性作用。个体的主观能动性才在人的身心发展中起决定性因素。"
+            },
+            {
+                id: 32,
+                type: "single",
+                typeName: "单选题",
+                title: "瑞士心理学家皮亚杰关于发生认识论的研究，揭示了个体认知发展的一般规律。这表明了个体的身心发展具有（）。",
+                options: [
+                    { id: "A", text: "不平衡性" },
+                    { id: "B", text: "阶段性" },
+                    { id: "C", text: "顺序性" },
+                    { id: "D", text: "互补性" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查身心发展的特点。学生心理发展的一般特征有：连续性与阶段性、定向性与顺序性、不平衡性、差异性。人的心理机能的发展也有一定的顺序性，如儿童思维的发展总是遵循从具体动作思维到形象思维，再从形象思维到抽象逻辑思维顺序；记忆发展的顺序是从机械记忆发展到意义记忆；注意发展的顺序是从无意注意到有意注意；情感发展的顺序是从喜、悲等一般情感发展到道德感、理智感、美感等高级情感。瑞士心理学家皮亚杰有关发生认识论的研究，揭示了个体认知发展的一般规律，即按照感知运算水平、前运算水平、具体运算水平、形式运算水平顺序发展的特征。美国心理学家科尔伯格的研究证明，人的道德认知遵循着从前世俗水平再到后世俗水平的发展过程。"
+            },
+            {
+                id: 33,
+                type: "single",
+                typeName: "单选题",
+                title: "《学记》中，“当其可之谓时，时过然后学，则勤苦而难成”，这句话反映了人的身心发展中存在的（）现象。",
+                options: [
+                    { id: "A", text: "最近发展期" },
+                    { id: "B", text: "依恋期" },
+                    { id: "C", text: "混沌期" },
+                    { id: "D", text: "关键期" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查关键期。题干中这句话的意思是“关键的学习时期过了才去学，虽然努力苦学，也难有成就”，这句话体现的是不同方面在不同发展时期具有不平衡性，即有的方面在较早的年龄阶段已经达到较高的发展水平，有的则要到较晚的年龄阶段才能达到较为成熟的水平。因此，教育要遵循儿童身心发展的不平衡性，要适时而教，即要在儿童发展的关键期或最佳期及时地进行教育。"
+            },
+            {
+                id: 34,
+                type: "single",
+                typeName: "单选题",
+                title: "古希腊哲学家亚里士多德在其《论灵魂》中认为灵魂如同蜡块一样，从外物接受印纹。在西方教育近代史上，著名的教育思想家（）继承和发展了这个思想，认为最初的心灵像一块没有任何记号和任何观念的白板。",
+                options: [
+                    { id: "A", text: "洛克" },
+                    { id: "B", text: "赫尔巴特" },
+                    { id: "C", text: "夸美纽斯" },
+                    { id: "D", text: "卢梭" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查洛克的教育思想。洛克在《教育漫话》中提出“白板说”，认为儿童出生时就是一张白纸，涂抹什么颜色即变成什么样子。即强调外界环境对人的影响。"
+            },
+            {
+                id: 35,
+                type: "single",
+                typeName: "单选题",
+                title: "酿酒工人具有敏锐的鉴别酒质的能力，印染工人可以比一般人有较强的颜色鉴别能力等。这种现象说明（）。",
+                options: [
+                    { id: "A", text: "遗传素质的发展过程制约着年轻一代的身心发展" },
+                    { id: "B", text: "遗传素质的差异性，对人的身体发展有一定的影响作用" },
+                    { id: "C", text: "遗传是人的身心发展的生理前提" },
+                    { id: "D", text: "遗传素质具有可塑性" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查遗传的作用。遗传为人的身心发展提供了前提和可能，并且具有可塑性，即遗传提供的可能会在环境、个体主观能动性等因素的作用下发展改变。"
+            },
+            {
+                id: 36,
+                type: "single",
+                typeName: "单选题",
+                title: "美国心理学家格塞尔认为，人的机体的成熟程度制约着身心发展的程度，成熟与教学的效果是契合的，一种技能的发展由成熟支配时没必要超前加以训练。这一结论来自著名的（）。",
+                options: [
+                    { id: "A", text: "黑箱装置实验" },
+                    { id: "B", text: "刺激反应实验" },
+                    { id: "C", text: "双生子爬梯实验" },
+                    { id: "D", text: "黑猩猩实验" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查格塞尔的实验。美国心理学家格塞尔通过双生子爬梯实验强调成熟机制对人的发展的决定性作用。他认为，人的发展受基因决定的特定的顺序支配，完成了一定顺序后机体达到成熟，教育要想通过外部训练抢在成熟的时间表前面形成某种能力是低效的甚至是徒劳的。"
+            },
+            {
+                id: 37,
+                type: "single",
+                typeName: "单选题",
+                title: "学校心理辅导的高级目标是（）",
+                options: [
+                    { id: "A", text: "普及心理知识" },
+                    { id: "B", text: "寻求发展" },
+                    { id: "C", text: "帮助学生解决心理问题" },
+                    { id: "D", text: "学会调适" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查心理辅导的目标。心理辅导的一般目的应为：学会调适和寻求发展。这两个目标中，学会调适是基本目标，以此为主要目标的心理辅导可称为调适性辅导；寻求发展是高级目标，以此为主要目标的心理辅导可称为发展性辅导。"
+            },
+            {
+                id: 38,
+                type: "single",
+                typeName: "单选题",
+                title: "有人富于想象，有人长于记忆，有人有音乐的天赋，有人有美术的天赋等，这说明了个体在能力发展上的（）。",
+                options: [
+                    { id: "A", text: "性别的差异" },
+                    { id: "B", text: "水平的差异" },
+                    { id: "C", text: "结构的差异" },
+                    { id: "D", text: "早晚的差异" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查能力的差异。能力的差异主要体现在以下几个方面：(1)能力发展水平的差异。能力发展水平的差异主要体现在智力上。智力分布近似正态分布，有些人的智力发展水平较高，有些人的发展水平较低，大多数人的智力属于中等水平。(2)能力类型的差异。能力类型差异是指构成能力的各种因素存在质的差异，主要表现在知觉、记忆、想象、思维的类型和品质方面。(3)能力表现早晚的差异，能力早晚的差异主要体现在能力早期的显露和大器晚成两个方面。(4)能力的性别差异。题干中所描述每个人擅长的领域不同，属于类型的差异。结合选项，结构的差异最为贴切。"
+            },
+            {
+                id: 39,
+                type: "single",
+                typeName: "单选题",
+                title: "李田读一篇很长的文章，他忘记中间的大部分内容，而对最后呈现的材料，最容易回忆，遗忘最少。这种现象可以用（）来解释。",
+                options: [
+                    { id: "A", text: "首因效应" },
+                    { id: "B", text: "干扰效应" },
+                    { id: "C", text: "衰退效应" },
+                    { id: "D", text: "近因效应" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查遗忘的知识点。艾宾浩斯最早研究了系列位置作用。他用一系列无意义音节作学习材料，发现开始的部分最容易学（首因效应），其次是最末后的部分（近因效应）。题干中对最后呈现的材料，最容易回忆，遗忘最少，体现了近因效应。"
+            },
+            {
+                id: 40,
+                type: "single",
+                typeName: "单选题",
+                title: "在学习游泳之前，小华读过一些有关的书籍，记住了某些动作要领，这种记忆属于（）。",
+                options: [
+                    { id: "A", text: "程序性记忆" },
+                    { id: "B", text: "内隐记忆" },
+                    { id: "C", text: "动作记忆" },
+                    { id: "D", text: "陈述性记忆" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查记忆的分类。根据信息加工和存储内容的不同，可分为：陈述性记忆和程序性记忆。陈述性记忆是以陈述性知识为内容，即事实类信息，包括字词、定义、人名、时间、事件、概念和观念。陈述性内容可以用言语表达。程序性记忆又称技能记忆，即对程序性知识进行记忆，如该怎样做事情或如何掌握技能，通常包含一系列复杂的动作过程，即有多个动作间的序列联系，也包括在同一瞬间同时进行的动作间的横向联系，这两方面共同构成的复合体是无法用语言清楚表述的，如打篮球。B项，内隐记忆是在个体无法意识的情况下，过去经验对当前作业产生的无意识的影响，有时又叫自动的无意识记忆。C项，动作记忆是对身体的运动状态和动作技能的记忆。题干中“在学习游泳之前，小华读过一些有关的书籍，记住了某些动作要领”，这是对于动作要领的记忆，因此属于陈述性记忆。"
+            },
+            {
+                id: 41,
+                type: "single",
+                typeName: "单选题",
+                title: "将黑白两匹布一半置于亮处，一半置于暗处。虽然每匹布的两半部分亮度存在差异，但个体仍把它知觉为一匹黑布或一匹白布，而不会知觉为两段明暗不同的布料。这体现了（）",
+                options: [
+                    { id: "A", text: "知觉学习" },
+                    { id: "B", text: "知觉的适应" },
+                    { id: "C", text: "知觉的恒常性" },
+                    { id: "D", text: "知觉的选择性" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查知觉的基本特征。(1)人在知觉过程中把知觉对象从背景中区分出来优先加以清晰地反映的特性就叫知觉的选择性。(2)在知觉过程中，人们总是根据已有的知识经验来解释当前知觉的对象，并用语言来描述它，使它具有一定的意义，这就是知觉的理解性。(3)知觉的对象是由不同部分和属性组成的，但我们总是把客观事物作为整体来感知，即把客观事物的个别特性综合为整体来反映，这就是知觉的整体性。(4)在知觉过程中，当知觉的条件在一定范围内发生变化时，人的知觉的映象仍然保持相对不变的特性就叫知觉的恒常性。题干中虽然每匹布的两半部分亮度存在差异，但个体仍把它知觉为一匹黑布或一匹白布体现了知觉恒常性中的亮度恒常性。"
+            },
+            {
+                id: 42,
+                type: "single",
+                typeName: "单选题",
+                title: "你觉得一斤棉花比一斤铁重，这属于（）。",
+                options: [
+                    { id: "A", text: "知觉恒常性" },
+                    { id: "B", text: "错觉" },
+                    { id: "C", text: "认知方式" },
+                    { id: "D", text: "联觉" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查错觉。错觉是人在某种特定条件下，对客观事物必然产生的、具有某种固定倾向、不符合事物本身特征和受到歪曲的知觉。一斤棉花比一斤铁重属于错觉中的形重错觉。A项，在知觉过程中，当知觉的条件在一定范围内发生变化时，人的知觉的映象仍然保持相对不变的特性就叫知觉的恒常性。C项，认知风格又叫认知方式，指个体感知、记忆、思维、解决问题、决策以及加工信息的典型方式。D项，一个刺激不仅引起一种感觉，同时还引起另一种感觉的现象就叫联觉。"
+            },
+            {
+                id: 43,
+                type: "single",
+                typeName: "单选题",
+                title: "小刚为了获得老师的赞许，努力学习，这属于（）。",
+                options: [
+                    { id: "A", text: "错误动机" },
+                    { id: "B", text: "正确动机" },
+                    { id: "C", text: "外部动机" },
+                    { id: "D", text: "内部动机" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查动机的分类。根据动机产生的诱因来源不同，学习动机分为内部学习动机和外部学习动机。内部学习动机指的是个体内在需要引起的学习动机。外部学习动机往往由外部诱因引起，与外部奖励相联系。题干中“小刚为了获得老师的赞许，努力学习”属于外部学习动机。A、B项，学习动机根据内容的社会意义，可以分为高尚的动机与低级的动机或正确的动机与错误的动机，与题干无关。"
+            },
+            {
+                id: 44,
+                type: "single",
+                typeName: "单选题",
+                title: "自由学习和学生中心的学习的教学观是（）的主要观点。",
+                options: [
+                    { id: "A", text: "认知行为主义" },
+                    { id: "B", text: "精神分析" },
+                    { id: "C", text: "人本主义" },
+                    { id: "D", text: "社会建构主义" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查人本主义学习理论。人本主义者倡导有意义的自由学习观。有意义学习关注学习内容与个人之间的关系，它不仅是理解记忆的学习，而且是学习者所作出的一种自主、自觉的学习，能够在相当大的范围内自行选择学习材料，自己安排适合于自己的学习情境。并且罗杰斯主张用“学习的促进者”代替“教师”这个称谓。教师的任务是要为学生提供学习的手段和条件，促进个体自由地成长。学生中心模式又称为非指导模式，教师的角色是“助产士”或“催化剂”。"
+            },
+            {
+                id: 45,
+                type: "single",
+                typeName: "单选题",
+                title: "“熟能生巧”符合桑代克提出的（）学习规律。",
+                options: [
+                    { id: "A", text: "效果律" },
+                    { id: "B", text: "近因律" },
+                    { id: "C", text: "练习律" },
+                    { id: "D", text: "准备律" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查桑代克的学习理论。桑代克认为学习的过程是刺激与反应之间建立联结的过程，联结是通过盲目尝试，逐步减少错误（试误）而形成的，因此他把自己的观点又称为试误说。桑代克根据自己的实验研究得出了三条主要的学习定律。(1)准备律。在进入某种学习活动之前，如果学习者做好了与相应的学习活动相关的预备性反应（包括生理的和心理的），学习者就能比较自如地掌握学习的内容。(2)练习律。对于学习者已形成的某种联结，在实践中正确地重复这种反应会有效地增强这种联结。另外，桑代克也非常重视练习中的反馈。他认为，告诉学习者练习正确或错误的信息有利于学习者在学习中不断纠正自己的学习内容。(3)效果律。学习者在学习过程中所得到的各种正或负的反馈意见会加强或减弱学习者在头脑中已经形成的某种联结。题干中“熟能生巧”符合练习律。"
+            },
+            {
+                id: 46,
+                type: "single",
+                typeName: "单选题",
+                title: "离下课还有10分钟，这时候一些学生的注意力开始涣散，语文老师王老师说，“如果大家认真听课，我就免去今天的额外作业”，学生开始认真听课了。王老师的此种做法属于（）。",
+                options: [
+                    { id: "A", text: "负强化" },
+                    { id: "B", text: "正强化" },
+                    { id: "C", text: "惩罚" },
+                    { id: "D", text: "消退" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查强化的分类。A项，负强化是通过撤销厌恶刺激，增加行为发生的频率。B项，正强化是通过给予愉快刺激，增加行为发生的频率。C项，惩罚是减少行为发生的频率。D项，消退是无任何强化物来减少行为发生的频率。题干中“语文老师王老师说，‘如果大家认真听课，我就免去今天的额外作业’，学生开始认真听课了”，是通过撤销厌恶刺激来增加学生认真听课的行为，属于负强化。"
+            },
+            {
+                id: 47,
+                type: "single",
+                typeName: "单选题",
+                title: "关于任务难度与努力程度的关系，说法正确的是（）。",
+                options: [
+                    { id: "A", text: "中等难度的任务比太难或太易的任务，更容易激励学生" },
+                    { id: "B", text: "任务越简单，越能激励学生努力" },
+                    { id: "C", text: "任务越难，越能激励学生努力" },
+                    { id: "D", text: "任务难度与努力程度没有关系" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查韦纳的归因理论。归因是人们对自己或他人活动及其结果的原因所作的解释和评价。心理学家韦纳对行为结果的归因进行了系统探讨，并把归因分为三个维度：(1)内部归因与外部归因；(2)稳定性归因与非稳定性归因；(3)可控制归因与不可控制归因。他又把人们活动成败的原因即行为责任主要归结为六个因素，即能力高低、努力程度、任务难易、运气（机遇）好坏、身心状态和外界环境。其中，当任务难度过高或者过低都会影响个体的努力程度，而当任务难度处于中等阶段的时候，更容易激发学生努力。"
+            },
+            {
+                id: 48,
+                type: "single",
+                typeName: "单选题",
+                title: "当读者看一段深奥难懂的文章时，会放慢阅读的速度。这种元认知策略是（）",
+                options: [
+                    { id: "A", text: "领会策略" },
+                    { id: "B", text: "调节策略" },
+                    { id: "C", text: "计划策略" },
+                    { id: "D", text: "监控策略" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查学习策略的分类。元认知策略包括计划策略、监视策略和调节策略。(1)计划策略是根据认知活动的目标，在进行一项认知活动之前，进一步明确认知目标、确定认知过程和环节、预计认知结果、选择认知策略并评估其有效性。(2)监视策略是一种常用的元认知策略，是指在认知活动中，根据认知目标不断反省和监控自己的认知活动是否在沿着正确的方向进行，正确估计自己达到认知目标的程度、水平并根据有效性标准评价各种认知行动、策略的效果。(3)调节策略是根据对认知活动结果的检查，如果发现问题、遇到困难或偏离目标时，采取相应的补救措施，及时修正、调整认知策略。题干中“读者看一段深奥难懂的文章时，会放慢阅读的速度”，已经出现了调整阅读速度的补救措施，属于调节策略。"
+            },
+            {
+                id: 49,
+                type: "single",
+                typeName: "单选题",
+                title: "人的心理与生理成长发展并逐步走向成熟的重要时期是（）。",
+                options: [
+                    { id: "A", text: "成年期" },
+                    { id: "B", text: "青春期" },
+                    { id: "C", text: "幼儿期" },
+                    { id: "D", text: "童年期" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查学生心理发展。青少年时期，是人的心理与生理成长发展并逐步走向成熟的时期，也是心理卫生的最重要的时期。这个时期，青少年的心理活动是复杂的，作为刚进入社会的一代新人，环境使他们本来不稳定的心理状态增加了新的促动因素，直接关系到他们今后的心理发育健康与否。青少年时期对应选项中的青春期。"
+            },
+            {
+                id: 50,
+                type: "single",
+                typeName: "单选题",
+                title: "有目的地控制一定的条件或创设一定的条件，来引起某种心理现象，以进行研究的方法是（）。",
+                options: [
+                    { id: "A", text: "实验法" },
+                    { id: "B", text: "调查法" },
+                    { id: "C", text: "经验总结法" },
+                    { id: "D", text: "观察法" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查教育心理学的研究方法。A项，实验法是指根据研究目的，改变或控制某些条件，以引起被试某种心理活动的变化，从而揭示特定条件与这种心理活动之间关系的方法。B项，调查法是通过各种途径间接了解被试心理活动的一种研究方法。C项，教育经验总结法是教育心理学中一个重要的研究方法，它是依据教育实践所提供的事实，按照科学研究的程序，分析和概括教育现象，揭示其内在联系和规律，使之上升为教育理论的一种教育科研方法。D项，观察法是指在教育过程中，研究者通过感官或借助于一定的科学仪器，有目的、有计划地考察和描述个体某种心理活动的表现或行为变化，从而收集相关的研究资料的方法。"
+            },
+            {
+                id: 51,
+                type: "single",
+                typeName: "单选题",
+                title: "在儿童言语形成的过程中，出现“爸爸，妈妈，……娃娃”，这种电报式语言的年龄阶段是（）。",
+                options: [
+                    { id: "A", text: "1岁~1.5岁" },
+                    { id: "B", text: "6个月~1岁" },
+                    { id: "C", text: "1.5岁~2岁" },
+                    { id: "D", text: "2岁~3岁" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查儿童语言的发展阶段。儿童语言的发展阶段如下：(1)单词句阶段（1~1.5岁）。(2)简单句阶段（1.5~2岁）。1岁半以后是婴儿言语发展最迅速的时期，此时婴儿能说出的词量大大增加，并学会使用简单句表达需要和想法。此阶段婴儿所说的简单句主要有以下一些形式和特点：①简单的主谓句、谓宾句或主谓宾句。这些句子大都很短，没有修辞，如“妈妈抱抱”“吃饭饭”“爸爸上班了”等。研究者将这一时期婴儿的语言称为“电报句”或“电报式语言”，因为这类句子在形式上常是断续的、简明的、结构不完整的，缺少语法成分。②简单的复合句。这些句子数量有限，常常只由两个简单短句组成，没有连词。例如，“妈妈来，宝宝睡觉觉”（妈妈来哄宝宝睡觉觉），“爸爸看我，可棒了”（爸爸看我，我可棒了！）。③词序颠倒，常有宾语前置现象。例如，把“开门”表达为“门开”，“宝宝吃糖”表达为“宝宝糖吃”。(3)复合句阶段（2~3岁）。2~3岁婴儿说出的句子仍以简单句为主，但复合句开始发展起来。婴儿这一时期的复合句通常是两个简单句的组合，还不会使用连词。例如，“宝宝睡觉觉，妈妈睡觉觉”。此时的句子明显加长，大部分句子已有6~10个词。"
+            },
+            {
+                id: 52,
+                type: "single",
+                typeName: "单选题",
+                title: "学生学习了金属的概念，知道了什么是金属，而后学习铁、铜的知识，把铁、铜内化到金属的概念之下，这是一种（）。",
+                options: [
+                    { id: "A", text: "并列结合学习" },
+                    { id: "B", text: "总括学习" },
+                    { id: "C", text: "下位学习" },
+                    { id: "D", text: "上位学习" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查奥苏贝尔学习的分类。奥苏贝尔认为，根据新知识与原有认知结构的关系，学习可以分为下位学习、上位学习和并列组合学习。(1)下位学习（类属学习）。下位学习指将概括程度或包容范围较低的新概念或命题，归属到认知结构中原有的概括程度或包容范围较高的适当概念或命题之下，从而获得新概念或新命题的意义。(2)上位学习（总括学习）。上位学习是指新概念、新命题具有较广的包容面或较高的概括水平，这时，新知识通过把一系列已有观念包含于其下而获得意义，新学习的内容便与学生认知结构中已有观念产生了一种上位关系。(3)并列组合学习（又称并列结合学习）。当新概念或新命题与学习者认知结构中已有的观念既不产生下位关系，又不产生上位关系时，它们之间可能存在组合关系，这种只凭组合关系来理解意义的学习就是并列组合学习。题干中“知道了什么是金属，而后学习铁、铜的知识”属于下位学习。"
+            },
+            {
+                id: 53,
+                type: "single",
+                typeName: "单选题",
+                title: "根据皮亚杰的认知发展理论，14岁的儿童思维发展的水平属于（）。",
+                options: [
+                    { id: "A", text: "形象思维" },
+                    { id: "B", text: "具体形象思维" },
+                    { id: "C", text: "形式运算水平思维" },
+                    { id: "D", text: "直觉思维" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查皮亚杰认知发展阶段。皮亚杰认为认知发展是一种建构的过程，是在个体与环境的相互作用中实现的，从而表现出按不变顺序相继出现的四个阶段。每一个阶段有它主要的行为模式。其中，每一个阶段都是一个统一的整体。他提出了认知发展理论，并将个体的认知发展分为四个阶段：(1)感知运动阶段（0~2岁）；(2)前运算阶段（2~7岁）；(3)具体运算阶段（7~11岁）；(4)形式运算阶段（11岁~成人）。题干问的是14岁，处于形式运算阶段。"
+            },
+            {
+                id: 54,
+                type: "single",
+                typeName: "单选题",
+                title: "（）认为幼儿游戏是为了补偿现实生活中不能满足的愿望和克服创伤事件。",
+                options: [
+                    { id: "A", text: "学习理论" },
+                    { id: "B", text: "行为主义理论" },
+                    { id: "C", text: "人本主义理论" },
+                    { id: "D", text: "精神分析理论" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查游戏的理论。精神分析理论的代表人物是奥地利著名的精神病学家、精神分析派创始人弗洛伊德（S.Freud）。弗洛伊德认为，儿童对游戏的喜欢也有潜意识的成分，游戏是补偿现实生活中不能满足的愿望和克服创伤事件的手段。儿童和成人一样，天生也有着种种的欲望需要得到满足和表现。但由于儿童所生活的客观环境不能听任儿童为所欲为。所以儿童的许多欲望得不到满足和表现。而游戏则是一种保护性的心理机制。儿童在游戏中可以摆脱现实的强制和约束，尝试不能在现实生活中实现的危险冲动，缓和内心的紧张，发展自我的力量以适应现实的环境。美国心理学家埃里克森（E.H.Erikson）是新精神分析学派的代表人物，他从新精神分析的角度对游戏作出了另一种解释。他认为，游戏是情感和思想的一种健康的发泄方式，在游戏中儿童既可以重复快乐，也可以抚平创伤。"
+            },
+            {
+                id: 55,
+                type: "single",
+                typeName: "单选题",
+                title: "以下不属于皮亚杰道德发展过程的是（）。",
+                options: [
+                    { id: "A", text: "功德阶段" },
+                    { id: "B", text: "他律道德阶段" },
+                    { id: "C", text: "自律道德阶段" },
+                    { id: "D", text: "前道德阶段" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查皮亚杰的品德发展阶段。皮亚杰认为，儿童的品德发展是一个由他律逐步向自律、由客观责任感逐步向主观责任感的转化过程。根据公正观念的发展水平，分为四个阶段。(1)第一阶段：前道德阶段（1~2岁）。(2)第二阶段：他律道德阶段（2~8岁）。他律道德阶段又可分为两个阶段：①自我中心阶段（2~5岁）；②权威阶段（5~8岁）。(3)第三阶段：自律或合作道德阶段（8~12岁）。(4)第四阶段：公正道德阶段（11~12岁以后）。"
+            },
+            {
+                id: 56,
+                type: "single",
+                typeName: "单选题",
+                title: "关于婴儿动作发展的规律，说法不正确的是（）。",
+                options: [
+                    { id: "A", text: "从小肌肉动作到大肌肉动作" },
+                    { id: "B", text: "从上部动作到下部动作" },
+                    { id: "C", text: "从无意识动作到有意识动作" },
+                    { id: "D", text: "从整体动作到分化动作" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查婴儿动作发展的规律。婴儿的动作发展是在脑和神经系统、骨骼肌肉控制下进行的。因此，婴儿动作的发展和婴儿身体的发展、大脑和神经系统的发展是密切联系的。婴儿动作发展主要表现为手的动作和为直立行走做准备。其规律是从整体动作到分化动作，从上部动作到下部动作，从大肌肉动作到小肌肉动作，从无意识动作到有意识动作。因此，A项错误。"
+            },
+            {
+                id: 57,
+                type: "single",
+                typeName: "单选题",
+                title: "“哈罗的恒河猴研究中，小猴子执着于柔软绒布猴妈妈”“劳伦兹小鸭印刻实验中的小动物追随行为”都属于（）。",
+                options: [
+                    { id: "A", text: "学习行为" },
+                    { id: "B", text: "依恋行为" },
+                    { id: "C", text: "亲子行为" },
+                    { id: "D", text: "团结行为" }
+                ],
+                correctAnswer: "B",
+                explanation: "本题考查依恋的研究。生态学取向的一个基本假设：包括人类在内的所有生物，出生后都会表现出一些天生的有利于物种生存的行为倾向，对情感依恋的解释也采用了这个假设。依恋的生态学理论受康拉德·劳伦兹幼鹅印刻学说的影响而形成。1937年，劳伦兹描述了鸟类动物的“印刻”现象，即处于关键期的动物能形成对移动物体的依恋并产生跟随行为的现象。据此，劳伦兹认为，印刻是一种适应性行为，跟随母亲会使幼鸟获得食物并得到保护，从而获得生存。另外哈罗的恒河猴实验，这一研究结果证明，喂养不是最为关键的依恋因素，接触的舒适感更为重要。两个研究均体现了依恋行为。"
+            },
+            {
+                id: 58,
+                type: "single",
+                typeName: "单选题",
+                title: "学过高等数学后，有利于初等数学的进一步理解和掌握，这属于（）。",
+                options: [
+                    { id: "A", text: "顺向正迁移" },
+                    { id: "B", text: "逆向负迁移" },
+                    { id: "C", text: "顺向负迁移" },
+                    { id: "D", text: "逆向正迁移" }
+                ],
+                correctAnswer: "D",
+                explanation: "本题考查迁移的分类。(1)根据迁移发生的方向来划分，可以分为顺向迁移与逆向迁移。①先前学习对后继学习产生的影响称为顺向迁移。②后继学习对先前学习产生的影响称为逆向迁移。(2)根据迁移的性质和结果来划分，可以分为正迁移和负迁移。①一种学习对另一种学习产生积极的促进影响作用，称为正迁移。②两种学习之间相互干扰、阻碍，即一种学习对另一种学习产生消极的影响，称为负迁移。题干中“学过高等数学后，有利于初等数学的进一步理解和掌握”属于逆向的正迁移。"
+            },
+            {
+                id: 59,
+                type: "single",
+                typeName: "单选题",
+                title: "李校长参观一所中学时，翻了翻学生课桌上的课本，问道“地下1千米比地面冷还是热”，学生面面相觑，哑口无言。旁边的任课老师急了，马上问学生，“地球深层是什么地质结构”，全班学生马上回答是“熔岩”。以上案例中学生对地球结构的学习属于（）。",
+                options: [
+                    { id: "A", text: "发现学习" },
+                    { id: "B", text: "意义学习" },
+                    { id: "C", text: "机械学习" },
+                    { id: "D", text: "模仿学习" }
+                ],
+                correctAnswer: "C",
+                explanation: "本题考查奥苏贝尔学习的分类。(1)根据学习进行的方式，学习分为接受学习和发现学习。①接受学习是将学生要学习的概念、原理等内容以结论的方式呈现在学生面前，教师传授，学生接受。②发现学习是指学生要学习的概念、原理等内容不直接呈现，需要学生通过独立思考、探索、发现而获得。(2)根据学习材料与学习者原有知识的关系，学习分为机械学习和有意义学习。①机械学习是指当前的学习没有与已有知识建立某种有意义的联系。②有意义学习是指当前的学习与已有知识建立起实质性的、有意义的联系。题干中的学生能够回答出“熔岩”，说明学习的知识并没有真正理解，因此属于机械学习。"
+            },
+            {
+                id: 60,
+                type: "single",
+                typeName: "单选题",
+                title: "奥苏贝尔的二维分类中，学习者所学的新知识与自己已有的知识建立了实质性的合乎逻辑的联系，属于（）。",
+                options: [
+                    { id: "A", text: "意义学习" },
+                    { id: "B", text: "接受学习" },
+                    { id: "C", text: "发现学习" },
+                    { id: "D", text: "机械学习" }
+                ],
+                correctAnswer: "A",
+                explanation: "本题考查奥苏贝尔学习的分类。根据学习材料与学习者原有知识的关系，学习分为机械学习和有意义学习。(1)机械学习是指当前的学习没有与已有知识建立某种有意义的联系。(2)有意义学习是指当前的学习与已有知识建立起实质性的、有意义的联系。"
+            },
+            
+            // 第二部分 多选题（20题）
+            {
+                id: 61,
+                type: "multiple",
+                typeName: "多选题",
+                title: "关于师生关系的理论中，影响较大的，有两大流派：教师中心论和儿童中心论，其中儿童中心论的代表人物有（）。",
+                options: [
+                    { id: "A", text: "德国赫尔巴特" },
+                    { id: "B", text: "英国洛克" },
+                    { id: "C", text: "美国杜威" },
+                    { id: "D", text: "法国卢梭" }
+                ],
+                correctAnswer: ["C", "D"],
+                explanation: "本题考查学生中心论。学生中心论是针对赫尔巴特的传统教育理念与思想而提出的，把学生视为教育过程的中心，全部的教育教学都要从学生的兴趣、需要出发，教师只能处于辅助地位。学生中心论认为学生是太阳，教师是地球。卢梭和杜威是学生中心论的代表人物。"
+            },
+            {
+                id: 62,
+                type: "multiple",
+                typeName: "多选题",
+                title: "以下属于德育任务的是（）。",
+                options: [
+                    { id: "A", text: "培养学生坚定的政治立场" },
+                    { id: "B", text: "养成学生良好的道德行为习惯" },
+                    { id: "C", text: "传授学生基础知识和基本技能，并充分发展学生智力" },
+                    { id: "D", text: "形成学生的社会主义和共产主义的道德观" }
+                ],
+                correctAnswer: ["A", "B", "D"],
+                explanation: "本题考查德育任务。德育任务是培养学生良好的道德品质，使学生成为具有良好社会公德、文明行为习惯的遵纪守法的好公民；培养学生正确的政治方向，使学生形成正确的政治信念，具有为国家富强和人民富裕而努力奋斗的献身精神；培养学生正确的世界观，使他们形成科学辩证的思想方法，正确认识世界和人生，在社会生活中追求新知识，解放思想，实事求是，勇于创新；培养学生良好、健康的心理品质，使学生能正确认识自己，讲究心理卫生，提高心理素质，形成完善人格；培养和发展学生良好的思想品德能力等。C项属于智育的任务。"
+            },
+            {
+                id: 63,
+                type: "multiple",
+                typeName: "多选题",
+                title: "以下属于学生义务的是（）。",
+                options: [
+                    { id: "A", text: "遵守学校管理制度" },
+                    { id: "B", text: "尊敬师长" },
+                    { id: "C", text: "努力学习" },
+                    { id: "D", text: "执行国家教育方针政策" }
+                ],
+                correctAnswer: ["A", "B", "C"],
+                explanation: "本题考查《中华人民共和国教育法》。《中华人民共和国教育法》规定学生应尽的义务有：(1)遵守法律、法规；(2)遵守学生行为规范，尊敬师长，养成良好的思想品德和行为习惯；(3)努力学习，完成规定的学习任务；(4)遵守所在学校或者其他教育机构的管理制度。"
+            },
+            {
+                id: 64,
+                type: "multiple",
+                typeName: "多选题",
+                title: "下列关于智力的说法正确的是（）。",
+                options: [
+                    { id: "A", text: "智力分数在130以上的，叫作超常儿童" },
+                    { id: "B", text: "晶体智力在中年之后有下降趋势，但流体智力一生都在发展" },
+                    { id: "C", text: "遗传因素对智力的发展起着决定性作用" },
+                    { id: "D", text: "人的总体智力在18到25岁间达到顶峰" }
+                ],
+                correctAnswer: ["A", "D"],
+                explanation: "本题考查智力的知识点。A项，智力分数在130以上的，叫做超常儿童。因此A项说法正确。B项，流体智力在中年之后有下降趋势，但晶体智力一生都在发展。因此B项说法错误。C项，遗传素质是智力发展的物质基础，它提供了发展的可能性。因此C项说法错误。D项，人的总体智力在18到25岁间达到顶峰。因此D项说法正确。"
+            },
+            {
+                id: 65,
+                type: "multiple",
+                typeName: "多选题",
+                title: "下列行为中属于学习现象的是（）。",
+                options: [
+                    { id: "A", text: "望梅止渴" },
+                    { id: "B", text: "谈虎色变" },
+                    { id: "C", text: "蜘蛛结网" },
+                    { id: "D", text: "见贤思齐" }
+                ],
+                correctAnswer: ["A", "B", "D"],
+                explanation: "本题考查对学习含义的理解。学习是个体在特定的情境下由于练习或反复经验而产生的行为或行为潜能的比较持久的变化。A项，望梅止渴是由于吃过梅子后知道了梅子的味道从而形成了条件反射，是联结学习理论的一种。B项，谈虎色变是人在长时间的生活中了解到老虎伤人的可怕之处，说到老虎时也会感到害怕，也是条件反射。C项，蜘蛛结网是本能行为。D项，见贤思齐是指人们看到有德才的人就想要跟他一样，是社会学习理论的体现。因此A、B、D三项属于学习现象。"
+            },
+            {
+                id: 66,
+                type: "multiple",
+                typeName: "多选题",
+                title: "班主任如何建立一支核心队伍？（）",
+                options: [
+                    { id: "A", text: "将对积极分子的使用和培养结合起来" },
+                    { id: "B", text: "善于发现和培养积极分子" },
+                    { id: "C", text: "自己管理，不需要学生参与" },
+                    { id: "D", text: "让学习好的学生担任班干部" }
+                ],
+                correctAnswer: ["A", "B"],
+                explanation: "本题考查建立核心队伍的方法。建立班集体的核心队伍，教师一是要善于发现和培养积极分子，二是要把对积极分子的使用与培养结合起来。"
+            },
+            {
+                id: 67,
+                type: "multiple",
+                typeName: "多选题",
+                title: "教学方法选择的主要依据是（）。",
+                options: [
+                    { id: "A", text: "教学目的和任务" },
+                    { id: "B", text: "学生的身心发展特点" },
+                    { id: "C", text: "每节课的重点和难点" },
+                    { id: "D", text: "学校的要求" }
+                ],
+                correctAnswer: ["A", "B", "C"],
+                explanation: "本题考查教学方法选择的主要依据。一般来说，教师选择教学方法应注意以下几方面：(1)教学目的和任务的要求；(2)课程性质和特点；(3)学生年龄特征；(4)教学时间、设备、条件；(5)教师自身素养；(6)教学手段、教学环境等因素。"
+            },
+            {
+                id: 68,
+                type: "multiple",
+                typeName: "多选题",
+                title: "促进学生迁移能力的有效措施，有（）。",
+                options: [
+                    { id: "A", text: "教授学习策略" },
+                    { id: "B", text: "精选教材" },
+                    { id: "C", text: "合理编排教材内容" },
+                    { id: "D", text: "合理安排教学程序" }
+                ],
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "本题考查如何促进学生的迁移能力。(1)精选教材。要想使学生在有限的时间内掌握大量有用的经验，教学内容就必须精选。教师应选择那些具有广泛迁移价值的科学成果作为教材的基本内容，而每一门学科中的基本知识、技能和行为规范具有广泛的适应性，其迁移价值较大。(2)合理编排教学内容。从迁移的角度来看，合理编排的标准就是使教材达到结构化、一体化、网络化。(3)合理安排教学程序。在宏观上，教学中应将基本的知识、技能和态度作为教学的主干结构，并依此进行教学。在微观上，应注重学习目标与学习过程的相似性，或有意识地沟通具有相似性的学习。简言之，在教学过程中的每一个环节都应努力体现迁移规律。(4)教授学习策略，提高迁移意识性。授之以鱼，不如授之以渔。这意味着仅教给学生组织良好的信息还是不够的，还需要使学生了解在什么条件下迁移所学的内容、迁移的有效性如何等。"
+            },
+            {
+                id: 69,
+                type: "multiple",
+                typeName: "多选题",
+                title: "动机具有的功能包括（）。",
+                options: [
+                    { id: "A", text: "指向功能" },
+                    { id: "B", text: "激活功能" },
+                    { id: "C", text: "转化功能" },
+                    { id: "D", text: "维持和调整功能" }
+                ],
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "本题考查动机的功能。A项，指向功能是指动机不仅能激发行为，而且能将行为指向一定的对象或目标。如在学习动机的支配之下，人们去图书馆或者教室看书。B项，激活功能是指动机是个体能动性的一个主要方面，它具有发动行为的作用，能推动个体产生某种活动，使个体由静止状态转向活动状态。C项，转化功能是指动机可以依具体情况而发生变化。例如，当一种动机一再努力而失败，就有可能改变动机性行为或调整目的，以满足另外某种需要。D项，维持和调整功能是指动机有助于人们对行为进行调节、选择、控制、定向和导向，使行为按正确的方法与策略向预期的目标前进。"
+            },
+            {
+                id: 70,
+                type: "multiple",
+                typeName: "多选题",
+                title: "《中华人民共和国教师法》规定的考核教师的内容有（）。",
+                options: [
+                    { id: "A", text: "工作态度" },
+                    { id: "B", text: "政治思想" },
+                    { id: "C", text: "工作成绩" },
+                    { id: "D", text: "业务水平" }
+                ],
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "本题考查《中华人民共和国教师法》。《中华人民共和国教师法》第二十二条规定：学校或者其他教育机构应当对教师的政治思想、业务水平、工作态度和工作成绩进行考核。"
+            },
+            {
+                id: 71,
+                type: "multiple",
+                typeName: "多选题",
+                title: "新课程提倡的三维教学目标是指（）。",
+                options: [
+                    { id: "A", text: "实践与创新" },
+                    { id: "B", text: "知识和技能" },
+                    { id: "C", text: "情感态度和价值观" },
+                    { id: "D", text: "过程与方法" }
+                ],
+                correctAnswer: ["B", "C", "D"],
+                explanation: "本题考查新课改提出的三维目标。“知识与技能”目标强调基础知识和基本技能的获得。“过程与方法”目标突出的是让学生“学会学习”，“情感态度与价值观”目标强调教学过程中激发学生的情感共鸣，引起学生积极的态度体验，形成正确的价值观。"
+            },
+            {
+                id: 72,
+                type: "multiple",
+                typeName: "多选题",
+                title: "品德的心理结构，包括的主要成分有（）。",
+                options: [
+                    { id: "A", text: "道德标准" },
+                    { id: "B", text: "道德行为" },
+                    { id: "C", text: "道德认识" },
+                    { id: "D", text: "道德情感" }
+                ],
+                correctAnswer: ["B", "C", "D"],
+                explanation: "本题考查品德的心理结构。品德的心理结构包括四种基本心理成分：道德认识、道德情感、道德意志和道德行为。(1)道德认识：亦称为道德观念。道德认识是指对道德行为准则及其执行意义的认识，是个体品德中的核心部分，包括判断自己或他人行为的是非、善恶和好坏。道德评价是道德认识的另一个重要组成部分。(2)道德情感：根据道德观念来评价他人或自己行为时产生的内心体验。(3)道德意志：道德意志是个体自觉地调节道德行为，克服困难，以实现道德目标的心理过程。(4)道德行为：是实现道德动机的行为意向及外部表现。道德行为是衡量品德的重要标志。看一个学生的品德，主要不是看他认识到什么，而是看他是否言行一致。"
+            },
+            {
+                id: 73,
+                type: "multiple",
+                typeName: "多选题",
+                title: "判断和确定教育法律的效力等级应遵循的原则是（）。",
+                options: [
+                    { id: "A", text: "特定程序法律优于一般程序法律" },
+                    { id: "B", text: "前定法优于后定法" },
+                    { id: "C", text: "特殊法优于一般法" },
+                    { id: "D", text: "下位法服从上位法" }
+                ],
+                correctAnswer: ["A", "C", "D"],
+                explanation: "本题考查法理的相关知识。判断和确定教育法律的效力等级通常应遵循以下原则：(1)下位法服从上位法；(2)特殊法优于一般法；(3)后定法优于前定法；(4)特定程序法律优于一般程序法律；(5)被授权机关的立法等同于授权机关自己的立法。"
+            },
+            {
+                id: 74,
+                type: "multiple",
+                typeName: "多选题",
+                title: "斯金纳是美国著名的心理学家，是行为主义学习理论的重要代表人物。他认为人的行为有两种，（）。",
+                options: [
+                    { id: "A", text: "一种是学习性行为" },
+                    { id: "B", text: "一种是刺激性行为" },
+                    { id: "C", text: "一种是应答性行为" },
+                    { id: "D", text: "一种是操作性行为" }
+                ],
+                correctAnswer: ["C", "D"],
+                explanation: "本题考查斯金纳的行为分类。斯金纳认为，人和动物的行为有两种：应答性行为和操作性行为。应答性行为是由特定刺激引起的，是经典条件作用的研究对象。而操作性行为则不与任何特定刺激相联系，是有机体自发做出的随意反应，是操作性条件作用的研究对象。操作性行为主要受强化规律的制约。"
+            },
+            {
+                id: 75,
+                type: "multiple",
+                typeName: "多选题",
+                title: "以语言传递信息为主的教学方法，主要包括（）。",
+                options: [
+                    { id: "A", text: "演示法" },
+                    { id: "B", text: "讲授法" },
+                    { id: "C", text: "讨论法" },
+                    { id: "D", text: "谈话法" }
+                ],
+                correctAnswer: ["B", "C", "D"],
+                explanation: "本题考查教学方法。以语言传递为主的教学方法包括讲授法、谈话法、讨论法、读书指导法。演示法是以直观感知为主的教学方法。"
+            },
+            {
+                id: 76,
+                type: "multiple",
+                typeName: "多选题",
+                title: "下列关于我国古代教育家与其主要思想对应正确的有（）。",
+                options: [
+                    { id: "A", text: "孟子--性恶论" },
+                    { id: "B", text: "荀子--性善论" },
+                    { id: "C", text: "墨子--兼爱、非攻" },
+                    { id: "D", text: "孔子--有教无类" }
+                ],
+                correctAnswer: ["C", "D"],
+                explanation: "本题考查我国古代教育家的思想。孟子主张性善论，荀子主张性恶论，所以A、B错误。墨子主张“兼爱”“非攻”，孔子主张“有教无类”，C、D正确。"
+            },
+            {
+                id: 77,
+                type: "multiple",
+                typeName: "多选题",
+                title: "下面关于教育目的的功能说法正确的是（）。",
+                options: [
+                    { id: "A", text: "教育目的的导向功能是指教育目的对于教育过程起到一个引导方向的作用" },
+                    { id: "B", text: "教育目的具有控制教育过程的功能" },
+                    { id: "C", text: "教育目的作为一种教育理想会起到激励作用" },
+                    { id: "D", text: "教育目的的评价功能是指根据一定标准对教育质量做出判断" }
+                ],
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "本题考查教育目的。教育目的具有导向、激励、评价、调控和选择的功能。"
+            },
+            {
+                id: 78,
+                type: "multiple",
+                typeName: "多选题",
+                title: "作为培养学生个性的重要途径，教育主要通过以下哪些方面来实现人的个性化？（）",
+                options: [
+                    { id: "A", text: "教育促进人的主体意识的形成和主体能力的发展" },
+                    { id: "B", text: "教育促进个体差异的充分发展，形成人的独特性" },
+                    { id: "C", text: "教育开发人的创造性，促进个体价值的实现" },
+                    { id: "D", text: "教育开发人的潜能，代替人完成自我实现的目的" }
+                ],
+                correctAnswer: ["A", "B", "C"],
+                explanation: "本题考查教育促进个体化的功能。教育主要通过下列方式促进人的个性的形成：教育促进人的主体意识的形成和主体能力的发展；教育促进个体差异的充分发展，形成人的独特性；教育开发人的创造性，促进个体价值的实现。D项“代替人完成自我实现”说法错误。"
+            },
+            {
+                id: 79,
+                type: "multiple",
+                typeName: "多选题",
+                title: "下列属于班级管理的对象的是（）。",
+                options: [
+                    { id: "A", text: "班级通讯录" },
+                    { id: "B", text: "班费" },
+                    { id: "C", text: "班级桌椅的摆放" },
+                    { id: "D", text: "教室的空间布局" }
+                ],
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "本题考查班级管理。班级管理的主要对象包括人、财、物、时间、空间、信息等。其中对人，即对学生的管理是班级管理最为主要的内容。班级通讯录属于信息，班费属于财，班级桌椅属于物，教室空间布局属于空间，均属于班级管理对象。"
+            },
+            {
+                id: 80,
+                type: "multiple",
+                typeName: "多选题",
+                title: "以下关于布鲁纳的描述，描述中正确的有（）。",
+                options: [
+                    { id: "A", text: "提出了认知结构学习理论" },
+                    { id: "B", text: "提出了发现法的教学模式" },
+                    { id: "C", text: "提出“先行组织者”的概念" },
+                    { id: "D", text: "重视对直觉思维的培养和训练" }
+                ],
+                correctAnswer: ["A", "B", "D"],
+                explanation: "本题考查布鲁纳的观点。布鲁纳是一位在西方教育界和心理学界都享有盛誉的学者。他主张学习的目的在于以发现学习的方式，使学科的基本结构转变为学生头脑中的认知结构。因此，他的理论常被称为认知一结构论或认知发现说。发现学习的四种特征：①强调学习过程；②强调直觉思维；③强调内在动机；④强调信息提取。因此，A、B、D三项是布鲁纳的观点。C项，提出“先行组织者”概念的是奥苏贝尔。"
+            },
+            
+            // 第三部分 判断题（30题）
+            {
+                id: 81,
+                type: "judge",
+                typeName: "判断题",
+                title: "最古老也是应用最广泛、最普遍的教学方法是实践法。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教学方法。讲授法是最古老的一种教学方法，也是迄今为止在世界范围内应用最广泛、最普遍的教学方法。"
+            },
+            {
+                id: 82,
+                type: "judge",
+                typeName: "判断题",
+                title: "学校教育在儿童发展过程中起着决定性作用。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查学校教育的作用。学校教育对人的发展起着主导作用，而不是决定作用。个体在与环境之间相互作用中所表现出来的个体主观能动性，是促进个体发展从潜在的可能状态转向现实状态的决定性因素。"
+            },
+            {
+                id: 83,
+                type: "judge",
+                typeName: "判断题",
+                title: "气质是先天产生的，没有好坏之分。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查气质的定义。气质是心理活动表现在强度、速度、稳定性和灵活性等方面的心理特征。它是人心理活动的动力特征的表现，它依赖于人的生理素质或身体特点。通常称之为秉性、脾气、性情，心理学叫气质。气质无所谓好坏。"
+            },
+            {
+                id: 84,
+                type: "judge",
+                typeName: "判断题",
+                title: "行为矫正就是指通过惩罚消除儿童的不良行为。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查行为矫正的定义。行为矫正是消除课堂问题行为的有效方法。这是用条件反射的原理来强化学生的良好行为以取代或消除问题行为的一种方法，包括厌恶疗法、代币制等。行为矫正也可以运用强化塑造学生的良好行为。"
+            },
+            {
+                id: 85,
+                type: "judge",
+                typeName: "判断题",
+                title: "课外、校外教育是一种有目的、有计划、有组织的教育活动，其实施范围是在课程计划和学科课程计划之中。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查课外、校外教育。课外、校外教育是指在课程计划和学科课程标准以外，利用课余时间，对学生施行的各种有目的、有计划、有组织的教育活动。"
+            },
+            {
+                id: 86,
+                type: "judge",
+                typeName: "判断题",
+                title: "新课程改革实际上就是新一轮的教材改革。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查课程改革。课程改革的核心目标是实现课程功能的转变，改变课程过于注重知识传授的倾向，强调形成积极主动的学习态度，引导学生学会学习、学会生存、学会做人。除此之外，还要体现课程结构的均衡性、综合性和选择性，密切课程内容与生活和时代的联系，改善学生的学习方式，建立与素质教育理念相一致的评价与考试制度，实行三级课程管理制度。因此，新课程改革不仅仅是新一轮的教材改革，而是一项复杂的系统性教育改革。"
+            },
+            {
+                id: 87,
+                type: "judge",
+                typeName: "判断题",
+                title: "先行组织者是先于学习任务本身呈现的一种引导性材料，它要比学习任务本身有较高的抽象、概括和综合水平。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查先行组织者的概念。所谓“先行组织者”，是先于学习任务本身呈现的一种引导性材料，它要比学习任务本身有较高的抽象、概括和综合水平，并且能够清晰地与认知结构中原有观念和新任务关联起来。也就是说，通过呈现“组织者”，在学习者已有知识与需要学习的新内容之间架设一道桥梁，使学生能更有效地学习新材料。"
+            },
+            {
+                id: 88,
+                type: "judge",
+                typeName: "判断题",
+                title: "高智力者其创造性也高。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查智力与创造性的关系。创造性与智力的关系并非简单的线性关系，二者既有独立性，又在某种条件下具有相关性，在整体上呈正相关趋势。其基本关系表现为：低智商不可能具有高创造性；高智商可能有高创造性，也可能有低创造性；低创造性的人其智商水平可能高，也可能低；高创造性者必须有高于一般水平的智商。"
+            },
+            {
+                id: 89,
+                type: "judge",
+                typeName: "判断题",
+                title: "幼儿的记忆特点是语词记忆占优势，形象记忆逐渐发展。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查幼儿记忆的特点。在幼儿的记忆中，形象记忆占主要地位。他们最容易记住的是那些具体的、直观的、形象的材料，其次是实物的名称、形象和行动的语词材料。最难记住的是那些概括性比较高、比较抽象的语词材料。这也是成人记忆的特点。有心理学家认为，形象的材料之所以能被更好地记住是因为可以进行表象和语词双重编码，而抽象程度高的材料却更多地依赖于语词编码。对于幼儿，这种倾向更为明显。"
+            },
+            {
+                id: 90,
+                type: "judge",
+                typeName: "判断题",
+                title: "弗洛伊德认为，人格包含本我、自我、超我，本我遵循快乐原则。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查弗洛伊德的人格结构。弗洛伊德把人格看作是一个由本我、自我和超我三个心理结构组成的动力系统。本我遵循快乐原则，自我遵循现实原则，超我遵循道德原则。"
+            },
+            {
+                id: 91,
+                type: "judge",
+                typeName: "判断题",
+                title: "德育原则中的导向性原则，强调为学生指明政治方向。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查导向性原则。导向性原则是指进行德育时要有一定的理想性和方向性，以指导学生向正确的方向发展。贯彻此原则的要求是：①坚持正确的政治方向；②德育目标必须符合新时期的方针政策和总任务的要求；③要把德育的理想性和现实性结合起来。"
+            },
+            {
+                id: 92,
+                type: "judge",
+                typeName: "判断题",
+                title: "学生的思想品德是在社会交往中形成的，没有社会交往就没有社会道德。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查德育的相关知识。学生是在活动和交往中形成思想品德的。学生的思想品德是在积极的社会活动和社会交往过程中逐步形成、发展并表现出来，没有活动和交往，就没有社会道德。与此同时，形成一定品德的目的也是更好地适应和参与创造社会新生活，因此，教育者应把组织学生进行社会活动和开展社会交往看成德育过程的基础。"
+            },
+            {
+                id: 93,
+                type: "judge",
+                typeName: "判断题",
+                title: "道德两难问题只能用于测量儿童的道德判断的发展水平。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查德育的相关知识。道德两难问题除可用于测量儿童的道德判断的发展水平，还具有非常特别的教育意义。第一，道德两难问题可以用于促进儿童的道德判断力的发展。第二，道德两难问题可用于提高学生的道德敏感性，使他们更加自觉地意识到各种不同的道德规范在现实生活中可能存在的矛盾和冲突，意识到自己的道德价值取向与别人的道德价值取向的可能存在的矛盾和冲突。第三，道德两难问题可用于提高学生在道德问题上的行动抉择能力。第四，道德两难问题可用于深化学生对各种道德规范的理解，提高学生的道德认识。"
+            },
+            {
+                id: 94,
+                type: "judge",
+                typeName: "判断题",
+                title: "教育心理学研究的主要对象是教学。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教育心理学研究对象。教育心理学的具体研究范畴是围绕学与教相互作用过程而展开的。学与教相互作用过程是一个系统过程。该系统包含学生、教师、教学内容、教学媒体和教学环境等五种要素，由学习过程、教学过程和评价/反思过程这三种活动过程交织在一起。其中，学生是教育心理学研究的主要对象。"
+            },
+            {
+                id: 95,
+                type: "judge",
+                typeName: "判断题",
+                title: "当两种或两种以上的目标，同时吸引着人们，但只能选择其中一种目标时，通常产生的内心冲突是趋避式冲突。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查动机冲突的类型。同时并存两种能满足需要的目标，它们具有同等的吸引力，但只能选择其中之一时所产生的动机冲突是双趋冲突。趋避冲突是指同一目标既有吸引力，又有排斥力，人既希望接近，同时又不得不回避，从而引起的冲突。"
+            },
+            {
+                id: 96,
+                type: "judge",
+                typeName: "判断题",
+                title: "对学生进行说服教育时，成效的好坏往往取决于时间的多少。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查说服教育法。说服教育法是指通过摆事实、讲道理使学生提高认识、形成正确观点的方法。运用的基本要求包括：(1)要有明确的目的性和针对性；(2)要富有知识性和趣味性；(3)注意时机，善于捕捉教育契机；(4)以诚待人。从以上要求可以看出，对学生进行说服教育时，成效的好坏并不取决于时间的多少。"
+            },
+            {
+                id: 97,
+                type: "judge",
+                typeName: "判断题",
+                title: "受测验长度影响的测验质量标准是效度。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查智力测验的标准。测验所含题目的数量称作测验的长度。测验的题目越多，测量学生水平的可靠性越高，即信度越高。因此受测验长度影响的是信度。"
+            },
+            {
+                id: 98,
+                type: "judge",
+                typeName: "判断题",
+                title: "我国实行九年制义务教育制度。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查法律法规。《中华人民共和国教育法》（2021年修订）第十九条规定：“国家实行九年制义务教育制度。”"
+            },
+            {
+                id: 99,
+                type: "judge",
+                typeName: "判断题",
+                title: "初中生亮亮违反学校管理制度，学校可以开除亮亮。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查法律法规。《中华人民共和国义务教育法》明确规定：“对违反学校管理制度的学生，学校应当予以批评教育，不得开除。”"
+            },
+            {
+                id: 100,
+                type: "judge",
+                typeName: "判断题",
+                title: "课程的文本一般表现为课程计划、课程目标、课程实施。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查课程的文本一般表现。课程的文本一般表现为课程计划、课程标准和教材。"
+            },
+            {
+                id: 101,
+                type: "judge",
+                typeName: "判断题",
+                title: "感受美好的自然环境不属于教育现象。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教育现象。感受美好的自然环境是在进行美感教育，属于教育现象。"
+            },
+            {
+                id: 102,
+                type: "judge",
+                typeName: "判断题",
+                title: "动物界的教育活动和人类社会的教育活动都是有意识的社会活动。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教育的本质。教育是人类社会特有的活动，动物界的教育活动与人类的教育活动的区别是社会性和意识性。"
+            },
+            {
+                id: 103,
+                type: "judge",
+                typeName: "判断题",
+                title: "狭义的教育指的是课堂教学。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查狭义的教育。狭义的教育指的是学校教育，课堂教学只是学校教育其中一个途径。"
+            },
+            {
+                id: 104,
+                type: "judge",
+                typeName: "判断题",
+                title: "教育的功能可以分为正向功能与负向功能。但不管是哪种功能，教育对人的发展作用都是积极的。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教育的功能。教育对人的发展有积极促进作用，也有消极阻碍作用。"
+            },
+            {
+                id: 105,
+                type: "judge",
+                typeName: "判断题",
+                title: "教学的首要任务是培养社会主义品德和学生的审美情趣，为学生形成正确的世界观奠定基础。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教学任务。教学的首要任务是传授系统的科学基础知识和基本技能。"
+            },
+            {
+                id: 106,
+                type: "judge",
+                typeName: "判断题",
+                title: "培根首次提出把教育学作为一门独立的学科。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查培根的教育思想。培根在《论科学的价值和发展》（1623年）一文中首次指出应该把“教育学”作为一门独立学科从学科分类中提出来。"
+            },
+            {
+                id: 107,
+                type: "judge",
+                typeName: "判断题",
+                title: "传统教学理论认为，教育是以升学为主要任务的，在这个过程中学生是学习的主体。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查传统教学理论。传统教学理论认为，教学任务就是授受知识，忽视学生智能的培养。在这一过程中，学生处于被动地位。"
+            },
+            {
+                id: 108,
+                type: "judge",
+                typeName: "判断题",
+                title: "学生学业成绩的检查与评价是教学工作的起始环节，是教学能否取得成功的先决条件。（）",
+                options: [],
+                correctAnswer: "B",
+                explanation: "本题考查教学工作的基本环节。备课是教学工作的起始环节，是教学能否取得成功的先决条件。"
+            },
+            {
+                id: 109,
+                type: "judge",
+                typeName: "判断题",
+                title: "在我国最具代表性、最广泛的课程观是课程即知识。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查课程观。课程是知识这一课程观是影响相当深远，也是比较传统的观点。目前，在国内这种课程观仍然最具代表性和广泛性。"
+            },
+            {
+                id: 110,
+                type: "judge",
+                typeName: "判断题",
+                title: "学校教育制度处于国民教育制度的核心和主体地位，体现了一个国家国民教育制度的实质。（）",
+                options: [],
+                correctAnswer: "A",
+                explanation: "本题考查学制。狭义的教育制度是指学校教育制度，简称学制，是一个国家各级各类学校的总体系，具体规定各级各类学校的性质、任务、目的、入学条件、修业年限以及它们之间的关系。学校教育制度处于国民教育制度的核心和主体地位，体现了一个国家的国民教育制度的实质。"
+            }
+        ];
+
+        // 应用状态
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // 存储用户答案，格式：{ questionId: answer(s) }
+        let fontSize = 'medium'; // small, medium, large
+        
+        // DOM元素
+        const questionCard = document.getElementById('question-card');
+        const questionType = document.getElementById('question-type');
+        const questionTitle = document.getElementById('question-title');
+        const optionsContainer = document.getElementById('options-container');
+        const judgeContainer = document.getElementById('judge-container');
+        const answerContainer = document.getElementById('answer-container');
+        const answerStatus = document.getElementById('answer-status');
+        const correctAnswer = document.getElementById('correct-answer');
+        const explanationText = document.getElementById('explanation-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressText = document.getElementById('progress-text');
+        const progressFill = document.getElementById('progress-fill');
+        const completionMessage = document.getElementById('completion-message');
+        const correctCountElement = document.getElementById('correct-count');
+        const wrongCountElement = document.getElementById('wrong-count');
+        const accuracyRateElement = document.getElementById('accuracy-rate');
+        const restartBtn = document.getElementById('restart-btn');
+        const answerToggle = document.getElementById('answer-toggle');
+        const answerContent = document.getElementById('answer-content');
+        const toggleIcon = document.getElementById('toggle-icon');
+        const fontDecreaseBtn = document.getElementById('font-decrease');
+        const fontIncreaseBtn = document.getElementById('font-increase');
+        const backBtn = document.querySelector('.back-btn');
+        const overlay = document.getElementById('overlay');
+        const sheetGrid = document.getElementById('sheetGrid');
+        const sheetClose = document.getElementById('sheetClose');
+        
+        // ==================== 题单面板 ====================
+        function buildSheetGrid() {
+            sheetGrid.innerHTML = '';
+            
+            // 为了分类，先看看数据的类型变化
+            let lastType = '';
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                if (q.typeName !== lastType) {
+                    lastType = q.typeName;
+                    const label = document.createElement('div');
+                    label.className = 'sheet-section-label';
+                    label.textContent = q.typeName;
+                    sheetGrid.appendChild(label);
+                }
+                const item = document.createElement('div');
+                item.className = 'sheet-item';
+                item.textContent = i + 1;
+                
+                const ua = userAnswers[q.id];
+                if (ua) { // 有答题
+                    let isCorrect = false;
+                    if (q.type === 'multiple') {
+                        const cs = q.correctAnswer;
+                        const us = (Array.isArray(ua) ? [...ua] : []).sort().join('');
+                        isCorrect = cs === us;
+                    } else {
+                        isCorrect = ua === q.correctAnswer;
+                    }
+                    item.classList.add(isCorrect ? 'correct-dot' : 'wrong-dot');
+                } else {
+                    item.classList.add('unanswered');
+                }
+                if (i === currentQuestionIndex) {
+                    item.classList.add('current-dot');
+                }
+                item.addEventListener('click', () => goToQuestion(i));
+                sheetGrid.appendChild(item);
+            }
+        }
+
+        function openOverlay() {
+            buildSheetGrid();
+            overlay.classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOverlay() {
+            overlay.classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        function goToQuestion(index) {
+            currentQuestionIndex = index;
+            renderQuestion(currentQuestionIndex);
+            updateNavigation();
+            updateProgress();
+            closeOverlay();
+            window.scrollTo(0, 0);
+        }
+        
+        // 初始化
+        function init() {
+            loadProgress();
+            renderQuestion(currentQuestionIndex);
+            updateNavigation();
+            updateProgress();
+            
+            // 事件监听
+            backBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openOverlay();
+            });
+            sheetClose.addEventListener('click', closeOverlay);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) closeOverlay();
+            });
+            
+            prevBtn.addEventListener('click', goToPrevQuestion);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            answerToggle.addEventListener('click', toggleAnswer);
+            restartBtn.addEventListener('click', restartQuiz);
+            fontDecreaseBtn.addEventListener('click', decreaseFontSize);
+            fontIncreaseBtn.addEventListener('click', increaseFontSize);
+            
+            // 从本地存储加载字体设置
+            const savedFontSize = localStorage.getItem('fontSize');
+            if (savedFontSize) {
+                fontSize = savedFontSize;
+                applyFontSize();
+            }
+        }
+        
+        // 渲染题目
+        function renderQuestion(index) {
+            const question = questions[index];
+            
+            // 更新题目信息
+            let typeTagClass = '';
+            let typeText = '';
+            
+            switch(question.type) {
+                case 'single':
+                    typeTagClass = 'single';
+                    typeText = '单选题';
+                    break;
+                case 'multiple':
+                    typeTagClass = 'multiple';
+                    typeText = '多选题';
+                    break;
+                case 'judge':
+                    typeTagClass = 'judge';
+                    typeText = '判断题';
+                    break;
+            }
+            
+            // 计算题号范围
+            let questionRange = '';
+            if (index < 60) {
+                questionRange = `第${index + 1}题/共60题`;
+            } else if (index < 80) {
+                questionRange = `第${index - 59}题/共20题`;
+            } else {
+                questionRange = `第${index - 79}题/共30题`;
+            }
+            
+            questionType.innerHTML = `<span class="type-tag ${typeTagClass}">${typeText}</span> ${questionRange}`;
+            questionTitle.textContent = question.title;
+            
+            // 清空选项容器
+            optionsContainer.innerHTML = '';
+            judgeContainer.innerHTML = '';
+            judgeContainer.style.display = 'none';
+            optionsContainer.style.display = 'none';
+            
+            // 根据题型渲染不同内容
+            if (question.type === 'judge') {
+                // 判断题
+                judgeContainer.style.display = 'flex';
+                renderJudgeOptions(question);
+            } else {
+                // 单选题或多选题
+                optionsContainer.style.display = 'block';
+                if (question.type === 'multiple') {
+                    const hint = document.createElement('div');
+                    hint.className = 'multi-select-hint';
+                    hint.innerHTML = '<i class="fas fa-info-circle"></i> 本题为多选题，请选择所有正确答案';
+                    optionsContainer.appendChild(hint);
+                }
+                renderOptions(question);
+            }
+            
+            // 显示/隐藏答案区域
+            const questionId = question.id.toString();
+            if (userAnswers[questionId] !== undefined) {
+                showAnswer(questionId);
+                answerContainer.style.display = 'block';
+                questionCard.style.marginBottom = '0';
+            } else {
+                answerContainer.style.display = 'none';
+                questionCard.style.marginBottom = '16px';
+            }
+            
+            // 隐藏完成消息
+            completionMessage.style.display = 'none';
+            questionCard.style.display = 'block';
+        }
+        
+        // 渲染选择题选项
+        function renderOptions(question) {
+            const questionId = question.id.toString();
+            const userAnswer = userAnswers[questionId];
+            const isMultiSelect = question.type === 'multiple';
+            
+            question.options.forEach(option => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option-item';
+                optionElement.dataset.optionId = option.id;
+                
+                // 检查是否已作答
+                const isAnswered = userAnswer !== undefined;
+                let isSelected = false;
+                
+                if (isAnswered) {
+                    if (isMultiSelect) {
+                        isSelected = userAnswer.includes(option.id);
+                    } else {
+                        isSelected = userAnswer === option.id;
+                    }
+                }
+                
+                // 检查是否正确
+                let isCorrect = false;
+                if (Array.isArray(question.correctAnswer)) {
+                    isCorrect = question.correctAnswer.includes(option.id);
+                } else {
+                    isCorrect = option.id === question.correctAnswer;
+                }
+                
+                // 设置样式类
+                if (isAnswered) {
+                    if (isSelected && isCorrect) {
+                        optionElement.classList.add('correct');
+                    } else if (isSelected && !isCorrect) {
+                        optionElement.classList.add('wrong');
+                    } else if (!isSelected && isCorrect) {
+                        optionElement.classList.add('correct');
+                    }
+                } else if (isSelected) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.innerHTML = `
+                    <div class="option-marker">${option.id}</div>
+                    <div class="option-text">${option.text}</div>
+                `;
+                
+                optionElement.addEventListener('click', () => selectOption(questionId, option.id, isMultiSelect));
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+        
+        // 渲染判断题选项
+        function renderJudgeOptions(question) {
+            const questionId = question.id.toString();
+            const userAnswer = userAnswers[questionId];
+            
+            const trueBtn = document.createElement('div');
+            trueBtn.className = 'judge-btn';
+            if (userAnswer === 'A') trueBtn.classList.add('selected');
+            if (userAnswer !== undefined) {
+                if (userAnswer === 'A' && question.correctAnswer === 'A') {
+                    trueBtn.classList.add('correct');
+                } else if (userAnswer === 'A' && question.correctAnswer === 'B') {
+                    trueBtn.classList.add('wrong');
+                }
+            }
+            trueBtn.innerHTML = '<i class="fas fa-check"></i> A. 正确';
+            trueBtn.addEventListener('click', () => selectJudgeOption(questionId, 'A'));
+            judgeContainer.appendChild(trueBtn);
+            
+            const falseBtn = document.createElement('div');
+            falseBtn.className = 'judge-btn';
+            if (userAnswer === 'B') falseBtn.classList.add('selected');
+            if (userAnswer !== undefined) {
+                if (userAnswer === 'B' && question.correctAnswer === 'B') {
+                    falseBtn.classList.add('correct');
+                } else if (userAnswer === 'B' && question.correctAnswer === 'A') {
+                    falseBtn.classList.add('wrong');
+                }
+            }
+            falseBtn.innerHTML = '<i class="fas fa-times"></i> B. 错误';
+            falseBtn.addEventListener('click', () => selectJudgeOption(questionId, 'B'));
+            judgeContainer.appendChild(falseBtn);
+        }
+        
+        // 选择选项（选择题）
+        function selectOption(questionId, optionId, isMultiSelect) {
+            // 如果已经作答，不允许更改
+            if (userAnswers[questionId] !== undefined) return;
+            
+            if (isMultiSelect) {
+                // 多选题逻辑
+                if (!userAnswers[questionId]) {
+                    userAnswers[questionId] = [];
+                }
+                
+                const index = userAnswers[questionId].indexOf(optionId);
+                if (index === -1) {
+                    userAnswers[questionId].push(optionId);
+                } else {
+                    userAnswers[questionId].splice(index, 1);
+                }
+                
+                // 重新渲染选项以显示选中状态
+                renderQuestion(currentQuestionIndex);
+            } else {
+                // 单选题逻辑
+                userAnswers[questionId] = optionId;
+                saveProgress();
+                showAnswer(questionId);
+                answerContainer.style.display = 'block';
+                questionCard.style.marginBottom = '0';
+                renderQuestion(currentQuestionIndex);
+            }
+        }
+        
+        // 选择判断题选项
+        function selectJudgeOption(questionId, optionId) {
+            // 如果已经作答，不允许更改
+            if (userAnswers[questionId] !== undefined) return;
+            
+            userAnswers[questionId] = optionId;
+            saveProgress();
+            showAnswer(questionId);
+            answerContainer.style.display = 'block';
+            questionCard.style.marginBottom = '0';
+            renderQuestion(currentQuestionIndex);
+        }
+        
+        // 显示答案
+        function showAnswer(questionId) {
+            const question = questions.find(q => q.id.toString() === questionId);
+            const userAnswer = userAnswers[questionId];
+            
+            // 判断是否正确
+            let isCorrect = false;
+            if (Array.isArray(question.correctAnswer)) {
+                // 多选题：需要所有选项都匹配
+                if (Array.isArray(userAnswer)) {
+                    isCorrect = question.correctAnswer.length === userAnswer.length &&
+                               question.correctAnswer.every(ans => userAnswer.includes(ans));
+                }
+            } else {
+                // 单选题或判断题
+                isCorrect = userAnswer === question.correctAnswer;
+            }
+            
+            // 更新答案状态
+            answerStatus.className = 'answer-status';
+            answerStatus.classList.add(isCorrect ? 'correct' : 'wrong');
+            answerStatus.innerHTML = `
+                <i class="fas fa-${isCorrect ? 'check' : 'times'}-circle"></i>
+                <span>${isCorrect ? '回答正确' : '回答错误'}</span>
+            `;
+            
+            // 更新正确答案
+            let correctAnswerText = '';
+            if (Array.isArray(question.correctAnswer)) {
+                correctAnswerText = question.correctAnswer.join(', ') + '. ' + 
+                    question.options
+                        .filter(opt => question.correctAnswer.includes(opt.id))
+                        .map(opt => opt.text)
+                        .join('；');
+            } else if (question.type === 'judge') {
+                correctAnswerText = question.correctAnswer === 'A' ? 'A. 正确' : 'B. 错误';
+            } else {
+                const correctOption = question.options.find(opt => opt.id === question.correctAnswer);
+                correctAnswerText = `${correctOption.id}. ${correctOption.text}`;
+            }
+            
+            correctAnswer.textContent = correctAnswerText;
+            
+            // 更新解析
+            explanationText.textContent = question.explanation;
+            
+            // 默认展开解析
+            answerContent.classList.add('expanded');
+            toggleIcon.classList.add('expanded');
+        }
+        
+        // 切换答案展开/折叠
+        function toggleAnswer() {
+            answerContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('expanded');
+        }
+        
+        // 上一题
+        function goToPrevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion(currentQuestionIndex);
+                updateNavigation();
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+        
+        // 下一题
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion(currentQuestionIndex);
+                updateNavigation();
+                updateProgress();
+                window.scrollTo(0, 0);
+            } else {
+                showCompletionMessage();
+            }
+        }
+        
+        // 更新导航按钮状态
+        function updateNavigation() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = false;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.innerHTML = '完成 <i class="fas fa-check"></i>';
+            } else {
+                nextBtn.innerHTML = '下一题 <i class="fas fa-chevron-right"></i>';
+            }
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressText.textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+            progressFill.style.width = `${progress}%`;
+        }
+        
+        // 显示完成消息
+        function showCompletionMessage() {
+            // 计算正确率
+            let correctCount = 0;
+            let wrongCount = 0;
+            
+            questions.forEach(question => {
+                const questionId = question.id.toString();
+                const userAnswer = userAnswers[questionId];
+                
+                if (userAnswer !== undefined) {
+                    let isCorrect = false;
+                    
+                    if (Array.isArray(question.correctAnswer)) {
+                        // 多选题
+                        if (Array.isArray(userAnswer)) {
+                            isCorrect = question.correctAnswer.length === userAnswer.length &&
+                                       question.correctAnswer.every(ans => userAnswer.includes(ans));
+                        }
+                    } else {
+                        // 单选题或判断题
+                        isCorrect = userAnswer === question.correctAnswer;
+                    }
+                    
+                    if (isCorrect) {
+                        correctCount++;
+                    } else {
+                        wrongCount++;
+                    }
+                }
+            });
+            
+            const accuracyRate = Math.round((correctCount / questions.length) * 100);
+            
+            // 更新完成消息
+            correctCountElement.textContent = correctCount;
+            wrongCountElement.textContent = wrongCount;
+            accuracyRateElement.textContent = `${accuracyRate}%`;
+            
+            // 显示完成消息，隐藏其他内容
+            questionCard.style.display = 'none';
+            answerContainer.style.display = 'none';
+            completionMessage.style.display = 'block';
+        }
+        
+        // 重新开始
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？这将清除所有答题记录。')) {
+                userAnswers = {};
+                currentQuestionIndex = 0;
+                localStorage.removeItem('quizProgress');
+                renderQuestion(currentQuestionIndex);
+                updateNavigation();
+                updateProgress();
+                questionCard.style.display = 'block';
+                completionMessage.style.display = 'none';
+                answerContainer.style.display = 'none';
+                window.scrollTo(0, 0);
+            }
+        }
+        
+        // 保存进度到本地存储
+        function saveProgress() {
+            const progress = {
+                currentQuestionIndex,
+                userAnswers,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('quizProgress', JSON.stringify(progress));
+            
+            let statsObj = {
+                total: questions.length,
+                answered: 0,
+                wrong: 0,
+                wrongQuestions: []
+            };
+
+            questions.forEach((q, i) => {
+                const questionId = q.id.toString();
+                const userAnswer = userAnswers[questionId];
+                
+                if (userAnswer !== undefined) {
+                    statsObj.answered++;
+                    let isCorrect = false;
+                    
+                    if (Array.isArray(q.correctAnswer)) {
+                        if (Array.isArray(userAnswer)) {
+                            isCorrect = q.correctAnswer.length === userAnswer.length &&
+                                       q.correctAnswer.every(ans => userAnswer.includes(ans));
+                        }
+                    } else {
+                        isCorrect = userAnswer === q.correctAnswer;
+                    }
+                    
+                    if (!isCorrect) {
+                        statsObj.wrong++;
+                        statsObj.wrongQuestions.push({id: q.id, num: i + 1});
+                    }
+                }
+            });
+            
+            localStorage.setItem('exam_stats_1', JSON.stringify(statsObj));
+        }
+        
+        // 从本地存储加载进度
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('quizProgress');
+            if (savedProgress) {
+                try {
+                    const progress = JSON.parse(savedProgress);
+                    currentQuestionIndex = progress.currentQuestionIndex || 0;
+                    userAnswers = progress.userAnswers || {};
+                } catch (e) {
+                    console.error('Failed to load progress:', e);
+                }
+            }
+        }
+        
+        // 调整字体大小
+        function decreaseFontSize() {
+            if (fontSize === 'large') {
+                fontSize = 'medium';
+            } else if (fontSize === 'medium') {
+                fontSize = 'small';
+            }
+            applyFontSize();
+        }
+        
+        function increaseFontSize() {
+            if (fontSize === 'small') {
+                fontSize = 'medium';
+            } else if (fontSize === 'medium') {
+                fontSize = 'large';
+            }
+            applyFontSize();
+        }
+        
+        function applyFontSize() {
+            document.body.classList.remove('font-small', 'font-medium', 'font-large');
+            document.body.classList.add(`font-${fontSize}`);
+            localStorage.setItem('fontSize', fontSize);
+        }
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
