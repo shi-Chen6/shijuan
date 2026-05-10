@@ -208,6 +208,11 @@
     <header>
         <h1>📖 潮南区试卷导航中心</h1>
         <p>实时同步您的刷题进度与错题记录</p>
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+            <button class="exam-action" onclick="exportData()" style="border: none; cursor: pointer;">导出记录</button>
+            <button class="exam-action" onclick="document.getElementById('importFile').click()" style="border: none; cursor: pointer; background: #10b981;">导入记录</button>
+            <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
     </header>
 
     <div class="dashboard" id="dashboard">
@@ -225,6 +230,59 @@
             { id: 7, title: '潮南教师招聘真题（三）', link: '真题3.html', key: 'exam_stats_7' },
             { id: 8, title: '潮南教师招聘真题（四）', link: '真题4.html', key: 'exam_stats_8' }
         ];
+
+        function exportData() {
+            const dataToExport = {};
+            exams.forEach(exam => {
+                const statStr = localStorage.getItem(exam.key);
+                if (statStr) {
+                    dataToExport[exam.key] = statStr;
+                }
+            });
+            
+            const dataStr = JSON.stringify(dataToExport);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', '答题记录备份.json');
+            document.body.appendChild(linkElement);
+            linkElement.click();
+            document.body.removeChild(linkElement);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    let importedCount = 0;
+                    
+                    for (const key in importedData) {
+                        if (exams.some(exam => exam.key === key)) {
+                            localStorage.setItem(key, importedData[key]);
+                            importedCount++;
+                        }
+                    }
+                    
+                    if (importedCount > 0) {
+                        alert('成功导入 ' + importedCount + ' 条记录！');
+                        renderDashboard();
+                    } else {
+                        alert('导入的文件中没有找到有效的答题记录。');
+                    }
+                } catch (error) {
+                    alert('导入失败：文件格式不正确，请确保上传了正确的JSON文件。');
+                    console.error(error);
+                }
+                
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
 
         function renderDashboard() {
             const dashboard = document.getElementById('dashboard');
