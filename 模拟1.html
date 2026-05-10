@@ -235,6 +235,11 @@
         .multi-select-hint i {
             color: var(--warning-color);
         }
+        .multi-actions {
+            display: flex;
+            gap: 12px;
+            padding: 0 16px 16px;
+        }
         
         /* 判断题特殊样式 */
         .judge-container {
@@ -2148,6 +2153,7 @@
         // 应用状态
         let currentQuestionIndex = 0;
         let userAnswers = {}; // 存储用户答案，格式：{ questionId: answer(s) }
+        let multiDrafts = {}; // 多选题暂存选择，格式：{ questionId: [optionId, ...] }
         let fontSize = 'medium'; // small, medium, large
         
         // DOM元素
@@ -2313,6 +2319,8 @@
             judgeContainer.innerHTML = '';
             judgeContainer.style.display = 'none';
             optionsContainer.style.display = 'none';
+            const existingActionBar = questionCard.querySelector('.multi-actions');
+            if (existingActionBar) existingActionBar.remove();
             
             // 根据题型渲染不同内容
             if (question.type === 'judge') {
@@ -2329,6 +2337,9 @@
                     optionsContainer.appendChild(hint);
                 }
                 renderOptions(question);
+                if (question.type === 'multiple' && userAnswers[question.id.toString()] === undefined) {
+                    renderMultiActions(question);
+                }
             }
             
             // 显示/隐藏答案区域
@@ -2352,6 +2363,7 @@
             const questionId = question.id.toString();
             const userAnswer = userAnswers[questionId];
             const isMultiSelect = question.type === 'multiple';
+            const draftAnswer = isMultiSelect ? (multiDrafts[questionId] || []) : [];
             
             question.options.forEach(option => {
                 const optionElement = document.createElement('div');
@@ -2368,6 +2380,8 @@
                     } else {
                         isSelected = userAnswer === option.id;
                     }
+                } else if (isMultiSelect) {
+                    isSelected = draftAnswer.includes(option.id);
                 }
                 
                 // 检查是否正确
@@ -2399,6 +2413,32 @@
                 optionElement.addEventListener('click', () => selectOption(questionId, option.id, isMultiSelect));
                 optionsContainer.appendChild(optionElement);
             });
+        }
+
+        function renderMultiActions(question) {
+            const questionId = question.id.toString();
+            const selected = multiDrafts[questionId] || [];
+            const actionBar = document.createElement('div');
+            actionBar.className = 'multi-actions';
+
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'nav-btn prev-btn';
+            clearBtn.textContent = '清空';
+            clearBtn.disabled = selected.length === 0;
+            clearBtn.addEventListener('click', () => {
+                multiDrafts[questionId] = [];
+                renderQuestion(currentQuestionIndex);
+            });
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'nav-btn next-btn';
+            submitBtn.textContent = '提交多选';
+            submitBtn.disabled = selected.length === 0;
+            submitBtn.addEventListener('click', () => submitMultiAnswer(questionId, selected));
+
+            actionBar.appendChild(clearBtn);
+            actionBar.appendChild(submitBtn);
+            questionCard.appendChild(actionBar);
         }
         
         // 渲染判断题选项
@@ -2442,17 +2482,16 @@
             
             if (isMultiSelect) {
                 // 多选题逻辑
-                if (!userAnswers[questionId]) {
-                    userAnswers[questionId] = [];
+                if (!multiDrafts[questionId]) {
+                    multiDrafts[questionId] = [];
                 }
-                
-                const index = userAnswers[questionId].indexOf(optionId);
+
+                const index = multiDrafts[questionId].indexOf(optionId);
                 if (index === -1) {
-                    userAnswers[questionId].push(optionId);
+                    multiDrafts[questionId].push(optionId);
                 } else {
-                    userAnswers[questionId].splice(index, 1);
+                    multiDrafts[questionId].splice(index, 1);
                 }
-                
                 // 重新渲染选项以显示选中状态
                 renderQuestion(currentQuestionIndex);
             } else {
@@ -2472,6 +2511,17 @@
             if (userAnswers[questionId] !== undefined) return;
             
             userAnswers[questionId] = optionId;
+            saveProgress();
+            showAnswer(questionId);
+            answerContainer.style.display = 'block';
+            questionCard.style.marginBottom = '0';
+            renderQuestion(currentQuestionIndex);
+        }
+
+        function submitMultiAnswer(questionId, selected) {
+            if (!selected || selected.length === 0) return;
+            userAnswers[questionId] = [...selected];
+            delete multiDrafts[questionId];
             saveProgress();
             showAnswer(questionId);
             answerContainer.style.display = 'block';

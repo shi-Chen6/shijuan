@@ -413,6 +413,11 @@
             margin-top: 6px;
             flex-wrap: wrap;
         }
+        .multi-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
         .btn-nav {
             flex: 1;
             min-width: 80px;
@@ -1925,15 +1930,19 @@
                 return '判断';
             }
 
+            function getAnsweredCount() {
+                return Object.values(answeredMap).filter(item => item && !item.pending).length;
+            }
+
             // ==================== 渲染题目 ====================
             function renderQuestion(index) {
                 if (index < 0 || index >= allQuestions.length) return;
                 currentIndex = index;
                 const q = allQuestions[index];
                 const answered = answeredMap[q.id];
-                const isAnswered = !!answered;
+                const isAnswered = !!answered && !answered.pending;
                 const selectedLetters = answered ? answered.selected : [];
-                const isCorrect = answered ? answered.isCorrect : null;
+                const isCorrect = isAnswered ? answered.isCorrect : null;
                 const typeLabel = getTypeLabel(q.type);
 
                 // 进度
@@ -1977,6 +1986,16 @@
                 });
                 html += '</div>';
 
+                if (q.type === 'multi' && !isAnswered) {
+                    const disabledAttr = selectedLetters.length === 0 ? 'disabled' : '';
+                    html += '<div class="multi-actions">';
+                    html +=
+                        `<button class="btn-nav btn-prev btn-clear" id="btnClearMulti" ${disabledAttr}>清空</button>`;
+                    html +=
+                        `<button class="btn-nav btn-next btn-submit" id="btnSubmitMulti" ${disabledAttr}>提交多选</button>`;
+                    html += '</div>';
+                }
+
                 // 答案与解析区域
                 if (isAnswered) {
                     const statusClass = isCorrect ? 'correct' : 'wrong';
@@ -2000,8 +2019,8 @@
                 html +=
                     `<button class="btn-nav btn-next" id="btnNext" ${index>=allQuestions.length-1?'disabled':''}>下一题 ▶</button>`;
                 html += '</div>';
-                html += '<div class="bottom-info">题库共 ' + allQuestions.length + ' 题 · 已答 ' + Object.keys(
-                    answeredMap).length + ' 题</div>';
+                html += '<div class="bottom-info">题库共 ' + allQuestions.length + ' 题 · 已答 ' + getAnsweredCount() +
+                    ' 题</div>';
 
                 mainContent.innerHTML = html;
 
@@ -2017,6 +2036,8 @@
                 const optionsList = document.getElementById('optionsList');
                 const btnPrev = document.getElementById('btnPrev');
                 const btnNext = document.getElementById('btnNext');
+                const btnSubmitMulti = document.getElementById('btnSubmitMulti');
+                const btnClearMulti = document.getElementById('btnClearMulti');
                 const parseHeader = document.getElementById('parseHeader');
                 const parseBody = document.getElementById('parseBody');
 
@@ -2062,6 +2083,21 @@
                     });
                 }
 
+                if (btnSubmitMulti && btnClearMulti) {
+                    btnSubmitMulti.addEventListener('click', () => {
+                        const pending = answeredMap[q.id];
+                        const selected = pending ? pending.selected : [];
+                        if (!selected || selected.length === 0) {
+                            showToast('请先选择至少一个选项');
+                            return;
+                        }
+                        submitMultiAnswer(q, selected);
+                    });
+                    btnClearMulti.addEventListener('click', () => {
+                        updateMultiSelectUI(q, []);
+                    });
+                }
+
                 // 卡片闪烁效果
                 if (isAnswered && card) {
                     const answeredData = answeredMap[q.id];
@@ -2074,7 +2110,7 @@
             }
 
             function handleOptionSelect(q, letter) {
-                if (answeredMap[q.id]) return; // 已答过
+                if (answeredMap[q.id] && !answeredMap[q.id].pending) return; // 已答过
 
                 let selected;
                 if (q.type === 'multi') {
@@ -2085,23 +2121,7 @@
                     } else {
                         selected = [...currentSel, letter];
                     }
-                    if (selected.length === 0) {
-                        // 至少选一个，暂不提交
-                        updateMultiSelectUI(q, selected);
-                        return;
-                    }
-                    // 多选需要确认提交：点击已选中的最后一个选项或通过其他方式
-                    // 这里简化：当用户点击选项时，如果该选项已在选中列表中且选中数>=1，则提交
-                    if (currentSel.includes(letter) && currentSel.length >= 1) {
-                        // 用户再次点击已选项，视为取消后重新选择，不自动提交
-                        updateMultiSelectUI(q, selected);
-                        return;
-                    }
-                    // 如果选中数达到答案数量或用户点击"提交"按钮，这里简化处理
                     updateMultiSelectUI(q, selected);
-                    // 多选：自动在选中2个以上时延迟提交，或用户可手动提交
-                    // 这里采用简单方案：多选也即时判断（选中即提交判断）
-                    submitMultiAnswer(q, selected);
                     return;
                 } else {
                     // 单选/判断：直接提交
@@ -2120,8 +2140,15 @@
                         item.classList.remove('selected');
                     }
                 });
-                // 暂存选中状态
-                answeredMap[q.id] = { selected, isCorrect: null, pending: true };
+                if (selected.length === 0) {
+                    delete answeredMap[q.id];
+                } else {
+                    answeredMap[q.id] = { selected, isCorrect: null, pending: true };
+                }
+                const btnSubmitMulti = document.getElementById('btnSubmitMulti');
+                const btnClearMulti = document.getElementById('btnClearMulti');
+                if (btnSubmitMulti) btnSubmitMulti.disabled = selected.length === 0;
+                if (btnClearMulti) btnClearMulti.disabled = selected.length === 0;
                 saveState();
             }
 
