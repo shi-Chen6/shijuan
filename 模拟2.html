@@ -507,20 +507,7 @@
     { type: 'multiple', part: 2, num: 70, question: '学校哪些情形会被责令改正处分（）。', options: { A: '拒收残疾随班就读', B: '分设重点班', C: '随意开除学生', D: '使用未经审定教材' }, answer: 'ABCD', analysis: '四项均违反义务教育法，<strong>责令整改追责</strong>。' },
     { type: 'multiple', part: 2, num: 71, question: '加涅学习八阶段包含（）。', options: { A: '动机阶段', B: '获得阶段', C: '反馈阶段', D: '未知阶段' }, answer: 'ABC', analysis: '加涅学习八阶段包括<strong>动机、获得、反馈</strong>阶段等，无未知阶段。' },
     { type: 'multiple', part: 2, num: 72, question: '关于目标评价模式正确的是（）。', options: { A: '关注非预期结果', B: '目的是改进', C: '只关注预期目标', D: '操作简单见效快' }, answer: 'CD', analysis: '目标评价模式<strong>只关注预期目标、操作简单见效快</strong>；关注非预期结果的是目的游离模式。' },
-{
-  "type": "multiple",
-  "part": 2,
-  "num": 73,
-  "question": "下列有关接受学习和发现学习的表述，不正确的有（）。",
-  "options": {
-    "A": "接受学习是低级的，发现学习是高级的",
-    "B": "接受学习是高级的，发现学习是低级的",
-    "C": "接受学习是机械的，发现学习是有意义的",
-    "D": "接受学习是有意义的，发现学习是机械的"
-  },
-  "answer": "ABCD",
-  "analysis": "这道题考查的是<strong>奥苏贝尔</strong>关于学习分类的理论。奥苏贝尔从两个维度对学习进行分类：学习方式（接受学习 vs 发现学习）与学习内容与原有知识的关系（机械学习 vs 有意义学习）。这两个维度<strong>相互独立</strong>，可任意组合：有意义的接受学习（如理解性听讲）、机械的接受学习（如死记硬背）、有意义的发现学习（如探究理解概念）、机械的发现学习（如盲目尝试错误）。因此，接受学习与发现学习<strong>无高低之分</strong>，均可机械或有意义。四个选项均不正确。"
-},
+    { type: 'multiple', part: 2, num: 73, question: '关于接受学习、发现学习说法错误的有（）。', options: { A: '接受低级发现高级', B: '接受高级发现低级', C: '接受必机械发现必有意义', D: '接受必有意义发现必机械' }, answer: 'ABCD', analysis: '接受学习与发现学习<strong>无高低之分</strong>，均可机械或有意义。四个选项均不正确。' },
     { type: 'multiple', part: 2, num: 74, question: '严谨治学要求教师（）。', options: { A: '终身学习', B: '钻研专业', C: '拓展知识', D: '丰富实践' }, answer: 'ABCD', analysis: '严谨治学要求教师<strong>终身学习、钻研专业、拓展知识、丰富实践</strong>。' },
     { type: 'multiple', part: 2, num: 75, question: '新时代强师计划提升教师（）。', options: { A: '思想政治素质', B: '师德师风', C: '教研探究能力', D: '教育教学能力' }, answer: 'ABD', analysis: '强师计划以提升教师<strong>思想政治素质、师德师风、教育教学能力</strong>为重点。' },
     { type: 'multiple', part: 2, num: 76, question: '操作技能说法正确的是（）。', options: { A: '打篮球开放', B: '开车连续', C: '投掷铅球开放', D: '雕刻精细' }, answer: 'ABD', analysis: '打篮球（开放）、开车（连续）、雕刻（精细）正确；投掷铅球是<strong>封闭性</strong>技能。' },
@@ -565,6 +552,7 @@
             // ==================== 状态管理 ====================
             const STORAGE_KEY = 'teacher_exam_progress_v2';
             const HISTORY_KEY = 'teacher_exam_history_v2';
+            const STATS_KEY = 'exam_stats_2';
             let currentIndex = 0;
             let userAnswers = {}; 
             let revealedAnswers = {}; 
@@ -597,7 +585,32 @@
                 try {
                     const data = { currentIndex, userAnswers, revealedAnswers, fontSizeLevel, mistakeMode, mistakeList };
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    
+                    const statsObj = {
+                        total: TOTAL,
+                        answered: getAnsweredCount(),
+                        wrong: getWrongCount(),
+                        wrongQuestions: generateMistakeList().map((idx, i) => ({ id: idx + 1, num: allQuestions[idx].num }))
+                    };
+                    localStorage.setItem(STATS_KEY, JSON.stringify(statsObj));
                 } catch (e) {}
+            }
+
+            function getWrongCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet !== userSet) count++;
+                    } else {
+                        if (ua !== q.answer) count++;
+                    }
+                }
+                return count;
             }
 
             // 新增：保存当前记录到历史
