@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>汕头市潮南教师招聘敬一畏模拟题（二）</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --primary: #4A6CF7;
+            --primary-light: #EEF1FE;
+            --text: #1c1c1e;
+            --text-secondary: #555;
+            --text-light: #888;
+            --border: #e5e5ea;
+            --correct: #34C759;
+            --correct-bg: #E8F8ED;
+            --wrong: #FF3B30;
+            --wrong-bg: #FFECEB;
+            --selected-bg: #EBF0FF;
+            --selected-border: #4A6CF7;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            --radius: 14px;
+            --option-radius: 12px;
+            --font-base: 16px;
+            --font-sm: 14px;
+            --font-xs: 12px;
+            --font-lg: 18px;
+            --transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --tap-min: 44px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #e8e8ed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (min-width: 481px) {
+            body {
+                padding: 20px 0;
+                align-items: flex-start;
+            }
+            .app-container {
+                border-radius: 20px;
+                min-height: auto;
+                min-height: 100vh;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+        }
+
+        /* ========== 顶部导航栏 ========== */
+        .top-bar {
+            background: #fff;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            min-height: 52px;
+        }
+        .top-bar .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f5f5f7;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 17px;
+            color: var(--text);
+            flex-shrink: 0;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            min-width: 38px;
+        }
+        .top-bar .icon-btn:active {
+            background: #e0e0e5;
+            transform: scale(0.94);
+        }
+        .top-bar .title-area {
+            flex: 1;
+            min-width: 0;
+            padding-left: 4px;
+        }
+        .top-bar .section-label {
+            font-size: var(--font-xs);
+            color: var(--text-light);
+            line-height: 1.2;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .top-bar .question-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .font-size-indicator {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-light);
+            position: absolute;
+            bottom: 2px;
+            width: 100%;
+            text-align: center;
+            pointer-events: none;
+        }
+        .font-size-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* ========== 进度条 ========== */
+        .progress-wrap {
+            padding: 8px 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-xs);
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .progress-bar-outer {
+            height: 5px;
+            background: #e5e5ea;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* ========== 主内容区 ========== */
+        .main-content {
+            flex: 1;
+            padding: 14px 14px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+        }
+
+        /* 题目卡片 */
+        .question-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 18px 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .question-type-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.4px;
+        }
+        .badge-single { background: #EEF1FE; color: #4A6CF7; }
+        .badge-multiple { background: #FFF3E0; color: #E67E22; }
+        .badge-judge { background: #E8F5E9; color: #388E3C; }
+        .question-text {
+            font-size: var(--font-base);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .question-text .qn-inline {
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2px;
+        }
+
+        /* 选项区域 */
+        .options-area {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--option-radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            background: #fff;
+            min-height: var(--tap-min);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .option-item:active { transform: scale(0.985); background: #fafafa; }
+        .option-item.selected { border-color: var(--selected-border); background: var(--selected-bg); box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.08); }
+        .option-item.correct-reveal { border-color: var(--correct) !important; background: var(--correct-bg) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; animation: pulse-correct 0.5s ease; }
+        .option-item.wrong-reveal { border-color: var(--wrong) !important; background: var(--wrong-bg) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.08) !important; animation: shake 0.45s ease; }
+        .option-letter { width: 32px; height: 32px; border-radius: 50%; background: #f5f5f7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--text-secondary); flex-shrink: 0; transition: var(--transition); letter-spacing: 0; }
+        .option-item.selected .option-letter { background: var(--primary); color: #fff; }
+        .option-item.correct-reveal .option-letter { background: var(--correct); color: #fff; }
+        .option-item.wrong-reveal .option-letter { background: var(--wrong); color: #fff; }
+        .option-text { font-size: var(--font-base); color: var(--text); line-height: 1.5; flex: 1; letter-spacing: 0.2px; }
+        .option-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid #ccc; flex-shrink: 0; display: none; align-items: center; justify-content: center; transition: var(--transition); font-size: 13px; color: #fff; }
+        .option-item.multi-mode .option-check { display: flex; }
+        .option-item.multi-mode .option-letter { display: none; }
+        .option-item.multi-mode.checked .option-check { background: var(--primary); border-color: var(--primary); }
+        .option-item.multi-mode.correct-reveal .option-check { background: var(--correct); border-color: var(--correct); }
+        .option-item.multi-mode.wrong-reveal .option-check { background: var(--wrong); border-color: var(--wrong); }
+
+        @keyframes pulse-correct { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+
+        /* 提交按钮（多选） */
+        .submit-multi-btn {
+            display: none; width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: var(--font-base); font-weight: 600; cursor: pointer; transition: var(--transition); min-height: var(--tap-min); -webkit-tap-highlight-color: transparent; letter-spacing: 0.4px;
+        }
+        .submit-multi-btn:active { opacity: 0.85; transform: scale(0.97); }
+        .submit-multi-btn.visible { display: block; }
+
+        /* 答案和解析区 */
+        .result-area { display: none; background: #fff; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); animation: fadeInUp 0.35s ease; }
+        .result-area.visible { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: 700; font-size: var(--font-base); }
+        .result-header.correct { color: var(--correct); }
+        .result-header.wrong { color: var(--wrong); }
+        .result-icon { font-size: 22px; }
+        .correct-answer-display { font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: 8px; padding: 8px 12px; background: #f9f9fb; border-radius: 8px; }
+        .correct-answer-display strong { color: var(--correct); font-weight: 700; }
+        .analysis-toggle { display: flex; align-items: center; gap: 6px; font-size: var(--font-sm); font-weight: 600; color: var(--primary); cursor: pointer; padding: 8px 0; -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; min-height: 36px; }
+        .analysis-toggle .arrow-icon { transition: transform 0.3s ease; display: inline-block; font-size: 12px; }
+        .analysis-toggle.expanded .arrow-icon { transform: rotate(180deg); }
+        .analysis-content { display: none; font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.7; padding: 10px 12px; background: #fafafc; border-radius: 8px; border-left: 3px solid var(--primary); margin-top: 4px; letter-spacing: 0.2px; }
+        .analysis-content.expanded { display: block; animation: fadeInUp 0.3s ease; }
+
+        /* 底部导航 */
+        .nav-bottom { display: flex; gap: 10px; padding: 12px 16px; background: #fff; border-top: 1px solid var(--border); position: sticky; bottom: 0; z-index: 100; box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.04); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .nav-btn { flex: 1; padding: 13px 8px; border-radius: 12px; border: 2px solid var(--border); background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); min-height: var(--tap-min); -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .nav-btn:active { background: #f5f5f7; transform: scale(0.96); }
+        .nav-btn:disabled { opacity: 0.4; pointer-events: none; }
+        .nav-btn.primary-nav { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+        .nav-btn.primary-nav:active { background: #3b59d9; }
+
+        /* 覆盖层组件通用 */
+        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); z-index: 200; justify-content: center; align-items: flex-end; }
+        .overlay.visible { display: flex; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        /* 题目列表面板 */
+        .sheet-panel { background: #fff; width: 100%; max-width: 480px; max-height: 75vh; border-radius: 20px 20px 0 0; padding: 16px 14px 20px; overflow-y: auto; animation: slideUp 0.3s ease; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+        .sheet-handle { width: 40px; height: 5px; background: #d1d1d6; border-radius: 10px; margin: 0 auto 14px; }
+        .sheet-title { font-weight: 700; font-size: 16px; text-align: center; margin-bottom: 12px; color: var(--text); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+        .sheet-item { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); border: 2px solid transparent; -webkit-tap-highlight-color: transparent; min-width: 36px; min-height: 36px; }
+        .sheet-item.unanswered { background: #f0f0f5; color: #888; }
+        .sheet-item.correct-dot { background: #E8F8ED; color: var(--correct); border-color: var(--correct); }
+        .sheet-item.wrong-dot { background: #FFECEB; color: var(--wrong); border-color: var(--wrong); }
+        .sheet-item.current-dot { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2); font-weight: 700; }
+        .sheet-section-label { grid-column: 1 / -1; font-size: 11px; font-weight: 600; color: #999; text-align: left; padding: 6px 0 2px; letter-spacing: 0.3px; }
+        .sheet-close { display: block; width: 100%; padding: 12px; margin-top: 14px; background: #f5f5f7; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 15px; color: var(--text); -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; }
+
+        /* 结算面板 & 历史面板通用 */
+        .summary-panel { background: #fff; width: 100%; max-width: 380px; border-radius: 20px; padding: 24px 20px; text-align: center; animation: slideUp 0.3s ease; position: relative; margin: 0 20px; max-height: 85vh; display: flex; flex-direction: column; }
+        .summary-title { font-size: 20px; margin-bottom: 20px; color: var(--text); font-weight: 700; flex-shrink: 0; }
+        
+        /* 结算面板特有 */
+        .summary-stats { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-item span { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .stat-item label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+        .rate-list { text-align: left; margin-bottom: 24px; background: #f9f9fb; padding: 12px 16px; border-radius: 12px; }
+        .rate-item { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; color: var(--text-secondary); }
+        .rate-item span:last-child { font-weight: 700; color: var(--text); }
+        .summary-actions { display: flex; gap: 12px; }
+        .summary-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; transition: var(--transition); -webkit-tap-highlight-color: transparent; }
+        .btn-wrong { background: #FFF3E0; color: #E67E22; }
+        .btn-restart { background: #EEF1FE; color: #4A6CF7; }
+        .summary-btn:active { transform: scale(0.96); }
+
+        /* Toast */
+        .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; letter-spacing: 0.3px; }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="appContainer">
+        <div class="top-bar">
+            <button class="icon-btn" id="homeBtn" aria-label="首页">🏠</button>
+            <button class="icon-btn" id="historyBtn" aria-label="历史记录">🕒</button>
+            <button class="icon-btn" id="backBtn" aria-label="题目列表">☰</button>
+            <div class="title-area">
+                <div class="section-label" id="sectionLabel">第一部分 单选题</div>
+                <div class="question-num" id="questionNum">第 1/110 题</div>
+            </div>
+            <div class="font-size-wrapper">
+                <button class="icon-btn font-size-btn" id="fontSizeBtn" aria-label="调整字体">A</button>
+                <span class="font-size-indicator" id="fontSizeIndicator">中</span>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-info">
+                <span id="progressText">已答 0/110</span>
+                <span id="correctRate">正确率 -</span>
+            </div>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="question-card" id="questionCard">
+                <span class="question-type-badge badge-single" id="typeBadge">单选题</span>
+                <div class="question-text" id="questionText"></div>
+            </div>
+            <div class="options-area" id="optionsArea"></div>
+            <button class="submit-multi-btn" id="submitMultiBtn">确认提交答案</button>
+            <div class="result-area" id="resultArea">
+                <div class="result-header" id="resultHeader"></div>
+                <div class="correct-answer-display" id="correctAnswerDisplay"></div>
+                <div class="analysis-toggle" id="analysisToggle">
+                    📖 查看解析 <span class="arrow-icon">▾</span>
+                </div>
+                <div class="analysis-content" id="analysisContent"></div>
+            </div>
+        </div>
+
+        <div class="nav-bottom">
+            <button class="nav-btn" id="prevBtn" disabled>◀ 上一题</button>
+            <button class="nav-btn primary-nav" id="nextBtn">下一题 ▶</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">📋 题目列表</div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+            <button class="sheet-close primary-nav" id="viewSummaryBtn" style="margin-top: 14px; background: var(--primary); color: #fff; border:none;">📊 结束答题并查看报告</button>
+            <button class="sheet-close" id="sheetClose">关闭</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="summaryOverlay" style="align-items: center;">
+        <div class="summary-panel" id="summaryPanel">
+            <h2 class="summary-title">📊 答题报告</h2>
+            <div class="summary-stats">
+                <div class="stat-item"><span id="sumTotal">0</span><label>总题数</label></div>
+                <div class="stat-item"><span id="sumAnswered">0</span><label>已答题</label></div>
+                <div class="stat-item"><span id="sumCorrect">0</span><label>答对题</label></div>
+            </div>
+            <div class="rate-list">
+                <div class="rate-item"><span>单选题正确率</span><span id="rateSingle">0%</span></div>
+                <div class="rate-item"><span>多选题正确率</span><span id="rateMulti">0%</span></div>
+                <div class="rate-item"><span>判断题正确率</span><span id="rateJudge">0%</span></div>
+            </div>
+            <div class="summary-actions">
+                <button class="summary-btn btn-wrong" id="viewMistakesBtn">📝 看错题</button>
+                <button class="summary-btn btn-restart" id="restartBtn">🔄 重新开始</button>
+            </div>
+            <button class="sheet-close" id="summaryClose" style="margin-top: 14px;">关闭</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="historyOverlay" style="align-items: center;">
+        <div class="summary-panel" id="historyPanel">
+            <h2 class="summary-title">🕒 历史答题记录</h2>
+            <div id="historyList" style="overflow-y: auto; flex: 1; text-align: left; padding: 4px 0;">
+                </div>
+            <button class="sheet-close" id="historyClose" style="margin-top: 14px; flex-shrink: 0;">关闭</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ==================== 题目数据 ====================
+ const allQuestions = [
+    // 第一部分：单选题 1-60
+    { type: 'single', part: 1, num: 1, question: '古罗马的奥古斯丁在他的重要著作（）中，结合自己的经历，论述了对教育的一系列看法。他的教育哲学成为中世纪基督教教育的理论基础。', options: { A: '《雄辩术原理》', B: '《政治学》', C: '《理想国》', D: '《忏悔录》' }, answer: 'D', analysis: '奥古斯丁是基督教教父哲学集大成者，其《忏悔录》结合个人经历阐述基督教教育思想，奠定中世纪基督教教育理论基础。《雄辩术原理》是昆体良著作，《政治学》是亚里士多德著作，《理想国》是柏拉图著作。' },
+    { type: 'single', part: 1, num: 2, question: '教育目的的基本类型中，（）是指被社会权力机构确定并要求所在各级各类教育都必须遵循的教育目的。', options: { A: '发展性教育目的', B: '阶级性教育目的', C: '正式决策的教育目的', D: '非正式决策的教育目的' }, answer: 'C', analysis: '正式决策的教育目的由国家权力机构制定，具有强制性；非正式决策的教育目的是蕴含在教育理论、思想中的教育目的。' },
+    { type: 'single', part: 1, num: 3, question: '在社会本位论看来，社会价值高于个人价值，个人存在与社会依赖并从属于社会，（）的高低是教育的价值所在。', options: { A: '社会效益', B: '个人利益', C: '经济水平', D: '个人素质' }, answer: 'A', analysis: '社会本位论主张教育目的从社会需要出发，以培养符合社会要求的公民为目标，教育价值由社会效益衡量。' },
+    { type: 'single', part: 1, num: 4, question: '凯勒计划（个别化教学系统）将课程分为多个单元，学生学完单元通过测验才能进入下一单元，这种教学方法可归属于（）。', options: { A: '情感教学理论', B: '认知教学理论', C: '行为主义教学理论', D: '建构主义教学理论' }, answer: 'C', analysis: '凯勒计划基于操作性条件反射理论，强调自定步调、掌握学习、强化反馈，属于行为主义教学理论的应用。' },
+    { type: 'single', part: 1, num: 5, question: '下列四位同学关于孔子论述中，说法正确的是（）。', options: { A: '小华：孔子强调学校教育，必须把知识教育放在首要地位', B: '小芳：孔子是儒家学派创始人，在晚年时整理了“六经”', C: '小阳：孔子最早使用“教育”这个词，并主张“有教无类”', D: '小英：孔子不但重视繁文缛节，而且注重实用技术的练习' }, answer: 'B', analysis: 'A项错误，孔子以道德教育为核心；C项错误，“教育”一词最早见于《孟子·尽心上》；D项错误，孔子轻视科技与生产劳动。' },
+    { type: 'single', part: 1, num: 6, question: '下列关于人的身心发展的规律与成语对应正确的一组是（）。', options: { A: '顺序性---陵节而施', B: '阶级性---温故知新', C: '不平衡性--拔苗助长', D: '个体差异性---因材施教' }, answer: 'D', analysis: 'A项“陵节而施”违背顺序性；B项“温故知新”体现巩固性教学原则，与阶级性无关；C项“拔苗助长”违背顺序性；D项因材施教对应个体差异性。' },
+    { type: 'single', part: 1, num: 7, question: '有学生认为，掌握的知识越多，智力也就越高，他的观点是（）。', options: { A: '正确的，因为知识是发展智力的基础', B: '正确的，因为掌握知识就是为了发展智力', C: '错误的，因为智力决定掌握知识的快慢', D: '错误的，因为智力并不完全随着知识的掌握而自然发展起来' }, answer: 'D', analysis: '知识是智力发展的基础，但知识不等于智力，只有掌握的知识能够灵活运用、转化为能力时，才能促进智力发展。' },
+    { type: 'single', part: 1, num: 8, question: '抛锚式教学的基本环节排序正确的是（）。', options: { A: '创设情境→搭建支架→自主学习→协作学习→效果评价', B: '确定问题→创设情境→协作学习→自主学习→效果评价', C: '创设情境→进入情境→协作学习→自主学习→效果评价', D: '创设情境→确定问题→自主学习→协作学习→效果评价' }, answer: 'D', analysis: '抛锚式教学（情境教学）流程：创设真实情境→确定核心问题→学生自主探究→小组协作学习→学习效果评价。' },
+    { type: 'single', part: 1, num: 9, question: '下列选项中，不属于美育的主要任务的是（）。', options: { A: '培养和提高学生感受美的能力', B: '培养和提高学生表现美、创造美的能力', C: '培养和提高学生追求人生趣味和理想境界的能力', D: '培养学生的学习兴趣和提高学生的美术成绩' }, answer: 'D', analysis: '美育任务包括感受美、鉴赏美、表现美、创造美，以及培养审美情趣和人生理想，不局限于美术学科成绩。' },
+    { type: 'single', part: 1, num: 10, question: '“三人行，必有我师焉”，看到别人的优秀品德，同时向别人学习，这属于皮亚杰理论中的（）。', options: { A: '平衡', B: '顺应', C: '认同', D: '内化' }, answer: 'B', analysis: '顺应是指个体原有认知结构无法解释新刺激时，调整原有认知结构以适应新环境的过程。向他人学习优秀品德，是调整自身认知与行为的顺应过程。' },
+    { type: 'single', part: 1, num: 11, question: '小美明知道偷拿别人的东西不好，还经常顺手偷拿其他小朋友笔袋里的东西，这属于德育培养中哪方面需要提高？（）', options: { A: '情感', B: '意志', C: '行为', D: '认知' }, answer: 'B', analysis: '道德意志是个体自觉调节道德行为、克服困难以实现道德目标的心理过程。明知不对仍犯错，是道德意志薄弱的表现。' },
+    { type: 'single', part: 1, num: 12, question: '德育培养从“道德意志、道德情感、道德行为、道德认知”入手，以下四个选项中，需要加强道德认知的是（）。', options: { A: '明明知道玩手机不好，还在玩', B: '幼儿身心发展不成熟，无法辨别是非善恶', C: '红红对占公交车座位的行为表示愤慨', D: '小雪知道撒谎不好，依然会撒谎' }, answer: 'B', analysis: '道德认知是对道德规范、是非善恶的认识和判断。幼儿无法辨别是非，是道德认知不足的表现；A、D属于道德意志问题，C属于道德情感问题。' },
+    { type: 'single', part: 1, num: 13, question: '弗洛伊德的“超我”（）。', options: { A: '是人格的象征，是社会道德的代表，是人格的最后形式而且是最文明的部分', B: '是最原始的天生的无意识的情欲冲动部分', C: '奉行“现实原则”，把本我需要的满足纳入现实的轨道', D: '依据“快乐原则”，要求得到直接满足，谈不上道德判断' }, answer: 'A', analysis: '弗洛伊德人格结构：本我（快乐原则）、自我（现实原则）、超我（道德原则）。超我是道德化的自我，代表社会规范和良心。' },
+    { type: 'single', part: 1, num: 14, question: '课程目标的确定需要考虑各种因素，其中不包括（）。', options: { A: '教育者的需要', B: '学习者的需要', C: '当代社会生活的需要', D: '学科发展的需要' }, answer: 'A', analysis: '课程目标制定的三大依据：学习者的需要、社会生活的需要、学科发展的需要，不包括教育者的个人需要。' },
+    { type: 'single', part: 1, num: 15, question: '在A学校，学生的课程相当一部分是在教师的指导下，由学生选择一些自己感兴趣的话题，通过自主探究进行学习。这反映出A学校主张的课程理论最有可能是（）。', options: { A: '学科中心课程论', B: '活动中心课程论', C: '社会中心课程论', D: '教师中心课程论' }, answer: 'B', analysis: '活动中心课程论（儿童中心课程论）以学生兴趣和需要为核心，强调自主探究和实践活动。' },
+    { type: 'single', part: 1, num: 16, question: '课程实施取向中的（）提倡教师要根据教学情境、教学目标、学生学习状态等，随时随地对教学做适当调整，以促进课程最大限度地被学生理解与掌握。', options: { A: '忠实取向', B: '创生取向', C: '目标取向', D: '相互适应取向' }, answer: 'D', analysis: '相互适应取向认为课程实施是课程计划与实际情境相互调整、适应的过程，强调教师根据实际情况灵活调整教学。' },
+    { type: 'single', part: 1, num: 17, question: '下列有关综合实践活动的说法，错误的是（）。', options: { A: '是一种以学生的经验与生活为核心的实践性课程', B: '是新的基础课程体系中设置的选修课程', C: '活动有指定领域与非指定领域之分', D: '社区服务与社会实践是综合实践活动的四大指定领域之一' }, answer: 'B', analysis: '综合实践活动是从小学到高中的<strong>必修课程</strong>，不是选修课程。' },
+    { type: 'single', part: 1, num: 18, question: '邓老师在教新知识前，会用与新知识有联系的“先行组织者”策略进行教学，以提高学生的学习效果。邓老师会采用教学策略进行教学是教师（）的体现。', options: { A: '教学监控能力', B: '教学认知能力', C: '教学反思能力', D: '教学操作能力' }, answer: 'D', analysis: '教学操作能力是教师在教学中运用教学策略、方法和手段的能力，包括运用先行组织者、直观教学等具体教学技巧。' },
+    { type: 'single', part: 1, num: 19, question: '陈老师发现今年所教班级的学生比去年所教班级学生的基础知识更加薄弱，于是她对去年的教案做了大幅度修改，在教学内容上增加了更多基础知识的讲解，并设计了更多的课堂活动帮助学生巩固所学内容。陈老师的工作反映了教师劳动的（）。', options: { A: '示范性', B: '协作性', C: '创造性', D: '长期性' }, answer: 'C', analysis: '教师劳动的创造性体现在因材施教、教学方法更新、教材处理和教育机智等方面。根据学生情况调整教案，体现了教学的创造性。' },
+    { type: 'single', part: 1, num: 20, question: '班级组织形成的第一阶段是（）。', options: { A: '个人属性之间的矛盾阶段', B: '团体属性之间的矛盾阶段', C: '团体要求与个人属性之间的矛盾阶段', D: '团体要求架构内的矛盾阶段' }, answer: 'A', analysis: '班级组织发展阶段：第一阶段是个体间矛盾阶段，第二阶段是团体要求与个人矛盾阶段，第三阶段是团体内部矛盾阶段。' },
+    { type: 'single', part: 1, num: 21, question: '魏书生提出“人人有事做，事事有人做”的班级管理理念，通过设立多种岗位实现班级管理自动化，这主要体现的是班级管理中的（）。', options: { A: '目标管理模式', B: '常规管理模式', C: '平行管理模式', D: '民主管理模式' }, answer: 'D', analysis: '班级民主管理是让全体学生参与班级管理，人人承担责任，体现学生主体地位。' },
+    { type: 'single', part: 1, num: 22, question: '班级内出现学生收集、攀比玩具盲盒的现象，部分学生被排挤，对此，章老师应通过（）的方法进行集体培养。', options: { A: '确定集体目标', B: '培养正确舆论和良好班风', C: '做好个别教育工作', D: '健全组织、培养干部以形成集体核心' }, answer: 'B', analysis: '班级攀比现象反映了不良的价值导向，需要通过培养正确的集体舆论和良好班风，引导学生树立正确的价值观。' },
+    { type: 'single', part: 1, num: 23, question: '小美当上学习委员后，积极参与班级活动，主动承担责任，也开始懂得体谅父母，这说明（）。', options: { A: '班级作为一种集体生活，有助于学生社会性的发展', B: '班级对于学生个性的形成，具有重要的价值', C: '班级文化对班级管理具有导向作用', D: '班级组织有利于社会经济的发展' }, answer: 'A', analysis: '班级集体生活为学生提供了社会交往和角色体验的机会，促进学生社会化发展，培养责任感和合作精神。' },
+    { type: 'single', part: 1, num: 24, question: '班主任围绕“心存感恩，学会感恩”主题，让学生回忆并讲述与父母的小故事，激发感恩之情，这种班会活动属于（）。', options: { A: '体验型', B: '实践型', C: '表演型', D: '叙事型' }, answer: 'D', analysis: '叙事型班会通过讲述故事、分享经历的方式，引发学生情感共鸣，达到教育目的。' },
+    { type: 'single', part: 1, num: 25, question: '学生王瑞将宠物猫带到教室，担心没人照顾，如果你是班主任，下列做法最合适的是（）。', options: { A: '立即让王瑞将猫送回去才能回学校上课', B: '告诉王瑞“老师暂时帮你照管小猫，你下次不要将它带到学校来，会影响同学们上课”', C: '允许王瑞这一次将小猫带进教室里听课，但下不为例', D: '打电话让王瑞的父母来学校将小猫领回去' }, answer: 'B', analysis: 'B选项既体现了对学生的关爱，又明确了学校纪律，是最恰当的处理方式。' },
+    { type: 'single', part: 1, num: 26, question: '王老师在讲课前对同学们说：“今天我一走进教室，就感到大家学习热情很高。希望在我讲课的时候这份热情能保持下去。”王老师引入课程的方式为（）。', options: { A: '引导式', B: '提示式', C: '表扬式', D: '检查式' }, answer: 'C', analysis: '通过表扬学生的学习状态，激发学生的学习积极性，属于表扬式导入。' },
+    { type: 'single', part: 1, num: 27, question: '王老师组织、参与有偿补课，还利用工作便利为校外培训机构介绍生源，违背了《新时代中小学教师职业行为十项准则》中的（）。', options: { A: '规范从教行为', B: '坚守廉洁自律', C: '坚持言行雅正', D: '潜心教书育人' }, answer: 'A', analysis: '规范从教行为明确要求教师不得组织、参与有偿补课，不得为校外培训机构介绍生源。' },
+    { type: 'single', part: 1, num: 28, question: '陈老师有意给几位成绩不及格的同学打了68分，并在试卷上评价“先预支给你68分，但我相信不久之后你会还给我”，此后这几位同学都对该学科产生了强烈的兴趣。下列选项中，能对这些学生的学习态度转变作出合理解释的是（）。', options: { A: '认知失调理论', B: '练习律', C: '效果律', D: '准备律' }, answer: 'C', analysis: '效果律是指行为结果会影响行为的再次发生。老师的正面评价和鼓励（满意结果）增强了学生的学习行为。' },
+    { type: 'single', part: 1, num: 29, question: '下列关于详案的说法不正确的是（）。', options: { A: '篇幅往往比较大', B: '对教学活动的细节进行认真思考和精心设计', C: '一般适用于新教师和年轻教师的教学', D: '是上课的绝对蓝本' }, answer: 'D', analysis: '详案是详细的教学预案，但不是绝对蓝本，教师需要根据课堂实际情况灵活调整。' },
+    { type: 'single', part: 1, num: 30, question: '老师表示写作是综合内容，需要多方面知识的积累和练习才会提高，单独讲解写作方法效果甚微，这是因为教学本身需要遵循（）原则。', options: { A: '巩固性', B: '循序渐进性', C: '直观性', D: '理论联系实际' }, answer: 'B', analysis: '循序渐进原则要求教学按照学科逻辑和学生认知发展顺序进行，写作能力的培养需要逐步积累，不能一蹴而就。' },
+    { type: 'single', part: 1, num: 31, question: '王老师在教学时，经常要求学生集中注意力深入思考，尝试把所学习的新观念同原有的旧观念结合起来。根据赫尔巴特的教学阶段论，王老师的要求属于（）阶段。', options: { A: '明了', B: '联想', C: '系统', D: '方法' }, answer: 'B', analysis: '赫尔巴特四阶段论：明了（清晰感知新教材）、联想（建立新旧知识联系）、系统（形成知识体系）、方法（应用知识）。' },
+    { type: 'single', part: 1, num: 32, question: '下列古语与“学不躐等”体现的教学原则相近的是（）。', options: { A: '欲速则不达', B: '不愤不启，不悱不发', C: '知者行之始，行者知之成', D: '不闻不若闻之，闻之不若见之' }, answer: 'A', analysis: '“学不躐等”和“欲速则不达”都体现了循序渐进的教学原则，强调不能超越学生的发展阶段。' },
+    { type: 'single', part: 1, num: 33, question: '经过一段时间的学习，学生能够从“阻、租、祖”中选出“祖”字，与“国”字组词。这属于刺激的（）。', options: { A: '泛化', B: '分化', C: '获得', D: '比较' }, answer: 'B', analysis: '刺激分化是指个体能够区分相似的刺激，并做出不同的反应。区分形近字属于刺激分化。' },
+    { type: 'single', part: 1, num: 34, question: '教师在教学过程中采取的师生相互作用方式、方法与手段的展开过程属于（）。', options: { A: '教学活动的调控过程', B: '教学活动的元认知过程', C: '教学方法的评价过程', D: '教学方法的执行过程' }, answer: 'D', analysis: '教学方法的执行过程是教师在课堂中具体运用教学方法、组织师生互动的过程。' },
+    { type: 'single', part: 1, num: 35, question: '教师不仅对不同年龄组的学生有着不同的期望，即使是对同一个学生的不同时期也存在不同的期望，这体现了教师期望效应的（）特点。', options: { A: '暗示性', B: '层次性', C: '情感性', D: '单一性' }, answer: 'B', analysis: '教师期望的层次性体现在对不同学生、同一学生不同发展阶段的期望存在差异。' },
+    { type: 'single', part: 1, num: 36, question: '部分教师热衷于形式的翻新、多媒体的滥用，丢弃了教学的根本，这种做法主要忽略了课堂教学的（）。', options: { A: '趣味性', B: '完整性', C: '实效性', D: '及时性' }, answer: 'C', analysis: '课堂教学的实效性是指教学目标的达成和学生学习效果的提升。重形式轻内容的做法忽视了教学的实际效果。' },
+    { type: 'single', part: 1, num: 37, question: '斯金纳主张程序教学应通过（）来进行。', options: { A: '教学机器', B: '情景模拟', C: '课外延伸', D: '教师引导' }, answer: 'A', analysis: '斯金纳基于操作性条件反射理论，发明了教学机器，提出程序教学法，强调小步子、自定步调、及时反馈。' },
+    { type: 'single', part: 1, num: 38, question: '教师在上课前采取教材结构化策略对教材进行加工，以下说法不正确的是（）。', options: { A: '教师可以采取多种结构化方法对教材进行处理', B: '教材结构化策略要求教师吃透教材', C: '结构化策略对优等生帮助尤其显著', D: '教师可用教材加工的方法训练学生' }, answer: 'C', analysis: '教材结构化策略能够帮助学生梳理知识体系，对中等生和学困生的帮助更为显著。' },
+    { type: 'single', part: 1, num: 39, question: '教师的语言需要遵循科学性，下列选项中符合教师语言规范的是（）。', options: { A: '政治课上老师说“黄金是从商品中分离出来固定充当一般等价物的特殊商品”', B: '生物课上老师说“脑袋主要包括左、右大脑半球，是中枢神经系统的最高级部分”', C: '地理课上老师说“吃饭具有强烈的地域性、民族性、民俗性等人文特性”', D: '语文课上老师说“散文是指以文字为创作、审美对象的文学艺术体裁”' }, answer: 'D', analysis: 'A项应改为“货币”；B项应改为“大脑”；C项应改为“饮食”；D项表述科学规范。' },
+    { type: 'single', part: 1, num: 40, question: '影响学生学习的要素有很多，下列属于环境类要素的是（）。', options: { A: '喜欢结伴学习', B: '对光线强弱的偏爱', C: '学习责任心强弱', D: '喜欢听觉刺激' }, answer: 'B', analysis: '环境类要素包括光线、温度、噪音、座位等物理环境因素；A属于社会要素，C属于情感要素，D属于生理要素。' },
+    { type: 'single', part: 1, num: 41, question: '王老师说：“教学过程是师与生、教与学的双边活动。”李老师认为：“教学过程有时需要教师的指导，有时也要学生主宰课堂。”下列对两位老师的言论评价正确的是（）。', options: { A: '王老师的说法正确，李老师的说法错误', B: '王老师的说法错误，李老师的说法正确', C: '两位老师的说法都错误', D: '两位老师的说法都正确' }, answer: 'D', analysis: '教学过程是教师主导与学生主体相统一的双边活动，既需要教师的指导，也需要发挥学生的主体性。' },
+    { type: 'single', part: 1, num: 42, question: '教师在对一个年级的学生进行教学时，组织班里其他年级的学生自学或做作业，并有计划地交替进行。这种教学组织形式属于（）。', options: { A: '协作教学', B: '开放教学', C: '个别教学', D: '复式教学' }, answer: 'D', analysis: '复式教学是把两个或两个以上年级的学生编在一个教室里，由一位教师在同一节课内分别对不同年级的学生进行教学的组织形式。' },
+    { type: 'single', part: 1, num: 43, question: '赫尔巴特曾经指出“如果不坚强而温和地抓住管理的缰绳，任何功课的教学都是不可能的”，这种观点主要体现了（）的特点。', options: { A: '观念性隐性课程', B: '物质性隐性课程', C: '制度性隐性课程', D: '心理性隐性课程' }, answer: 'C', analysis: '制度性隐性课程包括学校管理体制、班级管理制度、教学管理方式等。赫尔巴特强调教学管理的重要性，体现了制度性隐性课程。' },
+    { type: 'single', part: 1, num: 44, question: '关于教育经费的来源，下列说法不正确的是（）。', options: { A: '国家建立以财政拨款为主，其他多种渠道筹措教育经费为辅的体制', B: '国家逐步增加对教育的投入，保证国家举办的学校教育经费的稳定来源', C: '对于社会组织依法举办的学校，其办学经费由举办者负责筹措', D: '对于个人依法举办的教育机构，人民政府不给予任何经费支持' }, answer: 'D', analysis: '《教育法》规定，各级人民政府对民办教育可以给予适当的经费支持，并非不给予任何支持。' },
+    { type: 'single', part: 1, num: 45, question: '①刘老师认为备好一遍课可以用好多年，不重视备课；②地震时王老师丢弃学生第一个跑出教室。上述材料中，刘老师和王老师的做法分别违背了（）的要求。', options: { A: '爱岗敬业、为人师表', B: '终身学习、关爱学生', C: '为人师表、爱国守法', D: '教书育人、爱岗敬业' }, answer: 'B', analysis: '刘老师不更新知识、不认真备课，违背了终身学习；王老师不顾学生安危，违背了关爱学生。' },
+    { type: 'single', part: 1, num: 46, question: '孙老师在上课途中发现学校运动场附近有学生与社会青年正在斗殴，此时孙老师应采取的应对措施为（）。', options: { A: '组织班上一些身强体壮的男学生，协助自己制止斗殴', B: '组织部分学生，让他们拦截并控制参与斗殴的社会青年', C: '进入运动场，大声训斥并惩罚参与斗殴的本校学生', D: '及时向校内保卫人员报告，必要时马上报警' }, answer: 'D', analysis: '面对学生斗殴事件，教师应首先保证自身和学生安全，及时向学校保卫部门或公安机关报告。' },
+    { type: 'single', part: 1, num: 47, question: '李华总是在上课时看课外书，梁老师知道后没有直接批评他，而是表扬了认真上课的同桌。自此以后，李华再也没有在上课期间看与课堂无关的书。老师使用的这种课堂管理方法属于（）。', options: { A: '直接干预', B: '替代强化', C: '团体警觉', D: '处理转换' }, answer: 'B', analysis: '替代强化是指观察者因看到榜样受到强化而受到的强化。表扬同桌的良好行为，间接强化了李华的正确行为。' },
+    { type: 'single', part: 1, num: 48, question: '四位学生的学习动机如下，属于附属内驱力的是（）同学。', options: { A: '我努力学习是为了获得国家奖学金', B: '我是为了得到老师和父母的夸奖而努力学习的', C: '我跟你们不一样，我努力学习是因为我真的对学习很感兴趣', D: '我努力学习就是为了考取学校第一名' }, answer: 'B', analysis: '附属内驱力是指个体为了获得长者（家长、教师）的赞许或认可而努力学习的动机。' },
+    { type: 'single', part: 1, num: 49, question: '小美既想加入学校的舞蹈协会接受系统性训练，又怕参加训练占用大量学习时间影响学业，这种心理冲突属于（）。', options: { A: '趋避冲突', B: '双趋冲突', C: '双避冲突', D: '双重趋避冲突' }, answer: 'A', analysis: '趋避冲突是指个体对同一目标同时产生既想接近又想回避的矛盾心理。' },
+    { type: 'single', part: 1, num: 50, question: '学生小张自己看书和记笔记的学习效率比听老师讲课更高，而学生小李则更需要听老师的讲授来识记知识，这体现出学生的学习风格受（）生理因素的影响。', options: { A: '视觉刺激', B: '时间节律', C: '感觉通道', D: '大脑单侧化' }, answer: 'C', analysis: '感觉通道差异分为视觉型、听觉型、动觉型。小张属于视觉型学习者，小李属于听觉型学习者。' },
+    { type: 'single', part: 1, num: 51, question: '赵同学背诵新古诗词时，总会将部分旧知识混入其中，她可能是受到了（）的影响。', options: { A: '前摄抑制', B: '倒摄抑制', C: '刻板印象', D: '思维定势' }, answer: 'A', analysis: '前摄抑制是指先前学习的材料对后续学习材料的识记和回忆产生的干扰作用。' },
+    { type: 'single', part: 1, num: 52, question: '训练马驮东西时，先放轻羊毛毯，再放鞍子，逐渐增加重量，直到人能骑上去，这是运用了（）消除马不愿意驮东西的习惯。', options: { A: '刺激法', B: '疲劳法', C: '阈限法', D: '对抗性条件作用' }, answer: 'C', analysis: '阈限法是指逐步增加刺激强度，使个体逐渐适应，最终消除不良反应的方法。' },
+    { type: 'single', part: 1, num: 53, question: '下列不属于应答性行为的是（）。', options: { A: '望梅止渴', B: '画饼充饥', C: '守株待兔', D: '一朝被蛇咬，十年怕井绳' }, answer: 'C', analysis: '应答性行为是由特定刺激引起的被动反应，属于经典条件反射。守株待兔是主动的操作性行为。' },
+    { type: 'single', part: 1, num: 54, question: '方老师告诉小刘，只有做完了今天的数学作业，才能和同学去打篮球。这种用高频的活动作为低频活动的有效强化物的方式涉及强化物选择的（）。', options: { A: '耶基斯-多德森定律', B: '霍桑效应', C: '木桶效应', D: '普雷马克原则' }, answer: 'D', analysis: '普雷马克原则（祖母法则）是指用高频行为（喜欢的活动）作为低频行为（不喜欢的活动）的强化物。' },
+    { type: 'single', part: 1, num: 55, question: '下列情形属于对抗性课堂氛围的是（）。', options: { A: '个别同学对于课堂内容不感兴趣，昏昏欲睡', B: '学生在课堂上随意插嘴，有人在聊天，有人在看漫画', C: '同学们积极地回答问题，专注度高', D: '课堂十分安静，同学们心不在焉，没有人回答老师的问题' }, answer: 'B', analysis: '对抗性课堂氛围表现为课堂纪律混乱、师生关系紧张、学生各行其是，教师无法正常教学。' },
+    { type: 'single', part: 1, num: 56, question: '（）是同伴关系的主要特征。', options: { A: '彼此教育', B: '互相模仿', C: '互相竞争', D: '彼此平等' }, answer: 'D', analysis: '同伴关系是指年龄相近的个体之间的平等交往关系，彼此平等是其核心特征。' },
+    { type: 'single', part: 1, num: 57, question: '亮亮没有帮萌萌隐瞒抄作业的行为，萌萌非常不满并要求换座位，王老师可从（）的交友原则方面对萌萌进行引导。', options: { A: '广交朋友', B: '乐交诤友', C: '多交义友', D: '不交损友' }, answer: 'B', analysis: '诤友是指能够直言不讳指出朋友错误、帮助朋友进步的人。亮亮的行为是对朋友负责的表现。' },
+    { type: 'single', part: 1, num: 58, question: '学生误认为只有会飞的才是鸟，为了防止此类过度概括，刘老师需要为学生呈现出（）。', options: { A: '正例', B: '反例', C: '规则', D: '变式' }, answer: 'B', analysis: '反例是指不包含概念本质特征的例子，能够帮助学生区分概念的本质和非本质特征，避免过度概括。' },
+    { type: 'single', part: 1, num: 59, question: '下列现象属于学习正迁移的是（）。', options: { A: '小丽学习过电子琴后，学钢琴更加容易', B: '小雅掌握英语语法后，与之前学过的中文语法混淆了', C: '小陈在长时间看手机后，会无意识地用手滑非触屏电脑', D: '小王驾驶手动挡汽车的习惯总是会影响他驾驶自动挡汽车' }, answer: 'A', analysis: '正迁移是指一种学习对另一种学习产生的积极促进作用。电子琴学习促进钢琴学习属于正迁移。' },
+    { type: 'single', part: 1, num: 60, question: '妈妈说“你回到家练完钢琴后就可以做手工”，运用了心理学中的（）。', options: { A: '蝴蝶效应', B: '普雷马克效应', C: '踢猫效应', D: '心理暗示' }, answer: 'B', analysis: '用学生喜欢的做手工（高频行为）强化不喜欢的练钢琴（低频行为），符合普雷马克原则。' },
+    // 第二部分：多选题 61-80
+    { type: 'multiple', part: 2, num: 61, question: '下列属于文明礼貌、遵守纪律教育的要点的有（）。', options: { A: '教育学生说话和气、举止大方文雅', B: '教育学生在公共场所不大声喧哗、不随地吐痰', C: '教育学生按时上下学，不迟到、不早退、不逃学', D: '教育学生要正确处理国家、集体和个人利益' }, answer: 'ABC', analysis: 'D选项属于爱国主义和集体主义教育的内容，不属于文明礼貌和纪律教育。' },
+    { type: 'multiple', part: 2, num: 62, question: '托尔曼的动物学习迷宫实验揭示了（）。', options: { A: '潜伏学习的存在', B: '学习是通过顿悟产生的', C: '学习并不是S-R的直接联结', D: '外在强化是学习产生的必要因素' }, answer: 'AC', analysis: '托尔曼的实验证明了学习是有目的的，存在潜伏学习，且学习是S-O-R的过程，O代表中介变量。B是苛勒的观点，D错误，托尔曼认为不强化也能学习。' },
+    { type: 'multiple', part: 2, num: 63, question: '劳动技术教育的作用包括（）。', options: { A: '是德、智、体、美的具体运用与实施', B: '在全面教育中起着灵魂、核心、统率作用', C: '能传授学生现代生产劳动知识和生产技能', D: '能为学生将来的就业准备一定的条件' }, answer: 'ACD', analysis: 'B选项错误，德育在全面教育中起灵魂和统率作用。' },
+    { type: 'multiple', part: 2, num: 64, question: '“道而弗牵，强而弗抑，开而弗达”教导教师在教学中应当（）。', options: { A: '督促勉励学生，但又不强制压抑', B: '打开学生的思路，但又不给现成答案', C: '注重引导学生，但又不牵着学生的鼻子走', D: '尊重学生的主导地位，但又不放纵学生为所欲为' }, answer: 'ABC', analysis: 'D选项错误，学生是学习的主体，教师起主导作用。' },
+    { type: 'multiple', part: 2, num: 65, question: '教师职业倦怠的主要表现包括（）等。', options: { A: '身体耗竭', B: '心智枯竭', C: '情感衰竭', D: '同事关系紧张，人际关系恶化' }, answer: 'ABCD', analysis: '教师职业倦怠表现为生理耗竭、情感衰竭、去个性化、低个人成就感，以及人际关系恶化等。' },
+    { type: 'multiple', part: 2, num: 66, question: '下列属于班级精神文化层面的有（）。', options: { A: '班级人际关系', B: '班级舆论', C: '班级公约', D: '班级奖惩规定' }, answer: 'AB', analysis: '班级精神文化包括班级价值观、舆论、人际关系等；班级公约和奖惩规定属于制度文化。' },
+    { type: 'multiple', part: 2, num: 67, question: '下列体现了新课程自主、探究、合作学习方式的有（）。', options: { A: '“知之者不如好之者，好之者不如乐之者”', B: '“自为之，不若与人为之；与少为之，不若与众为之”', C: '“有匪君子，如切如磋，如琢如磨”', D: '“独学而无友，则孤陋而寡闻”' }, answer: 'ABD', analysis: 'A体现自主学习，B、D体现合作学习；C形容君子的修养，与学习方式无关。' },
+    { type: 'multiple', part: 2, num: 68, question: '备课工作包括（）。', options: { A: '钻研教材', B: '了解学生', C: '设计教法', D: '批改作业' }, answer: 'ABC', analysis: '备课的三项基本工作：备教材、备学生、备教法；批改作业是上课后的环节。' },
+    { type: 'multiple', part: 2, num: 69, question: '下列属于影响学习迁移的客观因素的有（）。', options: { A: '学习材料的相似性', B: '经验的概括程度', C: '学习者的原有认知结构', D: '情境作用' }, answer: 'AD', analysis: 'B、C属于影响迁移的主观因素；学习材料和学习情境属于客观因素。' },
+    { type: 'multiple', part: 2, num: 70, question: '下列情形中孩子更容易产生不良、敌对行为的有（）。', options: { A: '家长行为举止端正庄重', B: '家庭中无人管教', C: '家长无原则地溺爱', D: '家长严厉有余，爱抚不足' }, answer: 'BCD', analysis: 'A选项家长的良好行为会对孩子产生积极影响；B、C、D三种家庭教养方式容易导致孩子产生不良行为。' },
+    { type: 'multiple', part: 2, num: 71, question: '闫老师想要改善与学生之间的关系，可采纳的策略包括（）。', options: { A: '了解和研究学生', B: '树立正确的学生观', C: '主动与学生沟通，善于与学生交往', D: '努力提高自我修养，健全人格' }, answer: 'ABCD', analysis: '以上四项都是建立良好师生关系的有效策略。' },
+    { type: 'multiple', part: 2, num: 72, question: '下列属于校外课程资源的有（）。', options: { A: '乡土资源', B: '家庭资源', C: '教师的教学策略', D: '生活经验和方式' }, answer: 'AB', analysis: '校外课程资源包括乡土资源、家庭资源、社区资源、科技馆、博物馆等；C、D属于校内课程资源。' },
+    { type: 'multiple', part: 2, num: 73, question: '以下关于布鲁纳的描述中，正确的有（）。', options: { A: '提出了认知结构学习理论', B: '提出了发现法教学模式', C: '提出先行组织者概念', D: '重视对直觉思维的培养和训练' }, answer: 'ABD', analysis: 'C选项先行组织者是奥苏贝尔提出的概念。' },
+    { type: 'multiple', part: 2, num: 74, question: '下列对美育的认识，正确的包括（）。', options: { A: '重视美育是学生实现全面发展与多样化成长的需要', B: '要建设有利于促进和发挥美育功能的校园环境', C: '要让学生理解科学求真、人文求善、艺术求美的内涵', D: '要将美育融入立德树人全过程，培养全面发展的时代新人' }, answer: 'ABCD', analysis: '以上四项都是新时代美育工作的正确理念和要求。' },
+    { type: 'multiple', part: 2, num: 75, question: '课堂秩序的基本结构包括（）。', options: { A: '秩序的建立', B: '秩序的维持', C: '秩序的完善', D: '秩序的破坏' }, answer: 'ABC', analysis: '课堂秩序的基本结构包括建立、维持和完善三个环节。' },
+    { type: 'multiple', part: 2, num: 76, question: '罗森塔尔效应（教师期望效应）可以用下列哪些理论进行合理解释？（）', options: { A: '托尔曼的潜伏学习理论', B: '奥苏贝尔的有意义接受说', C: '班杜拉的自我效能感理论', D: '罗杰斯的自我实现人格论' }, answer: 'CD', analysis: '教师的积极期望能够增强学生的自我效能感，促进学生自我实现，符合C、D理论。' },
+    { type: 'multiple', part: 2, num: 77, question: '德西效应实验说明了（）。', options: { A: '当一个人进行一项愉快的活动时，给他提供奖励结果反而会减少这项活动对他内在的吸引力', B: '当学生尚没有形成自发内在学习动机时，外部奖励是必要和有效的', C: '在某些情况下，外在报酬和内在报酬兼得会更好地增强工作动机', D: '要正确使用奖励的方法，不滥用奖励' }, answer: 'ABD', analysis: 'C选项错误，德西效应表明外在奖励可能会削弱内在动机。' },
+    { type: 'multiple', part: 2, num: 78, question: '学习策略的获得与运用受制于（）。', options: { A: '个体的发展水平', B: '能力差异', C: '动机差异', D: '性别差异' }, answer: 'ABC', analysis: '学习策略的掌握受个体发展水平、能力、动机等因素影响，与性别差异无必然联系。' },
+    { type: 'multiple', part: 2, num: 79, question: '以下属于闭合性操作技能的有（）。', options: { A: '跳水', B: '自由体操', C: '汽车驾驶', D: '游泳' }, answer: 'ABD', analysis: '闭合性操作技能主要依靠内部反馈，对外界环境依赖低；汽车驾驶属于开放性操作技能。' },
+    { type: 'multiple', part: 2, num: 80, question: '根据学习的定义，下列属于学习现象的有（）。', options: { A: '上行下效', B: '近朱者赤', C: '吃一堑长一智', D: '青春期学生的变声' }, answer: 'ABC', analysis: '学习是个体在特定情境下由于练习或经验而产生的行为或行为潜能的相对持久的变化。D是生理成熟导致的，不属于学习。' },
+    // 第三部分：判断题 81-100
+    { type: 'judge', part: 3, num: 81, question: '社会发展离不开人的发展，因此教育的个体发展功能首先表现为促进个体个性化的功能。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '教育的个体发展功能包括促进个体社会化和个体个性化两个方面，二者同等重要。' },
+    { type: 'judge', part: 3, num: 82, question: '通过网络技术可以做到跨年龄段教育，这是传统学校教育无法实现的；但传统学校教育是跨时空的教育，这是网络教育不能实现的。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '网络教育是跨时空的教育，传统学校教育受时间和空间的限制。' },
+    { type: 'judge', part: 3, num: 83, question: '外因通过内因作用，环境和教育的影响成为个体自身发展的需要时，才能促进个体心理的发展。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '个体的主观能动性是身心发展的动力，环境和教育的影响只有通过个体的主观能动性才能发挥作用。' },
+    { type: 'judge', part: 3, num: 84, question: '在教育目的上，杜威指出，教育过程之外无目的，教育的目的在教育过程中，儿童的生长即教育的目的。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '杜威提出“教育无目的论”，认为教育的过程本身就是目的，教育即生长。' },
+    { type: 'judge', part: 3, num: 85, question: '夸美纽斯说过：凡是需要知道的事物，都是通过事物本身来学习，应该尽可能把事物本身或代替的图像，呈现给学生，这体现了教学的量力性原则。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '这体现了直观性教学原则，不是量力性原则。' },
+    { type: 'judge', part: 3, num: 86, question: '校风的表现形式主要有：校训、校歌、校徽、校旗。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '校风是学校精神风貌的体现，通过校训、校歌、校徽、校旗等形式表现出来。' },
+    { type: 'judge', part: 3, num: 87, question: '课堂教学主要包括启动、导入、展开、调整和结束5个环节。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '课堂教学的基本环节包括启动、导入、展开、调整和结束五个部分。' },
+    { type: 'judge', part: 3, num: 88, question: '操场绿化、标语、长廊等校园环境，都发挥着潜在的美育功能。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '校园物质环境是隐性课程的重要组成部分，具有潜移默化的美育功能。' },
+    { type: 'judge', part: 3, num: 89, question: '在教育开始阶段应该让学生充分感知学习材料，以便学生被动地接受教育。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '学生是学习的主体，应引导学生主动接受教育，而不是被动接受。' },
+    { type: 'judge', part: 3, num: 90, question: '演示法和参观法都是一种以直观感知为主的教学方法。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '以直观感知为主的教学方法包括演示法、参观法等。' },
+    { type: 'judge', part: 3, num: 91, question: '教学是以间接经验为主来组织学习，学生主要通过书本接受知识，然后再去应用和证明。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '教学过程是间接经验与直接经验相结合的过程，以间接经验为主。' },
+    { type: 'judge', part: 3, num: 92, question: '加强教师队伍建设，首先就要强化教师思想素质和师德素养，引导老师自觉贯彻落实新时代党的教育方针。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '师德师风是评价教师队伍素质的第一标准，加强教师队伍建设首先要加强师德建设。' },
+    { type: 'judge', part: 3, num: 93, question: '“四有”好老师是指有理想信念，有法律意识，有扎实学识，有仁爱之心的老师。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '“四有”好老师是指有理想信念、有道德情操、有扎实学识、有仁爱之心。' },
+    { type: 'judge', part: 3, num: 94, question: '“其身正，不令而行；其身不正，虽令不从。”从教师角度，可以理解为教师对学生下命令一定要正确。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '这句话强调教师的示范作用，教师要以身作则，为人师表。' },
+    { type: 'judge', part: 3, num: 95, question: '青少年阶段是人生的“拔节孕穗期”，需要教师给予更多尊重、理解和关爱。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '青少年时期是价值观形成的关键时期，需要教师的正确引导和关爱。' },
+    { type: 'judge', part: 3, num: 96, question: '接受义务教育不仅是学生的权利，也是学生的义务。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '《义务教育法》规定，适龄儿童、少年有接受义务教育的权利和义务。' },
+    { type: 'judge', part: 3, num: 97, question: '国务院教育行政部门主管全国的教师工作，学校和其他教育机构教师管理工作由国务院教育行政部门统筹，不得自主进行。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '学校和其他教育机构根据国家规定，自主进行教师管理工作。' },
+    { type: 'judge', part: 3, num: 98, question: '根据我国相关法律规定，父母因外出务工或其他原因不能履行对未成年人监护职责的，应委托有监护能力的其他成年人代为监护。（）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '《未成年人保护法》规定，父母因外出务工等原因不能履行监护职责的，应当委托具有照护能力的完全民事行为能力人代为照护。' },
+    { type: 'judge', part: 3, num: 99, question: '未成年人有“传播淫秽的读物或者音像制品”行为，应以刑事犯罪论处。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '未成年人实施刑法规定的行为，因不满法定刑事责任年龄不予刑事处罚的，应进行专门矫治教育，不是直接以刑事犯罪论处。' },
+    { type: 'judge', part: 3, num: 100, question: '学校、老师必须对学生家长提供家庭教育指导。（）', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '学校、教师可以对家长提供家庭教育指导，但不是“必须”的强制性义务。' }
+];
+            const TOTAL = allQuestions.length;
+
+            // ==================== 状态管理 ====================
+            const STORAGE_KEY = 'teacher_exam_progress_v2_mock6';
+            const HISTORY_KEY = 'teacher_exam_history_v2_mock6';
+            const STATS_KEY = 'exam_stats_jy6';
+            let currentIndex = 0;
+            let userAnswers = {}; 
+            let revealedAnswers = {}; 
+            let fontSizeLevel = 1; 
+            let mistakeMode = false;
+            let mistakeList = [];
+            const fontSizeLabels = ['小', '中', '大'];
+            const fontSizeBodyValues = ['14px', '16px', '18px'];
+            const fontSmValues = ['12px', '14px', '15px'];
+
+            function loadProgress() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const data = JSON.parse(raw);
+                        if (typeof data.currentIndex === 'number') currentIndex = data.currentIndex;
+                        if (data.userAnswers) userAnswers = data.userAnswers;
+                        if (data.revealedAnswers) revealedAnswers = data.revealedAnswers;
+                        if (typeof data.fontSizeLevel === 'number') fontSizeLevel = data.fontSizeLevel;
+                        if (typeof data.mistakeMode === 'boolean') mistakeMode = data.mistakeMode;
+                        if (data.mistakeList) mistakeList = data.mistakeList;
+                    }
+                } catch (e) {
+                    // ignore
+                }
+                if (currentIndex < 0 || currentIndex >= TOTAL) currentIndex = 0;
+            }
+
+            function saveProgress() {
+                try {
+                    const data = { currentIndex, userAnswers, revealedAnswers, fontSizeLevel, mistakeMode, mistakeList };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    
+                    const statsObj = {
+                        total: TOTAL,
+                        answered: getAnsweredCount(),
+                        wrong: getWrongCount(),
+                        wrongQuestions: generateMistakeList().map((idx, i) => ({ id: idx + 1, num: allQuestions[idx].num }))
+                    };
+                    localStorage.setItem(STATS_KEY, JSON.stringify(statsObj));
+                } catch (e) {}
+            }
+
+            function getWrongCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet !== userSet) count++;
+                    } else {
+                        if (ua !== q.answer) count++;
+                    }
+                }
+                return count;
+            }
+
+            // 新增：保存当前记录到历史
+            function archiveCurrentToHistory() {
+                const answered = getAnsweredCount();
+                if (answered > 0) {
+                    const record = {
+                        id: Date.now(),
+                        date: new Date().toLocaleString(),
+                        answered: answered,
+                        correct: getCorrectCount(),
+                        mistakes: generateMistakeList(),
+                        userAnswers: JSON.parse(JSON.stringify(userAnswers)),
+                        revealedAnswers: JSON.parse(JSON.stringify(revealedAnswers))
+                    };
+                    let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                    history.unshift(record); // 最新记录在最前
+                    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+                }
+            }
+
+            function getUserAnswer(index) { return userAnswers[index] || null; }
+            function setUserAnswer(index, answer) { userAnswers[index] = answer; saveProgress(); }
+            function isRevealed(index) { return !!revealedAnswers[index]; }
+            function setRevealed(index) { revealedAnswers[index] = true; saveProgress(); }
+
+            function getAnsweredCount() {
+                return Object.keys(userAnswers).filter(k => userAnswers[k] !== null && userAnswers[k] !== undefined &&
+                    (typeof userAnswers[k] === 'string' ? userAnswers[k].length > 0 : userAnswers[k].length > 0)).length;
+            }
+
+            function getCorrectCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet === userSet) count++;
+                    } else {
+                        if (ua === q.answer) count++;
+                    }
+                }
+                return count;
+            }
+
+            // ==================== DOM 元素 ====================
+            const $ = (sel) => document.querySelector(sel);
+            const sectionLabel = $('#sectionLabel');
+            const questionNum = $('#questionNum');
+            const questionText = $('#questionText');
+            const typeBadge = $('#typeBadge');
+            const optionsArea = $('#optionsArea');
+            const submitMultiBtn = $('#submitMultiBtn');
+            const resultArea = $('#resultArea');
+            const resultHeader = $('#resultHeader');
+            const correctAnswerDisplay = $('#correctAnswerDisplay');
+            const analysisToggle = $('#analysisToggle');
+            const analysisContent = $('#analysisContent');
+            const prevBtn = $('#prevBtn');
+            const nextBtn = $('#nextBtn');
+            const progressBar = $('#progressBar');
+            const progressText = $('#progressText');
+            const correctRate = $('#correctRate');
+            const overlay = $('#overlay');
+            const sheetGrid = $('#sheetGrid');
+            const toast = $('#toast');
+
+            // ==================== 渲染函数 ====================
+            function getPartLabel(part) {
+                if (part === 1) return '第一部分 单选题';
+                if (part === 2) return '第二部分 多选题';
+                if (part === 3) return '第三部分 判断题';
+                return '';
+            }
+
+            function getTypeBadgeClass(type) {
+                if (type === 'single') return 'badge-single';
+                if (type === 'multiple') return 'badge-multiple';
+                return 'badge-judge';
+            }
+
+            function getTypeLabel(type) {
+                if (type === 'single') return '单选题';
+                if (type === 'multiple') return '多选题';
+                return '判断题';
+            }
+
+            function applyFontSize() {
+                const bodyVal = fontSizeBodyValues[fontSizeLevel];
+                const smVal = fontSmValues[fontSizeLevel];
+                document.documentElement.style.setProperty('--font-base', bodyVal);
+                document.documentElement.style.setProperty('--font-sm', smVal);
+                $('#fontSizeIndicator').textContent = fontSizeLabels[fontSizeLevel];
+                if (questionText) questionText.style.fontSize = bodyVal;
+                if (analysisContent && analysisContent.classList.contains('expanded')) analysisContent.style.fontSize = smVal;
+                document.querySelectorAll('.option-text').forEach(el => el.style.fontSize = bodyVal);
+            }
+
+            function renderQuestion() {
+                const q = allQuestions[currentIndex];
+                sectionLabel.textContent = getPartLabel(q.part);
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    questionNum.textContent = `错题复习 ${currentPos + 1}/${mistakeList.length} (原题 ${q.num})`;
+                } else {
+                    questionNum.textContent = `第 ${q.num}/110 题`;
+                }
+                typeBadge.textContent = getTypeLabel(q.type);
+                typeBadge.className = 'question-type-badge ' + getTypeBadgeClass(q.type);
+                questionText.innerHTML = `<span class="qn-inline">${q.num}.</span> ${q.question}`;
+                questionText.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+
+                // 渲染选项
+                optionsArea.innerHTML = '';
+                const optionKeys = Object.keys(q.options);
+                const isMulti = q.type === 'multiple';
+                const revealed = isRevealed(currentIndex);
+                const userAns = getUserAnswer(currentIndex);
+
+                optionKeys.forEach(key => {
+                    const optDiv = document.createElement('div');
+                    optDiv.className = 'option-item';
+                    if (isMulti) optDiv.classList.add('multi-mode');
+                    optDiv.setAttribute('data-key', key);
+
+                    let isSelected = false;
+                    if (isMulti && Array.isArray(userAns)) isSelected = userAns.includes(key);
+                    else if (!isMulti && userAns === key) isSelected = true;
+                    
+                    if (isSelected && !revealed) optDiv.classList.add('selected');
+                    if (isMulti && isSelected && !revealed) optDiv.classList.add('checked');
+
+                    if (revealed) {
+                        const correctKeys = q.answer.split('');
+                        if (isMulti) {
+                            const wasSelected = Array.isArray(userAns) && userAns.includes(key);
+                            const isCorrectOption = correctKeys.includes(key);
+                            if (wasSelected && isCorrectOption) optDiv.classList.add('correct-reveal');
+                            else if (wasSelected && !isCorrectOption) optDiv.classList.add('wrong-reveal');
+                            else if (!wasSelected && isCorrectOption) optDiv.classList.add('correct-reveal');
+                        } else {
+                            if (key === q.answer) optDiv.classList.add('correct-reveal');
+                            if (key === userAns && userAns !== q.answer) optDiv.classList.add('wrong-reveal');
+                        }
+                    }
+
+                    const letterSpan = document.createElement('span');
+                    letterSpan.className = 'option-letter';
+                    letterSpan.textContent = key;
+                    optDiv.appendChild(letterSpan);
+
+                    if (isMulti) {
+                        const checkSpan = document.createElement('span');
+                        checkSpan.className = 'option-check';
+                        checkSpan.textContent = '✓';
+                        optDiv.appendChild(checkSpan);
+                    }
+
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'option-text';
+                    textSpan.textContent = q.options[key];
+                    textSpan.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+                    optDiv.appendChild(textSpan);
+
+                    optDiv.addEventListener('click', () => handleOptionClick(key, isMulti));
+                    optionsArea.appendChild(optDiv);
+                });
+
+                if (isMulti) {
+                    submitMultiBtn.classList.add('visible');
+                    submitMultiBtn.style.display = 'block';
+                    if (revealed) {
+                        submitMultiBtn.style.display = 'none';
+                        submitMultiBtn.classList.remove('visible');
+                    }
+                } else {
+                    submitMultiBtn.classList.remove('visible');
+                    submitMultiBtn.style.display = 'none';
+                }
+
+                if (revealed) showResultArea(q, userAns);
+                else {
+                    resultArea.classList.remove('visible');
+                    resultArea.style.display = 'none';
+                }
+
+                if (mistakeMode) {
+                    prevBtn.disabled = mistakeList.indexOf(currentIndex) === 0;
+                    nextBtn.textContent = mistakeList.indexOf(currentIndex) >= mistakeList.length - 1 ? '完成 ✓' : '下一题 ▶';
+                } else {
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.textContent = currentIndex >= TOTAL - 1 ? '完成 ✓' : '下一题 ▶';
+                }
+
+                updateProgressUI();
+                document.querySelector('.main-content').scrollTop = 0;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function handleOptionClick(key, isMulti) {
+                if (isRevealed(currentIndex)) return;
+
+                if (isMulti) {
+                    let currentSelection = getUserAnswer(currentIndex) || [];
+                    if (!Array.isArray(currentSelection)) currentSelection = [];
+                    const idx = currentSelection.indexOf(key);
+                    if (idx >= 0) currentSelection.splice(idx, 1);
+                    else currentSelection.push(key);
+                    setUserAnswer(currentIndex, currentSelection.length > 0 ? currentSelection : null);
+                    refreshOptionStyles();
+                } else {
+                    setUserAnswer(currentIndex, key);
+                    setRevealed(currentIndex);
+                    renderQuestion();
+                }
+            }
+
+            function refreshOptionStyles() {
+                const q = allQuestions[currentIndex];
+                const isMulti = q.type === 'multiple';
+                const userAns = getUserAnswer(currentIndex);
+                optionsArea.querySelectorAll('.option-item').forEach(item => {
+                    const key = item.getAttribute('data-key');
+                    item.classList.remove('selected', 'checked');
+                    if (isMulti && Array.isArray(userAns) && userAns.includes(key)) item.classList.add('selected', 'checked');
+                    else if (!isMulti && userAns === key) item.classList.add('selected');
+                });
+            }
+
+            function submitMultiAnswer() {
+                const q = allQuestions[currentIndex];
+                if (q.type !== 'multiple' || isRevealed(currentIndex)) return;
+                const userAns = getUserAnswer(currentIndex);
+                if (!userAns || userAns.length === 0) { showToast('请至少选择一个选项'); return; }
+                setRevealed(currentIndex);
+                renderQuestion();
+            }
+
+            function showResultArea(q, userAns) {
+                resultArea.classList.add('visible');
+                resultArea.style.display = 'block';
+                let isCorrect = false;
+                if (q.type === 'multiple') {
+                    const cs = q.answer.split('').sort().join('');
+                    const us = (Array.isArray(userAns) ? [...userAns] : []).sort().join('');
+                    isCorrect = cs === us;
+                } else {
+                    isCorrect = userAns === q.answer;
+                }
+
+                if (isCorrect) {
+                    resultHeader.className = 'result-header correct';
+                    resultHeader.innerHTML = '<span class="result-icon">✅</span> 回答正确！';
+                } else {
+                    resultHeader.className = 'result-header wrong';
+                    resultHeader.innerHTML = '<span class="result-icon">❌</span> 回答错误';
+                }
+
+                const answerLabels = q.answer.split('').map(k => `${k}：${q.options[k]}`).join('；');
+                correctAnswerDisplay.innerHTML = '<strong>正确答案：</strong>' + answerLabels;
+                analysisContent.innerHTML = q.analysis;
+                analysisContent.style.fontSize = fontSmValues[fontSizeLevel];
+                analysisContent.classList.remove('expanded');
+                analysisContent.style.display = 'none';
+                analysisToggle.classList.remove('expanded');
+                analysisToggle.querySelector('.arrow-icon').textContent = '▾';
+                analysisToggle.style.display = 'flex';
+            }
+
+            function toggleAnalysis() {
+                const isExpanded = analysisContent.classList.contains('expanded');
+                if (isExpanded) {
+                    analysisContent.classList.remove('expanded');
+                    analysisContent.style.display = 'none';
+                    analysisToggle.classList.remove('expanded');
+                    analysisToggle.querySelector('.arrow-icon').textContent = '▾';
+                } else {
+                    analysisContent.classList.add('expanded');
+                    analysisContent.style.display = 'block';
+                    analysisToggle.classList.add('expanded');
+                    analysisToggle.querySelector('.arrow-icon').textContent = '▴';
+                }
+            }
+
+            function updateProgressUI() {
+                const answered = getAnsweredCount();
+                const correct = getCorrectCount();
+                progressText.textContent = `已答 ${answered}/${TOTAL}`;
+                correctRate.textContent = answered > 0 ? `正确率 ${Math.round((correct / answered) * 100)}%` : '正确率 -';
+                progressBar.style.width = `${Math.round((answered / TOTAL) * 100)}%`;
+            }
+
+            function goToQuestion(index) {
+                if (index < 0 || index >= TOTAL) return;
+                currentIndex = index;
+                saveProgress();
+                renderQuestion();
+                closeOverlay();
+            }
+
+            function goNext() {
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    if (currentPos < mistakeList.length - 1) goToQuestion(mistakeList[currentPos + 1]);
+                    else {
+                        showToast(`已看完所有错题！`);
+                        showSummaryPanel();
+                    }
+                    return;
+                }
+                if (currentIndex < TOTAL - 1) goToQuestion(currentIndex + 1);
+                else showSummaryPanel();
+            }
+
+            function goPrev() {
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    if (currentPos > 0) goToQuestion(mistakeList[currentPos - 1]);
+                    return;
+                }
+                if (currentIndex > 0) goToQuestion(currentIndex - 1);
+            }
+
+            // ==================== 题单面板 ====================
+            function buildSheetGrid() {
+                sheetGrid.innerHTML = '';
+                let lastPart = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    if (q.part !== lastPart) {
+                        lastPart = q.part;
+                        const label = document.createElement('div');
+                        label.className = 'sheet-section-label';
+                        label.textContent = getPartLabel(q.part);
+                        sheetGrid.appendChild(label);
+                    }
+                    const item = document.createElement('div');
+                    item.className = 'sheet-item';
+                    item.textContent = q.num;
+                    const ua = userAnswers[i];
+                    if (revealedAnswers[i] && ua) {
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        item.classList.add(isCorrect ? 'correct-dot' : 'wrong-dot');
+                    } else if (ua) item.classList.add('correct-dot');
+                    else item.classList.add('unanswered');
+                    
+                    if (i === currentIndex && !mistakeMode) item.classList.add('current-dot');
+                    
+                    item.addEventListener('click', () => { mistakeMode = false; goToQuestion(i); });
+                    sheetGrid.appendChild(item);
+                }
+            }
+
+            function openOverlay() { buildSheetGrid(); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+            function closeOverlay() { overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+
+            let toastTimer;
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+            }
+
+            // ==================== 结算与错题记录 ====================
+            function generateMistakeList() {
+                let wrongIndices = [];
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (revealedAnswers[i] && ua) {
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        if (!isCorrect) wrongIndices.push(i);
+                    }
+                }
+                return wrongIndices;
+            }
+
+            function showSummaryPanel() {
+                let singleAns = 0, singleCorrect = 0, multiAns = 0, multiCorrect = 0, judgeAns = 0, judgeCorrect = 0, answered = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (ua && (typeof ua === 'string' ? ua.length > 0 : ua.length > 0)) {
+                        answered++;
+                        if (q.part === 1) singleAns++;
+                        else if (q.part === 2) multiAns++;
+                        else if (q.part === 3) judgeAns++;
+
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        if (isCorrect) {
+                            if (q.part === 1) singleCorrect++;
+                            else if (q.part === 2) multiCorrect++;
+                            else if (q.part === 3) judgeCorrect++;
+                        }
+                    }
+                }
+                
+                $('#sumTotal').textContent = TOTAL;
+                $('#sumAnswered').textContent = answered;
+                $('#sumCorrect').textContent = singleCorrect + multiCorrect + judgeCorrect;
+                $('#rateSingle').textContent = singleAns ? Math.round(singleCorrect/singleAns * 100) + '%' : '0%';
+                $('#rateMulti').textContent = multiAns ? Math.round(multiCorrect/multiAns * 100) + '%' : '0%';
+                $('#rateJudge').textContent = judgeAns ? Math.round(judgeCorrect/judgeAns * 100) + '%' : '0%';
+                
+                $('#summaryOverlay').classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ==================== 历史记录面板 ====================
+            function openHistoryPanel() {
+                const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                const listEl = $('#historyList');
+                listEl.innerHTML = '';
+                if (history.length === 0) {
+                    listEl.innerHTML = '<div style="text-align:center; color:#888; padding: 40px 0; font-size: 14px;">暂无历史记录<br><span style="font-size:12px; color:#aaa; margin-top:10px; display:inline-block;">（交卷并点击"重新开始"即可自动保存）</span></div>';
+                } else {
+                    history.forEach((rec, index) => {
+                        const rate = rec.answered > 0 ? Math.round((rec.correct / rec.answered) * 100) : 0;
+                        const item = document.createElement('div');
+                        item.style.cssText = 'background: #f9f9fb; padding: 14px; border-radius: 12px; margin-bottom: 12px; font-size: 14px; border: 1px solid #eee;';
+                        item.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; color: #333; font-weight: 700;">
+                                <span>${rec.date}</span>
+                                <span style="color: var(--primary);">正确率 ${rate}%</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; color: #666; font-size: 13px; margin-bottom: 12px; background: #fff; padding: 6px 10px; border-radius: 6px;">
+                                <span>已答: ${rec.answered}</span>
+                                <span>答对: <span style="color: var(--correct); font-weight: bold;">${rec.correct}</span></span>
+                                <span>错题: <span style="color: var(--wrong); font-weight: bold;">${rec.mistakes.length}</span></span>
+                            </div>
+                            <div style="display:flex; gap: 8px;">
+                                <button class="nav-btn load-btn" style="flex:1; min-height:36px; padding: 0;">加载记录</button>
+                                <button class="nav-btn primary-nav view-err-btn" style="flex:1; min-height:36px; padding: 0;" ${rec.mistakes.length === 0 ? 'disabled' : ''}>看错题</button>
+                                <button class="nav-btn del-btn" style="flex:0.5; min-height:36px; padding: 0; color: #FF3B30; border-color: #FFECEB; background: #FFECEB;">删除</button>
+                            </div>
+                        `;
+
+                        item.querySelector('.load-btn').addEventListener('click', () => {
+                            if (getAnsweredCount() > 0 && !confirm('加载历史记录将覆盖您当前的答题进度。\n建议您先在"答题报告"点击"重新开始"保存当前进度。\n\n确认覆盖并加载吗？')) return;
+                            userAnswers = rec.userAnswers || {};
+                            revealedAnswers = rec.revealedAnswers || {};
+                            mistakeMode = false;
+                            currentIndex = 0;
+                            saveProgress();
+                            $('#historyOverlay').classList.remove('visible');
+                            document.body.style.overflow = '';
+                            renderQuestion();
+                            showToast('✅ 历史记录加载成功');
+                        });
+
+                        item.querySelector('.view-err-btn').addEventListener('click', () => {
+                            if (getAnsweredCount() > 0 && !confirm('查看历史错题将暂时覆盖您当前的答题现场。\n确认查看吗？')) return;
+                            userAnswers = rec.userAnswers || {};
+                            revealedAnswers = rec.revealedAnswers || {};
+                            mistakeList = rec.mistakes;
+                            mistakeMode = true;
+                            currentIndex = mistakeList[0] !== undefined ? mistakeList[0] : 0;
+                            saveProgress();
+                            $('#historyOverlay').classList.remove('visible');
+                            document.body.style.overflow = '';
+                            renderQuestion();
+                            showToast(`进入历史错题模式，共 ${mistakeList.length} 题`);
+                        });
+
+                        item.querySelector('.del-btn').addEventListener('click', () => {
+                            if (confirm('确定要删除这条历史记录吗？')) {
+                                history.splice(index, 1);
+                                localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+                                openHistoryPanel(); // 刷新列表
+                            }
+                        });
+
+                        listEl.appendChild(item);
+                    });
+                }
+                $('#historyOverlay').classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ==================== 事件绑定 ====================
+            $('#homeBtn').addEventListener('click', () => window.location.href = 'index.html');
+            $('#backBtn').addEventListener('click', openOverlay);
+            $('#historyBtn').addEventListener('click', openHistoryPanel);
+            
+            $('#sheetClose').addEventListener('click', closeOverlay);
+            $('#viewSummaryBtn').addEventListener('click', () => { closeOverlay(); showSummaryPanel(); });
+            $('#summaryClose').addEventListener('click', () => { $('#summaryOverlay').classList.remove('visible'); document.body.style.overflow = ''; });
+            $('#historyClose').addEventListener('click', () => { $('#historyOverlay').classList.remove('visible'); document.body.style.overflow = ''; });
+            
+            $('.overlay').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('visible'); document.body.style.overflow = ''; } });
+            $('#historyOverlay').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('visible'); document.body.style.overflow = ''; } });
+            
+            $('#prevBtn').addEventListener('click', goPrev);
+            $('#nextBtn').addEventListener('click', goNext);
+            $('#submitMultiBtn').addEventListener('click', submitMultiAnswer);
+            $('#analysisToggle').addEventListener('click', toggleAnalysis);
+
+            $('#restartBtn').addEventListener('click', () => {
+                const ansCount = getAnsweredCount();
+                const msg = ansCount > 0 ? '确定要交卷并重新开始吗？\n\n您当前的进度将会被自动保存到历史记录中。' : '确定要清空答题记录，重新开始吗？';
+                if(confirm(msg)) {
+                    archiveCurrentToHistory(); // 归档
+                    userAnswers = {};
+                    revealedAnswers = {};
+                    mistakeMode = false;
+                    currentIndex = 0;
+                    saveProgress();
+                    $('#summaryOverlay').classList.remove('visible');
+                    document.body.style.overflow = '';
+                    renderQuestion();
+                    showToast(ansCount > 0 ? '✅ 已重新开始，进度已归档至历史记录' : '已重新开始');
+                }
+            });
+
+            $('#viewMistakesBtn').addEventListener('click', () => {
+                mistakeList = generateMistakeList();
+                if (mistakeList.length === 0) { showToast('太棒了，没有错题！'); return; }
+                mistakeMode = true;
+                currentIndex = mistakeList[0];
+                saveProgress();
+                $('#summaryOverlay').classList.remove('visible');
+                document.body.style.overflow = '';
+                renderQuestion();
+                showToast(`进入错题模式，共 ${mistakeList.length} 题`);
+            });
+
+            $('#fontSizeBtn').addEventListener('click', () => {
+                fontSizeLevel = (fontSizeLevel + 1) % 3;
+                applyFontSize();
+                saveProgress();
+                showToast(`字体大小：${fontSizeLabels[fontSizeLevel]}`);
+            });
+
+            // 键盘与滑动辅助
+            document.addEventListener('keydown', e => {
+                if ($('#overlay').classList.contains('visible') || $('#summaryOverlay').classList.contains('visible') || $('#historyOverlay').classList.contains('visible')) return;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+            });
+
+            let touchStartX = 0, touchStartY = 0;
+            document.addEventListener('touchstart', e => {
+                if (e.target.closest('.overlay') || e.target.closest('.sheet-panel') || e.target.closest('.summary-panel')) return;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            document.addEventListener('touchend', e => {
+                if (e.target.closest('.overlay') || e.target.closest('.sheet-panel') || e.target.closest('.summary-panel')) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+                    if (dx < -30) goNext();
+                    else if (dx > 30) goPrev();
+                }
+            });
+
+            // ==================== 初始化 ====================
+            function init() {
+                loadProgress();
+                applyFontSize();
+                renderQuestion();
+                updateProgressUI();
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
