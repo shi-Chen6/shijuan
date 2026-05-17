@@ -201,26 +201,237 @@
             padding: 20px 0;
             font-style: italic;
         }
+
+        .exam-card.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--primary);
+            box-shadow: none;
+        }
+
+        .exam-card.drag-over {
+            border: 2px solid var(--primary);
+            transform: scale(1.02);
+        }
+
+        /* 手机端排序面板样式 */
+        .sort-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .sort-modal.show {
+            display: flex;
+        }
+
+        .sort-container {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .sort-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 18px;
+            background: var(--bg);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0 5px;
+        }
+
+        /* 新增功能样式：全局统计、搜索框、重置按钮 */
+        .global-stats {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 16px;
+            border-radius: var(--radius);
+            margin: 0 auto 20px auto;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+        }
+        .global-stat-item {
+            text-align: center;
+        }
+        .global-stat-val {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .global-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            font-size: 15px;
+            outline: none;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(74, 108, 247, 0.15);
+        }
+        .reset-btn {
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .reset-btn:hover {
+            color: var(--danger);
+        }
+
+        .sort-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            list-style: none;
+        }
+
+        .sort-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .sort-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sort-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: none;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .sort-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sort-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #f0f0f0;
+            color: #aaa;
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <header>
         <h1>📖 潮南区试卷导航中心</h1>
         <p>实时同步您的刷题进度与错题记录</p>
-        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <button class="exam-action" onclick="openSortModal()" style="border: none; cursor: pointer; background: #f59e0b;">自定义排序</button>
             <button class="exam-action" onclick="exportData()" style="border: none; cursor: pointer;">导出记录</button>
+            <button class="exam-action" onclick="exportWrongQuestions()" style="border: none; cursor: pointer; background: #ef4444;">导出错题本</button>
             <button class="exam-action" onclick="document.getElementById('importFile').click()" style="border: none; cursor: pointer; background: #10b981;">导入记录</button>
             <input type="file" id="importFile" style="display: none;" accept=".json" onchange="importData(event)">
+            <!-- 学习记录导入（用于学习曲线） -->
+            <input type="file" id="importStudy" style="display: none;" accept=".json" onchange="importStudyHistory(event)">
+            <button class="exam-action" onclick="document.getElementById('importStudy').click()" style="border: none; cursor: pointer; background: #6b7280;">导入学习记录</button>
         </div>
     </header>
+
+    <div class="global-stats" id="globalStats">
+        <!-- 全局统计动态渲染 -->
+    </div>
+
+    <div style="max-width:800px;margin:0 auto 16px auto;">
+        <div id="chartContainer" style="background:white;border-radius:12px;padding:12px;box-shadow:var(--shadow);">
+            <canvas id="studyChart" style="width:100%;height:220px"></canvas>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 快速搜索试卷... (如：真题、模拟)" oninput="renderDashboard()">
+    </div>
 
     <div class="dashboard" id="dashboard">
         <!-- 卡片动态渲染 -->
     </div>
 
+    <!-- 手机端排序弹窗 -->
+    <div class="sort-modal" id="sortModal">
+        <div class="sort-container">
+            <div class="sort-header">
+                <span>排列试卷顺序</span>
+                <button class="close-btn" onclick="closeSortModal()">×</button>
+            </div>
+            <ul class="sort-list" id="sortList">
+                <!-- 动态生成 -->
+            </ul>
+            <div style="padding: 12px; border-top: 1px solid var(--border); background: #fafafa;">
+                <button class="exam-action" onclick="closeSortModal()" style="width: 100%; border: none; cursor: pointer; font-size: 16px; padding: 12px;">完成</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const exams = [
+        const defaultExams = [
+             { id: 13, title: '密卷（一）', link: '密卷一.html', key: 'exam_stats_jy5' },
+            { id: 14, title: '密卷（二）', link: '密卷二.html', key: 'exam_stats_jy6' },
+            { id: 15, title: '密卷（三）', link: '密卷三.html', key: 'exam_stats_jy7' },
+            { id: 16, title: '中公（一）', link: '中公一.html', key: 'exam_stats_jy8' },
+            { id: 17, title: '中公（二）', link: '中公二.html', key: 'exam_stats_jy9' },
+            { id: 18, title: '中公（三）', link: '中公三.html', key: 'exam_stats_jy10' },
+            { id: 5, title: '潮南教师招聘真题（一）', link: '真题1.html', key: 'exam_stats_5' },
+            { id: 6, title: '潮南教师招聘真题（二）', link: '真题2.html', key: 'exam_stats_6' },
+            { id: 7, title: '潮南教师招聘真题（三）', link: '真题3.html', key: 'exam_stats_7' },
+            { id: 8, title: '潮南教师招聘真题（四）', link: '真题4.html', key: 'exam_stats_8' },
             { id: 1, title: '潮南教师招聘模拟题（一）', link: '模拟1.html', key: 'exam_stats_1' },
             { id: 2, title: '潮南教师招聘模拟题（二）', link: '模拟2.html', key: 'exam_stats_2' },
             { id: 3, title: '潮南教师招聘模拟题（三）', link: '模拟3.html', key: 'exam_stats_3' },
@@ -229,14 +440,33 @@
             { id: 10, title: '敬一畏模拟题（二）', link: '敬一畏模拟2.html', key: 'exam_stats_jy2' },
             { id: 11, title: '敬一畏模拟题（三）', link: '敬一畏模拟3.html', key: 'exam_stats_jy3' },
             { id: 12, title: '敬一畏模拟题（四）', link: '敬一畏模拟4.html', key: 'exam_stats_jy4' },
-              { id: 13, title: '密卷（一）', link: '密卷一.html', key: 'exam_stats_jy5' },
-            { id: 14, title: '密卷（二）', link: '密卷二.html', key: 'exam_stats_jy6' },
-            { id: 15, title: '密卷（三）', link: '密卷三.html', key: 'exam_stats_jy7' },
-            { id: 5, title: '潮南教师招聘真题（一）', link: '真题1.html', key: 'exam_stats_5' },
-            { id: 6, title: '潮南教师招聘真题（二）', link: '真题2.html', key: 'exam_stats_6' },
-            { id: 7, title: '潮南教师招聘真题（三）', link: '真题3.html', key: 'exam_stats_7' },
-            { id: 8, title: '潮南教师招聘真题（四）', link: '真题4.html', key: 'exam_stats_8' }
         ];
+
+        let exams = [];
+        const savedOrder = localStorage.getItem('exams_order');
+        if (savedOrder) {
+            try {
+                const orderIds = JSON.parse(savedOrder);
+                orderIds.forEach(id => {
+                    const exam = defaultExams.find(e => e.id === id);
+                    if (exam) exams.push(exam);
+                });
+                defaultExams.forEach(exam => {
+                    if (!orderIds.includes(exam.id)) exams.push(exam);
+                });
+            } catch (e) {
+                exams = [...defaultExams];
+            }
+        } else {
+            exams = [...defaultExams];
+        }
+
+        function saveOrder() {
+            const orderIds = exams.map(e => e.id);
+            localStorage.setItem('exams_order', JSON.stringify(orderIds));
+        }
+
+        let draggedIndex = -1;
 
         function exportData() {
             const dataToExport = {};
@@ -295,7 +525,7 @@
             const dashboard = document.getElementById('dashboard');
             dashboard.innerHTML = '';
 
-            exams.forEach(exam => {
+            exams.forEach((exam, index) => {
                 const statStr = localStorage.getItem(exam.key);
                 let stats = null;
                 
@@ -309,6 +539,52 @@
 
                 const card = document.createElement('div');
                 card.className = 'exam-card';
+                card.draggable = true;
+                
+                // 拖拽事件监听
+                card.addEventListener('dragstart', function(e) {
+                    draggedIndex = index;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('drag-over'));
+                });
+
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                });
+
+                card.addEventListener('dragenter', function(e) {
+                    e.preventDefault();
+                    if (index !== draggedIndex) {
+                        this.classList.add('drag-over');
+                    }
+                });
+
+                card.addEventListener('dragleave', function(e) {
+                    this.classList.remove('drag-over');
+                });
+
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (draggedIndex === -1 || draggedIndex === index) return;
+                    
+                    const draggedItem = exams[draggedIndex];
+                    exams.splice(draggedIndex, 1);
+                    // 重新计算目标索引
+                    let targetIndex = index;
+                    if (draggedIndex < index) {
+                        targetIndex -= 0; // 因为从前面移除不影响后面的相对顺序，如果我们要在目标前面插入
+                    }
+                    exams.splice(targetIndex, 0, draggedItem);
+                    saveOrder();
+                    renderDashboard();
+                });
 
                 if (!stats || !stats.total) { // 未作答或暂无数据
                     card.innerHTML = `
@@ -370,8 +646,344 @@
         }
 
         // 初始化和实时更新
-        document.addEventListener('DOMContentLoaded', renderDashboard);
-        window.addEventListener('pageshow', renderDashboard); // 当用户从模拟卷后退回来时触发渲染更新
+        function init() {
+            renderDashboard();
+            renderGlobalStats();
+            renderStudyChart();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('pageshow', init); // 当用户从模拟卷后退回来时触发渲染更新
+
+        // 排序面板逻辑
+        function openSortModal() {
+            document.getElementById('sortModal').classList.add('show');
+            renderSortList();
+        }
+
+        function closeSortModal() {
+            document.getElementById('sortModal').classList.remove('show');
+        }
+
+        function renderSortList() {
+            const list = document.getElementById('sortList');
+            list.innerHTML = '';
+            exams.forEach((exam, index) => {
+                const li = document.createElement('li');
+                li.className = 'sort-item';
+                li.innerHTML = `
+                    <span style="font-size: 15px; font-weight: 500; flex: 1;">${exam.title}</span>
+                    <div class="sort-actions">
+                        <button class="sort-btn" onclick="moveExam(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
+                        <button class="sort-btn" onclick="moveExam(${index}, 1)" ${index === exams.length - 1 ? 'disabled' : ''}>↓</button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function moveExam(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= exams.length) return;
+            
+            // 交换位置
+            const temp = exams[index];
+            exams[index] = exams[newIndex];
+            exams[newIndex] = temp;
+            
+            saveOrder();
+            renderSortList(); // 重新渲染排序列表
+            renderDashboard(); // 重新渲染主界面
+        }
+
+        // 搜索过滤与全局统计
+        function renderGlobalStats() {
+            const total = { answered: 0, wrong: 0, questions: 0 };
+            exams.forEach(exam => {
+                const statStr = localStorage.getItem(exam.key);
+                if (!statStr) return;
+                try {
+                    const s = JSON.parse(statStr);
+                    total.answered += (s.answered || 0);
+                    total.wrong += (s.wrong || 0);
+                    total.questions += (s.total || 0);
+                } catch (e) {}
+            });
+
+            const statsEl = document.getElementById('globalStats');
+            const accuracy = total.answered > 0 ? Math.round(((total.answered - total.wrong) / total.answered) * 100) : 0;
+            statsEl.innerHTML = `
+                <div class="global-stat-item">
+                    <div class="global-stat-val">${total.answered}</div>
+                    <div class="global-stat-label">总刷题数</div>
+                </div>
+                <div class="global-stat-item">
+                    <div class="global-stat-val">${total.wrong}</div>
+                    <div class="global-stat-label">总错题数</div>
+                </div>
+                <div class="global-stat-item">
+                    <div class="global-stat-val">${accuracy}%</div>
+                    <div class="global-stat-label">综合正确率</div>
+                </div>
+                <div class="global-stat-item">
+                    <div class="global-stat-val">${exams.length}</div>
+                    <div class="global-stat-label">试卷数量</div>
+                </div>
+            `;
+        }
+
+        // 修改 renderDashboard 支持搜索过滤
+        const originalRenderDashboard = renderDashboard;
+        function renderDashboard() {
+            const q = (document.getElementById('searchInput') && document.getElementById('searchInput').value || '').trim().toLowerCase();
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = '';
+
+            exams.forEach((exam, index) => {
+                if (q && !exam.title.toLowerCase().includes(q)) return; // 过滤
+
+                const statStr = localStorage.getItem(exam.key);
+                let stats = null;
+                
+                if (statStr) {
+                    try {
+                        stats = JSON.parse(statStr);
+                    } catch(e) {
+                        console.error('JSON parse error for', exam.key);
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = 'exam-card';
+                card.draggable = true;
+                
+                // 拖拽事件监听
+                card.addEventListener('dragstart', function(e) {
+                    draggedIndex = index;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('drag-over'));
+                });
+
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                });
+
+                card.addEventListener('dragenter', function(e) {
+                    e.preventDefault();
+                    if (index !== draggedIndex) {
+                        this.classList.add('drag-over');
+                    }
+                });
+
+                card.addEventListener('dragleave', function(e) {
+                    this.classList.remove('drag-over');
+                });
+
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (draggedIndex === -1 || draggedIndex === index) return;
+                    
+                    const draggedItem = exams[draggedIndex];
+                    exams.splice(draggedIndex, 1);
+                    // 重新计算目标索引
+                    let targetIndex = index;
+                    if (draggedIndex < index) {
+                        targetIndex -= 0;
+                    }
+                    exams.splice(targetIndex, 0, draggedItem);
+                    saveOrder();
+                    renderDashboard();
+                    renderGlobalStats();
+                });
+
+                // 卡片内容
+                const statHtml = (!stats || !stats.total) ? `
+                        <div class="exam-header">
+                            <div class="exam-title">${exam.title}</div>
+                            <a href="${exam.link}" class="exam-action">开始答题</a>
+                        </div>
+                        <div class="no-data">暂无答题记录，请开始刷题吧！</div>
+                    ` : (() => {
+                        const progressPercent = Math.round((stats.answered / stats.total) * 100) || 0;
+                        const wrongCount = stats.wrong || 0;
+                        let wrongTagsHtml = '';
+                        if (stats.wrongQuestions && stats.wrongQuestions.length > 0) {
+                            wrongTagsHtml = stats.wrongQuestions.map(wq => `<span class="wrong-tag">第${wq.num}题</span>`).join('');
+                        } else if (wrongCount === 0 && stats.answered > 0) {
+                            wrongTagsHtml = `<span style="font-size:12px;color:var(--success);">🎉 全对，太棒了！</span>`;
+                        }
+
+                        return `
+                        <div class="exam-header">
+                            <div class="exam-title">${exam.title}</div>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <a href="${exam.link}" class="exam-action">${stats.answered > 0 ? '继续答题' : '开始答题'}</a>
+                                <button class="reset-btn" onclick="resetExam(${exam.id})">清空</button>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span>答题进度</span>
+                                <span>${stats.answered} / ${stats.total} (${progressPercent}%)</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${progressPercent}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">已答题目</div>
+                                <div class="stat-value value-success">${stats.answered}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">错题数量</div>
+                                <div class="stat-value value-danger">${wrongCount}</div>
+                            </div>
+                        </div>
+
+                        <div class="wrong-list-container">
+                            <div class="wrong-list-title">错题记录</div>
+                            <div class="wrong-tags">
+                                ${(stats.answered === 0) ? '<span style="font-size:12px;color:#888;">暂无数据</span>' : wrongTagsHtml}
+                            </div>
+                        </div>
+                    `;
+                    })();
+
+                card.innerHTML = statHtml;
+                dashboard.appendChild(card);
+            });
+
+            // 更新全局统计
+            renderGlobalStats();
+        }
+
+        function resetExam(examId) {
+            if (!confirm('确定要清空该试卷的答题记录吗？此操作不可撤销。')) return;
+            const exam = exams.find(e => e.id === examId);
+            if (!exam) return;
+            localStorage.removeItem(exam.key);
+            renderDashboard();
+            renderGlobalStats();
+        }
+
+        // 错题本汇总导出与打印
+        function exportWrongQuestions() {
+            const allWrong = [];
+            exams.forEach(exam => {
+                const statStr = localStorage.getItem(exam.key);
+                if (!statStr) return;
+                try {
+                    const s = JSON.parse(statStr);
+                    if (s.wrongQuestions && s.wrongQuestions.length) {
+                        s.wrongQuestions.forEach(wq => {
+                            allWrong.push({ exam: exam.title, num: wq.num, question: wq.question || '' });
+                        });
+                    }
+                } catch (e) {}
+            });
+
+            if (allWrong.length === 0) {
+                alert('当前没有检测到任何错题记录。');
+                return;
+            }
+
+            const win = window.open('', '_blank');
+            const html = `
+                <html><head><meta charset="utf-8"><title>错题本导出</title>
+                <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px}h1{color:#333} .item{padding:8px;border-bottom:1px solid #eee}</style>
+                </head><body>
+                <h1>错题本汇总</h1>
+                <div>共 ${allWrong.length} 条错题</div>
+                <div style="margin-top:16px">
+                ${allWrong.map((w,idx) => `<div class="item"><strong>${idx+1}. [${w.exam}] 第${w.num}题</strong><div>${w.question}</div></div>`).join('')}
+                </div>
+                <div style="margin-top:20px"><button onclick="window.print()">打印/预览</button>
+                <button onclick="(function(){const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(${JSON.stringify(allWrong)}));a.download='错题本.json';document.body.appendChild(a);a.click();document.body.removeChild(a);})()">下载 JSON</button>
+                </div>
+                </body></html>
+            `;
+            win.document.write(html);
+            win.document.close();
+        }
+
+        // 学习记录导入与曲线图（Chart.js）
+        function importStudyHistory(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    // 期望 data 为 [{date:'YYYY-MM-DD', answered: n, correct: m}, ...]
+                    localStorage.setItem('study_history', JSON.stringify(data));
+                    alert('已导入学习记录，更新图表。');
+                    renderStudyChart();
+                } catch (err) {
+                    alert('导入失败：文件格式错误');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        let studyChartInstance = null;
+        function renderStudyChart() {
+            const raw = localStorage.getItem('study_history');
+            let data = null;
+            if (raw) {
+                try { data = JSON.parse(raw); } catch(e) { data = null; }
+            }
+
+            // 如果没有数据，生成示例过去7天数据
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                const today = new Date();
+                data = [];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+                    const label = d.toISOString().slice(0,10);
+                    const answered = Math.floor(Math.random()*20);
+                    const correct = Math.max(0, answered - Math.floor(Math.random()*5));
+                    data.push({date: label, answered, correct});
+                }
+            }
+
+            const labels = data.map(r => r.date);
+            const answeredData = data.map(r => r.answered || 0);
+            const accuracyData = data.map(r => {
+                const a = r.answered || 0; const c = r.correct || 0; return a > 0 ? Math.round((c / a) * 100) : 0;
+            });
+
+            const ctx = document.getElementById('studyChart').getContext('2d');
+            if (studyChartInstance) studyChartInstance.destroy();
+            studyChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { type: 'bar', label: '答题量', data: answeredData, backgroundColor: 'rgba(74,108,247,0.7)', yAxisID: 'y' },
+                        { type: 'line', label: '正确率(%)', data: accuracyData, borderColor: 'rgba(16,185,129,0.9)', fill: false, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { beginAtZero: true, position: 'left', title: { display: true, text: '答题量' } },
+                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '正确率 (%)' }, ticks: { max: 100 } }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
