@@ -383,6 +383,7 @@
             <!-- 学习记录导入（用于学习曲线） -->
             <input type="file" id="importStudy" style="display: none;" accept=".json" onchange="importStudyHistory(event)">
             <button class="exam-action" onclick="document.getElementById('importStudy').click()" style="border: none; cursor: pointer; background: #6b7280;">导入学习记录</button>
+            <button class="exam-action" onclick="window.location.href='大亚湾/index.html'" style="border: none; cursor: pointer; background: #0f766e;">大亚湾导航</button>
         </div>
     </header>
 
@@ -940,12 +941,14 @@
         function renderStudyChart() {
             const raw = localStorage.getItem('study_history');
             let data = null;
+            let usingSample = false;
             if (raw) {
                 try { data = JSON.parse(raw); } catch(e) { data = null; }
             }
 
-            // 如果没有数据，生成示例过去7天数据
+            // 如果没有数据或格式不正确，生成示例过去7天数据并标注为示例
             if (!data || !Array.isArray(data) || data.length === 0) {
+                usingSample = true;
                 const today = new Date();
                 data = [];
                 for (let i = 6; i >= 0; i--) {
@@ -955,13 +958,23 @@
                     const correct = Math.max(0, answered - Math.floor(Math.random()*5));
                     data.push({date: label, answered, correct});
                 }
+                console.warn('使用示例学习数据渲染学习曲线；导入 study_history 可显示真实数据。');
             }
+
+            // 规范化并校验每条记录
+            data = data.map(item => {
+                const date = item.date ? String(item.date) : '';
+                const answered = Number(item.answered) || 0;
+                const correct = Number(item.correct) || 0;
+                const safeCorrect = Math.min(Math.max(correct, 0), answered); // correct 不应大于 answered
+                return { date, answered, correct: safeCorrect };
+            });
 
             const labels = data.map(r => r.date);
             const answeredData = data.map(r => r.answered || 0);
             const accuracyData = data.map(r => {
                 const a = r.answered || 0; const c = r.correct || 0; return a > 0 ? Math.round((c / a) * 100) : 0;
-            });
+            }).map(v => Math.min(Math.max(v, 0), 100)); // 限制在0-100
 
             const ctx = document.getElementById('studyChart').getContext('2d');
             if (studyChartInstance) studyChartInstance.destroy();
@@ -979,10 +992,27 @@
                     interaction: { mode: 'index', intersect: false },
                     scales: {
                         y: { beginAtZero: true, position: 'left', title: { display: true, text: '答题量' } },
-                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '正确率 (%)' }, ticks: { max: 100 } }
+                        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '正确率 (%)' }, ticks: { max: 100, min: 0 } }
                     }
                 }
             });
+
+            // 显示示例数据提示
+            const chartContainer = document.getElementById('chartContainer');
+            if (usingSample) {
+                if (!document.getElementById('sampleNotice')) {
+                    const note = document.createElement('div');
+                    note.id = 'sampleNotice';
+                    note.style.fontSize = '12px';
+                    note.style.color = '#666';
+                    note.style.marginTop = '6px';
+                    note.textContent = '当前展示为示例数据；导入真实学习记录可替换显示。';
+                    chartContainer.appendChild(note);
+                }
+            } else {
+                const existing = document.getElementById('sampleNotice');
+                if (existing) existing.remove();
+            }
         }
     </script>
 </body>
