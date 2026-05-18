@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>德育过程的多开端性刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">德育过程的多开端性</div>
+                        <div class="progress-text">教招核心考点 · 高频真题</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "衡量一个人品德高低最重要的标志是（）",
+            "options": [{ "label": "A", "text": "道德认识" }, { "label": "B", "text": "道德情感" }, { "label": "C",
+                "text": "道德意志" }, { "label": "D", "text": "道德行为" }],
+            "answer": 3,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是D（道德行为）。道德行为是品德的外在实际表现，是<strong>衡量品德高低的最重要标志</strong>。一个人的品德最终要通过其行为来检验和评判。</p><p><strong>📚 知识点讲解：</strong>品德四要素中，道德认识是基础（是非判断），道德情感是催化剂和内部动力，道德意志是精神保障（克服困难），而道德行为是<strong>最终标志和衡量标准</strong>。四者各有定位，不可混淆。常考对应关系：<span class=\"highlight\">知基础，情催化，意保障，行标志</span>。</p><p><strong>💡 解题思路：</strong>题干关键词是\u201C衡量\u201D和\u201C标志\u201D。A项道德认识是基础和前提，但不是衡量标志；B项道德情感是内在动力，无法直接衡量；C项道德意志是精神保障，也不是衡量标准。只有D项道德行为是外显的、可观察的实际行动，能够作为衡量品德高低的客观标志。故选D。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "德育过程的基础是（）",
+            "options": [{ "label": "A", "text": "道德认识" }, { "label": "B", "text": "道德情感" }, { "label": "C",
+                    "text": "道德意志" }, { "label": "D", "text": "道德行为" }
+            ],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（道德认识）。道德认识是德育过程的<strong>前提与基础</strong>，没有正确的道德认知就无法形成良好的品德。</p><p><strong>📚 知识点讲解：</strong>在品德四要素中，道德认识（知）解决的是\u201C是什么\u201D和\u201C为什么\u201D的问题，是学生对是非善恶的理解与判断能力。它是整个品德结构的<strong>认知基础</strong>。如果缺乏正确的道德观念，后续的情感培养、意志锻炼和行为训练都将失去方向。这正是\u201C晓之以理\u201D被放在首位的原因。</p><p><strong>💡 解题思路：</strong>题干问的是\u201C德育过程的基础\u201D。B项道德情感是催化剂和动力来源，不是基础；C项道德意志提供精神保障；D项道德行为是最终标志。只有A项道德认识承担\u201C打底\u201D的功能，为品德发展提供认知前提。因此选A。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "德育过程不必严格按照知\u2014情\u2014意\u2014行的顺序开展，体现德育的（）",
+            "options": [{ "label": "A", "text": "长期性" }, { "label": "B", "text": "多开端性" }, { "label": "C",
+                    "text": "反复性" }, { "label": "D", "text": "阶段性" }
+            ],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（多开端性）。<strong>多开端性</strong>是指德育不必严格遵循固定顺序，可以从知、情、意、行任意一个环节作为开端，顺序灵活。</p><p><strong>📚 知识点讲解：</strong>德育的<strong>多开端性</strong>是教招考试的重中之重。常规顺序是知\u2192情\u2192意\u2192行，但由于学生品德发展不平衡、存在个体差异，有的学生缺认知、有的缺情感、有的缺行为、有的缺意志，因此德育可以灵活选择切入点。注意区分：长期性指德育需要漫长过程，反复性指学生品德会反复波动，阶段性指不同年龄阶段特点不同。</p><p><strong>💡 解题思路：</strong>题干核心信息是\u201C不必严格按照固定顺序\u201D，这直接指向多开端性的定义。A长期性强调时间跨度长；C反复性强调整体反复、需要耐心；D阶段性强调年龄特征。均与\u201C顺序灵活\u201D无关。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "对于明知故犯、意志力薄弱的学生，德育应重点从哪一环节入手（）",
+            "options": [{ "label": "A", "text": "道德认识" }, { "label": "B", "text": "道德情感" }, { "label": "C",
+                    "text": "道德意志" }, { "label": "D", "text": "道德行为" }],
+            "answer": 2,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（道德意志）。题干描述的学生\u201C明知故犯\u201D，说明他们道理都懂（认识没问题），但\u201C意志力薄弱\u201D、抵制不住诱惑，因此德育重点应放在<strong>锻炼道德意志</strong>上。</p><p><strong>📚 知识点讲解：</strong>道德意志的核心功能是<strong>克服困难、抵制诱惑、坚持道德行为</strong>，被称为品德结构的\u201C精神保障\u201D。当学生已经具备正确认知但缺乏自控力时，就需要\u201C持之以恒\u201D，即加强意志训练。这也体现了德育多开端性的实践应用\u2014\u2014从意志环节切入。</p><p><strong>💡 解题思路：</strong>\u201C明知故犯\u201D说明认识层面没问题，排除A；题干没有提到情感冷漠或缺乏同情心，排除B；也没有说行为习惯差，排除D。关键词\u201C意志力薄弱\u201D直接对应C项道德意志。故选C。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "学生道理都懂，但缺乏同情心、待人冷漠，德育应侧重（）",
+            "options": [{ "label": "A", "text": "晓之以理" }, { "label": "B", "text": "动之以情" }, { "label": "C",
+                    "text": "持之以恒" }, { "label": "D", "text": "导之以行" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（动之以情）。学生\u201C道理都懂\u201D说明认知没问题，但\u201C缺乏同情心、待人冷漠\u201D说明<strong>道德情感缺失</strong>，应侧重培养道德情感，即\u201C动之以情\u201D。</p><p><strong>📚 知识点讲解：</strong>道德情感是<strong>内心爱憎体验</strong>，是品德发展的\u201C催化剂\u201D和\u201C内部动力\u201D。当学生冷漠无爱心时，再讲道理效果甚微，需要先激发其情感共鸣。这也体现了德育多开端性\u2014\u2014从情感环节切入。四句话对应关系：晓之以理\u2192知，动之以情\u2192情，持之以恒\u2192意，导之以行\u2192行。</p><p><strong>💡 解题思路：</strong>\u201C道理都懂\u201D说明不需要再\u201C晓之以理\u201D（A错）；题干未提及意志力薄弱或行为习惯差，排除C和D。\u201C缺乏同情心\u201D直接指向情感缺失，对应B项\u201C动之以情\u201D。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "学生日常行为习惯差、经常违纪，教师直接纠正其行为，这体现德育（）",
+            "options": [{ "label": "A", "text": "多开端性" }, { "label": "B", "text": "统一性" }, { "label": "C",
+                    "text": "强制性" }, { "label": "D", "text": "单一性" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（多开端性）。教师从<strong>道德行为</strong>直接入手纠正学生行为，不按常规的知\u2192情\u2192意\u2192行顺序，体现了德育的多开端性。</p><p><strong>📚 知识点讲解：</strong>德育<strong>多开端性</strong>的核心含义是：不必严格遵循固定顺序，可根据学生实际情况从任意环节切入。行为习惯差的学生，其薄弱点在\u201C行\u201D，因此可以直接\u201C导之以行\u201D，从行为训练开始。这正是多开端性的典型应用场景。</p><p><strong>💡 解题思路：</strong>教师\u201C直接纠正行为\u201D是跳过认知讲解、情感激发等前置环节，直接从行为入手，体现了顺序灵活、因材施教。B统一性强调各要素协调；C强制性带有负面色彩且非德育原则；D单一性与多开端性对立。故选A。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "道德情感在品德形成中起到的作用是（）",
+            "options": [{ "label": "A", "text": "基础" }, { "label": "B", "text": "催化剂/动力" }, { "label": "C",
+                    "text": "保障" }, { "label": "D", "text": "标志" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（催化剂/动力）。道德情感激发内心动力，是品德发展的<strong>催化剂和内部动力</strong>。</p><p><strong>📚 知识点讲解：</strong>四要素各有独特功能定位：道德认识是<strong>基础</strong>（认知前提），道德情感是<strong>催化剂/内部动力</strong>（情感驱动），道德意志是<strong>精神保障</strong>（克服困难），道德行为是<strong>衡量标志</strong>（外在表现）。口诀：\u201C知基础，情催化，意保障，行标志\u201D。考试中常将这些功能描述互换作为干扰项。</p><p><strong>💡 解题思路：</strong>A项\u201C基础\u201D对应道德认识；C项\u201C保障\u201D对应道德意志；D项\u201C标志\u201D对应道德行为。B项\u201C催化剂/动力\u201D才是道德情感的专属描述。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "道德意志的主要作用是（）",
+            "options": [{ "label": "A", "text": "明辨是非" }, { "label": "B", "text": "激发情感" }, { "label": "C",
+                    "text": "克服困难抵制诱惑" }, { "label": "D", "text": "规范外在行为" }],
+            "answer": 2,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（克服困难抵制诱惑）。道德意志帮助学生<strong>克服困难、抵制诱惑、坚持道德行为</strong>，是品德结构的\u201C精神保障\u201D。</p><p><strong>📚 知识点讲解：</strong>道德意志（意）的核心在于\u201C坚持\u201D和\u201C抵御\u201D。当学生面对诱惑或困境时，意志力决定了能否坚守道德底线。与之对应的教育方法是\u201C持之以恒\u201D。各要素功能需严格区分：A明辨是非属于道德认识；B激发情感属于道德情感；D规范外在行为是道德行为的范畴。</p><p><strong>💡 解题思路：</strong>A项\u201C明辨是非\u201D是认知功能，对应\u201C知\u201D；B项\u201C激发情感\u201D是情感功能，对应\u201C情\u201D；D项\u201C规范外在行为\u201D是行为层面，对应\u201C行\u201D。C项\u201C克服困难抵制诱惑\u201D精准描述了意志的核心作用，故选C。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "下列最能体现德育多开端性的做法是（）",
+            "options": [{ "label": "A", "text": "只给学生讲道德道理" }, { "label": "B", "text": "只训练学生道德行为" }, {
+                "label": "C",
+                "text": "根据学生特点，从认知、情感、意志、行为任意方面切入"
+            }, { "label": "D", "text": "严格按照知\u2192情\u2192意\u2192行依次开展" }],
+            "answer": 2,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。灵活选择切入点，<strong>根据学生特点从任意方面切入</strong>，是多开端性的核心体现。</p><p><strong>📚 知识点讲解：</strong>多开端性的\u201C多\u201D体现在切入点的多样性上。教师应根据学生品德发展的<strong>不平衡性和个体差异</strong>，判断其最薄弱的环节（缺认知、缺情感、缺意志还是缺行为），然后从该环节入手。A和B都只强调单一环节，D是固定顺序，均不符合多开端性的灵活特点。</p><p><strong>💡 解题思路：</strong>A只讲道理\u2014\u2014仅从认知入手；B只训练行为\u2014\u2014仅从行为入手；D严格按顺序\u2014\u2014否定多开端性。三者均违背了多开端性的核心理念。C强调\u201C任意方面切入\u201D和\u201C根据学生特点\u201D，完美诠释了多开端性。故选C。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "德育一般顺序是（）",
+            "options": [{ "label": "A", "text": "情\u2192知\u2192意\u2192行" }, { "label": "B",
+                    "text": "知\u2192情\u2192意\u2192行" }, { "label": "C", "text": "行\u2192意\u2192情\u2192知" }, { "label": "D",
+                    "text": "意\u2192行\u2192知\u2192情" }
+            ],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。德育的常规顺序是<strong>知\u2192情\u2192意\u2192行</strong>，对应\u201C晓之以理、动之以情、持之以恒、导之以行\u201D。</p><p><strong>📚 知识点讲解：</strong>一般顺序（常规顺序）是指大多数情况下遵循的德育路径：先建立道德认知\u2192激发道德情感\u2192锻炼道德意志\u2192落实道德行为。但需注意这是\u201C一般\u201D顺序而非\u201C唯一\u201D顺序，德育具有多开端性，顺序可灵活调整。考试常将\u201C一般顺序\u201D与\u201C多开端性\u201D结合考查。</p><p><strong>💡 解题思路：</strong>记住口诀\u201C知\u2192情\u2192意\u2192行\u201D即可。A项情在知前，顺序颠倒；C项行在最前，属于多开端的一种而非一般顺序；D项完全打乱。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "有的学生先养成良好行为习惯，再理解背后的道理，体现德育（）",
+            "options": [{ "label": "A", "text": "长期性" }, { "label": "B", "text": "多开端性" }, { "label": "C",
+                    "text": "反复性" }, { "label": "D", "text": "阶段性" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（多开端性）。学生<strong>从行为入手</strong>，先养成习惯再理解道理，这颠倒了一般顺序（知\u2192情\u2192意\u2192行），体现德育的多开端性。</p><p><strong>📚 知识点讲解：</strong>多开端性允许德育从任意环节开始。题干中\u201C先养成行为习惯\u201D意味着从\u201C行\u201D切入，跳过了\u201C知\u201D这个常规起点，后续再补上认知理解。这是多开端性在实践中的典型表现，说明德育顺序可以根据学生特点灵活调整。</p><p><strong>💡 解题思路：</strong>题干描述的是顺序上的灵活调整（先行为后认知），而非时间跨度（A长期性）、反复波动（C反复性）或年龄阶段特征（D阶段性）。这种\u201C颠倒常规顺序\u201D的做法，核心体现的正是多开端性。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "教师对学生进行爱心教育，先组织学生参加公益活动激发情感，再讲道理，这一开端是（）",
+            "options": [{ "label": "A", "text": "知" }, { "label": "B", "text": "情" }, { "label": "C", "text": "意" }, {
+                "label": "D",
+                "text": "行" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（情）。教师\u201C先激发情感\u201D再讲道理，说明德育的切入点是<strong>道德情感</strong>，从\u201C情\u201D开端。</p><p><strong>📚 知识点讲解：</strong>此题考查对多开端性中\u201C开端\u201D的识别能力。教师的教学设计是：先组织公益活动（激发爱心、同情心等情感体验），然后再进行认知讲解（讲道理）。这显然是从情感环节入手，属于\u201C动之以情\u201D先于\u201C晓之以理\u201D的实践案例。</p><p><strong>💡 解题思路：</strong>题干明确说\u201C先激发情感\u201D，\u201C情感\u201D对应品德四要素中的\u201C情\u201D。A项\u201C知\u201D对应讲道理（后做）；C项\u201C意\u201D题干未涉及；D项\u201C行\u201D虽涉及公益活动，但活动的目的被明确表述为\u201C激发情感\u201D而非训练行为。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "关于德育多开端性说法错误的是（）",
+            "options": [{ "label": "A", "text": "可从道德行为入手" }, { "label": "B", "text": "可从道德意志入手" }, {
+                "label": "C",
+                "text": "必须先培养道德认识"
+            }, { "label": "D", "text": "顺序灵活，因材施教" }],
+            "answer": 2,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。\u201C必须先培养道德认识\u201D说法错误，德育<strong>不必必须</strong>先从认知入手，可从情、意、行任意环节开端。</p><p><strong>📚 知识点讲解：</strong>此题考查对多开端性的反向理解。多开端性恰恰否定了\u201C必须从认知开始\u201D的固定模式。A、B、D都是对多开端性的正确描述：可从行为入手（导之以行）、可从意志入手（持之以恒）、顺序灵活因材施教。C项\u201C必须先培养道德认识\u201D是高频错误观点，与多开端性直接冲突。</p><p><strong>💡 解题思路：</strong>题干要求选\u201C错误\u201D的选项。A、B均符合多开端性；D是定义本身的表述。C中的\u201C必须\u201D二字过于绝对，且与多开端性的核心理念相悖，故为错误说法。选C。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "学生有正确的道德认知，但遇到诱惑就犯错，缺少的是（）",
+            "options": [{ "label": "A", "text": "道德认识" }, { "label": "B", "text": "道德情感" }, { "label": "C",
+                    "text": "道德意志" }, { "label": "D", "text": "道德行为" }],
+            "answer": 2,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（道德意志）。学生\u201C有正确认知\u201D但\u201C遇到诱惑就犯错\u201D，说明懂道理但坚持不住，是<strong>道德意志薄弱</strong>的表现。</p><p><strong>📚 知识点讲解：</strong>道德意志的核心作用是<strong>克服诱惑、抵制干扰、坚持道德行为</strong>。当学生已经具备认知（知道对错）但仍然犯错时，问题不在\u201C知\u201D而在\u201C意\u201D。这提示教育者应加强意志训练，如设置情境锻炼学生的自控力和抗诱惑能力。</p><p><strong>💡 解题思路：</strong>\u201C有正确的道德认知\u201D排除A；题干未提及情感冷漠或缺乏同情心，排除B；\u201C遇到诱惑就犯错\u201D说明问题出在无法坚持而非完全不会做，排除D。\u201C诱惑\u201D和\u201C犯错\u201D之间的关键变量是自控力，即道德意志。故选C。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "\u201C晓之以理、动之以情、持之以恒、导之以行\u201D对应四要素依次是（）",
+            "options": [{ "label": "A", "text": "知、情、意、行" }, { "label": "B", "text": "情、知、意、行" }, {
+                "label": "C",
+                "text": "知、意、情、行" }, { "label": "D", "text": "行、情、意、知" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（知、情、意、行）。四句话与四要素的对应关系为：<strong>晓理\u2192知，动情\u2192情，持久\u2192意，导行\u2192行</strong>。</p><p><strong>📚 知识点讲解：</strong>这是教招考试中的经典对应题。\u201C晓之以理\u201D即让学生明白道理\u2192道德认识（知）；\u201C动之以情\u201D即激发内心情感\u2192道德情感（情）；\u201C持之以恒\u201D即坚持不放弃\u2192道德意志（意）；\u201C导之以行\u201D即引导实际行动\u2192道德行为（行）。此对应关系是解题的基础。</p><p><strong>💡 解题思路：</strong>逐词对应：\u201C晓理\u201D\u2192认知（知），\u201C动情\u201D\u2192情感（情），\u201C持久\u201D\u2192意志（意），\u201C导行\u201D\u2192行为（行）。顺序为知\u2192情\u2192意\u2192行。B将情放在知前，C将意放在情前，D以行开头，均不符合。故选A。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "德育多开端性的主要原因是（）",
+            "options": [{ "label": "A", "text": "教师教学随意" }, { "label": "B", "text": "学生品德发展不平衡、存在个体差异" },
+            { "label": "C", "text": "学校德育制度不完善" }, { "label": "D", "text": "学生都没有道德认知" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。德育多开端性的主要原因是<strong>学生品德发展不平衡、存在个体差异</strong>，不同学生的薄弱点不同，因此德育切入点可灵活选择。</p><p><strong>📚 知识点讲解：</strong>多开端性的理论依据在于学生品德发展的<strong>不平衡性</strong>。每个学生在知、情、意、行四个维度上的发展水平不同：有的缺认知（不懂道理），有的缺情感（冷漠无爱心），有的缺意志（自控力差），有的缺行为（习惯差）。因此需要因材施教，从最薄弱的环节入手。</p><p><strong>💡 解题思路：</strong>A项\u201C教师教学随意\u201D是对多开端性的误解，多开端是有针对性的灵活而非随意；C项与制度无关；D项\u201C都没有道德认知\u201D说法绝对化且不符合事实。B项准确阐述了多开端性的根本原因。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "道德认识是指（）",
+            "options": [{ "label": "A", "text": "内心的爱憎体验" }, { "label": "B", "text": "对是非善恶的理解与判断" },
+            { "label": "C", "text": "克服困难的毅力" }, { "label": "D", "text": "外在实际行为" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。道德认识即<strong>对是非善恶的理解与判断能力</strong>，是品德结构的认知基础。</p><p><strong>📚 知识点讲解：</strong>道德认识（知）解决\u201C是什么\u201D和\u201C为什么\u201D的问题，包括道德概念的掌握、道德判断能力的发展等。四个选项分别对应品德四要素：A内心爱憎体验\u2192道德情感（情）；B是非善恶判断\u2192道德认识（知）；C克服困难的毅力\u2192道德意志（意）；D外在实际行为\u2192道德行为（行）。</p><p><strong>💡 解题思路：</strong>题干直接考查道德认识的定义。A项描述的是情感体验；C项描述的是意志品质；D项描述的是行为表现。B项\u201C对是非善恶的理解与判断\u201D精准对应\u201C认识\u201D的认知属性。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "教师先纠正学生上课说话的行为，再教育其遵守纪律的道理，体现（）",
+            "options": [{ "label": "A", "text": "多开端性" }, { "label": "B", "text": "单一开端" }, { "label": "C",
+                    "text": "顺序固定" }, { "label": "D", "text": "强制性" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（多开端性）。教师先纠正行为（从\u201C行\u201D入手），再讲道理（补\u201C知\u201D），体现了<strong>从行为开端</strong>的多开端性。</p><p><strong>📚 知识点讲解：</strong>此题与第6题、第11题类似，都是多开端性的典型案例。教师的做法是：行为纠正在前，认知教育在后。这打破了\u201C先讲道理再行动\u201D的常规顺序，说明德育可以从行为环节直接切入。这种灵活性正是多开端性的核心要义。</p><p><strong>💡 解题思路：</strong>\u201C先纠正行为\u201D说明开端是\u201C行\u201D而非\u201C知\u201D，体现顺序灵活。B单一开端与多开端对立；C顺序固定恰恰是多开端性所否定的；D强制性带负面色彩。故选A。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "品德形成的内部动力是（）",
+            "options": [{ "label": "A", "text": "道德认识" }, { "label": "B", "text": "道德情感" }, { "label": "C",
+                    "text": "道德意志" }, { "label": "D", "text": "道德行为" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（道德情感）。道德情感是品德形成的<strong>内部动力</strong>，激发学生内心向善的意愿和热情。</p><p><strong>📚 知识点讲解：</strong>道德情感被称为\u201C催化剂\u201D和\u201C内部动力\u201D，因为它能激发学生的道德需要，将外在的道德要求转化为内在的道德追求。没有情感的驱动，道德认知只是冰冷的知识，道德行为也难以持久。注意区分：道德认识是<strong>基础</strong>（认知前提），道德意志是<strong>保障</strong>（坚持力），道德行为是<strong>标志</strong>（外在表现）。</p><p><strong>💡 解题思路：</strong>题干关键词是\u201C内部动力\u201D。A项道德认识提供认知基础而非动力；C项道德意志提供的是坚持力（保障）；D项道德行为是结果和标志。B项道德情感正是激发内在动力的要素。故选B。</p>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于从道德意志开展德育的是（）",
+            "options": [{ "label": "A", "text": "讲解诚信的意义" }, { "label": "B", "text": "培养学生爱国情怀" }, {
+                "label": "C",
+                "text": "训练学生抵制玩手机的自制力" }, { "label": "D", "text": "纠正乱扔垃圾的行为" }],
+            "answer": 2,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。训练学生<strong>抵制玩手机的自制力</strong>属于锻炼道德意志，是典型的从\u201C意\u201D切入的德育方式。</p><p><strong>📚 知识点讲解：</strong>道德意志的核心是<strong>自制力和抗诱惑能力</strong>。C项中\u201C抵制玩手机\u201D直接针对自控力训练，属于意志锻炼。A项\u201C讲解诚信的意义\u201D是从认知（知）入手；B项\u201C培养爱国情怀\u201D是从情感（情）入手；D项\u201C纠正乱扔垃圾的行为\u201D是从行为（行）入手。四者分别对应四个不同的德育开端。</p><p><strong>💡 解题思路：</strong>逐一分析：A是认知教育（知）；B是情感培养（情）；C是自控力训练（意）；D是行为纠正（行）。题干要求选\u201C从道德意志开展\u201D的选项，C中的\u201C自制力\u201D是意志的典型表现。故选C。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "德育必须严格按照道德认识\u2192道德情感\u2192道德意志\u2192道德行为的顺序开展。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（错误）。德育具有<strong>多开端性</strong>，顺序可灵活调整，不必严格遵循固定顺序。</p><p><strong>📚 知识点讲解：</strong>这是教招考试中最常见的判断题陷阱。题干将\u201C一般顺序\u201D偷换为\u201C必须严格遵循的顺序\u201D。实际上，知\u2192情\u2192意\u2192行只是常规路径，多开端性允许从任意环节切入。关键词\u201C必须严格按照\u201D过于绝对，是错误的标志。</p><p><strong>💡 解题思路：</strong>看到\u201C必须严格\u201D这类绝对化表述，结合多开端性知识点即可判断为错误。德育顺序是灵活的而非僵化的。因此选B（错误）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "道德行为是衡量学生品德高低的最重要标志。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（正确）。道德行为是品德的外在实际表现，是<strong>衡量品德高低的最重要标志</strong>。</p><p><strong>📚 知识点讲解：</strong>在品德四要素中，道德行为具有特殊地位\u2014\u2014它是唯一可被直接观察和客观评价的要素。一个人的品德最终要落实到行动上，\u201C听其言而观其行\u201D。因此，道德行为被公认为衡量品德的核心标志。口诀：\u201C行标志\u201D。</p><p><strong>💡 解题思路：</strong>该说法与教材表述完全一致。道德认识是基础，道德情感是动力，道德意志是保障，但三者都是内在的；只有道德行为是外在的、可衡量的。因此该说法正确，选A。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "道德认识是德育的基础，道德情感是催化剂。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（正确）。道德认识是<strong>基础</strong>（认知前提），道德情感是<strong>催化剂</strong>（内部动力），表述完全正确。</p><p><strong>📚 知识点讲解：</strong>此题考查四要素功能定位的准确记忆。知为基础\u2014\u2014提供认知前提；情为催化剂\u2014\u2014提供内在驱动力。两者功能不同但都不可或缺。口诀中的\u201C知基础，情催化\u201D直接对应此题。</p><p><strong>💡 解题思路：</strong>该说法准确无误，两个定位描述均与教材一致。没有偷换概念或绝对化表述。因此选A（正确）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "对于行为习惯差的学生，德育可以直接从道德行为入手。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（正确）。行为习惯差的学生薄弱点在\u201C行\u201D，可以直接<strong>导之以行</strong>，体现德育多开端性和因材施教原则。</p><p><strong>📚 知识点讲解：</strong>多开端性的实践应用：当学生在行为层面存在问题（如经常违纪、习惯差）时，教师可以直接从行为训练入手，不必先讲一大堆道理。这种\u201C直接纠正行为\u201D的做法正是多开端性的体现，也是因材施教的具体运用。</p><p><strong>💡 解题思路：</strong>该说法符合多开端性的核心理念\u2014\u2014根据学生薄弱点灵活选择切入点。行为习惯差\u2192从行为入手，逻辑正确。因此选A（正确）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "道德意志薄弱的学生，德育应重点培养道德情感。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（错误）。道德意志薄弱应重点锻炼<strong>道德意志</strong>，而非培养道德情感。这是典型的\u201C对症不对药\u201D的错误表述。</p><p><strong>📚 知识点讲解：</strong>德育多开端性要求\u201C哪里薄弱补哪里\u201D：意志薄弱\u2192锻炼意志（持之以恒），情感缺失\u2192培养情感（动之以情），认知不足\u2192提高认识（晓之以理），行为差\u2192训练行为（导之以行）。题干将\u201C意志薄弱\u201D与\u201C培养情感\u201D错误搭配，混淆了不同要素的针对性策略。</p><p><strong>💡 解题思路：</strong>题干存在明显的逻辑错位：问题在意志，却要培养情感。正确的做法是\u201C意志薄弱\u2192锻炼意志\u201D。因此该说法错误，选B。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "德育多开端性意味着德育没有固定规律，完全随意开展。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（错误）。多开端性是<strong>顺序灵活</strong>，不是毫无规律、完全随意。德育仍遵循品德发展的内在规律。</p><p><strong>📚 知识点讲解：</strong>这是对多开端性的常见误解。多开端性强调的是\u201C不必严格遵循固定顺序\u201D，而非\u201C没有规律\u201D。德育仍然需要遵循学生品德发展的基本规律（如长期性、反复性、循序渐进等），只是切入点的选择可以灵活。\u201C完全随意开展\u201D是对多开端性的曲解和极端化。</p><p><strong>💡 解题思路：</strong>\u201C完全随意\u201D是绝对化、极端化的表述，通常为错误说法。多开端是有针对性的灵活，而非随意。因此选B（错误）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "学生品德发展不平衡，是德育具有多开端性的主要原因。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（正确）。学生品德发展<strong>不平衡、存在个体差异</strong>，正是德育多开端性的主要原因和理论依据。</p><p><strong>📚 知识点讲解：</strong>多开端性的理论根基在于学生品德发展的<strong>不平衡性</strong>。每个学生在知、情、意、行四个方面的发展水平参差不齐，薄弱点各不相同。这种差异决定了德育不能\u201C一刀切\u201D地从认知开始，而应根据实际情况灵活选择切入点。</p><p><strong>💡 解题思路：</strong>该说法与教材对多开端性原因的阐述一致。品德发展不平衡\u2192需要灵活选择切入点\u2192多开端性，逻辑链条完整。因此选A（正确）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "道德意志为道德行为提供精神保障。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（正确）。道德意志帮助学生<strong>克服困难、坚持道德行为</strong>，为道德行为的实施提供精神保障。</p><p><strong>📚 知识点讲解：</strong>道德意志的核心功能是\u201C保障\u201D\u2014\u2014当学生在执行道德行为过程中遇到困难、诱惑或挫折时，意志力帮助其坚持到底。没有意志的保障，道德认知和情感可能无法转化为持久的行为。口诀：\u201C意保障\u201D。</p><p><strong>💡 解题思路：</strong>该说法准确描述了道德意志的功能定位。\u201C精神保障\u201D是道德意志的标准表述之一，与教材一致。因此选A（正确）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "所有学生的德育都必须从培养道德认识开始。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（错误）。德育具有多开端性，<strong>不必都必须从认知开始</strong>，可从情、意、行任意环节切入。</p><p><strong>📚 知识点讲解：</strong>此题与判断题第1题类似，考查多开端性对\u201C认知优先论\u201D的否定。\u201C所有\u2026\u2026都必须\u201D是绝对化表述，通常为错误。实际上，对于行为习惯差的学生可以从行为入手，对于情感冷漠的学生可以从情感入手，对于意志薄弱的学生可以从意志入手。</p><p><strong>💡 解题思路：</strong>\u201C所有\u201D和\u201C都必须\u201D构成双重绝对化，与多开端性直接冲突。德育切入点因人而异，不可一概而论。因此选B（错误）。</p>"
+        }, {
+            "type": "判断题",
+            "stem": "\u201C动之以情\u201D侧重培养学生的道德情感。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（正确）。\u201C动之以情\u201D即激发内心体验，<strong>对应道德情感的培养</strong>。</p><p><strong>📚 知识点讲解：</strong>四句话与四要素的对应关系是考试重点：晓之以理\u2192道德认识（知），动之以情\u2192道德情感（情），持之以恒\u2192道德意志（意），导之以行\u2192道德行为（行）。\u201C动之以情\u201D的\u201C情\u201D字直接指向道德情感。</p><p><strong>💡 解题思路：</strong>该说法对应关系准确无误。\u201C动之以情\u201D的核心就是激发学生的情感共鸣和内心体验，培养其道德情感。因此选A（正确）。</p>"
+        }];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'moral_education_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '品德四要素与德育多开端性';
+            const content = `<h3>一、品德四要素（知、情、意、行）</h3>
+        <table class="knowledge-table">
+        <thead><tr><th>要素</th><th>别称/对应说法</th><th>作用定位</th><th>关键词</th></tr></thead>
+        <tbody>
+        <tr><td><strong>道德认识（知）</strong></td><td>晓之以理</td><td><span class="highlight">德育的基础</span></td><td>是非善恶判断、认知前提</td></tr>
+        <tr><td><strong>道德情感（情）</strong></td><td>动之以情</td><td><span class="highlight">催化剂、内部动力</span></td><td>内心爱憎体验、情感驱动</td></tr>
+        <tr><td><strong>道德意志（意）</strong></td><td>持之以恒</td><td><span class="highlight">精神保障</span></td><td>克服诱惑、坚持道德行为</td></tr>
+        <tr><td><strong>道德行为（行）</strong></td><td>导之以行</td><td><span class="highlight">衡量品德的最重要标志</span></td><td>实际行动、外在表现</td></tr>
+        </tbody>
+        </table>
+
+        <h3>二、一般顺序</h3>
+        <p>常规顺序：<strong>知→情→意→行</strong></p>
+        <p>对应四句话：晓之以理 → 动之以情 → 持之以恒 → 导之以行</p>
+        <p style="color:var(--text-light);font-size:13px;">⚠️ 注意：这是一般顺序，并非唯一顺序。</p>
+
+        <h3>三、多开端性（重中之重⭐）</h3>
+        <ul>
+        <li><strong>含义：</strong>德育<strong>不必严格遵循固定顺序</strong>，可从知、情、意、行<strong>任意一个环节作为开端</strong>。</li>
+        <li><strong>原因：</strong>学生品德发展<strong>不平衡、有个体差异</strong>，有的缺认知、有的缺情感、有的缺行为、有的缺意志。</li>
+        <li><strong>实例：</strong>学生爱骂人（行为差）→ 直接<strong>导之以行</strong>；学生冷漠无爱心 → 先<strong>动之以情</strong>。</li>
+        <li><strong>教学启示：</strong>因材施教，灵活选择德育切入点，哪里薄弱补哪里。</li>
+        </ul>
+
+        <h3>四、高频易错点</h3>
+        <p>❌ 德育必须按知→情→意→行顺序开展</p>
+        <p>✅ 德育具有<strong>多开端性</strong>，顺序可灵活调整</p>
+        <p style="margin-top:8px;">❌ 所有学生的德育都必须从培养道德认识开始</p>
+        <p>✅ 可从情、意、行任意环节开端，因人而异</p>
+
+        <h3>五、极简背诵口诀</h3>
+        <p style="text-align:center;font-size:17px;font-weight:700;color:var(--primary-color);background:var(--primary-light);padding:12px;border-radius:8px;">
+        知基础，情催化，意保障，行标志；<br>顺序常规知情意行，德育开端灵活多样。
+        </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML =
+                '<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>';
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html =
+                '<div class="question-card"><span class="question-type">' + q.type + '</span><div class="question-stem">' +
+                q.stem + '</div>';
+            if (q.image) { html += '<img src="' + q.image +
+                    '" alt="题目图片" class="question-image">'; }
+            html += '<div class="options-container">';
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += '<div class="' + classes.join(' ') + '" onclick="selectOption(' + idx +
+                    ')"><div class="option-label">' + opt.label + '</div><div class="option-text">' + opt.text +
+                    '</div></div>';
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += '<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ' +
+                    (isCorrect ? 'correct' : 'wrong') + '">' + (isCorrect ? '✓ 回答正确' : '✗ 回答错误') +
+                    '</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">' +
+                    q.analysis + '</div></div>';
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                saveToHistory(correctCount, accuracy);
+                html += '<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">刷题完成！</h1><p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p><div class="stats"><div class="stat-item"><div class="stat-value">' +
+                    correctCount + '/' + questions.length +
+                    '</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">' +
+                    accuracy +
+                    '%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button></div></div>';
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = (answeredCount / questions.length) * 100 + '%';
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML =
+                '<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ' + (currentIndex === 0 ?
+                    'disabled' : '') +
+                '><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ' +
+                (currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : '') +
+                '>下一题 <i class="fas fa-chevron-right"></i></button>';
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', fontSize + 'px');
+            document.documentElement.style.setProperty('--font-size-small', (fontSize - 2) + 'px');
+            document.documentElement.style.setProperty('--font-size-large', (fontSize + 2) + 'px');
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer))
+                        return;
+                }
+                html += '<div class="sheet-item ' + statusClass + '" onclick="jumpToQuestion(' + index +
+                    ')"><div class="sheet-number">' + (index + 1) + '</div><div class="sheet-status">' +
+                    statusText + '</div></div>';
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    '<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>';
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += '<div class="history-item"><div class="history-date">' + dateStr +
+                    '</div><div class="history-stats"><div class="history-stat"><div class="history-value">' +
+                    record.correctCount + '/' + record.totalCount +
+                    '</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">' +
+                    record.accuracy +
+                    '%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(' +
+                    index + ')">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(' +
+                    index + ')">删除</button></div></div>';
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(
+                saved) : []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', fontSize + 'px');
+                document.documentElement.style.setProperty('--font-size-small', (fontSize - 2) + 'px');
+                document.documentElement.style.setProperty('--font-size-large', (fontSize + 2) + 'px'); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

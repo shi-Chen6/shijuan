@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>班级管理刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">班级管理</div>
+                        <div class="progress-text">教招核心考点 · 高频真题</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            type: "单选题",
+            stem: "班主任开展班级工作的前提和基础是（）",
+            options: [{ label: "A", text: "组织培养班集体" }, { label: "B", text: "了解和研究学生" }, { label: "C",
+                text: "建立规章制度" }, { label: "D", text: "协调家校关系" }],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。了解和研究学生是班主任工作的前提与基础，只有深入了解学生，才能有效地开展班级工作。</p><p><strong>📚 知识点讲解：</strong>班主任工作的首要基础是了解和研究学生个体和群体，这是开展教育管理的前提。而组织培养班集体是班主任的中心工作。易混点：前提基础≠中心环节。</p><p><strong>💡 解题思路：</strong>A项组织和培养班集体是班主任的中心工作；C项建立规章制度是常规管理的手段；D项协调家校关系是常规工作之一。题干问“前提和基础”，只能选了解和研究学生。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "班主任工作的中心环节/首要任务是（）",
+            options: [{ label: "A", text: "了解学生" }, { label: "B", text: "组织和培养班集体" }, { label: "C",
+                    text: "后进生教育" }, { label: "D", text: "操行评定" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。组织和培养班集体是班主任工作的中心环节和首要任务。</p><p><strong>📚 知识点讲解：</strong>班主任的工作千头万绪，但最核心的是建设一个良好的班集体，通过集体来教育个人。了解学生是基础和前提，后进生教育是个别教育的重点，操行评定是常规工作的一部分。</p><p><strong>💡 解题思路：</strong>A项是前提而非中心；C项是重点个别教育对象；D项是具体操作。根据教材固定说法，中心工作是培养班集体。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "刚开学班级松散，学生互不熟悉，完全靠班主任管理，属于班集体（）",
+            options: [{ label: "A", text: "组建阶段" }, { label: "B", text: "核心形成阶段" }, { label: "C",
+                    text: "发展阶段" }, { label: "D", text: "成熟阶段" }
+            ],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是A。组建阶段班级松散，学生互不熟悉，完全依赖班主任的权威与管理。</p><p><strong>📚 知识点讲解：</strong>班集体发展四阶段：组建阶段（松散群体，依赖教师）→核心形成阶段（出现班干部，核心队伍形成）→发展阶段（班规完善，舆论形成，学生自我管理）→成熟阶段（高度自治，班风优良）。</p><p><strong>💡 解题思路：</strong>题干关键词“刚开学松散”“完全靠班主任”对应组建阶段的特征。其他选项均有一定程度的自治或核心。故选A。</p>"
+        }, {
+            type: "单选题",
+            stem: "班干部队伍形成，班级凝聚力初步显现，属于（）",
+            options: [{ label: "A", text: "组建阶段" }, { label: "B", text: "核心形成阶段" }, { label: "C",
+                    text: "发展阶段" }, { label: "D", text: "成熟阶段" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。核心形成阶段的特点是班干部出现、核心队伍形成、凝聚力初步显现。</p><p><strong>📚 知识点讲解：</strong>组建阶段后，学生之间逐渐熟悉，积极分子涌现，班主任选拔班干部，形成班级核心，此时班级进入核心形成阶段。</p><p><strong>💡 解题思路：</strong>“班干部队伍形成”是核心形成阶段的标志性特征，排除A（还没有班干部），C和D阶段已经更加成熟。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "班级形成良好班风，学生能自我管理、自我约束，属于（）",
+            options: [{ label: "A", text: "组建阶段" }, { label: "B", text: "核心形成阶段" }, { label: "C",
+                    text: "发展阶段" }, { label: "D", text: "成熟阶段" }
+            ],
+            answer: 2,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是C。发展阶段班规完善，集体舆论形成，学生能够自我管理，但尚未达到高度自治的成熟阶段。</p><p><strong>📚 知识点讲解：</strong>发展阶段是从核心形成到成熟的过渡期，特点是学生自我管理能力增强，班风逐渐形成。成熟阶段则是高度自治、班风优良、有共同奋斗目标。</p><p><strong>💡 解题思路：</strong>题干“良好班风、自我管理”符合发展阶段的描述；成熟阶段更强调高度自治和稳定的优良班风，通常作为最终理想状态。从教招出题偏好看，出现“自我管理”多选发展阶段。故选C。</p>"
+        }, {
+            type: "单选题",
+            stem: "马卡连柯提出的班级管理模式是（）",
+            options: [{ label: "A", text: "常规管理" }, { label: "B", text: "平行管理" }, { label: "C",
+                    text: "民主管理" }, { label: "D", text: "目标管理" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。平行管理由马卡连柯提出，强调集体教育与个别教育相结合，通过集体管理个人，又通过个人影响集体。</p><p><strong>📚 知识点讲解：</strong>四种管理模式：常规管理（规章制度）、平行管理（马卡连柯）、民主管理（师生共同参与）、目标管理（德鲁克）。注意区分提出者。</p><p><strong>💡 解题思路：</strong>A常规管理没有特定提出者；C民主管理是普遍理念；D目标管理是德鲁克。马卡连柯对应平行管理。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "依靠班规、校规管理班级，属于（）",
+            options: [{ label: "A", text: "常规管理" }, { label: "B", text: "平行管理" }, { label: "C",
+                    text: "民主管理" }, { label: "D", text: "目标管理" }
+            ],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是A。常规管理就是通过规章制度来管理班级，使班级工作规范化、制度化。</p><p><strong>📚 知识点讲解：</strong>常规管理是基础性的管理方式，依据班规、校规等常规制度进行管理，维持班级正常秩序。</p><p><strong>💡 解题思路：</strong>题干关键词“依靠班规、校规”直接对应常规管理。平行管理强调集体与个人相互影响；民主管理强调师生共同参与；目标管理强调目标分解。故选A。</p>"
+        }, {
+            type: "单选题",
+            stem: "师生共同制定班规、学生参与班级管理，属于（）",
+            options: [{ label: "A", text: "常规管理" }, { label: "B", text: "平行管理" }, { label: "C",
+                    text: "民主管理" }, { label: "D", text: "目标管理" }
+            ],
+            answer: 2,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是C。民主管理强调师生共同参与班级事务，民主制定班规，学生自主管理。</p><p><strong>📚 知识点讲解：</strong>民主管理体现了学生的主体地位，班级事务由师生协商决定，不同于单纯的常规管理（制度约束）或平行管理（集体与个人互动）。</p><p><strong>💡 解题思路：</strong>“师生共同制定”“学生参与”是民主管理的典型表述。常规管理是执行已有制度；平行管理侧重集体教育；目标管理侧重目标体系。故选C。</p>"
+        }, {
+            type: "单选题",
+            stem: "将班级总目标分解为小组、个人目标，层层落实，属于（）",
+            options: [{ label: "A", text: "常规管理" }, { label: "B", text: "平行管理" }, { label: "C",
+                    text: "民主管理" }, { label: "D", text: "目标管理" }
+            ],
+            answer: 3,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是D。目标管理由德鲁克提出，核心是将组织目标层层分解为具体的小目标，逐一落实。</p><p><strong>📚 知识点讲解：</strong>目标管理在班级管理中应用为：班级总目标→小组目标→个人目标，通过目标体系引导和激励学生。</p><p><strong>💡 解题思路：</strong>题干“分解为小组、个人目标，层层落实”是目标管理的标志性描述，与德鲁克的观点一致。故选D。</p>"
+        }, {
+            type: "单选题",
+            stem: "班级管理中，对后进生教育的核心原则是（）",
+            options: [{ label: "A", text: "严厉惩罚" }, { label: "B", text: "长善救失、尊重信任" }, { label: "C",
+                    text: "放任自流" }, { label: "D", text: "只抓成绩" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。后进生教育要关心爱护、尊重信任，运用长善救失原则，依靠积极因素克服消极因素。</p><p><strong>📚 知识点讲解：</strong>后进生由于缺点较多、自卑逆反，需要教师的关爱和信任，挖掘其闪光点，扬长避短。严厉惩罚或放任自流都是错误的做法。</p><p><strong>💡 解题思路：</strong>A严厉惩罚会加重逆反；C放任自流是不负责任；D只抓成绩不符合素质教育要求。只有B体现了正确的后进生转化思想。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "处理学生课堂打架突发事件，首要原则是（）",
+            options: [{ label: "A", text: "严厉批评" }, { label: "B", text: "冷静沉着，控制事态" }, { label: "C",
+                    text: "立刻叫家长" }, { label: "D", text: "直接处分" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。班级突发事件处理的首要原则是冷静沉着，迅速控制事态，避免恶化。</p><p><strong>📚 知识点讲解：</strong>突发事件处理原则口诀“冷客可教”：冷静沉着、客观性、可接受性、教育性、有效性。冷静是第一位的。</p><p><strong>💡 解题思路：</strong>A严厉批评可能激化矛盾；C立刻叫家长并非首选；D直接处分缺乏教育过程。唯有B冷静沉着控制事态符合教育机智。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "班主任既通过集体管理个人，又通过个人影响集体，体现（）",
+            options: [{ label: "A", text: "常规管理" }, { label: "B", text: "平行管理" }, { label: "C",
+                    text: "民主管理" }, { label: "D", text: "目标管理" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。平行管理的核心就是“通过集体、在集体中、为了集体”进行教育，集体与个人相互影响。</p><p><strong>📚 知识点讲解：</strong>马卡连柯的平行教育思想：集体不仅是教育对象，也是教育手段。教师通过集体影响个体，同时通过对个体的教育推动集体发展。</p><p><strong>💡 解题思路：</strong>题干“通过集体管理个人，又通过个人影响集体”是平行管理的经典定义，直接匹配。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "下列不属于后进生特点的是（）",
+            options: [{ label: "A", text: "是非观念模糊" }, { label: "B", text: "意志力薄弱" }, { label: "C",
+                    text: "自我约束力强" }, { label: "D", text: "逆反心理" }
+            ],
+            answer: 2,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是C。后进生通常自我约束力差，而不是强，因此该项不属于后进生特点。</p><p><strong>📚 知识点讲解：</strong>后进生特点包括：是非观念模糊、意志力薄弱、学习习惯差、自卑逆反等。自我约束力强是优秀学生的特点。</p><p><strong>💡 解题思路：</strong>题干要求选“不属于”的，ABD均为后进生典型表现，C与后进生特征相反。故选C。</p>"
+        }, {
+            type: "单选题",
+            stem: "班级成熟阶段最主要的特征是（）",
+            options: [{ label: "A", text: "依赖教师" }, { label: "B", text: "班干部刚产生" }, { label: "C",
+                    text: "高度自治、班风优良" }, { label: "D", text: "纪律混乱" }
+            ],
+            answer: 2,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是C。成熟阶段班级高度自治，有良好班风和学风，学生能自觉管理班级事务。</p><p><strong>📚 知识点讲解：</strong>成熟阶段是班集体发展的最高阶段，特征包括：自我管理能力强、班风学风优良、有共同奋斗目标、正确的集体舆论等。</p><p><strong>💡 解题思路：</strong>A依赖教师是组建阶段；B班干部刚产生是核心形成阶段；D纪律混乱是组建阶段初期。C高度自治、班风优良对应成熟阶段。故选C。</p>"
+        }, {
+            type: "单选题",
+            stem: "班主任协调家长、社区、学校统一教育要求，体现（）",
+            options: [{ label: "A", text: "平行管理" }, { label: "B", text: "一致性原则" }, { label: "C",
+                    text: "常规管理" }, { label: "D", text: "目标管理" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。协调家校社统一要求，体现了教育的一致性原则，也是班主任常规工作之一。</p><p><strong>📚 知识点讲解：</strong>班主任工作包含协调家庭、学校、社会三方教育力量，形成教育合力，这遵循了德育的一致性与连贯性原则。</p><p><strong>💡 解题思路：</strong>A平行管理是集体与个人关系；C常规管理是制度管理；D目标管理是目标分解。题干强调“统一教育要求”，故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "对优等生教育，重点是（）",
+            options: [{ label: "A", text: "放任不管" }, { label: "B", text: "严格要求，防止骄傲自满" }, { label: "C",
+                    text: "只表扬不批评" }, { label: "D", text: "降低要求" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。优等生容易骄傲自满，教育重点应放在严格要求、防止自满，引导其不断进步。</p><p><strong>📚 知识点讲解：</strong>班主任的个别教育包括优等生、中等生和后进生。优等生教育要一分为二，既要肯定成绩，也要指出不足，防止骄傲。</p><p><strong>💡 解题思路：</strong>A放任不管和D降低要求都是不负责任；C只表扬不批评容易使其骄傲。唯有B符合优等生教育策略。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "中等生的教育重点是（）",
+            options: [{ label: "A", text: "抓两头放中间" }, { label: "B", text: "激发潜能，增强自信" }, { label: "C",
+                    text: "严厉惩罚" }, { label: "D", text: "放弃教育" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。中等生是班级的主体，往往缺乏自信和关注，教育重点是激发潜能，增强自信心。</p><p><strong>📚 知识点讲解：</strong>中等生教育不能“抓两头放中间”，应给予更多关注，帮助他们发现自己的优势，提升自我效能感。</p><p><strong>💡 解题思路：</strong>A是错误做法；C和D显然不合理。B激发潜能、增强自信是中等生教育的核心。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "班级突发事件处理的教育性原则是指（）",
+            options: [{ label: "A", text: "只处罚不教育" }, { label: "B", text: "以教育学生、促进成长为目的" },
+            { label: "C", text: "息事宁人" }, { label: "D", text: "偏袒学生" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。教育性原则要求处理突发事件时以教育学生为根本目的，通过事件促进学生成长，而非简单处罚。</p><p><strong>📚 知识点讲解：</strong>教育性原则是处理突发事件的核心原则之一，强调抓住教育契机，使处理过程具有教育意义。</p><p><strong>💡 解题思路：</strong>A只处罚不教育违背教育性；C息事宁人是推卸责任；D偏袒学生有失公平。B准确阐述了教育性原则的内涵。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "班集体形成的重要标志是（）",
+            options: [{ label: "A", text: "成立班干部" }, { label: "B", text: "形成良好班风与集体舆论" },
+            { label: "C", text: "制定班规" }, { label: "D", text: "学生人数固定" }
+            ],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是B。良好班风和正确的集体舆论是班集体是否真正形成的重要标志。</p><p><strong>📚 知识点讲解：</strong>班集体的形成有多项指标，其中良好的班风和健康的集体舆论是深层标志，反映了班级成员共同的价值取向和凝聚力。</p><p><strong>💡 解题思路：</strong>A成立班干部是核心形成阶段；C制定班规是常规管理手段；D人数固定是表面现象。B项体现了集体精神面貌，是重要标志。故选B。</p>"
+        }, {
+            type: "单选题",
+            stem: "下列不属于班主任常规工作的是（）",
+            options: [{ label: "A", text: "了解学生" }, { label: "B", text: "组织班会" }, { label: "C",
+                    text: "进行学科科研" }, { label: "D", text: "操行评定" }
+            ],
+            answer: 2,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确答案是C。进行学科科研不属于班主任常规工作，而是教师的专业发展活动。</p><p><strong>📚 知识点讲解：</strong>班主任常规工作包括：了解学生、建立班集体、建立档案、个别教育、班会、操行评定、协调各方关系等。学科科研不属于班主任专属职责。</p><p><strong>💡 解题思路：</strong>A、B、D均为班主任常规工作内容；C项是学科教师的科研工作，不属于班级管理范畴。故选C。</p>"
+        }, {
+            type: "判断题",
+            stem: "了解和研究学生是班主任工作的中心环节。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>错误。了解和研究学生是班主任工作的前提与基础，组织和培养班集体才是中心环节。</p><p><strong>📚 知识点讲解：</strong>班主任工作两大要点极易混淆：了解学生是前提基础，建班集体是中心任务。题干将前提误作中心，故错误。</p><p><strong>💡 解题思路：</strong>教材固定表述：前提基础→了解学生；中心工作→培养班集体。故判断为错误。</p>"
+        }, {
+            type: "判断题",
+            stem: "平行管理模式由马卡连柯提出，强调集体与个人相互影响。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确。马卡连柯的平行教育思想强调通过集体教育个人，又通过个人影响集体。</p><p><strong>📚 知识点讲解：</strong>平行管理是马卡连柯教育思想的核心，注重集体与个人的双向影响。</p><p><strong>💡 解题思路：</strong>表述与教材一致，正确。</p>"
+        }, {
+            type: "判断题",
+            stem: "后进生教育要坚持反复抓、抓反复，允许反复。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确。后进生转化具有反复性，教育者要有耐心，允许学生出现反复，持之以恒。</p><p><strong>📚 知识点讲解：</strong>德育过程的长期性和反复性决定了后进生教育不可能一蹴而就，需要教师抓反复、反复抓。</p><p><strong>💡 解题思路：</strong>该说法体现了对后进生转化规律的尊重，正确。</p>"
+        }, {
+            type: "判断题",
+            stem: "班级发展成熟阶段，学生完全依赖教师管理。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>错误。成熟阶段班级高度自治，学生自我管理，不依赖教师，与题干描述相反。</p><p><strong>📚 知识点讲解：</strong>班集体成熟阶段的特点是自我管理、班风优良，教师主要起指导作用，学生成为班级的主人。</p><p><strong>💡 解题思路：</strong>“完全依赖教师”是组建阶段的特点，成熟阶段已脱离依赖。故错误。</p>"
+        }, {
+            type: "判断题",
+            stem: "民主管理就是学生想怎样就怎样，教师不干预。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>错误。民主管理是师生共同参与、有序管理，教师仍需发挥指导作用，并非放任不管。</p><p><strong>📚 知识点讲解：</strong>民主管理强调尊重学生主体性，但仍在教师引导下有规则地进行，不是无政府的自由。</p><p><strong>💡 解题思路：</strong>“想怎样就怎样”是对民主管理的曲解，错误。</p>"
+        }, {
+            type: "判断题",
+            stem: "处理突发事件要坚持客观性，公平公正对待每一位学生。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确。客观性原则要求教师在处理突发事件时实事求是，不偏袒任何一方，公正处理。</p><p><strong>📚 知识点讲解：</strong>突发事件处理原则包括客观性，即全面了解事实，避免主观臆断，维护公平正义。</p><p><strong>💡 解题思路：</strong>表述无误，正确。</p>"
+        }, {
+            type: "判断题",
+            stem: "常规管理主要依靠规章制度约束学生行为。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确。常规管理正是通过制定和执行规章制度来规范班级行为，实现管理目标。</p><p><strong>📚 知识点讲解：</strong>常规管理是班级管理的基础，制度化、规范化是其特点。</p><p><strong>💡 解题思路：</strong>符合常规管理定义，正确。</p>"
+        }, {
+            type: "判断题",
+            stem: "优等生没有缺点，不需要进行个别教育。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>错误。优等生同样需要个别教育，他们容易产生骄傲自满情绪，需要严格要求、防止自满。</p><p><strong>📚 知识点讲解：</strong>班主任要对各类学生进行个别教育，包括优等生，要一分为二看待，不能忽视其可能存在的缺点。</p><p><strong>💡 解题思路：</strong>“没有缺点”太绝对，且优等生同样需要教育引导，故错误。</p>"
+        }, {
+            type: "判断题",
+            stem: "目标管理是由马卡连柯提出的班级管理模式。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 1,
+            analysis: "<p><strong>🎯 答案解析：</strong>错误。目标管理是由美国管理学家德鲁克提出的，马卡连柯提出的是平行管理。</p><p><strong>📚 知识点讲解：</strong>管理模式提出者：平行管理—马卡连柯，目标管理—德鲁克。二者不应混淆。</p><p><strong>💡 解题思路：</strong>张冠李戴，错误。</p>"
+        }, {
+            type: "判断题",
+            stem: "班风、集体舆论是班集体形成的重要标志。（）",
+            options: [{ label: "A", text: "正确" }, { label: "B", text: "错误" }],
+            answer: 0,
+            analysis: "<p><strong>🎯 答案解析：</strong>正确。良好的班风和正确的集体舆论是班集体是否形成的深层标志，体现了集体的精神风貌。</p><p><strong>📚 知识点讲解：</strong>班集体形成的标志包括明确的奋斗目标、健全的组织机构、严格的规章制度、良好的班风和正确的舆论等。</p><p><strong>💡 解题思路：</strong>表述正确，符合教材观点。</p>"
+        }];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'class_management_quiz_4';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '班集体发展与班级管理（口诀+表格）';
+            const content = `<h3>一、班集体发展四阶段（顺序必背）</h3>
+        <table class="knowledge-table">
+        <thead><tr><th>阶段</th><th>特点</th><th>管理主体</th></tr></thead>
+        <tbody>
+        <tr><td><strong>组建阶段</strong></td><td>松散群体，互不熟悉</td><td>完全依赖教师</td></tr>
+        <tr><td><strong>核心形成阶段</strong></td><td>班干部出现，凝聚力初显</td><td>教师指导，班干部协助</td></tr>
+        <tr><td><strong>发展阶段</strong></td><td>班规完善，舆论形成，自我管理</td><td>学生自我管理为主</td></tr>
+        <tr><td><strong>成熟阶段</strong></td><td>高度自治，班风优良</td><td>学生自主，教师引导</td></tr>
+        </tbody>
+        </table>
+        <h3>二、班主任工作</h3>
+        <ul>
+        <li><span class="highlight">前提/基础</span>：了解和研究学生</li>
+        <li><span class="highlight">中心工作/首要任务</span>：组织和培养班集体</li>
+        <li>常规工作：了解学生、建班集体、建立档案、个别教育、班会、协调家校社、操行评定</li>
+        <li>个别教育：优等生（防骄傲）、中等生（激潜能）、后进生（重中之重）</li>
+        </ul>
+        <h3>三、后进生教育要点</h3>
+        <p><strong>特点：</strong>是非观念模糊、意志力薄弱、学习习惯差、自卑逆反</p>
+        <p><strong>对策：</strong>关心爱护、尊重信任；长善救失；因材施教；反复教育；家校共育</p>
+        <h3>四、四种班级管理模式</h3>
+        <table class="knowledge-table">
+        <thead><tr><th>模式</th><th>核心</th><th>提出者</th></tr></thead>
+        <tbody>
+        <tr><td><strong>常规管理</strong></td><td>依靠规章制度</td><td>——</td></tr>
+        <tr><td><strong>平行管理</strong></td><td>集体+个人相互影响</td><td>马卡连柯</td></tr>
+        <tr><td><strong>民主管理</strong></td><td>师生共同参与、自主管理</td><td>——</td></tr>
+        <tr><td><strong>目标管理</strong></td><td>总目标→小组→个人</td><td>德鲁克</td></tr>
+        </tbody>
+        </table>
+        <h3>五、突发事件处理原则（冷客可教）</h3>
+        <p><strong>冷静沉着、客观性、可接受性、教育性、有效性</strong></p>
+        <h3>极简背诵口诀</h3>
+        <p style="text-align:center;font-size:16px;font-weight:700;background:var(--primary-light);padding:10px;border-radius:8px;">
+        班集四段：组核发成；<br>班主任：了解为基，建班为心；<br>管理四式：常平民目；<br>后进生：尊信长善，反复教育；<br>突发原则：冷客可教。
+        </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML =
+                '<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>';
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html =
+                '<div class="question-card"><span class="question-type">' + q.type + '</span><div class="question-stem">' +
+                q.stem + '</div>';
+            if (q.image) { html += '<img src="' + q.image + '" alt="题目图片" class="question-image">'; }
+            html += '<div class="options-container">';
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += '<div class="' + classes.join(' ') + '" onclick="selectOption(' + idx +
+                    ')"><div class="option-label">' + opt.label + '</div><div class="option-text">' + opt.text +
+                    '</div></div>';
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html +=
+                    '<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ' +
+                    (isCorrect ? 'correct' : 'wrong') + '">' + (isCorrect ? '✓ 回答正确' : '✗ 回答错误') +
+                    '</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">' +
+                    q.analysis + '</div></div>';
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                saveToHistory(correctCount, accuracy);
+                html +=
+                    '<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">刷题完成！</h1><p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p><div class="stats"><div class="stat-item"><div class="stat-value">' +
+                    correctCount + '/' + questions.length +
+                    '</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">' +
+                    accuracy +
+                    '%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button></div></div>';
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = (answeredCount / questions.length) * 100 + '%';
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML =
+                '<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ' + (currentIndex === 0 ?
+                    'disabled' : '') +
+                '><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ' +
+                (currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : '') +
+                '>下一题 <i class="fas fa-chevron-right"></i></button>';
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', fontSize + 'px');
+            document.documentElement.style.setProperty('--font-size-small', (fontSize - 2) + 'px');
+            document.documentElement.style.setProperty('--font-size-large', (fontSize + 2) + 'px');
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer))
+                        return;
+                }
+                html += '<div class="sheet-item ' + statusClass + '" onclick="jumpToQuestion(' + index +
+                    ')"><div class="sheet-number">' + (index + 1) + '</div><div class="sheet-status">' +
+                    statusText + '</div></div>';
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    '<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>';
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += '<div class="history-item"><div class="history-date">' + dateStr +
+                    '</div><div class="history-stats"><div class="history-stat"><div class="history-value">' +
+                    record.correctCount + '/' + record.totalCount +
+                    '</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">' +
+                    record.accuracy +
+                    '%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(' +
+                    index + ')">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(' +
+                    index + ')">删除</button></div></div>';
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(
+                saved) : []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', fontSize + 'px');
+                document.documentElement.style.setProperty('--font-size-small', (fontSize - 2) + 'px');
+                document.documentElement.style.setProperty('--font-size-large', (fontSize + 2) + 'px'); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
