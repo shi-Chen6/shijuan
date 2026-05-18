@@ -877,41 +877,208 @@
             renderGlobalStats();
         }
 
+        // 辅助函数：获取题目类型标签
+        function getTypeLabel(type) {
+            if (type === 'single') return '单选题';
+            if (type === 'multiple') return '多选题';
+            if (type === 'judge') return '判断题';
+            return '';
+        }
+
         // 错题本汇总导出与打印
         function exportWrongQuestions() {
-            const allWrong = [];
+            // 按试卷分组存储错题
+            const groupedWrong = {};
+            let totalWrong = 0;
+            
             exams.forEach(exam => {
                 const statStr = localStorage.getItem(exam.key);
                 if (!statStr) return;
                 try {
                     const s = JSON.parse(statStr);
                     if (s.wrongQuestions && s.wrongQuestions.length) {
-                        s.wrongQuestions.forEach(wq => {
-                            allWrong.push({ exam: exam.title, num: wq.num, question: wq.question || '' });
-                        });
+                        groupedWrong[exam.title] = {
+                            link: exam.link,
+                            wrongs: s.wrongQuestions.map(wq => ({ num: wq.num, question: wq.question || '' }))
+                        };
+                        totalWrong += s.wrongQuestions.length;
                     }
                 } catch (e) {}
             });
 
-            if (allWrong.length === 0) {
+            if (totalWrong === 0) {
                 alert('当前没有检测到任何错题记录。');
                 return;
             }
 
             const win = window.open('', '_blank');
             const html = `
-                <html><head><meta charset="utf-8"><title>错题本导出</title>
-                <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px}h1{color:#333} .item{padding:8px;border-bottom:1px solid #eee}</style>
-                </head><body>
-                <h1>错题本汇总</h1>
-                <div>共 ${allWrong.length} 条错题</div>
-                <div style="margin-top:16px">
-                ${allWrong.map((w,idx) => `<div class="item"><strong>${idx+1}. [${w.exam}] 第${w.num}题</strong><div>${w.question}</div></div>`).join('')}
-                </div>
-                <div style="margin-top:20px"><button onclick="window.print()">打印/预览</button>
-                <button onclick="(function(){const a=document.createElement('a');a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(${JSON.stringify(allWrong)}));a.download='错题本.json';document.body.appendChild(a);a.click();document.body.removeChild(a);})()">下载 JSON</button>
-                </div>
-                </body></html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>错题本导出</title>
+                    <style>
+                        * { box-sizing: border-box; }
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+                            padding: 20px;
+                            max-width: 850px;
+                            margin: 0 auto;
+                            color: #333;
+                            line-height: 1.6;
+                        }
+                        h1 { color: #4A6CF7; font-size: 28px; margin-bottom: 8px; }
+                        .summary {
+                            color: #666;
+                            font-size: 14px;
+                            margin-bottom: 24px;
+                            padding: 12px;
+                            background: #f5f6f8;
+                            border-radius: 8px;
+                        }
+                        .exam-section {
+                            margin-bottom: 32px;
+                            border: 1px solid #eee;
+                            border-radius: 12px;
+                            overflow: hidden;
+                        }
+                        .exam-header {
+                            background: #EEF1FE;
+                            padding: 14px 18px;
+                            font-weight: 600;
+                            color: #4A6CF7;
+                            font-size: 18px;
+                        }
+                        .exam-body {
+                            padding: 16px;
+                        }
+                        .question-item {
+                            padding: 12px 0;
+                            border-bottom: 1px solid #eee;
+                        }
+                        .question-item:last-child {
+                            border-bottom: none;
+                        }
+                        .question-title {
+                            font-weight: 600;
+                            color: #1c1c1e;
+                            margin-bottom: 6px;
+                        }
+                        .question-content {
+                            color: #555;
+                            font-size: 15px;
+                        }
+                        .options {
+                            margin-top: 10px;
+                            padding: 12px;
+                            background: #f9f9fb;
+                            border-radius: 8px;
+                        }
+                        .option {
+                            padding: 4px 0;
+                            color: #444;
+                        }
+                        .answer-block {
+                            margin-top: 10px;
+                            padding: 10px 14px;
+                            background: #E8F8ED;
+                            color: #218c5e;
+                            border-radius: 8px;
+                        }
+                        .analysis-block {
+                            margin-top: 10px;
+                            padding: 10px 14px;
+                            background: #FFF3E0;
+                            color: #a16207;
+                            border-radius: 8px;
+                        }
+                        .btn-bar {
+                            margin-top: 20px;
+                            padding: 16px;
+                            background: #f9f9fb;
+                            border-radius: 10px;
+                            text-align: center;
+                        }
+                        .btn {
+                            padding: 10px 24px;
+                            margin: 0 8px;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 15px;
+                            cursor: pointer;
+                            transition: opacity 0.2s;
+                        }
+                        .btn:hover { opacity: 0.85; }
+                        .btn-print { background: #4A6CF7; color: white; }
+                        .btn-json { background: #10b981; color: white; }
+                        @media print {
+                            .btn-bar { display: none; }
+                            body { max-width: 100%; padding: 10mm; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>📝 错题本汇总</h1>
+                    <div class="summary">
+                        共 ${Object.keys(groupedWrong).length} 套试卷，合计 ${totalWrong} 道错题
+                    </div>
+                    
+                    ${Object.entries(groupedWrong).map(([title, { wrongs }]) => `
+                        <div class="exam-section">
+                            <div class="exam-header">📋 ${title}</div>
+                            <div class="exam-body">
+                                ${wrongs.map((w, idx) => {
+                                    let optionsHtml = '';
+                                    if (w.options) {
+                                        optionsHtml = Object.entries(w.options).map(([key, val]) => `
+                                            <div class="option">${key}. ${val}</div>
+                                        `).join('');
+                                    }
+                                    
+                                    let answerHtml = '';
+                                    let answerVal = w.answer || w.correctAnswer;
+                                    if (answerVal) {
+                                        // 处理数组格式的答案（多选题）
+                                        if (Array.isArray(answerVal)) {
+                                            answerVal = answerVal.join('、');
+                                        }
+                                        answerHtml = `<div class="answer-block"><strong>答案:</strong> ${answerVal}</div>`;
+                                    }
+                                    
+                                    let analysisHtml = '';
+                                    let analysisVal = w.analysis || w.explanation;
+                                    if (analysisVal) {
+                                        analysisHtml = `<div class="analysis-block"><strong>解析:</strong> ${analysisVal}</div>`;
+                                    }
+                                    
+                                    return `
+                                        <div class="question-item">
+                                            <div class="question-title">第 ${w.num} 题 ${w.type ? `(${getTypeLabel(w.type)})` : ''}</div>
+                                            ${w.question ? `<div class="question-content">${w.question}</div>` : ''}
+                                            ${optionsHtml ? `<div class="options">${optionsHtml}</div>` : ''}
+                                            ${answerHtml}
+                                            ${analysisHtml}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    <div class="btn-bar">
+                        <button class="btn btn-print" onclick="window.print()">🖨️ 打印/预览</button>
+                        <button class="btn btn-json" onclick="(function(){
+                            const data = ${JSON.stringify(groupedWrong)};
+                            const a = document.createElement('a');
+                            a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
+                            a.download = '错题本_按试卷分组.json';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        })()">💾 下载 JSON</button>
+                    </div>
+                </body>
+                </html>
             `;
             win.document.write(html);
             win.document.close();

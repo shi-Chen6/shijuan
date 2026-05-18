@@ -586,12 +586,43 @@
                     const data = { currentIndex, userAnswers, revealedAnswers, fontSizeLevel, mistakeMode, mistakeList };
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
                     
-                    const statsObj = {
+                    let statsObj = {
                         total: TOTAL,
-                        answered: getAnsweredCount(),
-                        wrong: getWrongCount(),
-                        wrongQuestions: generateMistakeList().map((idx, i) => ({ id: idx + 1, num: allQuestions[idx].num }))
+                        answered: 0,
+                        wrong: 0,
+                        wrongQuestions: []
                     };
+
+                    allQuestions.forEach((q, i) => {
+                        const ua = userAnswers[i];
+                        
+                        if (ua !== undefined && ua !== null && (typeof ua === 'string' ? ua.length > 0 : ua.length > 0)) {
+                            statsObj.answered++;
+                            let isCorrect = false;
+                            
+                            if (q.type === 'multiple') {
+                                const correctSet = q.answer.split('').sort().join('');
+                                const userSet = (Array.isArray(ua) ? ua : []).sort().join('');
+                                isCorrect = correctSet === userSet;
+                            } else {
+                                isCorrect = ua === q.answer;
+                            }
+                            
+                            if (!isCorrect) {
+                                statsObj.wrong++;
+                                statsObj.wrongQuestions.push({
+                                    id: i + 1, 
+                                    num: q.num,
+                                    type: q.type,
+                                    question: q.question,
+                                    options: q.options,
+                                    correctAnswer: q.answer,
+                                    explanation: q.analysis
+                                });
+                            }
+                        }
+                    });
+                    
                     localStorage.setItem(STATS_KEY, JSON.stringify(statsObj));
                 } catch (e) {}
             }
