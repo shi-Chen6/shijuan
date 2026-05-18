@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>皮亚杰道德发展阶段理论刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .wrong-review-btn { background: #fff2f0; color: var(--error-color); border: 2px solid var(--error-color); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">皮亚杰道德发展</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "type": "单选题",
+                "stem": "皮亚杰研究儿童道德发展采用的方法是（ ）",
+                "options": [
+                    {"label": "A", "text": "两难故事法"},
+                    {"label": "B", "text": "对偶故事法"},
+                    {"label": "C", "text": "观察法"},
+                    {"label": "D", "text": "实验法"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（对偶故事法）。皮亚杰用对偶故事法研究儿童道德发展，科尔伯格用两难故事法，这是教招考试中必考的区分点。</p><p><strong>📚 知识点讲解：</strong>对偶故事法是指给儿童讲两个相似但动机和结果不同的故事，让儿童判断谁更坏。例如：一个孩子不小心打碎10个杯子，另一个孩子故意打碎1个杯子，问儿童谁更该受罚。通过儿童的回答来判断其道德发展水平。</p><p><strong>💡 解题思路：</strong>看到“对偶故事法”直接对应皮亚杰，看到“两难故事法”对应科尔伯格。题干明确问皮亚杰，故选B。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "皮亚杰将儿童道德发展划分为几个阶段（ ）",
+                "options": [
+                    {"label": "A", "text": "3个"},
+                    {"label": "B", "text": "4个"},
+                    {"label": "C", "text": "5个"},
+                    {"label": "D", "text": "6个"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（4个）。皮亚杰将儿童道德发展划分为四大阶段：前道德阶段→他律道德阶段→自律道德阶段→公正道德阶段。</p><p><strong>📚 知识点讲解：</strong>四大阶段按年龄顺序固定：前道德（2～5岁）、他律（5～8岁）、自律（8～10岁）、公正（10～12岁以后）。口诀为“前他自公”。</p><p><strong>💡 解题思路：</strong>记住口诀“前他自公”对应4个阶段。科尔伯格是三水平六阶段，不要混淆。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童道德发展的前道德阶段（自我中心阶段）年龄是（ ）",
+                "options": [
+                    {"label": "A", "text": "2～5岁"},
+                    {"label": "B", "text": "5～8岁"},
+                    {"label": "C", "text": "8～10岁"},
+                    {"label": "D", "text": "10～12岁"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（2～5岁）。前道德阶段是儿童道德发展的最初阶段，年龄为2～5岁，核心特点是无道德观念、以自我为中心。</p><p><strong>📚 知识点讲解：</strong>前道德阶段也称自我中心阶段。此阶段儿童没有规则意识，分不清对错，只看自己的需求。例如抢玩具不觉得错，因为自己想要。</p><p><strong>💡 解题思路：</strong>年龄对应：前道德2～5岁，他律5～8岁，自律8～10岁，公正10岁以上。按顺序记忆即可。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "他律道德阶段（权威阶段）的年龄是（ ）",
+                "options": [
+                    {"label": "A", "text": "2～5岁"},
+                    {"label": "B", "text": "5～8岁"},
+                    {"label": "C", "text": "8～10岁"},
+                    {"label": "D", "text": "10岁以上"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（5～8岁）。他律道德阶段也称权威阶段，年龄为5～8岁。</p><p><strong>📚 知识点讲解：</strong>此阶段儿童认为规则是权威制定的、绝对不可改变。判断行为对错只看结果，不看动机。例如：不小心打碎10个杯子比故意打碎1个杯子更坏。</p><p><strong>💡 解题思路：</strong>5～8岁是小学低年级阶段，儿童绝对服从老师，正符合他律特征。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "自律道德阶段（可逆性阶段）的年龄是（ ）",
+                "options": [
+                    {"label": "A", "text": "2～5岁"},
+                    {"label": "B", "text": "5～8岁"},
+                    {"label": "C", "text": "8～10岁"},
+                    {"label": "D", "text": "10岁以上"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（8～10岁）。自律道德阶段也称可逆性阶段，年龄为8～10岁。</p><p><strong>📚 知识点讲解：</strong>此阶段儿童认识到规则是大家约定的、可以修改。判断行为对错看动机而非结果。例如：故意打碎1个杯子比不小心打碎10个杯子更坏。</p><p><strong>💡 解题思路：</strong>8～10岁是小学中段，儿童开始有独立判断，不再盲目服从权威。注意10岁是他律转自律的分水岭。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "公正道德阶段的年龄是（ ）",
+                "options": [
+                    {"label": "A", "text": "2～5岁"},
+                    {"label": "B", "text": "5～8岁"},
+                    {"label": "C", "text": "8～10岁"},
+                    {"label": "D", "text": "10～12岁以后"}
+                ],
+                "answer": 3,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是D（10～12岁以后）。公正道德阶段是皮亚杰道德发展理论的最高阶段，出现在10～12岁以后。</p><p><strong>📚 知识点讲解：</strong>此阶段儿童从平等观念发展到公道观念，追求公平正义，能考虑他人的特殊情况。例如认为给弱小的人更多帮助才是公平。</p><p><strong>💡 解题思路：</strong>公正阶段年龄最大（10岁以上），是道德发展的最高阶段。关键词“公平、公道”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童从他律道德向自律道德转化的分水岭是（ ）",
+                "options": [
+                    {"label": "A", "text": "5岁"},
+                    {"label": "B", "text": "8岁"},
+                    {"label": "C", "text": "10岁"},
+                    {"label": "D", "text": "12岁"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（10岁）。10岁是儿童从他律道德向自律道德转化的关键分水岭。</p><p><strong>📚 知识点讲解：</strong>10岁以前，儿童道德判断主要受外部权威约束（他律）；10岁以后，逐渐转向内部自我约束（自律）。这是皮亚杰道德发展理论的核心结论之一。</p><p><strong>💡 解题思路：</strong>记住：10岁=分水岭。常考判断题，如“8岁是分水岭”就是错的。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "前道德阶段儿童的核心特点是（ ）",
+                "options": [
+                    {"label": "A", "text": "服从权威"},
+                    {"label": "B", "text": "无道德观念、自我中心"},
+                    {"label": "C", "text": "看动机"},
+                    {"label": "D", "text": "追求公平"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（无道德观念、自我中心）。前道德阶段儿童没有真正的道德观念，一切以自我需求为中心。</p><p><strong>📚 知识点讲解：</strong>此阶段（2～5岁）儿童没有规则意识，分不清对错。例如抢别人玩具不觉得错，因为自己想要。A是他律阶段特点，C是自律阶段特点，D是公正阶段特点。</p><p><strong>💡 解题思路：</strong>“前道德”即“还没有道德”，所以“无道德观念”直接对应。其他选项都是后续阶段才出现的特征。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "他律道德阶段儿童判断行为对错的标准是（ ）",
+                "options": [
+                    {"label": "A", "text": "行为动机"},
+                    {"label": "B", "text": "行为后果"},
+                    {"label": "C", "text": "主观意图"},
+                    {"label": "D", "text": "公平正义"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（行为后果）。他律道德阶段儿童只看结果、不看动机，后果越严重越坏。</p><p><strong>📚 知识点讲解：</strong>这是他律与自律最核心的区分点。他律阶段儿童认为打碎10个杯子（虽然是不小心）比故意打碎1个杯子更坏，因为10个比1个多。</p><p><strong>💡 解题思路：</strong>“他律看结果，自律看动机”是必背口诀。题干问他律，选“行为后果”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "自律道德阶段儿童判断行为对错的标准是（ ）",
+                "options": [
+                    {"label": "A", "text": "行为后果"},
+                    {"label": "B", "text": "行为动机"},
+                    {"label": "C", "text": "权威意志"},
+                    {"label": "D", "text": "规则绝对"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（行为动机）。自律道德阶段儿童只看动机、不看结果，动机坏即使后果轻也更坏。</p><p><strong>📚 知识点讲解：</strong>自律阶段儿童认为故意打碎1个杯子比不小心打碎10个杯子更坏，因为前者的动机是坏的。这与成人道德判断逻辑一致。</p><p><strong>💡 解题思路：</strong>“他律看结果，自律看动机”。题干问自律，选“行为动机”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "认为规则是绝对的、不可改变的，必须严格遵守，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（他律道德阶段）。他律阶段视规则为权威制定、神圣不可侵犯，必须绝对遵守。</p><p><strong>📚 知识点讲解：</strong>他律阶段的儿童认为规则是大人（权威）制定的，没有任何例外，违反规则就该受罚，不管原因。自律阶段则认为规则是大家约定的，可以协商修改。</p><p><strong>💡 解题思路：</strong>“规则绝对、不可改变”是他律的标志性描述。自律阶段恰恰相反，认为规则可修改。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "认为规则是大家约定的，可以协商修改，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（自律道德阶段）。自律阶段也称可逆性阶段，认识到规则是共同约定，具有可逆性，可以修改。</p><p><strong>📚 知识点讲解：</strong>自律阶段儿童不再盲目服从权威，开始理解规则背后的道理。例如：他们可能认为某条班规不合理，可以商量修改。</p><p><strong>💡 解题思路：</strong>“协商修改”是自律的标志。他律是“绝对不可变”，两者完全相反。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童认为“不小心打碎10个杯子比故意打碎1个杯子更坏”，处于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（他律道德阶段）。只看打碎杯子的数量（结果），不看动机，典型他律特征。</p><p><strong>📚 知识点讲解：</strong>这是皮亚杰对偶故事法中的经典案例。他律儿童认为10个比1个多，所以更坏，完全不考虑前者是不小心、后者是故意。</p><p><strong>💡 解题思路：</strong>“更坏”的依据是“10个>1个”，只看数量=看结果，直接对应他律。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童认为“故意打碎1个杯子比不小心打碎10个杯子更坏”，处于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（自律道德阶段）。看重故意（坏动机），不看结果数量，典型自律特征。</p><p><strong>📚 知识点讲解：</strong>自律儿童能够区分行为动机的善恶。故意打碎1个虽然结果轻，但动机坏，所以更坏。这与成人道德判断一致。</p><p><strong>💡 解题思路：</strong>“故意”=坏动机，以此判断更坏=看动机，直接对应自律。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童抢别人玩具不觉得错，因为自己想要，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（前道德阶段）。无道德观念、自我中心、只满足自己需求，正是前道德阶段的特征。</p><p><strong>📚 知识点讲解：</strong>前道德阶段（2～5岁）儿童没有规则意识，分不清对错。抢玩具不觉得错，因为他们只关注自己的需求是否被满足。</p><p><strong>💡 解题思路：</strong>“不觉得错”=无道德观念，“自己想要”=自我中心。两者结合锁定前道德阶段。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童绝对服从老师和家长的话，认为“大人说的都是对的”，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（他律道德阶段）。服从权威是他律阶段的核心特征，儿童认为大人说的都是对的。</p><p><strong>📚 知识点讲解：</strong>他律阶段也称权威阶段，儿童绝对服从成人权威，认为规则是大人制定的，不可违抗。A无道德观念，C开始独立思考，D追求公道。</p><p><strong>💡 解题思路：</strong>“绝对服从老师家长”=服从权威，直接对应他律道德阶段。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童开始追求公平正义，认为“应该给弱小的人更多帮助”，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 3,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是D（公正阶段）。公正阶段从平等观念发展到公道观念，考虑他人特殊情况，追求真正的公平。</p><p><strong>📚 知识点讲解：</strong>公正阶段是皮亚杰道德发展的最高阶段。儿童不再追求“所有人都一样”的绝对平等，而是根据实际情况给予不同对待，例如给弱小者更多帮助。</p><p><strong>💡 解题思路：</strong>“给弱小的人更多帮助”体现了公道的公平观，而非绝对平等。这超越了自律阶段的平等观念，属公正阶段。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "皮亚杰认为儿童道德发展的总趋势是（ ）",
+                "options": [
+                    {"label": "A", "text": "从自律到他律"},
+                    {"label": "B", "text": "从他律到自律"},
+                    {"label": "C", "text": "从无到有"},
+                    {"label": "D", "text": "从具体到抽象"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（从他律到自律）。皮亚杰认为儿童道德发展是从外部约束的他律道德逐渐向内部自我约束的自律道德转化的过程。</p><p><strong>📚 知识点讲解：</strong>这是皮亚杰道德发展理论的核心结论。年幼儿童依赖外部权威判断对错（他律），随着年龄增长，逐渐发展出基于内部良心的道德判断（自律）。</p><p><strong>💡 解题思路：</strong>总趋势是“从他律到自律”。A说反了，C和D不是皮亚杰道德理论的核心表述。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于他律道德阶段特点的是（ ）",
+                "options": [
+                    {"label": "A", "text": "规则可修改"},
+                    {"label": "B", "text": "看动机好坏"},
+                    {"label": "C", "text": "规则绝对不可变"},
+                    {"label": "D", "text": "追求公道"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（规则绝对不可变）。他律阶段认为规则是权威制定的、神圣不可改变。</p><p><strong>📚 知识点讲解：</strong>A是自律阶段特点（规则可修改），B是自律阶段特点（看动机），D是公正阶段特点（追求公道）。只有C属于他律阶段。</p><p><strong>💡 解题思路：</strong>逐一排除：A、B是自律，D是公正，剩下的C是他律。用“他律=规则绝对”来记忆。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于自律道德阶段特点的是（ ）",
+                "options": [
+                    {"label": "A", "text": "服从权威"},
+                    {"label": "B", "text": "只看结果"},
+                    {"label": "C", "text": "规则具有可逆性"},
+                    {"label": "D", "text": "无道德观念"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（规则具有可逆性）。自律阶段也称可逆性阶段，认为规则是大家约定的，可以修改。</p><p><strong>📚 知识点讲解：</strong>A是他律阶段特点（服从权威），B是他律阶段特点（只看结果），D是前道德阶段特点（无道德观念）。只有C属于自律阶段。</p><p><strong>💡 解题思路：</strong>“可逆性”是自律阶段的别称来源，直接对应。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童认为“大家都遵守的规则才是好规则”，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（自律道德阶段）。自律阶段认为规则是大家共同约定、共同遵守的，强调约定性和相互性。</p><p><strong>📚 知识点讲解：</strong>自律阶段儿童理解规则的社会契约性质。他律阶段认为规则是权威单方面制定的，而自律阶段认为规则需要大家同意。</p><p><strong>💡 解题思路：</strong>“大家都遵守”体现了共同约定、相互尊重的观念，是自律阶段的核心特征。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "5岁的小明认为，只要违反了老师的规定，不管什么原因都应该受罚，他处于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（他律道德阶段）。5岁+绝对服从权威规则+不考虑原因，完全符合他律道德的特征。</p><p><strong>📚 知识点讲解：</strong>5岁处于他律阶段年龄范围（5～8岁），且“不管什么原因都应该受罚”体现规则绝对化的他律思维。</p><p><strong>💡 解题思路：</strong>年龄和特点双重印证：5岁在他律范围内，盲目服从规则是他律的标志。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "9岁的小红认为，只要是为了帮助别人，即使违反了班级规则也可以原谅，她处于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（自律道德阶段）。9岁+看重善良动机+不机械遵守规则，符合自律道德特征。</p><p><strong>📚 知识点讲解：</strong>9岁处于自律阶段年龄范围（8～10岁），且“为了帮助别人”的善良动机被看重，说明已从“看结果”发展到“看动机”。</p><p><strong>💡 解题思路：</strong>年龄和特点双重印证：9岁在自律范围内，看动机而非机械遵守规则是自律的核心。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "11岁的小刚认为，分配劳动任务时，应该给力气小的同学安排轻一点的活，这体现了（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 3,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是D（公正阶段）。11岁+考虑个体差异+追求公道而非绝对平等，符合公正道德阶段特征。</p><p><strong>📚 知识点讲解：</strong>公正阶段超越“所有人都一样”的平等观念，发展为根据实际情况给予不同对待的公道观念。给力气小的同学安排轻活正体现了这一特点。</p><p><strong>💡 解题思路：</strong>“给力气小的安排轻活”不是绝对平等，而是考虑个体差异的公道。年龄11岁也在公正阶段范围内（10岁以上）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "皮亚杰道德发展阶段中，最低级的阶段是（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（前道德阶段）。前道德阶段是儿童道德发展的起点，没有真正的道德观念，是最低级的阶段。</p><p><strong>📚 知识点讲解：</strong>四级发展顺序由低到高：前道德→他律→自律→公正。前道德阶段儿童尚不具备道德判断能力，所以是最低级阶段。</p><p><strong>💡 解题思路：</strong>按顺序排列，前道德是第一阶段，也是最低级的。公正阶段是最高级的。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "最高级的道德发展阶段是（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 3,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是D（公正阶段）。公正阶段是皮亚杰道德发展理论的最高阶段，出现在10～12岁以后。</p><p><strong>📚 知识点讲解：</strong>公正阶段超越了自律阶段的平等观念，发展出公道的道德观，能够考虑他人特殊情况，追求真正的公平正义。</p><p><strong>💡 解题思路：</strong>口诀“前他自公”，公正在最后，是最高阶段。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "他律道德阶段的约束来自于（ ）",
+                "options": [
+                    {"label": "A", "text": "自我内心"},
+                    {"label": "B", "text": "外部权威"},
+                    {"label": "C", "text": "同伴约定"},
+                    {"label": "D", "text": "道德良心"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（外部权威）。他律道德是外部约束，儿童服从成人权威（父母、老师等）。</p><p><strong>📚 知识点讲解：</strong>“他律”中的“他”指他人、外部。此阶段道德判断标准来自外部权威，儿童认为大人说的就是对的。自律则是内部约束，来自自我内心和道德良心。</p><p><strong>💡 解题思路：</strong>“他律”=外部，“自律”=内部。直接对应即可。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "自律道德阶段的约束来自于（ ）",
+                "options": [
+                    {"label": "A", "text": "外部权威"},
+                    {"label": "B", "text": "自我内心"},
+                    {"label": "C", "text": "老师要求"},
+                    {"label": "D", "text": "家长命令"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（自我内心）。自律道德是内部约束，儿童依靠自己的道德良心来判断是非。</p><p><strong>📚 知识点讲解：</strong>“自律”中的“自”指自己、内部。此阶段道德判断标准来自自我内心，不再依赖外部权威。A、C、D都是外部约束，属于他律范畴。</p><p><strong>💡 解题思路：</strong>“自律”=自己约束自己，选“自我内心”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列关于皮亚杰道德发展理论说法错误的是（ ）",
+                "options": [
+                    {"label": "A", "text": "用对偶故事法研究"},
+                    {"label": "B", "text": "10岁是他律转自律的分水岭"},
+                    {"label": "C", "text": "他律看动机，自律看结果"},
+                    {"label": "D", "text": "道德发展从他律到自律"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。C说反了，正确的口诀是“他律看结果，自律看动机”。</p><p><strong>📚 知识点讲解：</strong>A正确（皮亚杰用对偶故事法），B正确（10岁是分水岭），D正确（从他律到自律是总趋势）。只有C将两者的判断标准颠倒，说法错误。</p><p><strong>💡 解题思路：</strong>题干问“错误的”，逐一核实。C明显与记忆口诀相反，直接锁定。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童能够理解“己所不欲，勿施于人”的道理，开始换位思考，最可能处于（ ）",
+                "options": [
+                    {"label": "A", "text": "前道德阶段"},
+                    {"label": "B", "text": "他律道德阶段"},
+                    {"label": "C", "text": "自律道德阶段"},
+                    {"label": "D", "text": "公正阶段"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（自律道德阶段）。换位思考、平等观念是自律阶段的核心表现，儿童开始能够站在他人角度想问题。</p><p><strong>📚 知识点讲解：</strong>自律阶段儿童发展出相互尊重的观念，理解“己所不欲，勿施于人”的平等原则。前道德无此能力，他律只服从权威，公正则更进一步追求公道。</p><p><strong>💡 解题思路：</strong>“换位思考”和“平等”是自律阶段的关键词。他律阶段不会换位思考，公正阶段更进一步考虑特殊情况。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "皮亚杰用两难故事法研究儿童道德发展。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。皮亚杰用的是对偶故事法，科尔伯格用的才是两难故事法。两者是教招考试中必考的区分点。</p><p><strong>📚 知识点讲解：</strong>对偶故事法是给儿童讲两个动机和结果不同的故事，让儿童判断对错。两难故事法（如海因茨偷药）是科尔伯格研究道德发展的方法。</p><p><strong>💡 解题思路：</strong>皮亚杰→对偶故事法，科尔伯格→两难故事法。题干张冠李戴，判错。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "儿童道德发展的顺序是：前道德→他律→自律→公正。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。这是皮亚杰道德发展四大阶段的标准顺序，口诀为“前他自公”。</p><p><strong>📚 知识点讲解：</strong>四个阶段按年龄依次递进：前道德（2～5岁）→他律（5～8岁）→自律（8～10岁）→公正（10岁以上）。顺序固定不可颠倒。</p><p><strong>💡 解题思路：</strong>顺序完全正确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "他律道德阶段儿童只看行为结果，不看行为动机。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。他律道德阶段儿童判断对错只看结果，不看动机，后果越严重越坏。</p><p><strong>📚 知识点讲解：</strong>例如：不小心打碎10个杯子比故意打碎1个杯子更坏——这就是典型的他律逻辑。口诀：“他律看结果”。</p><p><strong>💡 解题思路：</strong>表述准确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "自律道德阶段儿童认为规则是绝对的、不可改变的。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。规则绝对不可改变是他律阶段的特点。自律阶段认为规则是大家约定的，可以修改。</p><p><strong>📚 知识点讲解：</strong>自律阶段也称“可逆性阶段”，强调规则的约定性和可修改性。他律阶段才是规则绝对论。</p><p><strong>💡 解题思路：</strong>题干将自律和他律的特点说反了，判错。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "8岁是儿童从他律道德向自律道德转化的分水岭。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。分水岭是10岁，不是8岁。10岁是儿童从他律向自律转化的关键年龄。</p><p><strong>📚 知识点讲解：</strong>8岁是自律阶段的起始年龄，但10岁才是真正的分水岭。在10岁左右，大多数儿童完成从他律到自律的转变。</p><p><strong>💡 解题思路：</strong>年龄记忆错误，8岁是自律开始，10岁才是分水岭。判错。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "前道德阶段儿童没有真正的道德观念，以自我为中心。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。前道德阶段（2～5岁）儿童没有规则意识，分不清对错，一切以自我需求为中心。</p><p><strong>📚 知识点讲解：</strong>此阶段也称“自我中心阶段”，儿童的行为完全由自己的欲望支配，不懂得道德判断。</p><p><strong>💡 解题思路：</strong>表述完全正确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "公正阶段儿童追求绝对的平等，认为所有人都应该一样。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。绝对平等是自律阶段的特点，公正阶段追求的是公道平等，考虑个体差异。</p><p><strong>📚 知识点讲解：</strong>公正阶段超越了“所有人都一样”的观念，发展为根据实际情况给予不同对待的公道观。例如：给弱小的人更多帮助，而非给所有人同样多。</p><p><strong>💡 解题思路：</strong>题干将自律的“绝对平等”安在公正阶段头上，判错。公正追求“公道”而非“绝对平等”。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "他律道德是外部约束，自律道德是内部自我约束。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。他律=外部约束（成人、权威），自律=内部约束（自我良心、道德信念）。</p><p><strong>📚 知识点讲解：</strong>“他律”中的“他”指他人/外部，“自律”中的“自”指自己/内部。这是皮亚杰道德发展从外部约束到内部约束的核心转变。</p><p><strong>💡 解题思路：</strong>表述准确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "儿童认为“老师说的都是对的”，这是自律道德的表现。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。服从权威、认为“老师说的都是对的”是他律道德阶段的表现，而非自律。</p><p><strong>📚 知识点讲解：</strong>他律阶段儿童盲目服从成人权威，自律阶段儿童开始独立思考，不再盲从权威。</p><p><strong>💡 解题思路：</strong>题干将服从权威错归为自律，判错。服从权威=他律。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "皮亚杰认为，儿童的道德认知发展与认知发展水平是同步的。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。皮亚杰认为道德认知的发展与一般认知发展是平行的，都遵循从他律到自律的规律。</p><p><strong>📚 知识点讲解：</strong>皮亚杰的认知发展理论是其道德发展理论的基础。儿童道德判断水平受认知发展水平的制约，两者同步发展。</p><p><strong>💡 解题思路：</strong>皮亚杰是认知学派代表，强调认知与道德的关联。表述正确，判对。</p>"
+            }
+        ];
+        
+        const APP_ID = 'piaget_moral_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '皮亚杰道德发展阶段理论（教招必考·极简版）';
+            const content = `
+                <h3>一、核心人物与研究方法</h3>
+                <ul>
+                    <li><strong>人物</strong>：皮亚杰（认知学派）</li>
+                    <li><strong>研究方法</strong>：<strong>对偶故事法</strong>（给儿童讲两个相似但动机和结果不同的故事，判断对错）</li>
+                </ul>
+                <h3>二、四大道德发展阶段（按年龄划分，顺序固定）</h3>
+                <p style="text-align:center;font-size:18px;font-weight:700;color:#4a90e2;">口诀：<strong>前他自公</strong></p>
+                <table class="knowledge-table">
+                    <thead><tr><th>阶段</th><th>年龄</th><th>核心特点</th><th>判断标准</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>前道德阶段</strong></td><td>2～5岁</td><td>无道德观念、自我中心</td><td>只满足自己</td></tr>
+                        <tr><td><strong>他律道德阶段</strong></td><td>5～8岁</td><td>服从权威、规则绝对</td><td><strong>只看结果</strong></td></tr>
+                        <tr><td><strong>自律道德阶段</strong></td><td>8～10岁</td><td>规则可改、平等观念</td><td><strong>只看动机</strong></td></tr>
+                        <tr><td><strong>公正道德阶段</strong></td><td>10～12岁以后</td><td>追求公平、公道、考虑他人</td><td>公道平等</td></tr>
+                    </tbody>
+                </table>
+                <h3>三、最易混点秒杀（必考）</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>阶段</th><th>看结果还是动机</th><th>规则观念</th><th>核心关键词</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>他律</strong></td><td><strong>只看结果</strong></td><td>规则绝对、不可变</td><td>服从权威、后果严重</td></tr>
+                        <tr><td><strong>自律</strong></td><td><strong>只看动机</strong></td><td>规则可改、大家约定</td><td>动机好坏、平等</td></tr>
+                    </tbody>
+                </table>
+                <h3>四、做题秒杀技巧</h3>
+                <ol>
+                    <li>看到<strong>无道德、自我中心、2-5岁</strong> → 前道德阶段</li>
+                    <li>看到<strong>服从权威、只看结果、规则不可变、5-8岁</strong> → 他律道德</li>
+                    <li>看到<strong>看动机、规则可改、平等、8-10岁</strong> → 自律道德</li>
+                    <li>看到<strong>公平、正义、考虑他人、10岁以上</strong> → 公正道德</li>
+                    <li>看到<strong>对偶故事法</strong> → 直接选皮亚杰</li>
+                </ol>
+                <h3>五、高频考点总结</h3>
+                <ul>
+                    <li>皮亚杰认为儿童道德发展是从<strong>他律</strong>到<strong>自律</strong>的过程</li>
+                    <li><strong>10岁</strong>是儿童从他律道德向自律道德转化的分水岭</li>
+                    <li>他律道德是<strong>外部约束</strong>，自律道德是<strong>内部约束</strong></li>
+                </ul>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                            <div class="stat-item"><div class="stat-value" style="color:#f5222d;">${wrongCount}</div><div class="stat-label">错题数量</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn wrong-review-btn" onclick="viewWrongQuestions()">📝 查看错题集</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function viewWrongQuestions() {
+            if (currentPage === 'quiz' && currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                currentFilter = 'wrong';
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                const wrongBtn = document.querySelector('.filter-btn[onclick*="wrong"]');
+                if (wrongBtn) wrongBtn.classList.add('active');
+                toggleSheet();
+            }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

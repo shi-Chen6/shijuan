@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>感受性与感觉阈限刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">感受性与感觉阈限</div>
+                        <div class="progress-text">普通心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "type": "单选题",
+                "stem": "人对刺激物的感觉能力，称为（ ）",
+                "options": [
+                    {"label": "A", "text": "感觉阈限"},
+                    {"label": "B", "text": "感受性"},
+                    {"label": "C", "text": "知觉"},
+                    {"label": "D", "text": "观察力"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（感受性）。感受性是指人对刺激物的感觉能力、灵敏度；感觉阈限是引起感觉的刺激量门槛。</p><p><strong>📚 知识点讲解：</strong>感受性回答“能不能感觉到、敏不敏感”的问题，是一种主观能力。感觉阈限回答“刚好能感觉到的那个最低标准是多少”的问题，是一种客观刺激量。两者成反比关系。</p><p><strong>💡 解题思路：</strong>题干关键词是“感觉能力”，直接对应感受性的定义。A选项是刺激量，C选项是整体认知过程，D选项是观察力。通过核心词“能力”即可锁定正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "能引起人的感觉的最小刺激量，叫做（ ）",
+                "options": [
+                    {"label": "A", "text": "感受性"},
+                    {"label": "B", "text": "感觉阈限"},
+                    {"label": "C", "text": "知觉恒常性"},
+                    {"label": "D", "text": "适应"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（感觉阈限）。感觉阈限就是能引起感觉的刺激临界量、门槛值。</p><p><strong>📚 知识点讲解：</strong>感觉阈限分为绝对感觉阈限（从无到有的最小量）和差别感觉阈限（从有到变的最小变化量）。题干“最小刺激量”是阈限的核心定义。</p><p><strong>💡 解题思路：</strong>看到“最小刺激量”这个关键词，直接对应感觉阈限。A感受性是能力而非数值，C和D是知觉特性，均不符合题意。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "感受性与感觉阈限的关系是（ ）",
+                "options": [
+                    {"label": "A", "text": "成正比"},
+                    {"label": "B", "text": "成反比"},
+                    {"label": "C", "text": "没关系"},
+                    {"label": "D", "text": "有时正比有时反比"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（成反比）。感受性越高（越敏感），所需刺激门槛越低（阈限越小），这是固定的反比关系。</p><p><strong>📚 知识点讲解：</strong>这是教招考试的固定考点。用例子理解：听力好的人（感受性高），很小的声音就能听见（阈限低）；听力差的人（感受性低），需要很大声音才能听见（阈限高）。</p><p><strong>💡 解题思路：</strong>牢记口诀“性限成反比”。排除A和C、D，因为这是一种确定的反向关系，不会有其他情况。只要记住“越敏感门槛越低”即可。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "刚刚能够引起感觉的最小刺激量是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "绝对感觉阈限"},
+                    {"label": "C", "text": "差别感受性"},
+                    {"label": "D", "text": "差别感觉阈限"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（绝对感觉阈限）。绝对感觉阈限是指从无到有、刚好能察觉到的最小刺激量。</p><p><strong>📚 知识点讲解：</strong>“绝对”关键词是“有无”——即从完全没有感觉到刚刚有感觉。例如刚好听到的最小声音、刚好尝到咸味的最低盐量。A是察觉最小刺激的能力，C和D都属于“差别”范畴（分辨差异）。</p><p><strong>💡 解题思路：</strong>题干“刚刚能引起感觉”和“最小刺激量”直接指向绝对感觉阈限。排除A（它是能力不是量），排除C、D（它们涉及两个刺激的比较）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "刚刚能觉察出两个刺激之间最小差异量的是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感觉阈限"},
+                    {"label": "B", "text": "差别感觉阈限"},
+                    {"label": "C", "text": "绝对感受性"},
+                    {"label": "D", "text": "适应"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别感觉阈限）。差别感觉阈限是指刚好能分辨出两个刺激不一样的最小变化量，也称最小可觉差。</p><p><strong>📚 知识点讲解：</strong>“差别”关键词是“变化”——即从有到变得不一样。例如两杯糖水，多加一点点糖刚好尝出更甜，这一点糖就是差别阈限。A是“有无”的最小量。</p><p><strong>💡 解题思路：</strong>抓住“两个刺激之间”和“差异量”，这明确指向差别阈限。绝对阈限只涉及单一刺激的最小量。D与题干无关。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "人的感官觉察最小刺激的能力，称为（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "绝对感觉阈限"},
+                    {"label": "C", "text": "差别感受性"},
+                    {"label": "D", "text": "差别感觉阈限"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（绝对感受性）。绝对感受性是指人的感官觉察最小刺激的能力，是对“有无”的敏感度。</p><p><strong>📚 知识点讲解：</strong>“性是能力，限是门槛”。绝对感受性属于能力范畴，绝对感觉阈限属于数值范畴。例如，能听到微弱声音的能力是绝对感受性，而那个微弱声音的分贝数是绝对感觉阈限。</p><p><strong>💡 解题思路：</strong>题干问的是“能力”，直接排除B、D（它们是刺激量）。C涉及差异分辨，而题干是“最小刺激”，故选A。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "人能够察觉两个刺激之间微弱差异的能力，是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "差别感受性"},
+                    {"label": "C", "text": "绝对阈限"},
+                    {"label": "D", "text": "适应"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别感受性）。差别感受性是指察觉刺激之间微弱差异的能力。</p><p><strong>📚 知识点讲解：</strong>“差别”+“能力”=差别感受性。例如，品酒师能尝出两种红酒的细微不同，说明他的差别感受性高。A是察觉有无的能力，C是阈值。</p><p><strong>💡 解题思路：</strong>题干中“察觉……差异的能力”直接匹配差别感受性。按照“性是能力，限是门槛”的口诀，先定位到“性”，再根据“差异”定位到“差别”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "有的人听力特别灵敏，很小的声音都能听到，说明他的（ ）",
+                "options": [
+                    {"label": "A", "text": "感受性高，感觉阈限高"},
+                    {"label": "B", "text": "感受性高，感觉阈限低"},
+                    {"label": "C", "text": "感受性低，感觉阈限高"},
+                    {"label": "D", "text": "感受性低，感觉阈限低"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。听力灵敏说明感受性高，很小声音就能听到说明所需刺激门槛低（阈限低）。</p><p><strong>📚 知识点讲解：</strong>这是一个理解反比关系的经典题目。灵敏=感受性高；只需很小声音=阈限低。两者一高一低，成反比。</p><p><strong>💡 解题思路：</strong>分两步判断：①“灵敏”对应感受性高；②“很小声音”对应阈限低。因此选B。如果选A，则变成听觉灵敏但需要很大声，这自相矛盾。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "有的人听力迟钝，需要很大声音才能听见，说明（ ）",
+                "options": [
+                    {"label": "A", "text": "感受性高，阈限低"},
+                    {"label": "B", "text": "感受性低，阈限高"},
+                    {"label": "C", "text": "感受性高，阈限高"},
+                    {"label": "D", "text": "感受性低，阈限低"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。迟钝说明感受性低，需要很大声音说明门槛高（阈限高）。</p><p><strong>📚 知识点讲解：</strong>与上题形成对比。迟钝=感受性低；需要大声=阈限高。反比关系再次得到体现：能力越低，所需刺激量越大。</p><p><strong>💡 解题思路：</strong>根据“迟钝”确定感受性低，根据“很大声音”确定阈限高。排除其他不符合反比关系的选项。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "往白开水里加糖，<strong>刚好尝到有甜味</strong>，此时的加糖量属于（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感觉阈限"},
+                    {"label": "B", "text": "差别感觉阈限"},
+                    {"label": "C", "text": "绝对感受性"},
+                    {"label": "D", "text": "差别感受性"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（绝对感觉阈限）。从没味道到有甜味，属于“从无到有”，刚好尝到甜味的加糖量就是绝对感觉阈限。</p><p><strong>📚 知识点讲解：</strong>绝对阈限处理“有无”问题。水原本是淡的，加糖到刚好能尝出甜味，这个临界糖量就是绝对感觉阈限的数值。</p><p><strong>💡 解题思路：</strong>抓住“刚好尝到有甜味”中“无→有”的变化，锁定“绝对”。题干问的是“加糖量”（刺激量），故选阈限而非感受性。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "在有甜味的水里再加点糖，<strong>刚好尝出比刚才更甜</strong>，多加的这点糖是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对阈限"},
+                    {"label": "B", "text": "差别阈限"},
+                    {"label": "C", "text": "绝对感受性"},
+                    {"label": "D", "text": "差别感受性"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别阈限）。在已有甜味基础上，尝出更甜的变化，属于“从有到变”，多加的糖量是差别感觉阈限。</p><p><strong>📚 知识点讲解：</strong>差别阈限处理“变化”问题，即刚好能分辨差异的最小变化量。这里的水已经有甜味，再加一点糖能感觉到“更甜”，这个增量就是差别阈限。</p><p><strong>💡 解题思路：</strong>区分有无和变化：第一次加糖（无→有）是绝对阈限；第二次加糖（有→更甜）是差别阈限。A是针对单个刺激，B是针对差异。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "最小可觉差指的是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "差别感觉阈限"},
+                    {"label": "C", "text": "绝对阈限"},
+                    {"label": "D", "text": "感受性"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别感觉阈限）。最小可觉差是差别感觉阈限的别称，是指刚刚能觉察出两个刺激差异的最小变化量。</p><p><strong>📚 知识点讲解：</strong>“最小可觉差”这个术语本身强调了“差”（差异）和“最小”（刚好觉察），完整对应差别感觉阈限的定义。德国生理学家韦伯对此进行了系统研究。</p><p><strong>💡 解题思路：</strong>看到“差”字直接对应“差别”。这是术语对应题，记住“最小可觉差=差别感觉阈限”即可。A、C都涉及“绝对”，不涉及差异。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列说法正确的是（ ）",
+                "options": [
+                    {"label": "A", "text": "感受性越高，感觉阈限越高"},
+                    {"label": "B", "text": "感受性越高，感觉阈限越低"},
+                    {"label": "C", "text": "二者成正比"},
+                    {"label": "D", "text": "二者无固定关系"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。感受性与感觉阈限成反比，感受性越高，感觉阈限越低。</p><p><strong>📚 知识点讲解：</strong>这是反复考查的核心关系。越敏感的人，感觉门槛越低；越迟钝的人，感觉门槛越高。A说反了，C和D都是错误的。</p><p><strong>💡 解题思路：</strong>用常识即可判断：一个听力灵敏的人（感受性高），只需要很小的声音就能听到（阈限低）。所以感受性高对应阈限低，选B。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "厨师能轻易尝出两道菜咸淡的细微差别，说明他的（ ）很高",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "差别感受性"},
+                    {"label": "C", "text": "绝对阈限"},
+                    {"label": "D", "text": "适应能力"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别感受性）。尝出咸淡细微差别是分辨刺激差异的能力，属于差别感受性。</p><p><strong>📚 知识点讲解：</strong>厨师辨味能力强，是指他的差别感受性高。他能察觉普通人察觉不到的咸淡变化。A是察觉有无的能力，C是数值，D是感觉适应。</p><p><strong>💡 解题思路：</strong>题干核心是“分别……细微差别”，这直接指向“差别”+“能力”=差别感受性。排除与“绝对”和“适应”相关的选项。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "夜晚安静时，一丝微弱声音就能被察觉，这是（ ）表现",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "差别感受性"},
+                    {"label": "C", "text": "差别阈限"},
+                    {"label": "D", "text": "感觉适应"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（绝对感受性）。察觉微弱声音是从无到有觉察刺激的能力，属于绝对感受性。</p><p><strong>📚 知识点讲解：</strong>绝对感受性是指在安静环境中察觉微弱刺激的能力。夜晚安静时能听到一丝声音，体现了较高的绝对感受性。B涉及差异分辨，C是数值，D是适应现象。</p><p><strong>💡 解题思路：</strong>“一丝微弱声音”是刚能察觉的最小刺激，反映的是能力而非刺激量，且不涉及两个刺激的比较。故选绝对感受性。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "衡量感觉灵敏程度的指标是（ ）",
+                "options": [
+                    {"label": "A", "text": "感觉阈限"},
+                    {"label": "B", "text": "感受性"},
+                    {"label": "C", "text": "知觉"},
+                    {"label": "D", "text": "错觉"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（感受性）。感受性本身就是指感觉的灵敏程度、感觉能力。</p><p><strong>📚 知识点讲解：</strong>感受性直接回答“敏不敏感”的问题，是衡量感觉灵敏程度的心理学指标。感觉阈限是衡量这种灵敏度的间接指标（通过刺激量来反映）。</p><p><strong>💡 解题思路：</strong>题干“灵敏程度”直接对应感受性。A是刺激量，不是灵敏指标。C、D与灵敏程度无关。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "刺激量的临界值、门槛值，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "感受性"},
+                    {"label": "B", "text": "感觉阈限"},
+                    {"label": "C", "text": "观察力"},
+                    {"label": "D", "text": "思维"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（感觉阈限）。阈限就是门槛、临界值的意思，感觉阈限就是能引起感觉的刺激临界量。</p><p><strong>📚 知识点讲解：</strong>“阈”即门槛，“限”即界限。感觉阈限就是感觉的门槛值。题干中“临界值、门槛值”直接解释了阈限的字面意思。</p><p><strong>💡 解题思路：</strong>看到“临界值、门槛值”这些词，直接对应感觉阈限。A是能力，不是数值。C、D是其他心理过程。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "绝对感受性与绝对感觉阈限的关系是（ ）",
+                "options": [
+                    {"label": "A", "text": "正比"},
+                    {"label": "B", "text": "反比"},
+                    {"label": "C", "text": "无关"},
+                    {"label": "D", "text": "有时正比"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（反比）。所有感受性与对应阈限之间都是反比关系，绝对感受性与绝对感觉阈限也不例外。</p><p><strong>📚 知识点讲解：</strong>这个规律具有普遍性：绝对感受性高（能察觉很微弱的刺激），绝对感觉阈限就低（那个微弱刺激的数值很小）。无论“绝对”还是“差别”，性限反比是不变的法则。</p><p><strong>💡 解题思路：</strong>直接应用“性限成反比”的口诀。无论前缀是绝对还是差别，关系都是反比。故选B。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "差别感受性与差别感觉阈限的关系是（ ）",
+                "options": [
+                    {"label": "A", "text": "反比"},
+                    {"label": "B", "text": "正比"},
+                    {"label": "C", "text": "无关"},
+                    {"label": "D", "text": "同步升降"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（反比）。差别感受性越高，所需的差别感觉阈限越低，二者成反比。</p><p><strong>📚 知识点讲解：</strong>例如，品酒师的差别感受性高，他只需要非常微小的甜度变化就能尝出差异（差别阈限低）。普通人差别感受性低，需要大幅加糖才能尝出变化（差别阈限高）。</p><p><strong>💡 解题思路：</strong>与绝对关系同理，性限反比适用于所有情况。B、C、D均不符合这一固定规律。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "普通人很难分辨两种相似香水的味道，说明其（ ）低",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "差别感受性"},
+                    {"label": "C", "text": "绝对阈限"},
+                    {"label": "D", "text": "差别阈限"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别感受性）。分辨不出两种香水的差异，说明察觉差异的能力低，即差别感受性低。</p><p><strong>📚 知识点讲解：</strong>分辨两种相似香水味道，是典型的差别感受性任务。能力低表现为无法区分相似刺激。A涉及察觉有无，C和D是数值。</p><p><strong>💡 解题思路：</strong>题干“分辨……两种”明确指向差异分辨。能力低直接选“差别感受性”。排除“绝对”相关选项。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "刚能引起听觉的最小声音分贝数，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "绝对感觉阈限"},
+                    {"label": "C", "text": "差别感受性"},
+                    {"label": "D", "text": "差别阈限"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（绝对感觉阈限）。分贝数是具体的刺激量数值，“刚能引起听觉的最小分贝”就是绝对感觉阈限。</p><p><strong>📚 知识点讲解：</strong>绝对感觉阈限通常用具体的物理量表示，如多少分贝的声音、多少克重的物体。题干给出了具体数值单位（分贝），且是“最小”量，指向绝对感觉阈限。</p><p><strong>💡 解题思路：</strong>关键词“分贝数”表示刺激量，排除A、C（它们是能力）。“最小”和“刚能引起”指向绝对阈限。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "两个重物之间，刚好能让人感觉出轻重不同的重量差，是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对阈限"},
+                    {"label": "B", "text": "差别阈限"},
+                    {"label": "C", "text": "绝对感受性"},
+                    {"label": "D", "text": "差别感受性"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（差别阈限）。两个重物的重量差是刺激的变化量，刚好感觉出轻重不同即差别感觉阈限。</p><p><strong>📚 知识点讲解：</strong>差别阈限是测量人对差异的敏感度。例如，100克和105克的重物，有人刚好能感觉出不同，这个5克的差值就是差别感觉阈限。</p><p><strong>💡 解题思路：</strong>“两个重物之间”“重量差”明确指向差异比较，属于差别范畴。题干问的是“重量差”这个刺激量，故选阈限。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "感受性是（ ）",
+                "options": [
+                    {"label": "A", "text": "刺激的数量"},
+                    {"label": "B", "text": "感觉的能力"},
+                    {"label": "C", "text": "知觉的特性"},
+                    {"label": "D", "text": "错觉现象"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（感觉的能力）。感受性就是人对刺激的感觉能力、灵敏度。</p><p><strong>📚 知识点讲解：</strong>这是对感受性概念的直接考查。感受性是主观能力，感觉阈限才是客观刺激量。</p><p><strong>💡 解题思路：</strong>用口诀“性是能力”直接判断。A描述的是感觉阈限，C和D与感受性定义不符。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "感觉阈限是（ ）",
+                "options": [
+                    {"label": "A", "text": "人的能力"},
+                    {"label": "B", "text": "刺激的临界量"},
+                    {"label": "C", "text": "主观体验"},
+                    {"label": "D", "text": "情绪状态"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（刺激的临界量）。感觉阈限是客观的刺激量标准，是门槛值。</p><p><strong>📚 知识点讲解：</strong>用口诀“限是门槛”直接判断。A是感受性的定义，C和D都不是感觉阈限的含义。</p><p><strong>💡 解题思路：</strong>题干问的是感觉阈限的本质，它回答“多少刺激才能感觉到”的问题，是临界量。排除主观类选项。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "一个人越不敏感，他的（ ）",
+                "options": [
+                    {"label": "A", "text": "感受性高，阈限低"},
+                    {"label": "B", "text": "感受性低，阈限高"},
+                    {"label": "C", "text": "感受性低，阈限低"},
+                    {"label": "D", "text": "感受性高，阈限高"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。不敏感就是感受性低，需要较大刺激量才能感觉到，即阈限高。</p><p><strong>📚 知识点讲解：</strong>“不敏感”直接对应感受性低。按照反比关系，感受性低必然伴随阈限高。两者一低一高。</p><p><strong>💡 解题思路：</strong>先确定“不敏感”=感受性低，再根据反比关系得出阈限高。A是一高一低但方向反了，C是两者都低（不符合反比），D是两者都高（也不符合）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于绝对感觉阈限案例的是（ ）",
+                "options": [
+                    {"label": "A", "text": "分辨两杯水甜度不同"},
+                    {"label": "B", "text": "刚好听到远处微弱铃声"},
+                    {"label": "C", "text": "分辨两种颜色深浅"},
+                    {"label": "D", "text": "分辨两个音调高低"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。刚好听到远处微弱铃声是从无到有觉察刺激，属于绝对感觉阈限。</p><p><strong>📚 知识点讲解：</strong>绝对阈限处理“无→有”的情境。B描述了从安静到听到微弱铃声的过程。A、C、D都涉及两个刺激的比较，属于差别范畴。</p><p><strong>💡 解题思路：</strong>逐一分析：A、C、D都有“分辨”“不同”等词，明确是差别任务。只有B是“刚好听到”，是绝对阈限的经典案例。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于差别感觉阈限的是（ ）",
+                "options": [
+                    {"label": "A", "text": "刚好闻到一丝花香"},
+                    {"label": "B", "text": "刚好察觉灯光变亮一点"},
+                    {"label": "C", "text": "刚能感觉到微风"},
+                    {"label": "D", "text": "刚能听到蚊子叫声"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。灯光从原有亮度变得更亮一点，是“有→变”的过程，属于差别感觉阈限。</p><p><strong>📚 知识点讲解：</strong>差别阈限关注变化量。B中的“变亮一点”是相对于原来亮度的增量，刚好察觉这个增量就是差别阈限。A、C、D都是从无到有，属于绝对阈限。</p><p><strong>💡 解题思路：</strong>找关键词“变亮”（变化），区别于A、C、D中的“闻到”“感觉到”“听到”（出现）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "韦伯定律主要研究的是（ ）",
+                "options": [
+                    {"label": "A", "text": "绝对感受性"},
+                    {"label": "B", "text": "差别感受性与差别阈限"},
+                    {"label": "C", "text": "感觉适应"},
+                    {"label": "D", "text": "感觉对比"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。韦伯定律揭示了差别感觉阈限与原始刺激量之间的比例关系，属于差别感受性范畴。</p><p><strong>📚 知识点讲解：</strong>韦伯定律指出，差别阈限与原始刺激量之比是一个常数（韦伯分数）。例如，在100克重物上加2克能感觉到更重，那么在200克上需加4克。这研究的是差别感受性。</p><p><strong>💡 解题思路：</strong>韦伯定律的研究对象是最小可觉差，即差别阈限。排除A（绝对）、C（适应）、D（对比）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "阈限越低，说明人的感受性（ ）",
+                "options": [
+                    {"label": "A", "text": "越高"},
+                    {"label": "B", "text": "越低"},
+                    {"label": "C", "text": "不变"},
+                    {"label": "D", "text": "先高后低"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（越高）。阈限低意味着门槛低，容易感觉到刺激，也就是感受性高。</p><p><strong>📚 知识点讲解：</strong>反比关系的推理：阈限越低→越容易感觉→越敏感→感受性越高。例如，能听到0分贝声音的人比需要10分贝的人感受性高。</p><p><strong>💡 解题思路：</strong>根据“性限成反比”直接推理：阈限↓则感受性↑。选A。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "我们平时说“这人感觉很敏锐”，指的是（ ）",
+                "options": [
+                    {"label": "A", "text": "感觉阈限高"},
+                    {"label": "B", "text": "感受性高"},
+                    {"label": "C", "text": "适应能力强"},
+                    {"label": "D", "text": "错觉少"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（感受性高）。“感觉敏锐”就是感觉灵敏、感觉能力强，即感受性高。</p><p><strong>📚 知识点讲解：</strong>日常用语中“敏锐”对应心理学中的“感受性高”。这体现了一个人的感觉能力出众。</p><p><strong>💡 解题思路：</strong>直接将日常用语“敏锐”替换为心理学概念“感受性高”。A高意味着迟钝，与敏锐相反。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "感受性是引起感觉的最小刺激量。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。引起感觉的最小刺激量是感觉阈限，感受性是感觉能力。</p><p><strong>📚 知识点讲解：</strong>这是一个常见的概念混淆点。感受性是主观能力，感觉阈限是客观刺激量。题干将阈限的定义安在了感受性头上。</p><p><strong>💡 解题思路：</strong>看到“最小刺激量”，应该对应感觉阈限。题干说成感受性，属于张冠李戴，判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "感受性与感觉阈限成反比例关系。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。这是感受性与感觉阈限之间固定不变的基本关系。</p><p><strong>📚 知识点讲解：</strong>反比关系是教招考试的核心考点。越敏感，门槛越低；越迟钝，门槛越高。这个规律适用于绝对和差别两种情况。</p><p><strong>💡 解题思路：</strong>这是固定知识点，直接判断正确。没有任何例外情况。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "绝对感觉阈限是分辨两个刺激差异的最小量。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。分辨差异是差别感觉阈限的定义，绝对感觉阈限是从无到有的最小刺激量。</p><p><strong>📚 知识点讲解：</strong>绝对和差别的核心区分：绝对看“有无”，差别看“变化”。题干把差别阈限的概念张冠李戴给了绝对阈限。</p><p><strong>💡 解题思路：</strong>题干中“分辨……差异”明确属于差别范畴，因此不是绝对感觉阈限。判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "差别感受性越高，差别感觉阈限就越低。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。差别感受性高意味着分辨差异的能力强，所需的变化量（差别阈限）就小，两者成反比。</p><p><strong>📚 知识点讲解：</strong>例如，品酒师差别感受性高，只需极少糖量变化就能尝出差异（差别阈限低）。这体现了反比关系。</p><p><strong>💡 解题思路：</strong>根据“性限成反比”的口诀，能力越高阈值越低。题干描述符合反比规律，判断正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "听力好的人，听觉感觉阈限高。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。听力好说明感受性高，根据反比关系，阈限应该低，而非高。</p><p><strong>📚 知识点讲解：</strong>听力好意味着能听到很微弱的声音，所需刺激门槛低。所以听觉感觉阈限低。题干说反了。</p><p><strong>💡 解题思路：</strong>用反比关系直接判断：感受性高→阈限低。题干说阈限高，与反比关系矛盾，判断错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "刚好尝到咸味的最低盐量，属于绝对感觉阈限。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。从无味到尝到咸味，是一种“从无到有”的觉察，那个最低盐量就是绝对感觉阈限。</p><p><strong>📚 知识点讲解：</strong>这是绝对感觉阈限的经典例子。水原本无咸味，加盐到刚好尝出咸味，这个临界盐量就是绝对感觉阈限的数值。</p><p><strong>💡 解题思路：</strong>题干情况是典型的绝对阈限场景（无→有），且给出了刺激量（盐量），表述完全正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "最小可觉差就是绝对感觉阈限。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。最小可觉差是差别感觉阈限的别称，不是绝对感觉阈限。</p><p><strong>📚 知识点讲解：</strong>“最小可觉差”全称是“最小可觉差异”，是指刚刚能分辨出的最小差异量，属于差别阈限。绝对阈限关注的是是否有刺激，不涉及差异。</p><p><strong>💡 解题思路：</strong>“差”字指向差别。将最小可觉差等同于绝对阈限，是常见错误。判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "感觉阈限越高，人的感觉越灵敏。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。阈限高说明需要很大刺激才能感觉到，这是迟钝的表现，感觉不灵敏。</p><p><strong>📚 知识点讲解：</strong>阈限是门槛，门槛越高越难进入。感觉阈限高意味着需要更大刺激才能产生感觉，说明感受性低、不灵敏。</p><p><strong>💡 解题思路：</strong>根据反比关系：阈限高→感受性低→不灵敏。题干说“越灵敏”，与推理结果相反，判断错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "绝对感受性是觉察刺激有无的能力。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。绝对感受性就是觉察“有无”刺激的能力，即察觉最小刺激是否存在的能力。</p><p><strong>📚 知识点讲解：</strong>绝对感受性对应“从无到有”的觉察能力。例如，在寂静中能察觉到极微弱声音的能力，就是绝对感受性。</p><p><strong>💡 解题思路：</strong>题干准确描述了绝对感受性的定义。关键词“有无”是绝对的核心标志，表述正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "厨师辨味能力强，说明其差别感受性较低。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。辨味能力强意味着能分辨细微差异，差别感受性应该高，不是低。</p><p><strong>📚 知识点讲解：</strong>厨师能尝出普通人尝不出的咸淡变化，说明他的差别感受性高（能力强），差别感觉阈限低（所需差异小）。</p><p><strong>💡 解题思路：</strong>题干逻辑前后矛盾：能力强对应感受性高。将“强”等同于“低”是错误的，判断为错误。</p>"
+            }
+        ];
+        
+        const APP_ID = 'sensitivity_threshold_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '感受性与感觉阈限（教招必背 超通俗版）';
+            const content = `
+                <h3>一、两个核心概念（先记死）</h3>
+                <p><strong>1. 感受性</strong></p>
+                <p><strong>定义</strong>：人<strong>感觉刺激的能力、灵敏度</strong>。<br>大白话：<strong>能不能感觉到、敏不敏感</strong>。</p>
+                <p><strong>2. 感觉阈限</strong></p>
+                <p><strong>定义</strong>：<strong>能引起感觉的刺激量、数值、门槛</strong>。<br>大白话：<strong>刚好能感觉到的那个最低标准</strong>。</p>
+                <h3>二、最重要关系（必考）</h3>
+                <p style="text-align:center;font-size:18px;font-weight:700;color:#4a90e2;"><strong>感受性 ↔ 感觉阈限 成 反比</strong></p>
+                <ul>
+                    <li><strong>越敏感（感受性高）</strong> → 门槛越低（阈限小）</li>
+                    <li><strong>越迟钝（感受性低）</strong> → 门槛越高（阈限大）</li>
+                </ul>
+                <p><strong>例子：</strong>有的人小声就能听见（<strong>感受性高，阈限低</strong>）有的人要很大声才听见（<strong>感受性低，阈限高</strong>）</p>
+                <h3>三、分两类：绝对 & 差别（4个名词）</h3>
+                <p><strong>1. 绝对感觉阈限 & 绝对感受性</strong><br>关键词：<strong>从 无 → 有</strong></p>
+                <ul><li><strong>绝对感觉阈限</strong>：<strong>刚刚能察觉到</strong>的<strong>最小刺激量</strong>（例：刚好听到的最小声音）</li><li><strong>绝对感受性</strong>：<strong>察觉最小刺激的能力</strong></li></ul>
+                <p><strong>2. 差别感觉阈限 & 差别感受性</strong><br>关键词：<strong>从 有 → 变</strong>（察觉<strong>不一样</strong>）别称：<strong>最小可觉差</strong></p>
+                <ul><li><strong>差别感觉阈限</strong>：<strong>刚好能感觉出两个刺激不一样</strong>的<strong>变化量</strong>（例：两杯糖水，多加一点点糖刚好尝出甜度不同）</li><li><strong>差别感受性</strong>：<strong>察觉刺激之间差异的能力</strong></li></ul>
+                <h3>四、极简口诀（做题直接秒）</h3>
+                <p style="text-align:center;font-size:18px;font-weight:700;color:#4a90e2;">
+                性是能力，限是门槛；<br>性限成反比；<br>绝对看有无，差别看差异。
+                </p>
+                <h3>五、做题秒杀技巧</h3>
+                <ol>
+                    <li>看到 <strong>能力、敏感、灵敏</strong> → <strong>感受性</strong></li>
+                    <li>看到 <strong>数值、量、门槛、标准</strong> → <strong>感觉阈限</strong></li>
+                    <li>看到 <strong>刚能察觉、有无</strong> → <strong>绝对</strong></li>
+                    <li>看到 <strong>分辨差异、不一样、变化</strong> → <strong>差别</strong></li>
+                    <li>敏感=感受性高=阈限低；迟钝=感受性低=阈限高</li>
+                </ol>
+                <h3>六、经典例子一遍懂</h3>
+                <ol>
+                    <li>往水里加盐，<strong>刚好尝到咸味</strong>→ 绝对感觉阈限</li>
+                    <li>再加一点盐，<strong>刚好尝出比刚才更咸</strong>→ 差别感觉阈限</li>
+                    <li>有的人很容易尝出味道差别 → 差别感受性高</li>
+                </ol>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

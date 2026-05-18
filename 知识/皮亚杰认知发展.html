@@ -1,0 +1,1925 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智力理论刷题 - 皮亚杰认知发展四阶段</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .knowledge-page.hidden {
+            display: none;
+        }
+
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 0;
+            margin-top: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .analysis-content strong {
+            color: var(--text-primary);
+        }
+
+        .knowledge-point {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .knowledge-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mnemonic {
+            margin-top: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .mnemonic-title {
+            font-weight: 600;
+            color: #ad6800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mnemonic-text {
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sheet-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .sheet-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            background: var(--bg-card);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            z-index: 400;
+            transform: translate(-50%, 100%);
+            transition: transform 0.3s ease;
+            max-height: 70vh;
+            overflow-y: auto;
+            width: min(430px, 100%);
+        }
+
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .sheet-number {
+            font-size: 16px;
+        }
+
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .history-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            background: var(--bg-card);
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            z-index: 400;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .history-panel.show {
+            transform: translateX(0);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .clear-history {
+            padding: 6px 12px;
+            background: #fff2f0;
+            color: var(--error-color);
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .history-item:active {
+            transform: scale(0.98);
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .history-stat {
+            text-align: center;
+        }
+
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">30</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">皮亚杰认知发展四阶段学习</div>
+                        <div class="progress-text">皮亚杰认知理论 · 教招必考</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <div class="icon-btn" onclick="toggleHistory()">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)">
+                        <i class="fas fa-font"></i>-
+                    </div>
+                    <div class="icon-btn" onclick="changeFontSize(1)">
+                        <i class="fas fa-font"></i>+
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content" id="footerContent"></div>
+        </footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid">
+            </div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            type: "单选题",
+            stem: "儿童获得客体永久性是在皮亚杰认知发展的哪个阶段（ ）",
+            options: [
+                { label: "A", text: "感知运动阶段" },
+                { label: "B", text: "前运算阶段" },
+                { label: "C", text: "具体运算阶段" },
+                { label: "D", text: "形式运算阶段" }
+            ],
+            answer: 0,
+            analysis: `<strong>📝 答案解析：</strong>A。感知运动阶段（0～2岁）最大成就就是获得<strong>客体永久性</strong>，知道物体被遮挡后依然存在。<br><br><strong>📚 知识点讲解：</strong>客体永久性是皮亚杰认知发展理论中感知运动阶段的核心标志，大约在婴儿8-12个月时出现。在此之前，婴儿认为看不见的物体就消失了；获得此能力后，婴儿会主动寻找被藏起来的物体，这表明他们开始形成心理表征能力。<br><br><strong>💡 解题思路：</strong>客体永久性是感知运动阶段的标志性成就，其他阶段均不涉及这一核心特征。前运算阶段以泛灵论和自我中心为特征，具体运算阶段以守恒和可逆思维为特征，形式运算阶段以抽象逻辑推理为特征。`
+        }, {
+            type: "单选题",
+            stem: "皮亚杰认为，自我中心意识最突出的阶段是（ ）",
+            options: [
+                { label: "A", text: "感知运动阶段" },
+                { label: "B", text: "前运算阶段" },
+                { label: "C", text: "具体运算阶段" },
+                { label: "D", text: "形式运算阶段" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。前运算阶段（2～7岁）典型特征：<strong>自我中心</strong>，只会从自己视角看问题，不能换位思考。<br><br><strong>📚 知识点讲解：</strong>自我中心是前运算阶段的核心特征之一，皮亚杰通过三山实验证明这一点。儿童只能描述自己所看到的三山模型景象，无法想象坐在对面的人看到的景象。这种自我中心并非自私，而是认知发展上的局限。<br><br><strong>💡 解题思路：</strong>感知运动阶段婴儿主要通过感觉动作认知世界，尚未形成真正的思维表征；具体运算阶段儿童已经实现去自我中心化；形式运算阶段青少年思维更加成熟。只有前运算阶段幼儿最突出地表现出自我中心特征。`
+        }, {
+            type: "单选题",
+            stem: "小孩认为花草树木、玩具娃娃都有生命，这种现象属于（ ）",
+            options: [
+                { label: "A", text: "不可逆思维" },
+                { label: "B", text: "泛灵论" },
+                { label: "C", text: "守恒思维" },
+                { label: "D", text: "假设推理" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。<strong>泛灵论</strong>是前运算阶段典型特点，认为世间万物都有生命、有情感。<br><br><strong>📚 知识点讲解：</strong>泛灵论是前运算阶段（2-7岁）的重要特征，幼儿将人类的心理属性投射到无生命物体上，如认为玩偶会疼、树木会伤心、月亮跟着自己走。这是因为幼儿尚未区分生命与非生命，思维带有强烈的主观色彩。<br><br><strong>💡 解题思路：</strong>A选项不可逆思维也是前运算阶段特征，但指思维方向单一；C选项守恒思维是具体运算阶段才具备的；D选项假设推理是形式运算阶段特征。题干描述的是万物有灵的现象，直接对应泛灵论。`
+        }, {
+            type: "单选题",
+            stem: "同样两杯等量的水，倒入细高杯和矮胖杯，幼儿认为细高杯里水更多，说明幼儿缺乏（ ）",
+            options: [
+                { label: "A", text: "客体永久性" },
+                { label: "B", text: "守恒概念" },
+                { label: "C", text: "抽象思维" },
+                { label: "D", text: "逻辑推理" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。前运算阶段儿童<strong>没有守恒概念</strong>，只看外形变化，看不到本质数量不变。<br><br><strong>📚 知识点讲解：</strong>守恒概念是指认识到物体的数量、体积、质量等属性不因外形改变而变化。皮亚杰的经典液体守恒实验证明，前运算阶段幼儿只关注单一维度（液面高度），无法同时考虑宽度和高度两个维度。守恒概念大约在7岁左右的具体运算阶段才能获得。<br><br><strong>💡 解题思路：</strong>A选项客体永久性是感知运动阶段概念，与水量判断无关；C选项抽象思维和D选项逻辑推理范围太宽泛。题干描述的是典型的守恒实验情景，幼儿因缺乏守恒概念而做出错误判断。`
+        }, {
+            type: "单选题",
+            stem: "皮亚杰三山实验用来测验儿童的（ ）",
+            options: [
+                { label: "A", text: "守恒能力" },
+                { label: "B", text: "自我中心性" },
+                { label: "C", text: "抽象思维" },
+                { label: "D", text: "逻辑可逆性" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。三山实验证明前运算阶段儿童<strong>自我中心</strong>，无法站在他人角度描述景物。<br><br><strong>📚 知识点讲解：</strong>三山实验是皮亚杰设计的经典实验。让儿童观察三座不同大小、颜色的山的模型，然后要求他们从图片中选出站在对面位置的人看到的景象。前运算阶段儿童往往选择自己视角看到的景象，证明他们无法摆脱自我中心进行换位思考。<br><br><strong>💡 解题思路：</strong>A选项守恒能力通过液体守恒等实验测量；C选项抽象思维是形式运算阶段特征；D选项逻辑可逆性是具体运算阶段特征。三山实验专门用于测量自我中心性，是前运算阶段的核心实验证据。`
+        }, {
+            type: "单选题",
+            stem: "只能从正面思考问题，不能逆向推导，思维具有不可逆性的儿童处于（ ）",
+            options: [
+                { label: "A", text: "感知运动阶段" },
+                { label: "B", text: "前运算阶段" },
+                { label: "C", text: "具体运算阶段" },
+                { label: "D", text: "形式运算阶段" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。前运算阶段思维<strong>不可逆</strong>，如知道3+2=5，却不会推出5-2=3。<br><br><strong>📚 知识点讲解：</strong>思维不可逆性是前运算阶段的重要限制。儿童只能单向思考，不能反向操作思维过程。例如，他们知道糖块溶化后变甜了，但无法倒推回去。这种可逆性要到具体运算阶段（7-11岁）才能发展出来，是守恒概念获得的前提条件。<br><br><strong>💡 解题思路：</strong>A选项感知运动阶段婴儿尚未形成真正的运算思维；C选项具体运算阶段恰恰以可逆性为特征；D选项形式运算阶段思维更加灵活完善。题干描述的不可逆性是前运算阶段的典型标志。`
+        }, {
+            type: "单选题",
+            stem: "儿童思维具备守恒性、可逆性，能去自我中心化，但离不开具体事物支持，年龄大概在（ ）",
+            options: [
+                { label: "A", text: "0～2岁" },
+                { label: "B", text: "2～7岁" },
+                { label: "C", text: "7～11岁" },
+                { label: "D", text: "11岁以后" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。<strong>具体运算阶段7～11岁</strong>，有守恒、可逆、去自我中心，逻辑思维依赖具体实物。<br><br><strong>📚 知识点讲解：</strong>具体运算阶段是小学阶段（7-11岁），儿童思维实现质的飞跃。他们获得了守恒概念，思维具有可逆性，能够去自我中心化理解他人观点。但其逻辑推理仍有局限，必须借助具体实物、生活经验进行思考，无法进行纯抽象的逻辑推演。<br><br><strong>💡 解题思路：</strong>A选项0-2岁是感知运动阶段，以感觉动作为主；B选项2-7岁是前运算阶段，缺乏守恒和可逆性；D选项11岁以后是形式运算阶段，可以进行抽象思维。题干描述的特点完全匹配具体运算阶段。`
+        }, {
+            type: "单选题",
+            stem: "小学生能理解把橡皮泥捏成圆球和长条，重量不变，说明具备了（ ）",
+            options: [
+                { label: "A", text: "客体永久性" },
+                { label: "B", text: "守恒概念" },
+                { label: "C", text: "泛灵思维" },
+                { label: "D", text: "抽象推理" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。掌握<strong>守恒</strong>是具体运算阶段的标志性特征。<br><br><strong>📚 知识点讲解：</strong>守恒概念包括数量守恒、重量守恒、体积守恒等不同类型，儿童获得各种守恒的年龄略有不同。橡皮泥重量守恒说明儿童认识到物体外形改变不影响其本质属性，这是从表象思维向逻辑思维过渡的重要里程碑。<br><br><strong>💡 解题思路：</strong>A选项客体永久性是0-2岁婴儿获得的能力；C选项泛灵思维是前运算阶段幼儿特征；D选项抽象推理是形式运算阶段特征。题干中理解橡皮泥变型但重量不变，体现的是守恒概念的掌握。`
+        }, {
+            type: "单选题",
+            stem: "儿童不再以自我为中心，能换位思考他人想法，这属于哪个阶段特征（ ）",
+            options: [
+                { label: "A", text: "感知运动" },
+                { label: "B", text: "前运算" },
+                { label: "C", text: "具体运算" },
+                { label: "D", text: "形式运算" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。具体运算阶段实现<strong>去自我中心化</strong>，能理解别人有不同观点。<br><br><strong>📚 知识点讲解：</strong>去自我中心化是具体运算阶段的重要发展成就。儿童开始明白他人可能有与自己不同的想法、感受和视角。这种能力的发展使儿童的社会交往质量显著提高，能够更好地理解他人的意图，进行有效的合作与沟通。<br><br><strong>💡 解题思路：</strong>A选项感知运动阶段婴儿尚未形成真正的自我中心思维；B选项前运算阶段恰恰以自我中心为特征；D选项形式运算阶段去自我中心化更加成熟，但题干描述的是最早实现换位思考的阶段。具体运算阶段是去自我中心化的关键转折点。`
+        }, {
+            type: "单选题",
+            stem: "不需要借助具体实物，能进行抽象逻辑思维、假设演绎推理的阶段是（ ）",
+            options: [
+                { label: "A", text: "前运算阶段" },
+                { label: "B", text: "具体运算阶段" },
+                { label: "C", text: "形式运算阶段" },
+                { label: "D", text: "感知运动阶段" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。形式运算阶段（11岁以后）可脱离具体事物，进行<strong>抽象思维、假设—演绎推理</strong>。<br><br><strong>📚 知识点讲解：</strong>形式运算阶段是皮亚杰认知发展理论的最后一个阶段。青少年能够摆脱具体内容的束缚，对抽象命题进行逻辑推理，能够提出假设并系统验证。这种思维接近成人水平，使得他们能够理解代数、几何等抽象学科，思考人生哲学和道德问题。<br><br><strong>💡 解题思路：</strong>A选项前运算阶段思维受限；B选项具体运算阶段需要具体实物支撑；D选项感知运动阶段通过感觉动作认知。题干强调“不需要借助具体实物”，正是形式运算阶段区别于具体运算阶段的核心特征。`
+        }, {
+            type: "单选题",
+            stem: "初中生学习代数、几何公式，能进行纯逻辑命题推理，处于（ ）",
+            options: [
+                { label: "A", text: "前运算阶段" },
+                { label: "B", text: "具体运算阶段" },
+                { label: "C", text: "形式运算阶段" },
+                { label: "D", text: "感知运动阶段" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。中学生进入<strong>形式运算阶段</strong>，抽象逻辑思维成熟，可理解抽象公式、定理。<br><br><strong>📚 知识点讲解：</strong>初中生（约11-15岁）进入形式运算阶段，大脑发育使抽象思维能力显著增强。他们可以理解符号化的数学概念（如代数变量、几何证明），进行命题逻辑推理，不再需要实物演示。这是认知发展的质变阶段。<br><br><strong>💡 解题思路：</strong>A选项前运算阶段是幼儿阶段；B选项具体运算阶段是小学生，学习需要具体教具辅助；D选项感知运动阶段是婴儿期。题干提到代数、几何公式和纯逻辑推理，这些正是形式运算阶段抽象思维的典型表现。`
+        }, {
+            type: "单选题",
+            stem: "婴儿通过抓、摸、看、听等动作感知世界，属于（ ）",
+            options: [
+                { label: "A", text: "感知运动阶段" },
+                { label: "B", text: "前运算阶段" },
+                { label: "C", text: "具体运算阶段" },
+                { label: "D", text: "形式运算阶段" }
+            ],
+            answer: 0,
+            analysis: `<strong>📝 答案解析：</strong>A。0～2岁感知运动阶段，依靠<strong>感觉+身体动作</strong>认识外界。<br><br><strong>📚 知识点讲解：</strong>感知运动阶段是皮亚杰认知发展理论的第一阶段（0-2岁）。婴儿通过感官（看、听、摸、尝）和身体动作（抓、推、拉）来探索和理解世界。此阶段经历从本能反射到有目的行动的转变，最终形成心理表征能力，为后续思维发展奠定基础。<br><br><strong>💡 解题思路：</strong>B选项前运算阶段幼儿已能用符号和语言表征世界；C选项具体运算阶段儿童能进行逻辑思维；D选项形式运算阶段青少年思维抽象化。题干强调通过感官和动作认识世界，这是感知运动阶段最显著的特征。`
+        }, {
+            type: "单选题",
+            stem: "下列不属于前运算阶段特点的是（ ）",
+            options: [
+                { label: "A", text: "泛灵论" },
+                { label: "B", text: "自我中心" },
+                { label: "C", text: "思维可逆" },
+                { label: "D", text: "无守恒概念" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。思维可逆是<strong>具体运算阶段</strong>特点，前运算阶段思维不可逆。<br><br><strong>📚 知识点讲解：</strong>前运算阶段（2-7岁）有四大核心特征：泛灵论、自我中心、思维不可逆、无守恒概念。这四点是教招考试的高频考点，需要准确记忆。思维可逆性是进入具体运算阶段的重要标志，意味着儿童能够进行双向思维操作。<br><br><strong>💡 解题思路：</strong>题干要求找出“不属于”前运算阶段的特点。A、B、D都是前运算阶段的典型特征；C选项思维可逆是具体运算阶段才发展出来的能力，因此不属于前运算阶段。解答此类排除题需要准确区分各阶段的特征。`
+        }, {
+            type: "单选题",
+            stem: "儿童能对事物进行分类、排序，逻辑思维仍需具体事物支撑，这是（ ）",
+            options: [
+                { label: "A", text: "感知运动阶段" },
+                { label: "B", text: "前运算阶段" },
+                { label: "C", text: "具体运算阶段" },
+                { label: "D", text: "形式运算阶段" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。具体运算阶段可进行分类、序列化思维，但不能脱离具体实例。<br><br><strong>📚 知识点讲解：</strong>具体运算阶段儿童发展了分类（根据共同属性分组）和序列化（按大小/顺序排列）能力，这是逻辑思维发展的重要成就。但这些运算必须依赖于具体、可感知的事物。例如，他们需要实物教具来理解数学运算，无法进行纯符号化的逻辑推演。<br><br><strong>💡 解题思路：</strong>A选项感知运动阶段婴儿尚无分类排序能力；B选项前运算阶段幼儿思维具有直觉性，分类能力不稳定；D选项形式运算阶段可以脱离具体事物进行抽象分类。题干强调分类排序但需具体事物支撑，完全匹配具体运算阶段特征。`
+        }, {
+            type: "单选题",
+            stem: "“如果所有A都是B，所有B都是C，那么所有A都是C”，能完成这种逻辑推理的是（ ）",
+            options: [
+                { label: "A", text: "幼儿" },
+                { label: "B", text: "小学生" },
+                { label: "C", text: "初中生" },
+                { label: "D", text: "婴儿" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。命题逻辑推理属于<strong>形式运算阶段</strong>，中学生才能掌握。<br><br><strong>📚 知识点讲解：</strong>题干呈现的是典型的三段论推理（传递性推理），属于抽象命题逻辑。形式运算阶段青少年能够对假设性命题进行逻辑推断，不需要具体事物验证。这种能力在具体运算阶段（小学生）尚未发展完善，他们需要具体实例才能理解类似关系。<br><br><strong>💡 解题思路：</strong>A选项幼儿处于前运算阶段，无法进行此类推理；B选项小学生处于具体运算阶段，需要具体事物支持；D选项婴儿处于感知运动阶段，无逻辑推理能力。初中生已进入形式运算阶段，能够处理纯逻辑命题。`
+        }, {
+            type: "单选题",
+            stem: "孩子躲猫猫时，捂住自己眼睛就以为别人看不见他，体现（ ）",
+            options: [
+                { label: "A", text: "泛灵论" },
+                { label: "B", text: "自我中心" },
+                { label: "C", text: "守恒思维" },
+                { label: "D", text: "抽象推理" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。典型前运算阶段<strong>自我中心</strong>，把自己的感受等同于别人的感受。<br><br><strong>📚 知识点讲解：</strong>躲猫猫捂住眼睛就以为别人看不见自己，是前运算阶段自我中心思维的生动体现。幼儿以自己的视角为准，认为“我看不见你，你就看不见我”。这与其他需要换位思考的情境本质相同，都是无法从他人角度感知世界的表现。<br><br><strong>💡 解题思路：</strong>A选项泛灵论指赋予物体生命；C选项守恒思维是具体运算阶段特征，与躲猫猫行为无关；D选项抽象推理是形式运算阶段特征。题干描述的认知局限直接源于自我中心，幼儿无法区分自我视角与他人视角。`
+        }, {
+            type: "单选题",
+            stem: "皮亚杰认知发展阶段中，思维开始具有逻辑性但仍离不开具体经验的是（ ）",
+            options: [
+                { label: "A", text: "感知运动" },
+                { label: "B", text: "前运算" },
+                { label: "C", text: "具体运算" },
+                { label: "D", text: "形式运算" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。具体运算阶段有逻辑，但必须依托具体事物、生活经验。<br><br><strong>📚 知识点讲解：</strong>具体运算阶段是逻辑思维的起始阶段，儿童开始能够进行系统性的心智操作，但处于“具体”到“抽象”的过渡期。他们能理解因果关系，进行分类和排序，但这些思维活动必须建立在直接经验或具体表象的基础之上，这是与形式运算阶段最本质的区别。<br><br><strong>💡 解题思路：</strong>A选项感知运动阶段尚无真正逻辑思维；B选项前运算阶段思维具有直觉性和非逻辑性；D选项形式运算阶段可以脱离具体经验进行纯抽象思维。题干“有逻辑但离不开具体经验”是对具体运算阶段特点的精准描述。`
+        }, {
+            type: "单选题",
+            stem: "下列哪项是形式运算阶段的典型特征（ ）",
+            options: [
+                { label: "A", text: "获得客体永久性" },
+                { label: "B", text: "泛灵论" },
+                { label: "C", text: "假设演绎推理" },
+                { label: "D", text: "自我中心" }
+            ],
+            answer: 2,
+            analysis: `<strong>📝 答案解析：</strong>C。假设演绎推理、抽象命题思维是形式运算阶段独有特征。<br><br><strong>📚 知识点讲解：</strong>假设演绎推理是形式运算阶段的核心特征。青少年能够提出假设（“如果……会怎样”），然后通过逻辑推理推导出可能的结果，并系统地进行验证。这种思维方式使他们能够进行科学探究、理解抽象理论和思考未来可能性。<br><br><strong>💡 解题思路：</strong>A选项客体永久性是感知运动阶段（0-2岁）特征；B选项泛灵论和D选项自我中心都是前运算阶段（2-7岁）特征。只有C选项假设演绎推理是形式运算阶段独有的高级思维技能，其他阶段均不具备。`
+        }, {
+            type: "单选题",
+            stem: "7岁的孩子明白了水量不会因容器形状改变而改变，说明进入了（ ）",
+            options: [
+                { label: "A", text: "前运算阶段" },
+                { label: "B", text: "具体运算阶段" },
+                { label: "C", text: "形式运算阶段" },
+                { label: "D", text: "感知运动阶段" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。7岁左右开始进入<strong>具体运算阶段</strong>，逐步获得各类守恒概念。<br><br><strong>📚 知识点讲解：</strong>根据皮亚杰理论，儿童约在7岁左右从前运算阶段过渡到具体运算阶段，守恒概念的获得是这一转变的关键标志。液体守恒（水量不因容器形状改变）通常是最早获得的守恒类型之一，标志着儿童开始克服直觉表象的干扰，形成逻辑判断能力。<br><br><strong>💡 解题思路：</strong>A选项前运算阶段儿童（2-7岁）缺乏守恒概念，会认为水变多了；C选项形式运算阶段是11岁以后；D选项感知运动阶段是0-2岁。7岁儿童理解水量守恒，正好处于具体运算阶段的起始年龄。`
+        }, {
+            type: "单选题",
+            stem: "关于皮亚杰认知发展阶段，说法错误的是（ ）",
+            options: [
+                { label: "A", text: "感知运动阶段0～2岁" },
+                { label: "B", text: "前运算阶段具有守恒概念" },
+                { label: "C", text: "具体运算阶段可去自我中心" },
+                { label: "D", text: "形式运算阶段可进行抽象推理" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>B。前运算阶段<strong>无守恒概念</strong>，守恒是具体运算阶段特征。<br><br><strong>📚 知识点讲解：</strong>各阶段核心特征对比：感知运动阶段（0-2岁）获得客体永久性；前运算阶段（2-7岁）有泛灵论、自我中心、不可逆、无守恒；具体运算阶段（7-11岁）有守恒、可逆、去自我中心；形式运算阶段（11岁后）有抽象推理和假设演绎能力。<br><br><strong>💡 解题思路：</strong>题干要求选错误的说法。A选项年龄对应正确；C选项去自我中心是具体运算阶段特征，正确；D选项抽象推理是形式运算阶段特征，正确。B选项将守恒概念归于前运算阶段是错误的，守恒是具体运算阶段的标志性成就。`
+        }, {
+            type: "判断题",
+            stem: "皮亚杰认为，客体永久性出现在前运算阶段。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>错误。客体永久性是<strong>感知运动阶段（0～2岁）</strong>的核心标志。<br><br><strong>📚 知识点讲解：</strong>客体永久性大约在婴儿8-12个月时出现，是感知运动阶段最重要的认知成就。婴儿理解物体即使不在视野中也依然存在，能够主动寻找被藏起的物品。这是心理表征能力形成的标志，否定常见的错误认识：客体永久性不属于前运算阶段。<br><br><strong>💡 解题思路：</strong>题干将客体永久性错误地归于前运算阶段。前运算阶段（2-7岁）的核心特征包括泛灵论、自我中心、不可逆、无守恒，不涉及客体永久性。客体永久性是更早的感知运动阶段的成就，二者不能混淆。`
+        }, {
+            type: "判断题",
+            stem: "前运算阶段儿童具有自我中心的思维特点，不能换位思考。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📝 答案解析：</strong>正确。三山实验证明，2～7岁儿童只能从自己角度看问题，自我中心明显。<br><br><strong>📚 知识点讲解：</strong>自我中心是前运算阶段的核心特征之一。这种自我中心并非品德问题，而是认知发展的正常阶段。儿童尚未发展出观点采择能力，无法区分自己与他人视角的差异，在认知、情感和社会交往中都表现出这一局限。<br><br><strong>💡 解题思路：</strong>题干描述与前运算阶段的特征完全一致。皮亚杰的三山实验及其它观点采择任务均证实此阶段儿童的自我中心思维。这一特征要到具体运算阶段（7-11岁）才能逐渐克服，实现去自我中心化。`
+        }, {
+            type: "判断题",
+            stem: "幼儿觉得月亮会跟着自己走，属于泛灵论现象。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📝 答案解析：</strong>正确。泛灵论是前运算阶段特征，认为万事万物都有生命和情感。<br><br><strong>📚 知识点讲解：</strong>泛灵论是指幼儿将无生命物体或自然现象视为有生命、有情感、有意识的倾向。典型表现包括认为玩偶会疼、树木会伤心、太阳在微笑、月亮跟着走路等。这是前运算阶段思维主观化、缺乏客观分类能力的表现。<br><br><strong>💡 解题思路：</strong>题干中“月亮跟着自己走”的认知，本质上是幼儿赋予月亮以生命和主动性，这是泛灵论的经典案例。该现象在前运算阶段（2-7岁）最为常见，随年龄增长和认知发展到具体运算阶段后会逐渐消失。`
+        }, {
+            type: "判断题",
+            stem: "前运算阶段的儿童已经具备守恒概念。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>错误。前运算阶段无守恒；守恒是<strong>具体运算阶段</strong>才获得的。<br><br><strong>📚 知识点讲解：</strong>守恒概念需要儿童同时考虑多个维度（如高度和宽度）、理解可逆性，这些认知能力在前运算阶段尚未发展成熟。守恒概念的获得标志着儿童从表象思维向逻辑思维过渡，是具体运算阶段（约7岁开始）的核心成就。<br><br><strong>💡 解题思路：</strong>题干将守恒概念归于前运算阶段是错误的，这是教招考试中的高频易错点。前运算阶段恰恰以“无守恒”为特征，经典液体守恒实验中幼儿判断水变多或变少，正是缺乏守恒概念的有力证据。`
+        }, {
+            type: "判断题",
+            stem: "思维不可逆、只能正向思考不能反向推理，是具体运算阶段的特点。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>错误。思维不可逆属于<strong>前运算阶段</strong>；具体运算阶段思维具有可逆性。<br><br><strong>📚 知识点讲解：</strong>思维不可逆是前运算阶段的重要限制，儿童只能单向思维。进入具体运算阶段后，可逆性发展出来，儿童能够在头脑中同时进行正向和反向操作，这是守恒概念和逻辑思维发展的认知基础。<br><br><strong>💡 解题思路：</strong>题干将不可逆性错误归于具体运算阶段。实际上，前运算阶段思维不可逆，具体运算阶段思维可逆，二者正相反。解答此类题需要清晰区分各阶段特征：前运算——不可逆、无守恒；具体运算——可逆、有守恒。`
+        }, {
+            type: "判断题",
+            stem: "7～11岁儿童思维有守恒、可逆，且能脱离具体事物进行抽象思考。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>错误。7～11岁是具体运算阶段，有逻辑但<strong>离不开具体实物</strong>，不能纯抽象。<br><br><strong>📚 知识点讲解：</strong>具体运算阶段与形式运算阶段的本质区别就在于是否需要具体实物的支撑。7-11岁儿童虽然有了守恒、可逆等逻辑思维，但其思维仍然是“具体的”，需要依赖实物、表象或生活经验进行推理，无法像形式运算阶段青少年那样进行纯抽象的符号化思考。<br><br><strong>💡 解题思路：</strong>题干前半部分正确（有守恒、可逆），但后半部分错误（“能脱离具体事物”不是该阶段能力）。7-11岁儿童不能脱离具体事物进行抽象思考，这是形式运算阶段（11岁以后）才具备的能力。`
+        }, {
+            type: "判断题",
+            stem: "具体运算阶段儿童实现了去自我中心化，能理解他人不同观点。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📝 答案解析：</strong>正确。不再以自我为中心，学会换位思考，是本阶段重要特征。<br><br><strong>📚 知识点讲解：</strong>去自我中心化是具体运算阶段的重要发展成就。儿童逐渐能够协调自己与他人的观点，理解不同的人可能有不同的想法、感受和视角。这种能力的发展促进了儿童社会交往的成熟，也使他们的道德判断水平得以提升。<br><br><strong>💡 解题思路：</strong>题干描述与具体运算阶段特征完全一致。前运算阶段的自我中心思维在这一时期得到克服，儿童开始能够理解他人观点。这是具体运算阶段区别于前运算阶段的重要标志之一。`
+        }, {
+            type: "判断题",
+            stem: "形式运算阶段（11岁以后）能进行假设—演绎推理和抽象命题思维。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📝 答案解析：</strong>正确。中学生可理解公式、逻辑命题、抽象哲理，思维接近成人。<br><br><strong>📚 知识点讲解：</strong>形式运算阶段是皮亚杰认知发展理论的最后一个阶段。青少年发展出假设—演绎推理能力，能够对假设性的问题进行逻辑分析，能够处理可能性和现实性的关系。他们可以理解抽象的科学概念、数学符号和哲学命题，思维水平逐渐接近成人。<br><br><strong>💡 解题思路：</strong>题干描述的是形式运算阶段的核心特征。假设演绎推理和抽象命题思维是这一阶段区别于其他阶段的关键能力，也是教招考试的高频考点。`
+        }, {
+            type: "判断题",
+            stem: "小学生学习数学完全不需要借助实物和具体形象。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>错误。小学生处于<strong>具体运算阶段</strong>，逻辑思考仍依赖具体事物、具象支撑。<br><br><strong>📚 知识点讲解：</strong>根据皮亚杰理论，小学生（约7-11岁）处于具体运算阶段。他们的逻辑思维虽然有所发展，但仍然需要具体实例、实物教具和生活经验的支撑。在数学教学中使用小棒、图形等直观教具，正是基于这一认知发展规律。<br><br><strong>💡 解题思路：</strong>题干说“完全不需要借助实物”是错误的，这混淆了具体运算阶段与形式运算阶段的特征。只有形式运算阶段（约11岁以后）的青少年才能逐渐脱离具体事物进行纯抽象思考。`
+        }, {
+            type: "判断题",
+            stem: "皮亚杰认知发展四阶段顺序可以颠倒、可以跨越。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📝 答案解析：</strong>错误。四个阶段顺序固定、不可跨越、不可颠倒，每个人依次经历。<br><br><strong>📚 知识点讲解：</strong>皮亚杰认为认知发展遵循普遍的、不变的顺序：感知运动→前运算→具体运算→形式运算。每个阶段都是前一阶段的延伸和重组，虽然个体发展速度有差异，但顺序不可改变，任何阶段都不能被跳过或颠倒。<br><br><strong>💡 解题思路：</strong>题干说法违背皮亚杰理论的基本原则。四阶段顺序具有普遍性和恒常性，不存在跨文化或跨个体的例外。这一考点常以判断题形式出现，需牢记口诀“感前具形，顺序不变”。`
+        }];
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '皮亚杰：认知发展四阶段（教招必考 超好记）';
+            const content = `
+                <h3>一、四阶段总览口诀</h3>
+                <p><strong>感前具形</strong>：感知运动→前运算→具体运算→形式运算</p>
+
+                <h3>二、感知运动阶段（0～2岁）</h3>
+                <p><strong>核心特点：</strong></p>
+                <p>1. 依靠<strong>感觉、动作</strong>认识世界</p>
+                <p>2. 最重要成就：获得<strong>客体永久性</strong>（物体看不见也知道仍然存在）</p>
+                <p>3. 从本能反射发展到有目的的行动</p>
+                <p><strong>例子：</strong>小婴儿拿玩具，用手挡住，小婴儿以为东西消失了；8个月后，会主动拿开遮挡物找玩具，说明有了<strong>客体永久性</strong>。</p>
+
+                <h3>三、前运算阶段（2～7岁）</h3>
+                <p><strong>核心四大特征：</strong></p>
+                <p>1. <strong>泛灵论</strong>：认为万物都有生命</p>
+                <p>2. <strong>自我中心</strong>：只会从自己角度看问题，不会换位思考（经典实验：<strong>三山实验</strong>）</p>
+                <p>3. <strong>思维不可逆</strong>：只能顺着想，不能倒着想</p>
+                <p>4. <strong>不具备守恒概念</strong></p>
+                <p><strong>例子：</strong>觉得月亮跟着自己走、玩偶会疼（泛灵论）；只能说出自己看到的山的样子（自我中心）；知道2+3=5，不会算5-3=2（不可逆）；水倒进细高杯子认为水变多了（不守恒）。</p>
+
+                <h3>四、具体运算阶段（7～11岁）</h3>
+                <p><strong>核心特点：</strong></p>
+                <p>1. 思维具有<strong>可逆性</strong></p>
+                <p>2. 获得<strong>守恒概念</strong>（数量、体积、质量守恒）</p>
+                <p>3. <strong>去自我中心化</strong>：能站在别人角度思考</p>
+                <p>4. 逻辑思维<strong>离不开具体事物、实物支撑</strong></p>
+                <p><strong>例子：</strong>明白水换杯子水量没变（掌握守恒）；能反向思考加减法；能理解别人和自己想法不一样；做数学题需要借助实物、画图。</p>
+
+                <h3>五、形式运算阶段（11岁以后）</h3>
+                <p><strong>核心特点：</strong></p>
+                <p>1. <strong>抽象逻辑思维成熟</strong></p>
+                <p>2. 能进行<strong>假设—演绎推理</strong></p>
+                <p>3. 能理解概念、公式、哲理、抽象命题</p>
+                <p>4. 思维水平接近成人</p>
+                <p><strong>例子：</strong>不用实物直接理解代数公式、物理定理；会做逻辑假设“如果……就会……”；能思考人生价值观。</p>
+
+                <h3>六、极简背诵版（考试简答题直接写）</h3>
+                <p>1. <strong>感知运动阶段（0～2岁）</strong>：靠感觉动作认知，形成<strong>客体永久性</strong>。</p>
+                <p>2. <strong>前运算阶段（2～7岁）</strong>：泛灵论、自我中心、思维不可逆、无守恒。</p>
+                <p>3. <strong>具体运算阶段（7～11岁）</strong>：有守恒、思维可逆、去自我中心，依赖具体事物。</p>
+                <p>4. <strong>形式运算阶段（11岁后）</strong>：抽象逻辑思维，假设演绎推理，思维成人化。</p>
+
+                <h3>七、速记口诀</h3>
+                <p><strong>感前具形 02711</strong></p>
+                <p>0-2客体永久性，2-7泛灵自我不可逆无守恒</p>
+                <p>7-11守恒可逆去中心，11以后抽象假设成人思维</p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()">
+                    <i class="fas fa-play-circle"></i>
+                    我已学完，开始刷题
+                </button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = `
+                <div class="question-card">
+                    <span class="question-type">${q.type}</span>
+                    <div class="question-stem">${q.stem}</div>
+            `;
+
+            if (q.image) {
+                html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            }
+
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+
+                html += `
+                    <div class="${classes.join(' ')}" onclick="selectOption(${idx})">
+                        <div class="option-label">${opt.label}</div>
+                        <div class="option-text">${opt.text}</div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">
+                                📝 答案解析
+                                <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">
+                                    ${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}
+                                </span>
+                            </div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">
+                            ${q.analysis}
+                            <div class="knowledge-point">
+                                <div class="knowledge-title">💡 皮亚杰认知发展四阶段核心框架</div>
+                                <div><strong>口诀：感前具形 02711</strong></div>
+                                <div style="margin-top: 8px;"><strong>感知运动（0-2岁）：</strong>客体永久性、靠感觉动作</div>
+                                <div><strong>前运算（2-7岁）：</strong>泛灵论、自我中心、不可逆、无守恒</div>
+                                <div><strong>具体运算（7-11岁）：</strong>有守恒、可逆、去自我中心、离不开具体事物</div>
+                                <div><strong>形式运算（11岁后）：</strong>抽象逻辑、假设演绎、命题推理、成人思维</div>
+                            </div>
+                            <div class="mnemonic">
+                                <div class="mnemonic-title">🎯 极速记忆口诀</div>
+                                <div class="mnemonic-text">
+                                    感前具形 02711<br>
+                                    感知运动客体永，前运算泛灵自我无守恒<br>
+                                    具体运算守恒可逆去中心，形式运算抽象假设成人思
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+
+                saveToHistory(correctCount, accuracy);
+
+                html = `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${correctCount}/${questions.length}</div>
+                                <div class="stat-label">答对题数</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${accuracy}%</div>
+                                <div class="stat-label">正确率</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+
+            const q = questions[currentIndex];
+            const isCorrect = idx === q.answer;
+            showToast(isCorrect ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('expanded');
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                    上一题
+                </button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>
+                    下一题
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+
+            if (panel.classList.contains('show')) {
+                overlay.classList.remove('show');
+                panel.classList.remove('show');
+            } else {
+                overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet();
+            }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) {
+                        statusClass = 'correct';
+                        statusText = '正确';
+                    } else {
+                        statusClass = 'wrong';
+                        statusText = '错误';
+                    }
+                }
+
+                if (index === currentIndex) {
+                    statusClass += ' current';
+                }
+
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q
+                            .answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer))
+                        return;
+                }
+
+                html += `
+                    <div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})">
+                        <div class="sheet-number">${index + 1}</div>
+                        <div class="sheet-status">${statusText}</div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+
+            if (panel.classList.contains('show')) {
+                overlay.classList.remove('show');
+                panel.classList.remove('show');
+            } else {
+                overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+
+            if (history.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div>暂无历史记录</div>
+                        <div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            history.forEach((record, index) => {
+                const date = new Date(record.timestamp);
+                const dateStr = date.toLocaleDateString('zh-CN', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                html += `
+                    <div class="history-item">
+                        <div class="history-date">${dateStr}</div>
+                        <div class="history-stats">
+                            <div class="history-stat">
+                                <div class="history-value">${record.correctCount}/${record.totalCount}</div>
+                                <div class="history-label">答对题数</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-value">${record.accuracy}%</div>
+                                <div class="history-label">正确率</div>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button>
+                            <button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const record = {
+                timestamp: new Date().getTime(),
+                totalCount: questions.length,
+                correctCount: correctCount,
+                accuracy: accuracy,
+                answers: [...answers]
+            };
+
+            history.unshift(record);
+            if (history.length > 50) history.pop();
+
+            localStorage.setItem('piaget_quiz_history', JSON.stringify(history));
+        }
+
+        function getHistory() {
+            const saved = localStorage.getItem('piaget_quiz_history');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = [...record.answers];
+                currentIndex = 0;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                history.splice(index, 1);
+                localStorage.setItem('piaget_quiz_history', JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除');
+            }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？此操作不可恢复。')) return;
+
+            localStorage.removeItem('piaget_quiz_history');
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        function saveAnswers() {
+            localStorage.setItem('piaget_quiz_answers', JSON.stringify({
+                currentIndex,
+                answers
+            }));
+        }
+
+        function saveSettings() {
+            localStorage.setItem('piaget_quiz_settings', JSON.stringify({
+                fontSize
+            }));
+        }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem('piaget_quiz_answers');
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null);
+            }
+
+            const savedSettings = localStorage.getItem('piaget_quiz_settings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+        }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem('piaget_quiz_answers');
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        }
+    </script>
+</body>
+</html>

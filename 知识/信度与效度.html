@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>信度与效度刷题训练</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">信度与效度</div>
+                        <div class="progress-text">教育测量与评价 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "type": "单选题",
+                "stem": "测验结果的稳定性、一致性程度，称为（ ）",
+                "options": [
+                    {"label": "A", "text": "效度"},
+                    {"label": "B", "text": "信度"},
+                    {"label": "C", "text": "难度"},
+                    {"label": "D", "text": "区分度"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（信度）。题干中\u201C稳定性、一致性\u201D是信度的核心关键词，直接指向信度的定义。效度侧重\u201C准确性、有效性\u201D，难度和区分度是测验的其他质量指标，与题干描述不符。</p><p><strong>📚 知识点讲解：</strong>信度是指测验结果的稳定性、可靠性和一致性程度，通俗理解就是\u201C多次测量，结果差不多\u201D。效度则是指测验真正测出了想要测量的东西的程度。两者是教育测量中最重要的两个质量指标，但含义截然不同。难度指题目的难易程度，区分度指题目区分不同水平学生的能力。</p><p><strong>💡 解题思路：</strong>看到题干中的\u201C稳定性\u201D\u201C一致性\u201D这两个关键词，应立刻联想到信度的定义。这是信度定义的标准表述，在教育测量中，稳定性、一致性、可靠性这三个词几乎等同于信度。效度对应的关键词是\u201C准确性\u201D\u201C有效性\u201D。通过关键词匹配可快速锁定正确答案B。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "衡量一个测验能否真正测出所要测量的事物的程度，称为（ ）",
+                "options": [
+                    {"label": "A", "text": "信度"},
+                    {"label": "B", "text": "效度"},
+                    {"label": "C", "text": "信度系数"},
+                    {"label": "D", "text": "难度"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（效度）。题干\u201C真正测出所要测量的事物\u201D是效度的核心定义，即测验的准确性和有效性。</p><p><strong>📚 知识点讲解：</strong>效度（validity）是指一个测验能够测量出其所要测量的心理特质或行为特征的程度。简单说就是\u201C测得准不准\u201D。信度系数是信度的量化指标（如相关系数），不是测验质量本身的类型名称。如果将信度比作打靶的稳定性（每次打在同一个位置），效度就是打靶的准确性（打在靶心上）。</p><p><strong>💡 解题思路：</strong>题干的核心短语是\u201C测出所要测量的事物\u201D，这直接对应效度的\u201C有效性\u201D含义。A选项信度侧重\u201C稳定一致\u201D，C选项是信度的量化表达，D选项与题干无关。通过抓取\u201C真正测出\u201D这个关键表述，可快速判断答案为效度。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列关于信度与效度的关系，说法正确的是（ ）",
+                "options": [
+                    {"label": "A", "text": "信度高，效度一定高"},
+                    {"label": "B", "text": "效度高，信度一定高"},
+                    {"label": "C", "text": "效度低，信度一定低"},
+                    {"label": "D", "text": "信度低，效度一定高"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。这是信度与效度关系的核心考点：效度高则信度一定高（有效一定可靠），但信度高不代表效度一定高（可靠不一定有效）。</p><p><strong>📚 知识点讲解：</strong>信度是效度的必要条件，但不是充分条件。用打靶比喻来解释：如果每次都能打中靶心（效度高），那么弹着点必然集中在靶心附近（信度必然高）。但如果弹着点只是集中在偏离靶心的某个位置（信度高），却并不代表打中了靶心（效度低）。四种情况中，\u201C效度高、信度低\u201D是不可能出现的组合。</p><p><strong>💡 解题思路：</strong>牢记口诀\u201C有效一定可靠，可靠不一定有效\u201D。A选项把充分必要关系搞反了；C选项错误，因为效度低时信度可能高（如偏离靶心的集中射击）；D选项不可能，因为信度低意味着结果不稳定，连稳定都做不到就不可能准确。逐一排除即可确定B为正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "老师用同一套数学试卷，在一周后对同一批学生再次测试，两次测试成绩基本一致，这体现了测验的（ ）",
+                "options": [
+                    {"label": "A", "text": "复本信度"},
+                    {"label": "B", "text": "重测信度"},
+                    {"label": "C", "text": "内容效度"},
+                    {"label": "D", "text": "构想效度"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（重测信度）。题干中的关键信息\u201C同一套试卷、隔一周、同一批学生、结果一致\u201D完全符合重测信度的定义。</p><p><strong>📚 知识点讲解：</strong>重测信度（test-retest reliability）是指用同一套测验在不同时间对同一组被试进行两次施测，两次结果的一致性程度。它反映的是测验跨时间的稳定性。复本信度是用两套平行等价的试卷进行测试，内部一致性信度关注同一试卷内题目之间的一致性，而内容效度属于效度类型而非信度类型。</p><p><strong>💡 解题思路：</strong>解题的关键在于抓取三个要素：①同一套题（排除复本信度）、②隔一段时间（这是重测信度的标志）、③同一批人。A选项需要两套不同的等价试卷，C和D都是效度类型，与信度无关。因此B是唯一正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某英语测验有A、B两套试卷，难度、题型、考查内容基本一致，学生做两套试卷的成绩接近，这体现了（ ）",
+                "options": [
+                    {"label": "A", "text": "重测信度"},
+                    {"label": "B", "text": "复本信度"},
+                    {"label": "C", "text": "内部一致性信度"},
+                    {"label": "D", "text": "评分者信度"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（复本信度）。题干中\u201C两套等价试卷、成绩接近\u201D是复本信度的典型描述。</p><p><strong>📚 知识点讲解：</strong>复本信度（parallel-forms reliability）是指编制两套在内容、难度、题型等方面等价的测验（A卷和B卷），对同一批学生进行测试，两次成绩的相关程度。它检验的是不同试卷版本之间的一致性。重测信度只用一套试卷，内部一致性信度只涉及同一试卷内部题目，评分者信度涉及不同评分者。</p><p><strong>💡 解题思路：</strong>看到\u201C两套试卷\u201D\u201CA卷、B卷\u201D\u201C难度内容相当\u201D这些表述，立刻对应复本信度。A选项重测信度是同一套题测两次，C选项是同一试卷内题目之间的关系，D选项是两个评分者之间的关系。四个信度类型的区分关键是看\u201C谁和谁比较\u201D：两套等价题→复本信度。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某份教育学试卷中，所有题目都围绕教招考试大纲设计，覆盖了教育学的核心知识点，这体现了测验的（ ）",
+                "options": [
+                    {"label": "A", "text": "内容效度"},
+                    {"label": "B", "text": "构想效度"},
+                    {"label": "C", "text": "效标关联效度"},
+                    {"label": "D", "text": "内部一致性信度"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（内容效度）。题干\u201C覆盖知识点、贴合考纲\u201D直接对应内容效度的核心定义。</p><p><strong>📚 知识点讲解：</strong>内容效度（content validity）是指测验题目对所要测量的全部内容范围的代表性程度。通俗地说，就是试卷上的题目是否覆盖了该考的知识点。例如，教招考试大纲规定考教育学原理、教育心理学等内容，试卷必须涵盖这些方面，才具有较高的内容效度。构想效度针对抽象理论特质，效标关联效度关联外部实际标准。</p><p><strong>💡 解题思路：</strong>关键词\u201C覆盖\u201D\u201C贴合考纲\u201D\u201C核心知识点\u201D明确指向内容效度。B选项构想效度针对\u201C智力\u201D\u201C性格\u201D等抽象特质，C选项效标关联效度涉及\u201C预测未来表现\u201D，D选项是信度类型。通过关键词匹配\u201C覆盖内容\u201D即可锁定A。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列哪种情况是不可能出现的（ ）",
+                "options": [
+                    {"label": "A", "text": "信度高，效度高"},
+                    {"label": "B", "text": "信度高，效度低"},
+                    {"label": "C", "text": "效度高，信度低"},
+                    {"label": "D", "text": "信度低，效度低"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。\u201C效度高、信度低\u201D是不可能出现的组合，因为高效度必须以高信度为前提。</p><p><strong>📚 知识点讲解：</strong>信度是效度的必要条件。效度高意味着测验准确测出了目标特质，而要做到准确，必须先有稳定的测量结果。用打靶比喻：如果子弹都能命中靶心（效度高），弹着点必然集中在靶心附近（信度必然高）。而信度高（弹着点集中但偏离靶心）时，效度可能低。信度低（子弹乱飞）时，效度必然低。因此四种组合中只有\u201C效度高、信度低\u201D在逻辑上不成立。</p><p><strong>💡 解题思路：</strong>应用口诀\u201C有效一定可靠\u201D。既然效度高意味着测验是有效的，有效的前提就是结果稳定可靠（信度高）。因此不可能存在效度高但信度低的情况。A是理想状态，B是常见情况（如尺子测体重），D是最差状态。C违反基本逻辑，为正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "两位老师批改同一批作文，打分结果差异很小，这体现了测验的（ ）",
+                "options": [
+                    {"label": "A", "text": "评分者信度"},
+                    {"label": "B", "text": "内部一致性信度"},
+                    {"label": "C", "text": "复本信度"},
+                    {"label": "D", "text": "内容效度"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（评分者信度）。题干\u201C两位老师打分差异小\u201D直接对应评分者信度的含义。</p><p><strong>📚 知识点讲解：</strong>评分者信度（scorer reliability）是指不同评分者对同一测验结果（如作文、面试答题）进行评分时，评分结果的一致性程度。这在主观题评分中尤为重要。两位老师改同一份卷子，如果打分非常接近，说明评分者信度高。内部一致性信度关注试卷题目之间的一致性，复本信度涉及两套等价试卷，内容效度属于效度类型。</p><p><strong>💡 解题思路：</strong>看到\u201C两位老师\u201D\u201C批改同一批\u201D\u201C打分差异小\u201D这些信息，可以直接定位到评分者信度。关键词是\u201C评分者\u201D，即评价的人。B选项涉及题目内容，C选项涉及试卷版本，D选项涉及内容覆盖。只有A选项涉及\u201C谁来评分\u201D的问题。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某智力测验能够准确测出学生的智力水平，而不是测出学生的记忆力，这说明该测验的（ ）",
+                "options": [
+                    {"label": "A", "text": "信度高"},
+                    {"label": "B", "text": "效度高"},
+                    {"label": "C", "text": "难度适中"},
+                    {"label": "D", "text": "区分度高"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（效度高）。测验准确测出了想要测量的智力水平，并且没有测量无关的记忆力，这正是效度高的体现。</p><p><strong>📚 知识点讲解：</strong>效度的核心是\u201C测出想要测的东西，不测无关的东西\u201D。一个智力测验应该测量智力而不是记忆力、知识储备等其他因素。如果它测出的是记忆力而不是智力，那就缺乏效度。信度只关注结果是否稳定，不关注测的是什么。难度和区分度是项目分析指标，与题干描述的\u201C准确性\u201D无关。</p><p><strong>💡 解题思路：</strong>题干强调\u201C准确测出\u201D和\u201C不是测出其他无关特质\u201D，这恰好是效度的定义。A选项信度侧重稳定一致而非准确，C和D分别是题目的难易和区分能力指标。因此B是唯一符合题意的答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某数学测验，学生多次测试的成绩波动很大，说明该测验的（ ）",
+                "options": [
+                    {"label": "A", "text": "信度低"},
+                    {"label": "B", "text": "效度低"},
+                    {"label": "C", "text": "难度高"},
+                    {"label": "D", "text": "区分度低"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（信度低）。\u201C多次测试成绩波动大\u201D说明测验结果不稳定、不一致，这正是信度低的表现。</p><p><strong>📚 知识点讲解：</strong>信度反映的是测验结果的稳定性。如果同一个学生在短时间内多次参加同一测验，成绩忽高忽低、波动很大，说明该测验的信度低。一个信度低的测验就像是坏了的秤，每次称同一个物体得到的重量都不一样。效度则是这个秤称出来的重量是否准确，前提是秤本身要稳定。</p><p><strong>💡 解题思路：</strong>\u201C波动很大\u201D直接对应\u201C不稳定\u201D，而不稳定就是信度低。B选项效度低指的是测得不准确（偏离了想测的目标），C和D是题目的其他属性。因为题干明确说的是\u201C成绩波动\u201D即稳定性问题，所以锁定信度（A）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于构想效度的是（ ）",
+                "options": [
+                    {"label": "A", "text": "试卷覆盖所有考点"},
+                    {"label": "B", "text": "两套试卷成绩接近"},
+                    {"label": "C", "text": "智力测验能测出学生的智力特质"},
+                    {"label": "D", "text": "测验成绩能预测学生后续的学习表现"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。构想效度是指测验能够测量出抽象的理论构想或心理特质（如智力、性格、创造力等），C选项恰好描述了智力测验测出智力特质。</p><p><strong>📚 知识点讲解：</strong>构想效度（construct validity）是指测验对理论上的构想或特质进行测量的有效程度。\u201C构想\u201D指的是心理学中的抽象概念，如智力、焦虑、动机、创造力等不能被直接观察的心理特质。A选项是内容效度（覆盖考点），B选项是复本信度（两套等价试卷），D选项是效标关联效度（预测外部标准）。</p><p><strong>💡 解题思路：</strong>通过排除法：A的关键词\u201C覆盖考点\u201D→内容效度；B的关键词\u201C两套试卷\u201D→复本信度；D的关键词\u201C预测后续表现\u201D→效标关联效度。C涉及\u201C智力\u201D这个抽象理论特质，属于构想效度。记住：测抽象概念→构想效度。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "关于信度和效度，下列说法错误的是（ ）",
+                "options": [
+                    {"label": "A", "text": "信度是效度的必要条件"},
+                    {"label": "B", "text": "效度是信度的充分条件"},
+                    {"label": "C", "text": "信度高，效度不一定高"},
+                    {"label": "D", "text": "效度低，信度可能高"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。\u201C效度是信度的充分条件\u201D这个说法是错误的。正确的关系是：效度高是信度高的充分条件（效度高→信度高），但效度本身不是信度的充分条件，应该说\u201C高效度是信度高的充分不必要条件\u201D才严谨。这里的表述有逻辑错误。</p><p><strong>📚 知识点讲解：</strong>信度和效度的逻辑关系是：信度是效度的必要条件（没有信度就没有效度），效度高是信度高的充分条件（有效一定可靠）。但效度本身是一个概念而非条件，说\u201C效度是信度的充分条件\u201D在逻辑上是不准确的。A正确，信度是效度的前提；C正确，信度高不代表效度一定高；D正确，效度低时信度可能高（偏离靶心的集中射击）。</p><p><strong>💡 解题思路：</strong>仔细辨析B选项的表述。\u201C效度是信度的充分条件\u201D混淆了逻辑关系——应为\u201C效度高是信度高的充分条件\u201D。A、C、D都是正确的陈述，因此B是错误说法，为答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某份语文试卷中，所有题目都围绕语文基础知识考查，题目之间的关联性强，这体现了（ ）",
+                "options": [
+                    {"label": "A", "text": "内部一致性信度"},
+                    {"label": "B", "text": "重测信度"},
+                    {"label": "C", "text": "内容效度"},
+                    {"label": "D", "text": "评分者信度"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（内部一致性信度）。题干强调\u201C同一试卷、题目之间内容一致、关联性强\u201D，这正是内部一致性信度的核心含义。</p><p><strong>📚 知识点讲解：</strong>内部一致性信度（internal consistency reliability）是指同一测验内部各题目之间的一致性程度。如果一份语文试卷中的所有题目都在考查语文基础知识，题目之间相互关联、内容一致，说明该试卷内部一致性信度高。它关注的是\u201C题目之间是否在测量同一个东西\u201D。常用的检测方法有分半信度和克伦巴赫α系数。</p><p><strong>💡 解题思路：</strong>关键词\u201C题目之间\u201D\u201C关联性强\u201D说明关注的是试卷内部题目的一致性。B选项重测信度涉及时间间隔，C选项内容效度涉及题目与考纲的对应，D选项评分者信度涉及评分者。只有A选项关注同一试卷内题目之间的关系。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某测验的成绩能准确预测学生半年后的学业成绩，这体现了测验的（ ）",
+                "options": [
+                    {"label": "A", "text": "内容效度"},
+                    {"label": "B", "text": "构想效度"},
+                    {"label": "C", "text": "效标关联效度"},
+                    {"label": "D", "text": "重测信度"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（效标关联效度）。\u201C预测半年后学业成绩\u201D说明测验结果与外部实际标准（效标）之间存在关联，这是效标关联效度的典型特征。</p><p><strong>📚 知识点讲解：</strong>效标关联效度（criterion-related validity）是指测验分数与外部效标（即实际表现或标准）之间的相关程度。如果测验成绩能有效预测学生未来的学业表现，就说明该测验具有良好的效标关联效度。它的核心是\u201C测验结果能否预测实际表现\u201D。内容效度关注题目是否覆盖知识点，构想效度关注抽象理论特质。</p><p><strong>💡 解题思路：</strong>看到\u201C预测\u201D\u201C后续表现\u201D\u201C半年后\u201D这些词，对应效标关联效度的\u201C关联外部实际标准\u201D。A选项侧重\u201C覆盖内容\u201D，B选项侧重\u201C抽象特质\u201D，D选项是信度类型。预测未来表现→效标关联效度，这是固定的对应关系。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "用一把尺子反复测量同一物体的长度，每次测量结果都相同，但测量结果比实际长度短，这说明该测量的（ ）",
+                "options": [
+                    {"label": "A", "text": "信度高，效度高"},
+                    {"label": "B", "text": "信度高，效度低"},
+                    {"label": "C", "text": "信度低，效度高"},
+                    {"label": "D", "text": "信度低，效度低"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。\u201C反复测量结果相同\u201D说明信度高（稳定），\u201C测量结果偏离实际长度\u201D说明效度低（不准确）。</p><p><strong>📚 知识点讲解：</strong>这是信度高但效度低的经典实例。尺子虽然每次都能给出相同的结果（信度高），但由于尺子本身有缺陷（如刻度偏短），测量结果始终偏离真实长度（效度低）。这完美诠释了\u201C可靠不一定有效\u201D的含义。在真实教育场景中，一份试卷可能每次测试都给出稳定的分数，但如果题目设计偏离了教学目标，分数再稳定也是无效的。</p><p><strong>💡 解题思路：</strong>分两步判断：①\u201C每次结果相同\u201D→稳定→信度高；②\u201C比实际长度短\u201D→不准确→效度低。综合得出\u201C信度高、效度低\u201D。这对应打靶比喻中\u201C弹着点集中在偏离靶心的位置\u201D。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列哪项不属于信度的类型（ ）",
+                "options": [
+                    {"label": "A", "text": "重测信度"},
+                    {"label": "B", "text": "复本信度"},
+                    {"label": "C", "text": "内容效度"},
+                    {"label": "D", "text": "评分者信度"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。内容效度属于效度的类型，不属于信度类型。其余三项均为信度的四种类型之一。</p><p><strong>📚 知识点讲解：</strong>信度有四种主要类型：重测信度（跨时间稳定性）、复本信度（跨版本一致性）、内部一致性信度（同一试卷题目间一致性）、评分者信度（不同评分者间一致性）。效度有三种类型：内容效度、构想效度、效标关联效度。\u201C内容效度\u201D名字中虽然带有\u201C内容\u201D二字，但它关注的是题目能否代表测量内容范围，属于效度范畴。</p><p><strong>💡 解题思路：</strong>这是一道分类辨析题。A、B、D都是信度类型，分别对应时间维度、版本维度、评分者维度。C选项\u201C内容效度\u201D虽然容易与\u201C内部一致性信度\u201D混淆（都涉及试卷内容），但内容效度属于效度大类。记住：信度四类型的共同点是\u201C一致性\u201D，不带\u201C效度\u201D二字。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某教育测验，虽然每次测量结果都很稳定，但测出的内容与测验目的无关，这说明该测验（ ）",
+                "options": [
+                    {"label": "A", "text": "信度高，效度高"},
+                    {"label": "B", "text": "信度高，效度低"},
+                    {"label": "C", "text": "信度低，效度高"},
+                    {"label": "D", "text": "信度低，效度低"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。\u201C结果稳定\u201D→信度高，\u201C测出的内容与目的无关\u201D→效度低。这是信度高但效度低的典型案例。</p><p><strong>📚 知识点讲解：</strong>这个例子说明了一个重要原理：信度是效度的必要但不充分条件。测验可以有高信度（每次结果稳定一致）但低效度（测量的内容偏离了测验目标）。例如，用数学题去测量语文能力，虽然每次数学成绩稳定，但测的根本不是语文能力，效度就很低。教育测量中，必须先保证信度（结果稳定），再追求效度（结果有效）。</p><p><strong>💡 解题思路：</strong>抓住两个关键信息：①\u201C结果稳定\u201D→信度高；②\u201C与目的无关\u201D→没有测出想测的→效度低。因此B是唯一正确答案。这对应口诀\u201C可靠不一定有效\u201D。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "信度的核心是强调测验结果的（ ）",
+                "options": [
+                    {"label": "A", "text": "准确性"},
+                    {"label": "B", "text": "稳定性"},
+                    {"label": "C", "text": "有效性"},
+                    {"label": "D", "text": "针对性"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（稳定性）。信度的核心是测验结果的稳定性、一致性和可靠性。</p><p><strong>📚 知识点讲解：</strong>信度（reliability）在中文教育测量学中，最核心的关键词就是\u201C稳定性\u201D\u201C一致性\u201D\u201C可靠性\u201D。它回答的是\u201C测量结果是否靠谱、能否重复\u201D的问题。而\u201C准确性\u201D\u201C有效性\u201D是效度的核心关键词。两者虽然经常一起出现，但各有侧重：信度关注\u201C稳不稳\u201D，效度关注\u201C准不准\u201D。</p><p><strong>💡 解题思路：</strong>直接通过关键词对应：信度→稳定、一致、可靠；效度→准确、有效。A和C都是效度的核心词，D不是测量学的核心术语。因此B为正确答案。这是定义层面的考查，需要牢固记忆两个概念的核心关键词。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "效度的核心是强调测验结果的（ ）",
+                "options": [
+                    {"label": "A", "text": "稳定性"},
+                    {"label": "B", "text": "一致性"},
+                    {"label": "C", "text": "准确性"},
+                    {"label": "D", "text": "重复性"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（准确性）。效度的核心是测验结果的准确性和有效性，即测验是否真正测出了想要测量的东西。</p><p><strong>📚 知识点讲解：</strong>效度（validity）是教育测量中最核心的质量指标，它回答的是\u201C测验是否测量了它声称要测量的东西\u201D。关键词是\u201C准确\u201D\u201C有效\u201D\u201C贴合目的\u201D。A选项\u201C稳定性\u201D和B选项\u201C一致性\u201D是信度的核心词，D选项\u201C重复性\u201D也是信度的特征。只有C选项\u201C准确性\u201D准确对应效度的定义。</p><p><strong>💡 解题思路：</strong>信度与效度的核心关键词必须严格区分：信度→稳定、一致、可靠、重复；效度→准确、有效、测出本意。A、B、D都属于信度阵营，C属于效度阵营。这道题与第18题形成对比，帮助巩固两个概念的区分。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列关于内容效度的说法，正确的是（ ）",
+                "options": [
+                    {"label": "A", "text": "内容效度是指测验能测出抽象的理论特质"},
+                    {"label": "B", "text": "内容效度是指两套平行试卷的成绩一致性"},
+                    {"label": "C", "text": "内容效度是指测验题目覆盖所要测量的全部内容"},
+                    {"label": "D", "text": "内容效度是指测验成绩与外部标准的关联性"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。内容效度的核心定义就是测验题目对所要测量内容范围的代表性和覆盖程度。</p><p><strong>📚 知识点讲解：</strong>三种效度类型的区分是高频考点：①内容效度→题目覆盖知识点、贴合考纲；②构想效度→测出抽象理论特质（智力、性格、创造力）；③效标关联效度→测验成绩与外部实际标准相关（预测未来表现）。A选项描述的是构想效度，B选项描述的是复本信度（属于信度类型而非效度类型），D选项描述的是效标关联效度。</p><p><strong>💡 解题思路：</strong>通过匹配关键词来判断：A的\u201C抽象理论特质\u201D→构想效度；B的\u201C两套平行试卷\u201D→复本信度；C的\u201C覆盖全部内容\u201D→内容效度；D的\u201C外部标准\u201D→效标关联效度。因此C是内容效度的正确表述。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "信度是指测验结果的准确性、有效性。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。信度是指测验结果的稳定性、一致性和可靠性，而\u201C准确性、有效性\u201D是效度的定义。题干混淆了信度与效度的概念。</p><p><strong>📚 知识点讲解：</strong>信度和效度是教育测量中两个最基本也最容易混淆的概念。信度回答\u201C稳不稳\u201D的问题，效度回答\u201C准不准\u201D的问题。一个测验可以信度高但效度低（如尺子测体重），但不可能效度高而信度低。判断题中如果出现信度与效度定义互换的表述，一定判为错误。</p><p><strong>💡 解题思路：</strong>看到\u201C准确性、有效性\u201D这两个词，应该立刻想到它们属于效度的关键词，而非信度。信度的关键词是\u201C稳定性\u201D\u201C一致性\u201D\u201C可靠性\u201D。题干将效度的定义安在了信度头上，属于张冠李戴，因此判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "效度高的测验，信度一定高。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。效度高意味着测验准确有效，而要做到准确有效，前提必须是测量结果稳定可靠（信度高）。这就是\u201C有效一定可靠\u201D的逻辑。</p><p><strong>📚 知识点讲解：</strong>信度是效度的必要条件。用打靶比喻：如果每次都能命中靶心（效度高），弹着点必然集中在靶心附近（信度必然高）。如果弹着点分散（信度低），就不可能每次都命中靶心。因此，效度高必然意味着信度高。这是信效度关系中最重要的逻辑推论之一。</p><p><strong>💡 解题思路：</strong>运用口诀\u201C有效一定可靠\u201D直接判断。从逻辑学角度，效度高是信度高的充分条件。在教招考试中，这个命题始终是正确的，因为高效度必须以高信度为前提。反之则不成立（信度高不一定效度高）。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "信度高的测验，效度一定高。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。信度高只代表结果稳定，但不一定准确有效。典型反例：用尺子测体重，每次结果稳定（信度高），但根本测不出体重（效度低）。</p><p><strong>📚 知识点讲解：</strong>信度高是效度高的必要条件而非充分条件。测验可以稳定地测量一个错误的目标。例如，一份试卷每次测试都给出相似的分数（信度高），但如果题目设计偏离了教学目标，分数再稳定也不能有效反映学生的真实水平（效度低）。这就是\u201C可靠不一定有效\u201D的含义。</p><p><strong>💡 解题思路：</strong>运用口诀\u201C可靠不一定有效\u201D直接判断为错误。这是教招考试中最常见的判断题陷阱之一。只要记住\u201C信度高≠效度高\u201D，就能轻松应对这类题目。反例思维也很有效：想想偏离靶心的集中射击，信度高但效度低。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "重测信度是指用两套平行试卷对同一批学生测试，成绩接近。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。题干描述的是复本信度而非重测信度。重测信度是用同一套试卷、隔一段时间、对同一批学生再次测试。</p><p><strong>📚 知识点讲解：</strong>重测信度和复本信度是两种容易混淆的信度类型。重测信度的核心是\u201C同一套题+时间间隔+同一批人\u201D，检验跨时间稳定性。复本信度的核心是\u201C两套等价试卷+同一批人\u201D，检验跨版本一致性。两者的关键区别在于用了几套试卷：一套→重测信度，两套→复本信度。</p><p><strong>💡 解题思路：</strong>题干中的\u201C两套平行试卷\u201D是复本信度的标志性表述。重测信度只用一套试卷。因此题干张冠李戴，将复本信度的定义错安在重测信度名下，判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "内容效度是指测验题目能够覆盖所要测量的全部知识点和范围。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。内容效度的核心定义就是测验题目对所测量内容范围的代表性和覆盖程度。</p><p><strong>📚 知识点讲解：</strong>内容效度是效度三种类型中最直观的一种。它关注的是\u201C试卷上的题目是否考到了该考的内容\u201D。例如，教招考试大纲规定了教育学原理、教育心理学等考点，如果试卷题目能够全面覆盖这些考点，就说明内容效度高。这类似于学校期末考试是否考了本学期所教的内容。</p><p><strong>💡 解题思路：</strong>题干表述与内容效度的标准定义完全吻合。关键词\u201C覆盖\u201D\u201C全部知识点和范围\u201D准确描述了内容效度的内涵。这是一个对定义的直接考查，表述正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "信度低的测验，效度一定低。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。信度是效度的必要条件，信度低意味着测量结果不稳定，不稳定的结果不可能准确有效。</p><p><strong>📚 知识点讲解：</strong>信度和效度的逻辑关系链条是：效度高→信度高（有效一定可靠）；信度低→效度低（不可靠必定无效）。如果连稳定都做不到（信度低），就谈不上准确（效度低）。用打靶比喻：子弹乱飞（信度低），不可能都命中靶心（效度低）。因此信度低必然导致效度低。</p><p><strong>💡 解题思路：</strong>这是信效度逻辑关系的重要推论之一。从必要条件关系推导：信度是效度的必要条件，没有信度就没有效度。因此信度低时，效度一定低。这个命题始终为真，在判断题中看到类似的表述应果断判正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "评分者信度是指同一套试卷，不同评分者打分的一致性程度。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。评分者信度的定义就是不同评分者对同一测验结果评分的一致性程度。</p><p><strong>📚 知识点讲解：</strong>评分者信度是信度的四种类型之一，专门针对主观题评分场景。当多个老师批改同一份试卷（如作文、论述题）时，如果大家的打分非常接近，说明评分者信度高。这在高考作文评分、面试评分等场景中尤为重要。评分者信度的高低直接影响考试的公平性。</p><p><strong>💡 解题思路：</strong>题干\u201C不同评分者打分的一致性\u201D准确描述了评分者信度的含义。关键词\u201C不同评分者\u201D和\u201C一致性\u201D直接对应这一信度类型。表述准确，判断为正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "构想效度是指测验成绩能够预测学生后续的学习表现。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。题干描述的是效标关联效度，而非构想效度。构想效度是指测验能够测出抽象的理论特质（如智力、性格、创造力等）。</p><p><strong>📚 知识点讲解：</strong>构想效度和效标关联效度是两种不同的效度类型。构想效度针对的是抽象的、不能直接观察的心理特质（构想），如智力、焦虑、动机等。效标关联效度则是将测验成绩与外部实际标准（效标）进行关联，看测验能否预测实际表现。\u201C预测后续学习表现\u201D属于效标关联效度的范畴。</p><p><strong>💡 解题思路：</strong>题干中\u201C预测后续表现\u201D是效标关联效度的标志性表述。构想效度的关键词是\u201C抽象特质\u201D\u201C理论构想\u201D。两者的区分是：构想效度→测抽象概念，效标关联效度→关联实际标准并预测。因此题干张冠李戴，判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "一个测验可以信度低但效度高。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。\u201C信度低、效度高\u201D是不可能出现的组合。效度高必须以信度高为前提，因为有效的测量必须先有稳定的结果。</p><p><strong>📚 知识点讲解：</strong>这是信效度关系中最核心的逻辑考点。信度是效度的必要条件，也就是说，没有信度就没有效度。如果一次测量连结果都不稳定（信度低），怎么可能准确地测出目标特质呢？用打靶比喻：子弹乱飞（信度低），不可能每枪都中靶心（效度高）。在四种可能的信效度组合中，只有\u201C效度高、信度低\u201D是不可能出现的。</p><p><strong>💡 解题思路：</strong>运用反证法：如果效度高（测量准确），说明每次测量都命中了目标，那结果必然是稳定集中的（信度高）。所以信度低和效度高在逻辑上不能共存。题干说法违反了信效度的基本逻辑关系，判断为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "内部一致性信度是指同一试卷中，所有题目的考查内容具有关联性和一致性。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。内部一致性信度的核心就是同一测验内部各题目之间在考查内容上的一致性程度。</p><p><strong>📚 知识点讲解：</strong>内部一致性信度关注的是\u201C同一张试卷里的题目是否在测量同一个东西\u201D。例如，一份教育学试卷中的所有题目都应该围绕教育学知识来设计，题目之间应该有内在关联。如果部分题目考教育学、部分题目考数学，内部一致性就会降低。常用的检测方法包括分半信度（将题目分成两半比较）和克伦巴赫α系数。</p><p><strong>💡 解题思路：</strong>题干\u201C同一试卷、题目之间、内容一致\u201D准确概括了内部一致性信度的三个要素。表述规范、定义准确，判断为正确。这是对信度类型定义的直接考查。</p>"
+            }
+        ];
+
+        const APP_ID = 'reliability_validity_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '信度 vs 效度（通俗易懂+考点全梳理）';
+            const content = `
+                <h3>一、最通俗比喻（一秒懂）</h3>
+                <p>用<strong>打靶</strong>理解：</p>
+                <ul>
+                    <li><strong>信度</strong>：<strong>稳不稳定</strong>——每次开枪都打在<strong>同一个位置</strong>，不乱跑 = 信度高</li>
+                    <li><strong>效度</strong>：<strong>准不准确</strong>——子弹都打在<strong>靶心</strong> = 效度高</li>
+                </ul>
+                <p><strong>四种情况：</strong></p>
+                <table class="knowledge-table">
+                    <thead><tr><th>情况</th><th>信度</th><th>效度</th><th>比喻说明</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>高</td><td>高</td><td>全集中在靶心 ✅</td></tr>
+                        <tr><td>2</td><td>高</td><td>低</td><td>聚在一点，但<strong>偏离靶心</strong></td></tr>
+                        <tr><td>3</td><td>低</td><td>低</td><td>子弹乱飞，又散又不准</td></tr>
+                        <tr><td>4</td><td>低</td><td>高</td><td><strong>不可能出现：效度高、信度低</strong> ❌</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>二、专业定义+做题关键词</h3>
+                <p><strong>1. 信度</strong></p>
+                <p><strong>定义</strong>：测验结果的<strong>稳定性、可靠性、一致性</strong>。</p>
+                <p><strong>人话</strong>：多次测，结果差不多。</p>
+                <p>关键词：<span class="highlight">稳定、一致、可靠、重复、误差小</span></p>
+                <p><strong>2. 效度</strong></p>
+                <p><strong>定义</strong>：测验<strong>真正测出了想要测的东西</strong>。</p>
+                <p><strong>人话</strong>：测得准不准。</p>
+                <p>关键词：<span class="highlight">准确、有效、测出本意、符合目的</span></p>
+                <p><strong>举例：</strong>拿尺子测体重——每次量身高都一样 → <strong>信度高</strong>；根本测不出体重 → <strong>效度低</strong></p>
+
+                <h3>三、必考逻辑关系（背下来直接秒杀题）</h3>
+                <ol>
+                    <li><strong>效度高 → 信度一定高</strong></li>
+                    <li><strong>信度高 → 效度不一定高</strong></li>
+                    <li><strong>信度低 → 效度一定低</strong></li>
+                    <li><strong>效度低 → 信度不一定低</strong></li>
+                </ol>
+                <p style="text-align:center;font-size:18px;font-weight:700;color:#4a90e2;">口诀：<strong>有效一定可靠，可靠不一定有效</strong></p>
+
+                <h3>四、信度的4种类型（常考）</h3>
+                <ol>
+                    <li><strong>重测信度</strong>：隔一段时间，<strong>同一套题测同一批人</strong>，结果差不多。</li>
+                    <li><strong>复本信度</strong>：<strong>A卷、B卷</strong>两套卷子，难度内容相当，成绩接近。</li>
+                    <li><strong>内部一致性信度</strong>：同一张试卷里，<strong>题目之间考的内容一致</strong>（比如都考教育学）。</li>
+                    <li><strong>评分者信度</strong>：<strong>两个老师改同一份卷</strong>，打分差别小。</li>
+                </ol>
+
+                <h3>五、效度的3种类型（常考）</h3>
+                <ol>
+                    <li><strong>内容效度</strong>：试卷题目<strong>有没有覆盖该考的知识点</strong>（贴合考纲）。</li>
+                    <li><strong>构想效度</strong>：能不能测出<strong>抽象理论特质</strong>（如智力、性格、创造力）。</li>
+                    <li><strong>效标关联效度</strong>：测验成绩和<strong>外部实际标准</strong>相关（如中考成绩预测高中成绩）。</li>
+                </ol>
+
+                <h3>六、做题秒杀技巧</h3>
+                <ol>
+                    <li>题干出现：<strong>稳定、一致、重复、多次测量差不多</strong> → 选 <strong>信度</strong></li>
+                    <li>题干出现：<strong>准确、测出要测的、有没有用、贴合目标</strong> → 选 <strong>效度</strong></li>
+                    <li>问关系：<strong>效度高必信度高；信度高未必效度高</strong></li>
+                    <li>两套试卷等价 → 复本信度</li>
+                    <li>隔一段时间再测 → 重测信度</li>
+                    <li>题目覆盖知识点 → 内容效度</li>
+                </ol>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

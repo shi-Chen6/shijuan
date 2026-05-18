@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>教育心理学刷题：学习准备与思维定势</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">30</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">学习准备/思维定势/功能固着/酝酿效应</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "学生在解决数学应用题前，已掌握的数学公式、运算技巧，属于影响问题解决的哪种因素？（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "学习准备" },
+                    { label: "C", text: "功能固着" },
+                    { label: "D", text: "酝酿效应" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。学习准备是指解决问题前已有的知识、技能、经验等基础条件，数学公式、运算技巧属于知识技能储备。<br><br><strong>📚 知识点讲解：</strong>学习准备包括学生已掌握的知识、技能、身心状态、学习习惯等，是解决问题的前提和基础。良好的学习准备能提高问题解决的效率。<br><br><strong>💡 解题思路：</strong>A项思维定势是习惯用旧方法；C项功能固着是局限物体常规功能；D项酝酿效应是搁置问题后突发灵感。题干中“已掌握的公式、技巧”属于已有基础，对应学习准备。`
+            },
+            {
+                type: "单选题",
+                stem: "“一张桌子4个角，砍去1个角，还剩3个角”的错误答案，体现了哪种心理现象？（ ）",
+                options: [
+                    { label: "A", text: "功能固着" },
+                    { label: "B", text: "酝酿效应" },
+                    { label: "C", text: "思维定势" },
+                    { label: "D", text: "学习准备不足" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。思维定势是重复先前经验形成的心理准备状态，此处下意识用“减法”思维解决问题，属于思维定势的消极影响，忽略了其他砍法的可能性。<br><br><strong>📚 知识点讲解：</strong>思维定势是指人们习惯用已有的方法或思路解决问题，当情境变化时可能阻碍新思路的产生。它具有双重作用：熟悉情境中的积极作用和新情境中的消极作用。<br><br><strong>💡 解题思路：</strong>题干中的错误源于习惯性减法思维，未考虑砍角后可能产生新的角。这是思维定势的典型表现，并非功能固着（物体功能限制）或酝酿效应。`
+            },
+            {
+                type: "单选题",
+                stem: "在“蜡烛问题”中，多数人想不到用图钉盒作为蜡烛支架，只认为图钉盒是装图钉的容器，这体现了（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "功能固着" },
+                    { label: "C", text: "学习准备" },
+                    { label: "D", text: "酝酿效应" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。功能固着是指熟悉物体常规功能后，难以想到其他用途，核心是被物体固定功能限制。图钉盒的常规功能是装图钉，无法想到其支架功能，属于功能固着。<br><br><strong>📚 知识点讲解：</strong>功能固着是思维定势的一种特殊形式，仅局限于“物体功能”这一维度。蜡烛问题（Duncker, 1945）是功能固着的经典实验。<br><br><strong>💡 解题思路：</strong>题干强调物体常规功能的限制，A项思维定势范围更广（含解题方法等）；C、D与物体功能无关。因此选B。`
+            },
+            {
+                type: "单选题",
+                stem: "阿基米德为鉴定王冠是否纯金，苦思多日无果，洗澡时突然想到浮力原理，这一现象属于（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "功能固着" },
+                    { label: "C", text: "酝酿效应" },
+                    { label: "D", text: "学习准备" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。酝酿效应是指反复探索问题无果后，暂时搁置，潜意识继续处理信息，后续突然找到答案。阿基米德搁置问题后突发灵感，符合酝酿效应的定义。<br><br><strong>📚 知识点讲解：</strong>酝酿效应的本质是潜意识加工信息，暂时搁置问题能使思维跳出原有僵局，从而促进创造性问题解决。<br><br><strong>💡 解题思路：</strong>题干关键词“苦思多日无果”“洗澡时突然想到”，正是酝酿效应的典型过程，与思维定势、功能固着等无关。`
+            },
+            {
+                type: "单选题",
+                stem: "下列选项中，不属于学习准备范畴的是（ ）",
+                options: [
+                    { label: "A", text: "学生已掌握的语文生字" },
+                    { label: "B", text: "学生熬夜后的疲惫状态" },
+                    { label: "C", text: "学生的解题习惯" },
+                    { label: "D", text: "学生对新方法的抵触" }
+                ],
+                answer: 3,
+                analysis: `<strong>🎯 答案解析：</strong>D。学习准备包括知识、技能、经验、身心状态、学习习惯等。A（知识）、B（身心状态）、C（学习习惯）均属于；D项对新方法的抵触，属于思维定势的消极表现，不属于学习准备。<br><br><strong>📚 知识点讲解：</strong>学习准备是解决问题前已有的所有基础条件，涵盖认知、技能和身心状态。思维定势则是经验带来的心理倾向。<br><br><strong>💡 解题思路：</strong>排除法：A、B、C都是已有基础条件，D是消极心理倾向，故选D。`
+            },
+            {
+                type: "单选题",
+                stem: "教师引导学生“举一反三”解决同类问题，利用的是思维定势的（ ）",
+                options: [
+                    { label: "A", text: "消极作用" },
+                    { label: "B", text: "积极作用" },
+                    { label: "C", text: "中立作用" },
+                    { label: "D", text: "双重作用" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。思维定势有两面性，情境不变时，能快速解决问题（积极作用）；情境变化时，阻碍新方法（消极作用）。“举一反三”是利用同类问题的解决经验快速解题，属于积极作用。<br><br><strong>📚 知识点讲解：</strong>思维定势的双重作用：在不变的情境中提高效率，在变化的情境中阻碍创新。<br><br><strong>💡 解题思路：</strong>题干强调利用已有经验解决同类问题，是正面的、积极的迁移，故选B。`
+            },
+            {
+                type: "单选题",
+                stem: "小明遇到一道新的数学题，始终用之前学过的一元一次方程解法，即使题目用二元一次方程更简便，也想不到其他方法，这体现了（ ）",
+                options: [
+                    { label: "A", text: "功能固着" },
+                    { label: "B", text: "思维定势" },
+                    { label: "C", text: "酝酿效应" },
+                    { label: "D", text: "学习准备不足" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。思维定势是习惯用旧方法解决新问题，此处小明局限于旧方法，忽略更简便的新方法，属于思维定势的消极影响，区别于功能固着（仅局限物体功能）。<br><br><strong>📚 知识点讲解：</strong>思维定势在解题中的表现是习惯性使用某种方法或思路，即使该方法已不适用或效率低下。<br><br><strong>💡 解题思路：</strong>A项是针对物体功能；C项是搁置后灵感；D项是基础缺乏。题干描述的是解题方法的固化，选B。`
+            },
+            {
+                type: "单选题",
+                stem: "下列哪种现象最能体现功能固着？（ ）",
+                options: [
+                    { label: "A", text: "用吹风机吹头发，想不到它还能吹干潮湿的鞋子" },
+                    { label: "B", text: "做英语阅读时，习惯先看题目再读文章" },
+                    { label: "C", text: "解几何题时，反复思考无果，休息后突然有思路" },
+                    { label: "D", text: "学生没学过分数除法，无法解决相关题目" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。A项中，吹风机的常规功能是吹头发，无法想到其吹干鞋子的其他用途，属于功能固着；B项是思维定势（习惯的解题顺序）；C项是酝酿效应；D项是学习准备不足。<br><br><strong>📚 知识点讲解：</strong>功能固着特指物体功能被固化，限制物体新用途的发现。<br><br><strong>💡 解题思路：</strong>直接对比各选项，只有A涉及物体功能的局限，其余涉及方法、灵感或知识储备。`
+            },
+            {
+                type: "单选题",
+                stem: "学习准备的核心作用是（ ）",
+                options: [
+                    { label: "A", text: "阻碍问题解决" },
+                    { label: "B", text: "为问题解决提供基础" },
+                    { label: "C", text: "打破思维僵局" },
+                    { label: "D", text: "限制物体用途" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。学习准备是解决问题的前提和基础，储备充足时能提高问题解决效率。A是学习准备不足的影响，C是酝酿效应的作用，D是功能固着的影响。<br><br><strong>📚 知识点讲解：</strong>学习准备为认知活动提供必要的知识、技能和心理状态支持，是有效学习的前提。<br><br><strong>💡 解题思路：</strong>根据概念的核心定义直接选择。`
+            },
+            {
+                type: "单选题",
+                stem: "小李在写作文时，反复修改仍觉得不满意，于是放下作文去看电影，看完后突然理清了写作思路，这体现了（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "功能固着" },
+                    { label: "C", text: "酝酿效应" },
+                    { label: "D", text: "学习准备" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。酝酿效应的关键是“暂时搁置问题后突发灵感”，小李放下作文（搁置问题），看电影后理清思路（突发灵感），符合酝酿效应的定义。<br><br><strong>📚 知识点讲解：</strong>酝酿效应表明，暂时休息或转移注意力有助于潜意识加工信息，克服思维僵局。<br><br><strong>💡 解题思路：</strong>题干中的“放下……去看电影……突然理清”是典型的酝酿效应叙事。`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于思维定势和功能固着的关系，说法正确的是（ ）",
+                options: [
+                    { label: "A", text: "两者毫无关联" },
+                    { label: "B", text: "功能固着是思维定势的一种特殊形式" },
+                    { label: "C", text: "思维定势是功能固着的一种特殊形式" },
+                    { label: "D", text: "两者完全相同" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。功能固着是思维定势的一种特殊形式，仅局限于“物体功能”这一维度，而思维定势的范围更广，涵盖解题方法、操作习惯等所有重复经验带来的心理准备状态。<br><br><strong>📚 知识点讲解：</strong>二者是包含与被包含的关系，不是等同或无关。<br><br><strong>💡 解题思路：</strong>根据核心概念即可判断，功能固着是思维定势在物体功能上的具体表现。`
+            },
+            {
+                type: "单选题",
+                stem: "学生在考试前，认真复习知识点、调整作息，目的是提升自身的（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "功能固着" },
+                    { label: "C", text: "学习准备" },
+                    { label: "D", text: "酝酿效应" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。复习知识点（提升知识储备）、调整作息（改善身心状态），都是为了完善解决问题前的基础条件，即提升学习准备，为考试解题做好铺垫。<br><br><strong>📚 知识点讲解：</strong>学习准备既包括认知因素也包括非认知因素（如身心状态）。<br><br><strong>💡 解题思路：</strong>复习和调整作息都是为解决问题做基础准备，故选C。`
+            },
+            {
+                type: "单选题",
+                stem: "“习惯于用手掰苹果，想不到用水果刀切开苹果”，这一现象属于（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "功能固着" },
+                    { label: "C", text: "酝酿效应" },
+                    { label: "D", text: "学习准备不足" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。此处是习惯用“手掰”的旧方法解决“切苹果”的问题，属于思维定势；若题目是“想不到水果刀除了切苹果，还能削铅笔”，则属于功能固着（局限水果刀的常规功能）。<br><br><strong>📚 知识点讲解：</strong>思维定势指习惯性的方法或动作倾向，不局限于物体功能。<br><br><strong>💡 解题思路：</strong>关键在于，题目描述的是动作方法（手掰）的固化，而非水果刀的功能限制。`
+            },
+            {
+                type: "单选题",
+                stem: "酝酿效应的本质是（ ）",
+                options: [
+                    { label: "A", text: "知识储备不足" },
+                    { label: "B", text: "潜意识继续加工信息" },
+                    { label: "C", text: "思维定势的积极作用" },
+                    { label: "D", text: "功能固着的影响" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。酝酿效应中，搁置问题时，意识层面停止探索，但潜意识仍在继续处理问题相关信息，打破之前的思维僵局，进而突发灵感找到答案，其本质是潜意识的加工作用。<br><br><strong>📚 知识点讲解：</strong>酝酿效应是认知心理学中的重要概念，揭示了潜意识在问题解决中的作用。<br><br><strong>💡 解题思路：</strong>A、C、D均不符合酝酿效应的核心机制，故选B。`
+            },
+            {
+                type: "单选题",
+                stem: "下列哪种情况体现了学习准备不足？（ ）",
+                options: [
+                    { label: "A", text: "学生用旧方法解新题" },
+                    { label: "B", text: "学生想不到筷子能当搅拌棒" },
+                    { label: "C", text: "学生没学过音标，无法准确读单词" },
+                    { label: "D", text: "学生卡题后，休息片刻找到思路" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。学习准备不足是指缺乏解决问题所需的知识、技能等基础，C项学生没学过音标（知识储备不足），无法读单词，属于学习准备不足；A是思维定势，B是功能固着，D是酝酿效应。<br><br><strong>📚 知识点讲解：</strong>学习准备不足会直接导致问题解决受阻，缺乏必要的基础。<br><br><strong>💡 解题思路：</strong>直接根据定义匹配：只有C缺少“音标”这一基础。`
+            },
+            {
+                type: "单选题",
+                stem: "思维定势的消极影响主要体现在（ ）",
+                options: [
+                    { label: "A", text: "知识储备不足" },
+                    { label: "B", text: "阻碍创造性思维，难以采用新方法" },
+                    { label: "C", text: "限制物体的用途" },
+                    { label: "D", text: "潜意识无法加工信息" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。思维定势的消极作用是当情境发生变化时，习惯用旧方法，阻碍新方法、新思路的产生，束缚创造性思维；A是学习准备的问题，C是功能固着的影响，D与酝酿效应相关。<br><br><strong>📚 知识点讲解：</strong>思维定势的消极影响主要表现为功能固着、僵化的思维模式等。<br><br><strong>💡 解题思路：</strong>比较各选项，B最准确概括了思维定势的消极面。`
+            },
+            {
+                type: "单选题",
+                stem: "下列选项中，属于酝酿效应的是（ ）",
+                options: [
+                    { label: "A", text: "学生反复练习，熟练掌握解题方法" },
+                    { label: "B", text: "教师引导学生多角度思考问题" },
+                    { label: "C", text: "设计师卡壳后，去户外散步，突然想到设计方案" },
+                    { label: "D", text: "学生只能想到尺子用来测量，想不到用来画直线" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。C项中，设计师卡壳（反复探索无果），户外散步（搁置问题），突发设计方案（找到答案），符合酝酿效应；A是技能熟练，B是打破定势，D是功能固着。<br><br><strong>📚 知识点讲解：</strong>酝酿效应强调搁置后灵感突现。<br><br><strong>💡 解题思路：</strong>对照定义，只有C包含“卡壳-搁置-灵感”全过程。`
+            },
+            {
+                type: "单选题",
+                stem: "功能固着对问题解决的影响主要是（ ）",
+                options: [
+                    { label: "A", text: "积极的" },
+                    { label: "B", text: "消极的" },
+                    { label: "C", text: "既有积极也有消极" },
+                    { label: "D", text: "无影响" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。功能固着的核心是被物体的常规功能限制，难以想到其他用途，大多情况下会阻碍问题解决，因此其影响以消极为主，不同于思维定势的双重影响。<br><br><strong>📚 知识点讲解：</strong>功能固着通常是一种认知障碍，不利于创新性解决问题。<br><br><strong>💡 解题思路：</strong>与思维定势区分开：功能固着没有积极作用，是消极的。`
+            },
+            {
+                type: "单选题",
+                stem: "学生在解决物理实验题时，已掌握的实验器材使用方法，属于（ ）",
+                options: [
+                    { label: "A", text: "思维定势" },
+                    { label: "B", text: "学习准备" },
+                    { label: "C", text: "功能固着" },
+                    { label: "D", text: "酝酿效应" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。实验器材使用方法属于“技能储备”，是解决物理实验题前的基础条件，对应学习准备；若学生只能想到器材的常规用法，想不到其他用途，则属于功能固着。<br><br><strong>📚 知识点讲解：</strong>使用方法的掌握属于技能型学习准备。<br><br><strong>💡 解题思路：</strong>题干强调的是“已掌握的使用方法”，是基础条件，所以是学习准备。`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于四个概念的说法，错误的是（ ）",
+                options: [
+                    { label: "A", text: "学习准备是问题解决的基础" },
+                    { label: "B", text: "思维定势只有消极影响" },
+                    { label: "C", text: "功能固着是特殊的思维定势" },
+                    { label: "D", text: "酝酿效应能打破思维僵局" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。思维定势有双重影响，情境不变时能快速解决问题（积极），情境变化时阻碍新方法（消极），B项“只有消极影响”表述错误；A、C、D三项均符合四个概念的核心定义。<br><br><strong>📚 知识点讲解：</strong>这一题综合考查了四个概念的核心定义和关系。<br><br><strong>💡 解题思路：</strong>错误之处在于B项否认了思维定势的积极作用。`
+            },
+            {
+                type: "判断题",
+                stem: "学习准备仅包括学生已有的知识和技能，不包括身心状态。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。学习准备是解决问题前已有的知识、技能、经验、学习习惯和身心状态等所有基础条件，身心状态（如注意力、疲劳程度）也属于学习准备的范畴。<br><br><strong>📚 知识点讲解：</strong>学习准备包含认知和非认知因素，身心状态是重要组成部分。<br><br><strong>💡 解题思路：</strong>题干缩小了学习准备的外延，故错误。`
+            },
+            {
+                type: "判断题",
+                stem: "思维定势对问题解决只有消极影响，会阻碍创造性思维。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。思维定势有双重影响，当问题情境不变时，能帮助人们快速运用旧经验解决问题（积极作用）；当情境变化时，才会阻碍新方法的采用（消极作用）。<br><br><strong>📚 知识点讲解：</strong>思维定势的“习惯”在熟悉情境中是有益的。<br><br><strong>💡 解题思路：</strong>题干否定了积极作用，属于片面理解。`
+            },
+            {
+                type: "判断题",
+                stem: "功能固着是思维定势的一种特殊形式，仅局限于物体功能的认知。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。功能固着的核心是被物体的常规功能限制，无法想到其他用途，其范围仅局限于“物体功能”，是思维定势的一种特殊表现形式。<br><br><strong>📚 知识点讲解：</strong>功能固着是思维定势在物体用途上的具体化。<br><br><strong>💡 解题思路：</strong>题干表述符合两者关系，故正确。`
+            },
+            {
+                type: "判断题",
+                stem: "酝酿效应的关键是“暂时搁置问题”，此时潜意识会停止对问题的加工。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。酝酿效应中，暂时搁置问题时，意识层面停止探索，但潜意识仍在继续加工问题相关信息，正是这种潜意识加工，才会让后续突然产生灵感。<br><br><strong>📚 知识点讲解：</strong>潜意识加工是酝酿效应的核心机制。<br><br><strong>💡 解题思路：</strong>题干说“潜意识停止加工”是错误的。`
+            },
+            {
+                type: "判断题",
+                stem: "学生没学过小数乘法，无法解决小数乘法应用题，体现了学习准备不足。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。学习准备不足是指缺乏解决问题所需的知识、技能等基础，学生没学过小数乘法（知识储备不足），无法解决相关应用题，符合学习准备不足的定义。<br><br><strong>📚 知识点讲解：</strong>缺乏必要知识是典型的学习准备不足。<br><br><strong>💡 解题思路：</strong>题干描述直接体现学习准备不足，故正确。`
+            },
+            {
+                type: "判断题",
+                stem: "“举一反三”“触类旁通”，利用的是思维定势的积极作用。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。“举一反三”是利用同类问题的解决经验，快速迁移到新的同类问题中，属于思维定势在情境不变时的积极作用，能提高问题解决效率。<br><br><strong>📚 知识点讲解：</strong>思维定势的积极作用体现在正迁移和学习效率上。<br><br><strong>💡 解题思路：</strong>举一反三是积极经验的运用，故正确。`
+            },
+            {
+                type: "判断题",
+                stem: "功能固着对问题解决有积极影响，能帮助人们快速运用物体的常规功能解决问题。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。功能固着的核心是限制人们对物体用途的想象，大多情况下会阻碍问题解决，其影响以消极为主，无法体现积极作用。常规功能的快速使用并非功能固着的“积极作用”，而是功能固着本身导致的限制。<br><br><strong>📚 知识点讲解：</strong>功能固着本身就是一种认知障碍，不是积极因素。<br><br><strong>💡 解题思路：</strong>题干混淆了“使用常规功能”与“固着于常规功能”，后者是消极的。`
+            },
+            {
+                type: "判断题",
+                stem: "当反复探索一个问题无果时，采用酝酿效应，搁置问题一段时间，能有效打破思维僵局。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。酝酿效应的核心价值就是打破之前的思维僵局，通过潜意识加工信息，让人们跳出死胡同，进而找到问题的解决方法。<br><br><strong>📚 知识点讲解：</strong>酝酿效应是克服思维定势和僵局的有效策略。<br><br><strong>💡 解题思路：</strong>题干描述了酝酿效应的积极作用，故正确。`
+            },
+            {
+                type: "判断题",
+                stem: "思维定势和功能固着是完全相同的心理现象，只是表述不同。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。两者不同，思维定势范围更广，涵盖解题方法、操作习惯等；功能固着是思维定势的一种，仅局限于物体功能的认知。<br><br><strong>📚 知识点讲解：</strong>功能固着是子集，思维定势是全集。<br><br><strong>💡 解题思路：</strong>两者不是全同关系。`
+            },
+            {
+                type: "判断题",
+                stem: "学习准备越充足，问题解决的效率就越高，越容易找到解决方法。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。学习准备是问题解决的基础，知识、技能、身心状态等准备越充足，人们解决问题时的思路就越清晰，效率就越高，也越容易找到合适的解决方法。<br><br><strong>📚 知识点讲解：</strong>良好的学习准备是高效认知活动的保障。<br><br><strong>💡 解题思路：</strong>符合教育心理学的一般规律，故正确。`
+            }
+        ];
+        
+        const APP_ID = 'edupsy_four_concepts_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '影响问题解决的因素（四概念辨析）';
+            const content = `
+                <h3>一、学习准备</h3>
+                <p><strong>定义：</strong>解决问题前已有的知识、技能、经验、学习习惯和身心状态等所有基础条件。</p>
+                <p><strong>范畴：</strong>包括认知因素（知识、技能、解题习惯）和非认知因素（注意力、疲劳程度、情绪）。</p>
+                <p><strong>作用：</strong>是问题解决的前提和基础，准备越充足，效率越高。</p>
+
+                <h3>二、思维定势</h3>
+                <p><strong>定义：</strong>由先前的活动形成的心理准备状态或习惯倾向，影响后续问题的解决。</p>
+                <p><strong>双重作用：</strong></p>
+                <ul>
+                    <li><strong>积极作用：</strong>问题情境不变时，快速调用旧经验，提高效率（如“举一反三”）。</li>
+                    <li><strong>消极作用：</strong>情境变化时，习惯用旧方法，阻碍新思路，束缚创造性思维。</li>
+                </ul>
+                <p><strong>例子：</strong>习惯用减法砍桌角、只想到一元一次方程解法。</p>
+
+                <h3>三、功能固着</h3>
+                <p><strong>定义：</strong>熟悉物体常规功能后，难以想到其其他用途，被物体的固定功能所限制。</p>
+                <p><strong>与思维定势的关系：</strong>功能固着是思维定势的一种特殊形式，仅局限于“物体功能”的认知。</p>
+                <p><strong>影响：</strong>以消极为主，阻碍创造性问题解决。</p>
+                <p><strong>经典实验：</strong>蜡烛问题（Duncker, 1945）—— 想不到用图钉盒作支架。</p>
+                <p><strong>例子：</strong>想不到用吹风机吹干鞋子、用尺子画直线（但尺子本身就可以画直线，此处换为“用筷子当搅拌棒”更恰当）。</p>
+
+                <h3>四、酝酿效应</h3>
+                <p><strong>定义：</strong>反复探索问题无果时，暂时搁置，潜意识继续加工信息，后续突然产生灵感。</p>
+                <p><strong>本质：</strong>潜意识的加工作用，打破之前的思维僵局。</p>
+                <p><strong>例子：</strong>阿基米德洗澡时发现浮力原理、设计师散步时突然想到方案。</p>
+
+                <h3>五、核心对比表格</h3>
+                <table class="knowledge-table">
+                    <thead>
+                        <tr>
+                            <th>概念</th>
+                            <th>核心特征</th>
+                            <th>影响方向</th>
+                            <th>典型例子</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>学习准备</td>
+                            <td>已有基础条件</td>
+                            <td>积极（前提）</td>
+                            <td>已掌握公式、身心状态</td>
+                        </tr>
+                        <tr>
+                            <td>思维定势</td>
+                            <td>习惯用旧方法</td>
+                            <td>双重作用</td>
+                            <td>砍桌角、一元一次方程</td>
+                        </tr>
+                        <tr>
+                            <td>功能固着</td>
+                            <td>局限物体常规功能</td>
+                            <td>消极为主</td>
+                            <td>想不出图钉盒其他用途</td>
+                        </tr>
+                        <tr>
+                            <td>酝酿效应</td>
+                            <td>搁置后突发灵感</td>
+                            <td>积极（打破僵局）</td>
+                            <td>阿基米德浮力、作文思路</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>六、教招考试高频辨析点</h3>
+                <ul>
+                    <li>思维定势 vs 功能固着：前者范围广（方法、习惯），后者仅限物体功能。</li>
+                    <li>学习准备不足 vs 思维定势：前者是缺基础，后者是有基础但固化了。</li>
+                    <li>酝酿效应的关键是“潜意识加工”，不是停止思考。</li>
+                </ul>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1961 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智力理论刷题 - 维纳成败归因理论</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .knowledge-page.hidden {
+            display: none;
+        }
+
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 0;
+            margin-top: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .analysis-content strong {
+            color: var(--text-primary);
+        }
+
+        .knowledge-point {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .knowledge-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mnemonic {
+            margin-top: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .mnemonic-title {
+            font-weight: 600;
+            color: #ad6800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mnemonic-text {
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sheet-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .sheet-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            background: var(--bg-card);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            z-index: 400;
+            transform: translate(-50%, 100%);
+            transition: transform 0.3s ease;
+            max-height: 70vh;
+            overflow-y: auto;
+            width: min(430px, 100%);
+        }
+
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .sheet-number {
+            font-size: 16px;
+        }
+
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .history-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            background: var(--bg-card);
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            z-index: 400;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .history-panel.show {
+            transform: translateX(0);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .clear-history {
+            padding: 6px 12px;
+            background: #fff2f0;
+            color: var(--error-color);
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .history-item:active {
+            transform: scale(0.98);
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .history-stat {
+            text-align: center;
+        }
+
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">30</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">维纳成败归因理论学习</div>
+                        <div class="progress-text">维纳归因理论 · 教招必考</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <div class="icon-btn" onclick="toggleHistory()">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)">
+                        <i class="fas fa-font"></i>-
+                    </div>
+                    <div class="icon-btn" onclick="changeFontSize(1)">
+                        <i class="fas fa-font"></i>+
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content" id="footerContent"></div>
+        </footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid">
+            </div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            type: "单选题",
+            stem: "提出成败归因理论的心理学家是（ ）",
+            options: [
+                { label: "A", text: "皮亚杰" },
+                { label: "B", text: "维纳" },
+                { label: "C", text: "维果茨基" },
+                { label: "D", text: "斯金纳" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>成败归因理论由美国心理学家<strong>维纳（Bernard Weiner）</strong>提出。该理论系统探讨了人们如何解释自己行为成败的原因，并将归因划分为三个维度、六个因素。皮亚杰提出认知发展阶段理论和道德发展理论；维果茨基提出最近发展区理论；斯金纳是操作性条件作用理论的代表人物。<br><br><strong>💡 解题思路：</strong>本题为识记型题目，直接考查理论的提出者。A选项皮亚杰研究认知发展，C选项维果茨基研究社会文化对认知的影响，D选项斯金纳研究行为强化，均与成败归因无关。B选项维纳是正确答案，这是教招考试中的高频考点。`
+        }, {
+            type: "单选题",
+            stem: "维纳将人们对成败的归因划分的三个维度是（ ）",
+            options: [
+                { label: "A", text: "内外性、稳定性、可控性" },
+                { label: "B", text: "整体性、结构性、功能性" },
+                { label: "C", text: "直观性、间接性、概括性" },
+                { label: "D", text: "生理性、心理性、社会性" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳归因理论的<strong>三大维度</strong>是：<strong>内外性</strong>（内部原因/外部原因）、<strong>稳定性</strong>（稳定不变/不稳定易变化）、<strong>可控性</strong>（自己能控制/不可控制）。这三个维度构成了归因分析的完整框架，是所有后续学习的基础。<br><br><strong>💡 解题思路：</strong>本题可直接通过识记作答。B选项中的“整体性、结构性、功能性”并非维纳归因维度的术语；C选项“直观性、间接性、概括性”是思维特征相关概念；D选项“生理性、心理性、社会性”是发展心理学的分类方式。只有A选项准确对应维纳的三大维度，属于必背核心考点。`
+        }, {
+            type: "单选题",
+            stem: "在维纳六大归因因素中，唯一可控的因素是（ ）",
+            options: [
+                { label: "A", text: "能力" },
+                { label: "B", text: "努力" },
+                { label: "C", text: "运气" },
+                { label: "D", text: "任务难度" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>在维纳的六大归因因素中，<strong>努力</strong>是<strong>唯一可控</strong>的因素，其维度归属为：内部、不稳定、可控。其余五个因素（能力、任务难度、运气、身心状态、外界环境）均为不可控因素。这一考点是教招考试的<strong>重中之重</strong>，几乎每年都会涉及。<br><br><strong>💡 解题思路：</strong>A选项能力是内部、稳定、不可控的；C选项运气是外部、不稳定、不可控的；D选项任务难度是外部、稳定、不可控的。只有B选项努力是可控的，因为个人可以决定自己付出多少努力。教学中引导学生归因于努力，正是因为它可控、可改变。`
+        }, {
+            type: "单选题",
+            stem: "在维纳归因中，“能力”所属维度是（ ）",
+            options: [
+                { label: "A", text: "内部、稳定、不可控" },
+                { label: "B", text: "内部、不稳定、可控" },
+                { label: "C", text: "外部、稳定、不可控" },
+                { label: "D", text: "外部、不稳定、不可控" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>能力</strong>在维纳归因理论中的维度归属为：<strong>内部</strong>（属于个人自身因素）、<strong>稳定</strong>（短时间内不会发生明显变化）、<strong>不可控</strong>（个人无法随意改变自身能力水平）。能力是六大因素中两个稳定因素之一，另一个是任务难度。<br><br><strong>💡 解题思路：</strong>首先，能力显然属于内部因素，排除C和D。其次，能力是相对稳定的，不会今天高明天低剧烈波动，因此是稳定因素，排除B。最终确定A为正确答案。注意区分能力（内部、稳定、不可控）与努力（内部、不稳定、可控）。`
+        }, {
+            type: "单选题",
+            stem: "“努力”对应的归因维度是（ ）",
+            options: [
+                { label: "A", text: "内部、稳定、不可控" },
+                { label: "B", text: "内部、不稳定、可控" },
+                { label: "C", text: "外部、稳定、不可控" },
+                { label: "D", text: "外部、不稳定、不可控" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>努力</strong>的维度归属是：<strong>内部</strong>（个人的主观付出）、<strong>不稳定</strong>（努力程度可以随时变化，今天努力明天可能懈怠）、<strong>可控</strong>（个人可以自主决定是否努力以及努力的程度）。努力是六大因素中<strong>唯一可控</strong>的因素。<br><br><strong>💡 解题思路：</strong>努力是内部因素，排除C和D。努力程度因人因时而异，是不稳定的，且个人可以控制，排除A。B选项完全符合努力的维度特征。记住“努力是唯一可控因素”这一关键考点即可快速作答。`
+        }, {
+            type: "单选题",
+            stem: "考试题目太难导致没考好，属于“任务难度”，其维度是（ ）",
+            options: [
+                { label: "A", text: "内部、稳定" },
+                { label: "B", text: "外部、稳定" },
+                { label: "C", text: "内部、不稳定" },
+                { label: "D", text: "外部、不稳定" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>任务难度</strong>的维度归属是：<strong>外部</strong>（题目难度由出题者决定，非考生自身因素）、<strong>稳定</strong>（同一套试卷的难度对所有人是相对固定的）、<strong>不可控</strong>（考生无法改变题目难度）。任务难度与能力并列为六大因素中仅有的两个稳定因素。<br><br><strong>💡 解题思路：</strong>题目难度属于外部因素（试卷是外部环境），排除A和C。试卷难度在考试那一刻是固定不变的，属于稳定因素，排除D。B选项“外部、稳定”完全匹配任务难度的维度归属。注意：任务难度虽稳定但不可控，这也是不宜引导学生归因于任务难度的原因。`
+        }, {
+            type: "单选题",
+            stem: "学生认为自己考得好只是碰巧蒙对，属于运气归因，运气的维度是（ ）",
+            options: [
+                { label: "A", text: "外部、稳定、不可控" },
+                { label: "B", text: "外部、不稳定、不可控" },
+                { label: "C", text: "内部、稳定、不可控" },
+                { label: "D", text: "内部、不稳定、可控" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>运气</strong>的维度归属是：<strong>外部</strong>（运气不受个人主观意志左右）、<strong>不稳定</strong>（运气时好时坏，完全随机变化）、<strong>不可控</strong>（人无法控制运气）。运气与外界环境同属外部、不稳定、不可控因素。<br><br><strong>💡 解题思路：</strong>运气是外部因素，排除C和D。运气的本质特点是随机多变、不可预测，属于不稳定因素，排除A。B选项“外部、不稳定、不可控”准确描述了运气的三个维度特征。将成败归因于运气不利于激发学习动机，因为学生可能觉得“反正靠运气，努力也没用”。`
+        }, {
+            type: "单选题",
+            stem: "学生考试前紧张焦虑、身体状态差导致发挥失常，属于（ ）",
+            options: [
+                { label: "A", text: "努力" },
+                { label: "B", text: "身心状态" },
+                { label: "C", text: "任务难度" },
+                { label: "D", text: "能力" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>身心状态</strong>是维纳六大归因因素之一，指个体在特定情境下的情绪、生理状态（如焦虑、疲劳、生病等），其维度归属为：内部、不稳定、不可控。身心状态会直接影响临场发挥，但它是不稳定的（可以调节改善），也是不可控的（临场紧张往往难以完全避免）。<br><br><strong>💡 解题思路：</strong>题干描述的是考试前的紧张焦虑和身体不适，这属于情绪和生理层面的状态，直接对应B选项身心状态。A选项努力涉及的是用功程度，C选项任务难度涉及试卷本身，D选项能力涉及长期稳定的智力水平，均与临场身心状态无关。`
+        }, {
+            type: "单选题",
+            stem: "学生抱怨考场太吵、天气太热影响考试发挥，属于（ ）",
+            options: [
+                { label: "A", text: "身心状态" },
+                { label: "B", text: "外界环境" },
+                { label: "C", text: "任务难度" },
+                { label: "D", text: "努力不足" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>外界环境</strong>是维纳六大归因因素之一，指个体所处的外部物理环境和社会环境（如噪音、天气、考场条件、他人干扰等），其维度归属为：外部、不稳定、不可控。外界环境是六大因素中与运气并列的外部不稳定不可控因素。<br><br><strong>💡 解题思路：</strong>题干中“考场太吵”“天气太热”明显属于外部物理环境因素，直接对应B选项外界环境。A选项身心状态是内部因素（身体情绪），C选项任务难度涉及试卷本身，D选项努力不足涉及个人付出程度，均与外部环境无关。`
+        }, {
+            type: "单选题",
+            stem: "下列选项中，属于稳定因素的两个因素是（ ）",
+            options: [
+                { label: "A", text: "能力、努力" },
+                { label: "B", text: "能力、任务难度" },
+                { label: "C", text: "运气、任务难度" },
+                { label: "D", text: "努力、运气" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳六大因素中，只有<strong>能力</strong>和<strong>任务难度</strong>属于<strong>稳定因素</strong>。能力在短期内不会发生明显改变，任务难度在同一情境下是固定的。其余四个因素——努力、运气、身心状态、外界环境——均为不稳定因素，会随时间和情境变化。<br><br><strong>💡 解题思路：</strong>A选项中努力是不稳定的，排除；C选项中运气是不稳定的，排除；D选项中努力和运气都不稳定，排除。只有B选项能力和任务难度都是稳定因素。记住口诀“稳两样：能力、任务难”即可快速作答。`
+        }, {
+            type: "单选题",
+            stem: "学生总觉得自己天生智商低、怎么学也学不会，这种归因易导致（ ）",
+            options: [
+                { label: "A", text: "自我效能感提高" },
+                { label: "B", text: "习得性无助" },
+                { label: "C", text: "学习动机增强" },
+                { label: "D", text: "更加刻苦努力" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>习得性无助</strong>是指个体在经历反复失败后，形成“无论怎么努力都无法改变结果”的消极认知，从而放弃努力的心理状态。维纳指出，长期将失败归因于<strong>能力不足</strong>（内部、稳定、不可控）最容易导致习得性无助，因为学生会认为“我天生不行，努力也没用”。<br><br><strong>💡 解题思路：</strong>题干描述“天生智商低”“怎么学也学不会”正是典型的将失败归因于能力的表现。这种归因会让学生觉得结果不可改变，从而放弃努力，产生习得性无助。A、C、D都是积极结果，与题干描述的消极状态不符。B选项习得性无助是维纳归因理论的重要应用考点。`
+        }, {
+            type: "单选题",
+            stem: "教师引导学生进行积极合理归因，最应该引导归于（ ）",
+            options: [
+                { label: "A", text: "能力" },
+                { label: "B", text: "努力" },
+                { label: "C", text: "运气" },
+                { label: "D", text: "任务难度" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳归因理论的教学启示中，最重要的一条就是<strong>引导学生将成败多归因于努力</strong>。因为努力是唯一可控的因素，归因于努力能让学生感到结果掌握在自己手中，从而激发后续学习动机、增强自信心。归因于能力（不可控稳定）可能导致习得性无助，归因于运气或任务难度（外部不可控）则可能让学生推卸责任。<br><br><strong>💡 解题思路：</strong>四个选项中，只有B选项努力是可控因素。A选项能力不可控且稳定，归因于此易产生习得性无助；C选项运气不可控，归因于此会削弱动机；D选项任务难度不可控，归因于此会让学生觉得无能为力。因此教师最应引导学生归因于努力。`
+        }, {
+            type: "单选题",
+            stem: "小明考高分就认为自己聪明，考低分就怪题目偏难，这种现象是（ ）",
+            options: [
+                { label: "A", text: "首因效应" },
+                { label: "B", text: "自我服务归因偏差" },
+                { label: "C", text: "晕轮效应" },
+                { label: "D", text: "刻板效应" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>自我服务归因偏差</strong>（又称自利偏差）是指个体倾向于将成功归因于内部因素（如能力、努力），而将失败归因于外部因素（如运气、任务难度），以此来维护自尊和自我形象。这是维纳归因理论在实际生活中的典型表现。<br><br><strong>💡 解题思路：</strong>题干中小明的行为——成功归自己（聪明=能力）、失败怪外界（题目偏难=任务难度）——正是自我服务归因偏差的经典描述。A选项首因效应指第一印象的影响；C选项晕轮效应指以偏概全的评价倾向；D选项刻板效应指对群体的固定印象。只有B选项准确描述了这种归因偏差。`
+        }, {
+            type: "单选题",
+            stem: "下列属于内部不稳定不可控因素的是（ ）",
+            options: [
+                { label: "A", text: "能力" },
+                { label: "B", text: "努力" },
+                { label: "C", text: "身心状态" },
+                { label: "D", text: "任务难度" }
+            ],
+            answer: 2,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>身心状态</strong>的维度归属为：<strong>内部</strong>（个人的情绪和身体状况）、<strong>不稳定</strong>（情绪和身体状态会随时间变化）、<strong>不可控</strong>（临场的身心状态往往难以完全自主控制）。六大因素各维度对应关系必须准确记忆。<br><br><strong>💡 解题思路：</strong>A选项能力是内部、稳定、不可控，不符合“不稳定”条件；B选项努力是内部、不稳定、可控，不符合“不可控”条件；D选项任务难度是外部、稳定、不可控，不符合“内部”条件。C选项身心状态恰好符合内部、不稳定、不可控三个条件，是正确答案。`
+        }, {
+            type: "单选题",
+            stem: "下列哪一种归因方式最能激发学生后续学习动机（ ）",
+            options: [
+                { label: "A", text: "考不好是我太笨" },
+                { label: "B", text: "考不好是我努力不够" },
+                { label: "C", text: "考不好是运气太差" },
+                { label: "D", text: "考不好是老师出题太难" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>将失败归因于<strong>努力不足</strong>（内部、不稳定、可控）最能激发后续学习动机。因为努力是可控的，学生可以通过增加努力来改变结果，这种归因赋予学生掌控感。而归因于能力不足（“太笨”）会产生习得性无助，归因于运气或任务难度则会削弱个人责任感。<br><br><strong>💡 解题思路：</strong>A选项归因于能力（“太笨”），是稳定不可控的，易导致放弃；C选项归因于运气，是外部不可控的，让学生觉得无法改变；D选项归因于任务难度，也是外部不可控的。只有B选项归因于努力，是可控且可改变的，能促使学生下次加倍努力。`
+        }, {
+            type: "单选题",
+            stem: "受先天禀赋影响较大、个人无法改变的归因因素是（ ）",
+            options: [
+                { label: "A", text: "努力" },
+                { label: "B", text: "能力" },
+                { label: "C", text: "学习态度" },
+                { label: "D", text: "复习时间" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>能力</strong>在维纳归因理论中是内部、稳定、不可控因素，受先天禀赋影响较大，个人在短期内难以改变。这也是为什么教育者不鼓励学生将失败归因于能力——因为如果学生认为能力无法改变，就会丧失努力的动力。<br><br><strong>💡 解题思路：</strong>A选项努力是可控的，学生可以自主决定；C选项学习态度也是可以调整的；D选项复习时间同样可以由学生自己安排。只有B选项能力是个人无法随意改变的稳定因素，符合题干“受先天禀赋影响较大、个人无法改变”的描述。`
+        }, {
+            type: "单选题",
+            stem: "把考试失败归因为运气不好，这种归因属于（ ）",
+            options: [
+                { label: "A", text: "内部稳定" },
+                { label: "B", text: "外部稳定" },
+                { label: "C", text: "外部不稳定" },
+                { label: "D", text: "内部不稳定" }
+            ],
+            answer: 2,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>运气</strong>的维度归属是：外部（不由个人决定）、不稳定（随机变化）、不可控（无法掌控）。将失败归因于运气属于外部不稳定归因，这种归因方式会让学生觉得结果不受自己控制，从而削弱学习动力。<br><br><strong>💡 解题思路：</strong>运气是外部因素，排除A和D；运气时好时坏、不可预测，属于不稳定因素，排除B。C选项“外部不稳定”准确描述了运气的维度特征。教学应引导学生少用运气归因，多用努力归因。`
+        }, {
+            type: "单选题",
+            stem: "关于维纳归因维度说法错误的是（ ）",
+            options: [
+                { label: "A", text: "努力是唯一可控因素" },
+                { label: "B", text: "任务难度是外部稳定" },
+                { label: "C", text: "身心状态是内部稳定" },
+                { label: "D", text: "运气是外部不稳定" }
+            ],
+            answer: 2,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>身心状态</strong>的维度归属是<strong>内部、不稳定、不可控</strong>，而非“内部稳定”。情绪和身体状况会随着时间、环境、休息状况等随时变化，属于不稳定因素。六大因素的维度归属需要准确区分，尤其注意身心状态与能力的区别：两者同属内部不可控，但能力稳定而身心状态不稳定。<br><br><strong>💡 解题思路：</strong>A选项正确，努力确实是唯一可控因素；B选项正确，任务难度是外部、稳定、不可控；C选项错误，身心状态是不稳定而非稳定；D选项正确，运气是外部、不稳定、不可控。题干要求选错误选项，故选C。`
+        }, {
+            type: "单选题",
+            stem: "学生不再怨天尤人，把成败归结于自身用功程度，说明具备（ ）",
+            options: [
+                { label: "A", text: "合理归因能力" },
+                { label: "B", text: "刻板效应" },
+                { label: "C", text: "从众心理" },
+                { label: "D", text: "角色认同" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>合理归因</strong>是指个体能够客观、恰当地分析成败原因，特别是将结果归因于可控因素（如努力）而非不可控因素（如运气、任务难度）。维纳归因理论强调，具备合理归因能力的学生更愿意为自己的学习结果负责，学习动机更强。<br><br><strong>💡 解题思路：</strong>题干描述学生“不再怨天尤人”说明不再归因于外部因素，“归结于自身用功程度”说明归因于努力这个可控因素，这正是合理归因的表现。B选项刻板效应是社会认知偏差；C选项从众心理是社会影响现象；D选项角色认同是自我概念范畴。只有A选项与归因方式直接相关。`
+        }, {
+            type: "单选题",
+            stem: "下列不属于维纳六大归因因素的是（ ）",
+            options: [
+                { label: "A", text: "能力" },
+                { label: "B", text: "努力" },
+                { label: "C", text: "性格" },
+                { label: "D", text: "运气" }
+            ],
+            answer: 2,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳的<strong>六大归因因素</strong>为：<strong>能力、努力、任务难度、运气、身心状态、外界环境</strong>。记忆口诀为“能努任运身环”（能力、努力、任务难度、运气、身心状态、外界环境）。性格并不在维纳的六因素之中。<br><br><strong>💡 解题思路：</strong>A选项能力、B选项努力、D选项运气都是维纳六大因素中的明确因素。C选项性格虽然也是内部因素，但维纳并未将其纳入六大归因因素。做此类排除题时，熟记六大因素的具体名称即可轻松作答。`
+        }, {
+            type: "判断题",
+            stem: "维纳归因理论的三个维度是内外性、稳定性、可控性。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳归因理论的<strong>三大维度</strong>为<strong>内外性</strong>（内部/外部）、<strong>稳定性</strong>（稳定/不稳定）、<strong>可控性</strong>（可控/不可控）。这三个维度构成了2×2×2的归因框架，每个归因因素都可以在这三个维度上定位。<br><br><strong>💡 解题思路：</strong>题干陈述完全正确，三大维度的表述准确无误。这是维纳归因理论最基础的知识点，教招考试中常以判断或选择题形式出现。建议将“内外、稳定、可控”六个字作为口诀熟记。`
+        }, {
+            type: "判断题",
+            stem: "努力是维纳六因素中唯一可以控制的因素。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong>在维纳的六大归因因素中，<strong>努力</strong>是<strong>唯一可控</strong>的因素，其维度为内部、不稳定、可控。其余五个因素——能力（内部、稳定、不可控）、任务难度（外部、稳定、不可控）、运气（外部、不稳定、不可控）、身心状态（内部、不稳定、不可控）、外界环境（外部、不稳定、不可控）——均为不可控因素。<br><br><strong>💡 解题思路：</strong>题干陈述正确。这是维纳归因理论中最核心的考点之一。正是因为努力是唯一可控因素，所以教学启示中强调要引导学生多归因于努力。判断时可逐一核对六大因素的“可控性”维度来验证。`
+        }, {
+            type: "判断题",
+            stem: "能力属于内部、不稳定、不可控因素。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>能力</strong>的维度归属是<strong>内部、稳定、不可控</strong>。能力在短期内是相对稳定的，不会发生剧烈波动，因此属于稳定因素而非不稳定因素。与能力同属稳定因素的是任务难度（外部、稳定、不可控）。<br><br><strong>💡 解题思路：</strong>题干将能力描述为“不稳定”是错误的。能力是稳定的，正因如此，长期将失败归因于能力（稳定不可控）才会导致习得性无助——学生认为“我能力差是改变不了的”。能力与努力的关键区别之一就是：能力稳定，努力不稳定。`
+        }, {
+            type: "判断题",
+            stem: "任务难度属于外部、稳定、不可控因素。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>任务难度</strong>的维度归属为<strong>外部</strong>（由出题者或任务本身决定）、<strong>稳定</strong>（同一任务对所有人难度一致）、<strong>不可控</strong>（个体无法改变任务难度）。任务难度与能力并列为六大因素中仅有的两个稳定因素。<br><br><strong>💡 解题思路：</strong>题干陈述完全正确。任务难度是外部因素（非个人能决定），在一段时间内保持稳定（试卷难度固定），且不可控（考生只能适应无法改变）。这三个维度描述准确无误。`
+        }, {
+            type: "判断题",
+            stem: "运气和外界环境都属于外部、不稳定、不可控。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>运气</strong>和<strong>外界环境</strong>在维纳归因理论中都归属于<strong>外部、不稳定、不可控</strong>。运气随机变化不可预测，外界环境（如天气、噪音等）也会随时改变且不受个人控制。两者在三个维度上的归属完全一致。<br><br><strong>💡 解题思路：</strong>题干陈述正确。运气和外界环境都是外部因素，都不稳定（会变化），都不可控（个人无法掌控）。在六大因素中，这两个因素的维度归属完全重合，可以放在一起记忆。教学中也应引导学生避免过度使用这两种归因。`
+        }, {
+            type: "判断题",
+            stem: "教师应引导学生经常把失败归因于能力不足。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳归因理论的重要<strong>教学启示</strong>是：教师应引导学生将成败<strong>多归因于努力</strong>，而<strong>少归因于能力</strong>。因为能力是稳定且不可控的，如果学生长期将失败归因于能力不足，会产生“我天生就不行”的消极认知，进而导致习得性无助，放弃努力。<br><br><strong>💡 解题思路：</strong>题干说法明显错误。正确的做法是引导学生归因于努力（可控），而非能力（稳定不可控）。将失败归因于能力不足会严重损害学生的自信心和学习动机，这与教育目标背道而驰。教师应帮助学生建立“努力可以改变结果”的信念。`
+        }, {
+            type: "判断题",
+            stem: "长期将失败归因于能力，容易形成习得性无助。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong><strong>习得性无助</strong>的形成机制与归因方式密切相关。当学生长期将失败归因于<strong>能力不足</strong>（内部、稳定、不可控）时，会形成“无论我怎么努力都无法改变”的消极信念，从而放弃尝试和努力。这是维纳归因理论在心理健康领域的重要应用。<br><br><strong>💡 解题思路：</strong>题干陈述正确。能力是稳定不可控因素，长期归因于此会让学生认为失败不可避免且无法改变，这正是习得性无助的核心成因。教育者应警惕学生的这种归因倾向，及时引导其转向努力归因。`
+        }, {
+            type: "判断题",
+            stem: "所有不稳定的归因因素都是不可控的。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>在维纳的六大因素中，<strong>努力</strong>属于<strong>不稳定但可控</strong>的因素，这是唯一一个“不稳定+可控”的组合。其他不稳定因素（运气、身心状态、外界环境）确实都不可控，但努力是例外。因此不能说“所有不稳定因素都不可控”。<br><br><strong>💡 解题思路：</strong>题干说法错误，因为存在一个重要的例外——努力。努力是不稳定的（可以今天多明天少），但它是可控的（个人可以自主决定）。这个例外恰恰是维纳归因理论教学启示的核心依据：正因努力不稳定但可控，才能成为引导学生归因的最佳方向。`
+        }, {
+            type: "判断题",
+            stem: "归因方式只会影响成绩，不会影响情绪和学习动机。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 1,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳归因理论强调，归因方式<strong>不仅影响成绩归因本身</strong>，更会深刻影响个体的<strong>情绪体验</strong>（如自豪、羞愧、焦虑）、<strong>学习动机</strong>（增强或削弱后续努力意愿）和<strong>自我效能感</strong>。例如，将成功归因于能力会带来自豪感，将失败归因于努力不足会激发更强的学习动力。<br><br><strong>💡 解题思路：</strong>题干说法过于狭隘且错误。归因方式的影响是多方面的，它直接关联到学生的情绪反应和后续行为动机。如果归因方式不影响情绪和动机，那么维纳理论的教学启示就失去了意义。事实上，归因理论最重要的价值正在于它对动机和情绪的解释与干预作用。`
+        }, {
+            type: "判断题",
+            stem: "能力和任务难度是维纳归因中仅有的两个稳定因素。（ ）",
+            options: [
+                { label: "A", text: "正确" },
+                { label: "B", text: "错误" }
+            ],
+            answer: 0,
+            analysis: `<strong>📚 知识点讲解：</strong>维纳六大因素中，<strong>能力</strong>（内部、稳定、不可控）和<strong>任务难度</strong>（外部、稳定、不可控）是<strong>仅有的两个稳定因素</strong>。其余四个因素——努力、运气、身心状态、外界环境——均属于不稳定因素。记住口诀“稳两样：能力、任务难”。<br><br><strong>💡 解题思路：</strong>题干陈述正确。逐一核对：努力不稳定，运气不稳定，身心状态不稳定，外界环境不稳定。只有能力和任务难度是稳定因素。这一知识点常以单选题或判断题形式考查，需要准确识记。`
+        }];
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '维纳：成败归因理论（教招必考 超好记）';
+            const content = `
+                <h3>一、提出者</h3>
+                <p><strong>维纳（Bernard Weiner）</strong>提出成败归因理论，系统解释人们如何归因行为成败。</p>
+
+                <h3>二、三大维度（必背）</h3>
+                <p>1. <strong>内外性</strong>：内部原因 / 外部原因</p>
+                <p>2. <strong>稳定性</strong>：稳定不变 / 不稳定易变化</p>
+                <p>3. <strong>可控性</strong>：自己能控制 / 不可控制</p>
+
+                <h3>三、六大因素 + 维度对应（重中之重）</h3>
+                <table class="knowledge-table">
+                    <thead>
+                        <tr>
+                            <th>因素</th>
+                            <th>内外</th>
+                            <th>稳定</th>
+                            <th>可控</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>能力</strong></td>
+                            <td>内部</td>
+                            <td>稳定</td>
+                            <td>不可控</td>
+                        </tr>
+                        <tr>
+                            <td><strong>努力</strong></td>
+                            <td>内部</td>
+                            <td>不稳定</td>
+                            <td><span class="highlight">可控（唯一可控）</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>任务难度</strong></td>
+                            <td>外部</td>
+                            <td>稳定</td>
+                            <td>不可控</td>
+                        </tr>
+                        <tr>
+                            <td><strong>运气</strong></td>
+                            <td>外部</td>
+                            <td>不稳定</td>
+                            <td>不可控</td>
+                        </tr>
+                        <tr>
+                            <td><strong>身心状态</strong></td>
+                            <td>内部</td>
+                            <td>不稳定</td>
+                            <td>不可控</td>
+                        </tr>
+                        <tr>
+                            <td><strong>外界环境</strong></td>
+                            <td>外部</td>
+                            <td>不稳定</td>
+                            <td>不可控</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>四、必记核心考点</h3>
+                <p>1. <strong>唯一可控因素</strong>：<span class="highlight">努力</span></p>
+                <p>2. <strong>两个稳定因素</strong>：<span class="highlight">能力、任务难度</span></p>
+                <p>3. 其余四个因素：全是<strong>不稳定、不可控</strong></p>
+
+                <h3>五、习得性无助</h3>
+                <p>长期把失败归因为<strong>能力不足</strong> → 认为自己天生不行、怎么努力都没用 → 放弃努力，产生<strong>习得性无助</strong>。</p>
+
+                <h3>六、教学启示（简答直接默写）</h3>
+                <p>1. 引导学生把成败<strong>多归因于努力</strong>；</p>
+                <p>2. 尽量少归因于<strong>能力、运气、任务难度</strong>；</p>
+                <p>3. 避免学生形成<strong>习得性无助</strong>；</p>
+                <p>4. 正确归因能增强学习动机与自信心。</p>
+
+                <h3>七、极简口诀</h3>
+                <p>三维：<strong>内外、稳定、可控</strong></p>
+                <p>六素：<strong>能努任运身环</strong></p>
+                <p>唯可控：<strong>只有努力</strong></p>
+                <p>稳两样：<strong>能力、任务难</strong></p>
+                <p>避无助：<strong>少归能力，多归努力</strong></p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()">
+                    <i class="fas fa-play-circle"></i>
+                    我已学完，开始刷题
+                </button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = `
+                <div class="question-card">
+                    <span class="question-type">${q.type}</span>
+                    <div class="question-stem">${q.stem}</div>
+            `;
+
+            if (q.image) {
+                html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            }
+
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+
+                html += `
+                    <div class="${classes.join(' ')}" onclick="selectOption(${idx})">
+                        <div class="option-label">${opt.label}</div>
+                        <div class="option-text">${opt.text}</div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">
+                                📝 答案解析
+                                <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">
+                                    ${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}
+                                </span>
+                            </div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">
+                            ${q.analysis}
+                            <div class="knowledge-point">
+                                <div class="knowledge-title">💡 维纳归因理论核心框架</div>
+                                <div><strong>三大维度：</strong>内外性、稳定性、可控性</div>
+                                <div style="margin-top: 8px;"><strong>六大因素维度速查：</strong></div>
+                                <div>能力：内部·稳定·不可控 | 努力：内部·不稳定·<strong>可控（唯一）</strong></div>
+                                <div>任务难度：外部·稳定·不可控 | 运气：外部·不稳定·不可控</div>
+                                <div>身心状态：内部·不稳定·不可控 | 外界环境：外部·不稳定·不可控</div>
+                            </div>
+                            <div class="mnemonic">
+                                <div class="mnemonic-title">🎯 极速记忆口诀</div>
+                                <div class="mnemonic-text">
+                                    三维：内外、稳定、可控<br>
+                                    六素：能努任运身环<br>
+                                    唯可控：只有努力<br>
+                                    稳两样：能力、任务难<br>
+                                    避无助：少归能力，多归努力
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+
+                saveToHistory(correctCount, accuracy);
+
+                html = `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${correctCount}/${questions.length}</div>
+                                <div class="stat-label">答对题数</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${accuracy}%</div>
+                                <div class="stat-label">正确率</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+
+            const q = questions[currentIndex];
+            const isCorrect = idx === q.answer;
+            showToast(isCorrect ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('expanded');
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                    上一题
+                </button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>
+                    下一题
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+
+            if (panel.classList.contains('show')) {
+                overlay.classList.remove('show');
+                panel.classList.remove('show');
+            } else {
+                overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet();
+            }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) {
+                        statusClass = 'correct';
+                        statusText = '正确';
+                    } else {
+                        statusClass = 'wrong';
+                        statusText = '错误';
+                    }
+                }
+
+                if (index === currentIndex) {
+                    statusClass += ' current';
+                }
+
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q
+                            .answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer))
+                        return;
+                }
+
+                html += `
+                    <div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})">
+                        <div class="sheet-number">${index + 1}</div>
+                        <div class="sheet-status">${statusText}</div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+
+            if (panel.classList.contains('show')) {
+                overlay.classList.remove('show');
+                panel.classList.remove('show');
+            } else {
+                overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+
+            if (history.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div>暂无历史记录</div>
+                        <div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            history.forEach((record, index) => {
+                const date = new Date(record.timestamp);
+                const dateStr = date.toLocaleDateString('zh-CN', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                html += `
+                    <div class="history-item">
+                        <div class="history-date">${dateStr}</div>
+                        <div class="history-stats">
+                            <div class="history-stat">
+                                <div class="history-value">${record.correctCount}/${record.totalCount}</div>
+                                <div class="history-label">答对题数</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-value">${record.accuracy}%</div>
+                                <div class="history-label">正确率</div>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button>
+                            <button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const record = {
+                timestamp: new Date().getTime(),
+                totalCount: questions.length,
+                correctCount: correctCount,
+                accuracy: accuracy,
+                answers: [...answers]
+            };
+
+            history.unshift(record);
+            if (history.length > 50) history.pop();
+
+            localStorage.setItem('weiner_quiz_history', JSON.stringify(history));
+        }
+
+        function getHistory() {
+            const saved = localStorage.getItem('weiner_quiz_history');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = [...record.answers];
+                currentIndex = 0;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                history.splice(index, 1);
+                localStorage.setItem('weiner_quiz_history', JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除');
+            }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？此操作不可恢复。')) return;
+
+            localStorage.removeItem('weiner_quiz_history');
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        function saveAnswers() {
+            localStorage.setItem('weiner_quiz_answers', JSON.stringify({
+                currentIndex,
+                answers
+            }));
+        }
+
+        function saveSettings() {
+            localStorage.setItem('weiner_quiz_settings', JSON.stringify({
+                fontSize
+            }));
+        }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem('weiner_quiz_answers');
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null);
+            }
+
+            const savedSettings = localStorage.getItem('weiner_quiz_settings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+        }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem('weiner_quiz_answers');
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        }
+    </script>
+</body>
+</html>

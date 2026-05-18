@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>维果茨基「最近发展区」超通俗详解（教招必背）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">维果茨基最近发展区</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle">维果茨基最近发展区超通俗详解</div>
+                    <div class="knowledge-content" id="knowledgeContent">
+                        <h3>一、核心定义</h3>
+                        <p><strong>最近发展区</strong>：学生<strong>现有独立解决问题的水平</strong>，与<strong>在成人帮助/能力强的同伴协助下能达到的潜在水平</strong>之间的<strong>差距</strong>。</p>
+                        <p>通俗一句话：<strong>自己单独做不会，有人稍微点拨、引导就能学会的那个能力区间</strong>。</p>
+
+                        <h3>二、两个关键水平（必记）</h3>
+                        <ul>
+                            <li><strong>现有发展水平</strong>：不用别人帮，<strong>自己独立就能完成</strong>的任务水平。</li>
+                            <li><strong>潜在发展水平</strong>：自己做不出来，<strong>在老师、家长、优秀同学帮助下</strong>可以完成的水平。</li>
+                        </ul>
+                        <p>两者中间的<strong>差距 = 最近发展区</strong></p>
+
+                        <h3>三、经典形象比喻</h3>
+                        <p><strong>跳一跳，够得着</strong></p>
+                        <ul>
+                            <li>太低：不用跳就拿到→太简单，无成长</li>
+                            <li>太高：再跳也够不到→太难，学不会</li>
+                            <li><strong>刚好踮脚、跳一下能够到</strong>→就是最近发展区</li>
+                        </ul>
+
+                        <h3>四、举例（超好理解）</h3>
+                        <p><strong>例子1（学习类）</strong></p>
+                        <p>一年级小朋友：</p>
+                        <ul>
+                            <li>自己能独立算 <strong>10以内加减法</strong>（现有水平）</li>
+                            <li>自己不会 <strong>20以内进位加法</strong>，但老师稍作讲解、引导就能做出来（潜在水平）</li>
+                        </ul>
+                        <p>👉 <strong>20以内进位加法</strong> 就是他的最近发展区。</p>
+
+                        <p><strong>例子2（生活技能）</strong></p>
+                        <p>低年级孩子：</p>
+                        <ul>
+                            <li>自己会穿鞋子，但<strong>不会系鞋带</strong></li>
+                            <li>家长示范、手把手指导一遍，马上就能学会系鞋带</li>
+                        </ul>
+                        <p>👉 系鞋带这件事，就在他的<strong>最近发展区</strong>。</p>
+
+                        <p><strong>例子3（中职教学）</strong></p>
+                        <p>中职生：</p>
+                        <ul>
+                            <li>自己会做简单Excel表格</li>
+                            <li>不会用Vlookup函数，老师分步讲解示范后就能掌握</li>
+                        </ul>
+                        <p>👉 Vlookup学习就在他最近发展区。</p>
+
+                        <h3>五、教学启示（教招简答高频考点）</h3>
+                        <ul>
+                            <li><strong>教学要走在发展的前面</strong>，不能只停留在学生已经会的内容上；</li>
+                            <li>教学内容难度要适中，贴合<strong>跳一跳够得着</strong>的最近发展区；</li>
+                            <li>提倡<strong>支架式教学</strong>：老师先提供帮助、搭建“支架”，慢慢减少指导，让学生独立完成；</li>
+                            <li>重视<strong>同伴互助</strong>：让优等生带动后进生，在最近发展区内共同提升；</li>
+                            <li>因材施教，找准每个学生专属的最近发展区。</li>
+                        </ul>
+
+                        <h3>六、考试标准背诵版（简答直接默写）</h3>
+                        <p>最近发展区是维果茨基提出的概念，指学生<strong>现有认知发展水平</strong>与<strong>在他人帮助下所能达到的潜在发展水平之间的差距</strong>。</p>
+                        <p>教育教学应着眼于学生的最近发展区，教学要走在发展前面，设置适度难度的学习任务，通过教师引导、同伴互助、支架式教学，促进学生认知水平不断提升。</p>
+
+                        <h3>七、易错题误区</h3>
+                        <ul>
+                            <li>❌ 最近发展区是学生已经学会的知识</li>
+                            <li>❌ 是无论怎么教都学不会的内容</li>
+                            <li>✅ 是<strong>稍高于现有水平，有帮助就能学会</strong>的区间</li>
+                        </ul>
+
+                        <h3>三、考点速记（刷题后巩固）</h3>
+                        <ol>
+                            <li><strong>核心定义</strong>：现有水平（独立会做）→ 潜在水平（帮助会做）→ 差距=最近发展区</li>
+                            <li><strong>教学启示</strong>：教学走在发展前、支架式教学、同伴互助、难度适中（跳一跳够得着）</li>
+                            <li><strong>易混误区</strong>：① 最近发展区≠潜在水平；② 现有水平≠潜在水平；③ 教学≠越难越好；④ 支架式教学≠全程帮助</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "维果茨基提出的“最近发展区”是指（ ）",
+                options: [
+                    { label: "A", text: "学生已掌握的知识与技能水平" },
+                    { label: "B", text: "学生未来能达到的最高知识水平" },
+                    { label: "C", text: "学生现有水平与潜在水平之间的差距" },
+                    { label: "D", text: "学生永远无法达到的水平" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。最近发展区的本质是“差距”，即学生现有独立解决问题的水平（现有水平）与在他人帮助下能达到的潜在水平之间的差距，ABD均表述错误。<br><strong>📚 知识点讲解：</strong>最近发展区是维果茨基提出的核心概念，强调学生能力发展的动态区间。它既不是已经掌握的内容，也不是遥不可及的目标，而是需要借助外部支持才能跨越的“成长空间”。<br><strong>💡 解题思路：</strong>首先排除A（这是现有发展水平），B（这不是差距概念），D（这与发展潜力矛盾）。C准确描述了“现有”与“潜在”之间的动态差距。"
+            },
+            {
+                type: "单选题",
+                stem: "下列选项中，最能体现“最近发展区”内涵的是（ ）",
+                options: [
+                    { label: "A", text: "小明能独立完成10以内加减法，却无法独立完成20以内进位加法" },
+                    { label: "B", text: "小红能独立完成20以内进位加法，老师再教也无法掌握乘法口诀" },
+                    { label: "C", text: "小刚无法独立完成10以内加减法，即使老师引导也学不会" },
+                    { label: "D", text: "小丽自己不会20以内进位加法，但老师点拨后就能熟练完成" }
+                ],
+                answer: 3,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是D。D选项中，“自己不会”是现有水平，“老师点拨就会”是潜在水平，两者的差距就是最近发展区。<br><strong>📚 知识点讲解：</strong>最近发展区的关键在于“跳一跳够得着”——现有能力与潜在能力之间需要存在可跨越的差距。A只体现现有水平和不会的内容，未体现“帮助后能学会”；B中乘法口诀是超出潜在水平的内容；C是低于现有水平且无法提升的内容。<br><strong>💡 解题思路：</strong>抓住“现有独立不会”+“帮助后能会”的双重特征。A缺少帮助环节，B超出潜在水平，C无法提升，只有D完整体现了最近发展区的动态过程。"
+            },
+            {
+                type: "单选题",
+                stem: "维果茨基认为，教学的最佳效果应发生在（ ）",
+                options: [
+                    { label: "A", text: "现有发展水平之上" },
+                    { label: "B", text: "潜在发展水平之上" },
+                    { label: "C", text: "最近发展区内" },
+                    { label: "D", text: "现有发展水平之下" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。教学应着眼于学生的最近发展区，设置“跳一跳够得着”的任务，才能促进学生发展。<br><strong>📚 知识点讲解：</strong>维果茨基强调教学应当走在发展的前面。低于现有水平太简单，高于潜在水平太难，只有在最近发展区内的教学才能有效推动认知发展。<br><strong>💡 解题思路：</strong>A和D分别位于发展区的上下两端，都无法产生最佳效果。B的“潜在水平之上”已经超出学生能力范围。只有C精准对应“教学走在发展前面”的核心观点。"
+            },
+            {
+                type: "单选题",
+                stem: "下列关于“最近发展区”的说法，错误的是（ ）",
+                options: [
+                    { label: "A", text: "最近发展区是动态变化的，随着学生发展而变化" },
+                    { label: "B", text: "最近发展区需要他人帮助才能实现潜在水平" },
+                    { label: "C", text: "最近发展区是学生已经掌握的知识技能" },
+                    { label: "D", text: "教学应走在最近发展区的前面" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。学生已经掌握的是“现有发展水平”，而非最近发展区。<br><strong>📚 知识点讲解：</strong>最近发展区是尚未掌握的潜在能力区间，不是已掌握内容。A、B、D均正确描述了最近发展区的动态性、依赖性和教学指导意义。<br><strong>💡 解题思路：</strong>注意题干要求选择“错误”说法。A、B、D都符合理论，C将“已掌握”与“待发展”混淆，是典型误区。"
+            },
+            {
+                type: "单选题",
+                stem: "维果茨基提出的“支架式教学”，其理论依据是（ ）",
+                options: [
+                    { label: "A", text: "认知发展阶段理论" },
+                    { label: "B", text: "最近发展区理论" },
+                    { label: "C", text: "多元智能理论" },
+                    { label: "D", text: "人格发展阶段理论" }
+                ],
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是B。支架式教学是基于最近发展区提出的。<br><strong>📚 知识点讲解：</strong>支架式教学的核心是教师先提供帮助（搭建支架），再逐步减少指导，让学生独立完成任务，完美契合“现有水平→潜在水平”的提升过程。A是皮亚杰的理论，C是加德纳，D是埃里克森。<br><strong>💡 解题思路：</strong>直接关联维果茨基的核心理论即可排除其他选项。支架式教学强调在他人帮助下跨越发展区，与最近发展区直接相关。"
+            },
+            {
+                type: "单选题",
+                stem: "学生能独立完成课文朗读，但无法独立概括课文主旨，在老师的引导下就能完成概括，这说明概括课文主旨处于学生的（ ）",
+                options: [
+                    { label: "A", text: "现有发展水平" },
+                    { label: "B", text: "潜在发展水平" },
+                    { label: "C", text: "最近发展区" },
+                    { label: "D", text: "无法判断" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。“独立完成朗读”是现有水平，“老师引导下完成概括”是潜在水平，两者之间的差距（概括主旨）就是最近发展区。<br><strong>📚 知识点讲解：</strong>潜在发展水平是“帮助下能达到的水平”，而非任务本身。最近发展区特指现有与潜在之间的差距区间。<br><strong>💡 解题思路：</strong>B是干扰项，潜在水平是能力状态，不是任务属性。C准确描述了任务所处的动态区间。"
+            },
+            {
+                type: "单选题",
+                stem: "下列哪种教学行为最符合最近发展区理论（ ）",
+                options: [
+                    { label: "A", text: "给学生布置远超其能力的任务，激发其潜能" },
+                    { label: "B", text: "给学生布置简单重复的任务，巩固基础" },
+                    { label: "C", text: "给学生布置稍高于其现有水平，且能在帮助下完成的任务" },
+                    { label: "D", text: "完全让学生自主学习，不提供任何帮助" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。最近发展区的核心是“稍高于现有水平，需帮助能完成”。<br><strong>📚 知识点讲解：</strong>“跳一跳够得着”是教学难度的黄金标准。A超出潜在水平，B低于现有水平，D忽视了社会互动的重要性。<br><strong>💡 解题思路：</strong>紧扣“适度挑战+必要支持”的双重特征。A过难，B过易，D缺乏支持，只有C符合理论要求。"
+            },
+            {
+                type: "单选题",
+                stem: "维果茨基认为，影响最近发展区的关键因素是（ ）",
+                options: [
+                    { label: "A", text: "遗传素质" },
+                    { label: "B", text: "他人的指导与帮助" },
+                    { label: "C", text: "学生的兴趣爱好" },
+                    { label: "D", text: "环境因素" }
+                ],
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是B。最近发展区的“潜在水平”必须在他人（教师、同伴等）的帮助下才能达到。<br><strong>📚 知识点讲解：</strong>维果茨基强调社会文化对认知发展的影响。没有他人帮助，无法实现从现有水平到潜在水平的跨越。<br><strong>💡 解题思路：</strong>直接抓住“最近发展区需要外部支持”这一核心。A、C、D都不是实现潜在水平的必要条件。"
+            },
+            {
+                type: "单选题",
+                stem: "下列关于最近发展区与教学关系的说法，正确的是（ ）",
+                options: [
+                    { label: "A", text: "教学决定最近发展区的大小" },
+                    { label: "B", text: "最近发展区决定教学的内容和难度" },
+                    { label: "C", text: "教学与最近发展区无关" },
+                    { label: "D", text: "教学应落后于最近发展区" }
+                ],
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是B。最近发展区是教学的依据，教学内容和难度必须贴合最近发展区。<br><strong>📚 知识点讲解：</strong>教学应当适应学生的发展区间。A错误，最近发展区由学生自身发展水平决定；C、D明显错误，教学应走在最近发展区前面。<br><strong>💡 解题思路：</strong>记住“教学走在发展前面”的口诀。A颠倒因果关系，C、D违背基本理论。"
+            },
+            {
+                type: "单选题",
+                stem: "小学生能独立计算长方形面积，但无法独立计算平行四边形面积，在老师示范转化方法后就能掌握，平行四边形面积的学习属于（ ）",
+                options: [
+                    { label: "A", text: "现有发展水平" },
+                    { label: "B", text: "最近发展区" },
+                    { label: "C", text: "潜在发展水平" },
+                    { label: "D", text: "超出发展水平" }
+                ],
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是B。“独立算长方形面积”是现有水平，“老师示范后会算平行四边形面积”是潜在水平，两者的差距就是最近发展区。<br><strong>📚 知识点讲解：</strong>这个例子完美诠释了“跳一跳够得着”的教学理念。C是能力状态，不是任务属性。<br><strong>💡 解题思路：</strong>区分“现有水平”（已掌握）、“潜在水平”（帮助下能掌握）和“最近发展区”（两者差距）。平行四边形面积正处于这个动态区间。"
+            },
+            {
+                type: "单选题",
+                stem: "下列选项中，不属于最近发展区理论给教学的启示的是（ ）",
+                options: [
+                    { label: "A", text: "重视同伴互助，促进共同发展" },
+                    { label: "B", text: "教学内容难度要适中，贴合学生实际" },
+                    { label: "C", text: "只关注学生已掌握的知识，避免难度过大" },
+                    { label: "D", text: "采用支架式教学，逐步引导学生独立学习" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。只关注现有水平，忽视潜在水平，不符合“教学走在发展前面”的启示。<br><strong>📚 知识点讲解：</strong>教学应当适度超前于现有水平。A、B、D均是正确启示，同伴互助、难度适中、支架式教学都能促进学生在最近发展区内提升。<br><strong>💡 解题思路：</strong>注意题干要求选“不属于”。C的“只关注已掌握”违背了发展性原则。"
+            },
+            {
+                type: "单选题",
+                stem: "维果茨基的最近发展区理论，强调的是（ ）",
+                options: [
+                    { label: "A", text: "遗传对认知发展的决定作用" },
+                    { label: "B", text: "环境对认知发展的决定作用" },
+                    { label: "C", text: "个体与社会环境的相互作用对认知发展的影响" },
+                    { label: "D", text: "成熟对认知发展的影响" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。维果茨基强调社会文化对认知发展的影响。<br><strong>📚 知识点讲解：</strong>最近发展区的实现需要个体（自身现有水平）与社会环境（他人帮助、文化氛围）的相互作用。A（遗传）、B（环境决定）、D（成熟）均不符合其理论观点。<br><strong>💡 解题思路：</strong>维果茨基是社会文化学派代表，强调社会互动。A是遗传决定论，B是环境决定论，D是成熟势力说。"
+            },
+            {
+                type: "单选题",
+                stem: "下列说法中，正确的是（ ）",
+                options: [
+                    { label: "A", text: "最近发展区是固定不变的，每个学生的最近发展区都相同" },
+                    { label: "B", text: "最近发展区是动态的，随着学生的发展不断变化" },
+                    { label: "C", text: "最近发展区就是学生的潜在发展水平" },
+                    { label: "D", text: "最近发展区不需要他人帮助就能实现" }
+                ],
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是B。最近发展区具有动态性，学生掌握了之前的潜在水平后，会形成新的现有水平，进而产生新的最近发展区。<br><strong>📚 知识点讲解：</strong>A错误，每个学生的现有水平和潜在水平不同；C错误，最近发展区是“差距”，不是潜在水平本身；D错误，潜在水平需要他人帮助才能实现。<br><strong>💡 解题思路：</strong>抓住“动态变化”这一核心特征。A、C、D都是常见误解。"
+            },
+            {
+                type: "单选题",
+                stem: "教师在教学中，先示范解题方法，再让学生尝试练习，逐步减少指导，这种教学方法体现了最近发展区理论中的（ ）",
+                options: [
+                    { label: "A", text: "因材施教" },
+                    { label: "B", text: "支架式教学" },
+                    { label: "C", text: "同伴互助" },
+                    { label: "D", text: "教学走在发展前面" }
+                ],
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是B。支架式教学的核心是“搭建支架→逐步撤去支架→学生独立完成”。<br><strong>📚 知识点讲解：</strong>题干中教师先示范（搭支架），再让学生尝试、减少指导（撤支架），完全符合支架式教学的特点，其理论依据正是最近发展区。<br><strong>💡 解题思路：</strong>直接对应“支架式教学”的定义。A是总原则，C是具体形式，D是宏观理念，都不如B精准。"
+            },
+            {
+                type: "单选题",
+                stem: "下列实例中，不符合最近发展区理论的是（ ）",
+                options: [
+                    { label: "A", text: "老师给不会解方程的学生，先讲解解题步骤，再让学生独立练习" },
+                    { label: "B", text: "家长教孩子系鞋带，先示范，再手把手指导，最后让孩子自己系" },
+                    { label: "C", text: "老师给学生布置的作业，都是学生已经熟练掌握的知识点" },
+                    { label: "D", text: "优等生帮助后进生解决难题，后进生在帮助下掌握解题方法" }
+                ],
+                answer: 2,
+                analysis: "<strong>🎯 答案解析：</strong>正确答案是C。布置已熟练掌握的作业，属于“低于现有发展水平”，无法促进学生在最近发展区内提升。<br><strong>📚 知识点讲解：</strong>A、B是支架式教学，D是同伴互助，均符合最近发展区理论。C的作业没有挑战性，不能推动发展。<br><strong>💡 解题思路：</strong>注意题干要求选“不符合”。C的作业难度过低，违背“教学走在发展前面”的原则。"
+            },
+            {
+                type: "判断题",
+                stem: "维果茨基提出的“最近发展区”，是指学生潜在的发展水平。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。最近发展区是“现有水平与潜在水平之间的差距”，不是潜在水平本身。<br><strong>📚 知识点讲解：</strong>这是最常见的概念混淆。潜在水平只是最近发展区的一个端点，差距才是其核心内涵。<br><strong>💡 解题思路：</strong>判断题常考概念精确性。记住“差距”这个关键词。"
+            },
+            {
+                type: "判断题",
+                stem: "最近发展区理论认为，教学应该走在学生发展的前面。（ ）",
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确。教学应着眼于学生的最近发展区，设置稍高于现有水平的任务，通过帮助让学生达到潜在水平。<br><strong>📚 知识点讲解：</strong>这是维果茨基理论的核心教学启示，强调教学的前瞻性和引导性。<br><strong>💡 解题思路：</strong>直接对应“教学走在发展前面”的经典论断。"
+            },
+            {
+                type: "判断题",
+                stem: "学生独立完成任务的水平，就是维果茨基所说的潜在发展水平。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。独立完成任务的水平是“现有发展水平”；潜在发展水平是“在他人帮助下才能完成的水平”。<br><strong>📚 知识点讲解：</strong>这两个水平经常被混淆。关键区别在于是否需要外部支持。<br><strong>💡 解题思路：</strong>“独立”对应现有水平，“帮助”对应潜在水平。"
+            },
+            {
+                type: "判断题",
+                stem: "最近发展区是动态变化的，随着学生认知水平的提升而不断变化。（ ）",
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确。当学生掌握了之前的潜在水平后，潜在水平会变成新的现有水平，进而产生新的最近发展区。<br><strong>📚 知识点讲解：</strong>这体现了发展的连续性和阶段性。昨天的最近发展区可能变成今天的现有水平。<br><strong>💡 解题思路：</strong>动态性是最近发展区的重要特征，符合发展规律。"
+            },
+            {
+                type: "判断题",
+                stem: "支架式教学的核心是，教师全程给予学生帮助，直到学生能独立完成任务。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。支架式教学是“逐步撤去支架”，即教师先提供较多帮助，再慢慢减少指导，最终让学生独立完成。<br><strong>📚 知识点讲解：</strong>“全程帮助”会让学生产生依赖，违背培养独立性的目标。<br><strong>💡 解题思路：</strong>关键在于“逐步撤去”这个动态过程。"
+            },
+            {
+                type: "判断题",
+                stem: "只要有他人帮助，学生就能达到潜在发展水平，跨越最近发展区。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。他人帮助是跨越最近发展区的必要条件，但不是充分条件，还需要学生自身的努力、兴趣等因素。<br><strong>📚 知识点讲解：</strong>发展是学生主体性与环境支持共同作用的结果，不是单方面决定的。<br><strong>💡 解题思路：</strong>“只要...就”的绝对化表述通常是错误的。"
+            },
+            {
+                type: "判断题",
+                stem: "最近发展区理论强调，同伴互助是促进学生发展的重要方式。（ ）",
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确。能力强的同伴可以作为“帮助者”，引导能力较弱的同伴达到潜在水平，实现共同发展。<br><strong>📚 知识点讲解：</strong>这是维果茨基理论中“更有知识的他人”的重要体现形式。<br><strong>💡 解题思路：</strong>同伴互助是支架式教学的有效形式之一。"
+            },
+            {
+                type: "判断题",
+                stem: "小学生处于具体运算阶段，因此他们没有最近发展区。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。最近发展区是每个阶段的学生都具备的，无论处于皮亚杰认知发展的哪个阶段。<br><strong>📚 知识点讲解：</strong>维果茨基与皮亚杰的理论是互补关系，不是对立关系。所有学习者都存在最近发展区。<br><strong>💡 解题思路：</strong>“因此没有”的推论是错误的，发展阶段不影响最近发展区的存在。"
+            },
+            {
+                type: "判断题",
+                stem: "教学内容如果超出学生的最近发展区，会导致学生无法理解和掌握，不利于发展。（ ）",
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确。超出最近发展区（太难），学生即使有帮助也无法掌握，反而会打击学习积极性。<br><strong>📚 知识点讲解：</strong>“跳一跳够得着”强调适度挑战。超出潜在水平的任务属于“跳起来也够不着”。<br><strong>💡 解题思路：</strong>这符合维果茨基关于教学难度的基本原则。"
+            },
+            {
+                type: "判断题",
+                stem: "维果茨基的最近发展区理论，与皮亚杰的认知发展阶段理论完全对立。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。两者并非对立，而是互补：皮亚杰强调个体自身认知发展的规律，维果茨基强调社会环境对认知发展的影响。<br><strong>📚 知识点讲解：</strong>现代发展心理学认为这两个理论从不同角度解释了认知发展，可以相互补充。<br><strong>💡 解题思路：</strong>“完全对立”的表述过于绝对，不符合学术共识。"
+            },
+            {
+                type: "判断题",
+                stem: "学生的最近发展区越大，说明学生的学习能力越强。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。最近发展区是“现有水平与潜在水平的差距”，差距大小与学习能力无直接关联。<br><strong>📚 知识点讲解：</strong>差距大可能是因为现有水平较低，不能等同于学习能力强。需要结合起点水平综合判断。<br><strong>💡 解题思路：</strong>避免简单化推论，发展区大小受多种因素影响。"
+            },
+            {
+                type: "判断题",
+                stem: "教学的核心任务，就是帮助学生跨越最近发展区，实现从现有水平到潜在水平的提升。（ ）",
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确。最近发展区是学生发展的“关键区间”，教学的核心就是通过引导、帮助，让学生突破现有水平。<br><strong>📚 知识点讲解：</strong>这概括了教学与发展关系的本质，体现了维果茨基理论的教育价值。<br><strong>💡 解题思路：</strong>这是对教学使命的准确描述。"
+            },
+            {
+                type: "判断题",
+                stem: "幼儿自己不会穿衣服，但在妈妈的指导下就能学会，这说明穿衣服处于幼儿的最近发展区。（ ）",
+                answer: 1,
+                analysis: "<strong>🎯 答案解析：</strong>正确。“自己不会穿”是现有水平，“妈妈指导下会穿”是潜在水平，两者的差距（穿衣服）就是最近发展区。<br><strong>📚 知识点讲解：</strong>这个生活实例完美诠释了最近发展区理论，适用于各个年龄段和各种技能学习。<br><strong>💡 解题思路：</strong>符合“现有独立不会+帮助后能会”的标准定义。"
+            },
+            {
+                type: "判断题",
+                stem: "最近发展区理论认为，遗传决定学生的现有水平，环境决定学生的潜在水平。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。维果茨基强调个体与社会环境的相互作用，现有水平和潜在水平均是遗传、环境、个体努力等多种因素共同作用的结果。<br><strong>📚 知识点讲解：</strong>这是典型的二元对立误区。维果茨基反对单一因素决定论。<br><strong>💡 解题思路：</strong>“决定”一词过于绝对，不符合相互作用的观点。"
+            },
+            {
+                type: "判断题",
+                stem: "给学生布置的任务，越难越能促进学生跨越最近发展区。（ ）",
+                answer: 0,
+                analysis: "<strong>🎯 答案解析：</strong>错误。任务难度需“稍高于现有水平”，并非越难越好；超出潜在水平的任务，学生无法完成。<br><strong>📚 知识点讲解：</strong>“跳一跳够得着”强调适度挑战。过难的任务属于“跳起来也够不着”，反而阻碍发展。<br><strong>💡 解题思路：</strong>“越难越好”是常见误区，违背最近发展区的基本原理。"
+            }
+        ];
+        
+        // --- 核心防串联机制 ---
+
+        const APP_ID = 'vygotsky_zpd_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '维果茨基最近发展区超通俗详解';
+            const content = document.getElementById('knowledgeContent').innerHTML;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

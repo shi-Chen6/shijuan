@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>加涅学习过程八阶段刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">30</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">加涅学习过程八阶段</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "加涅提出的学习过程八个阶段中，第一个阶段是（ ）",
+                options: [
+                    { label: "A", text: "领会阶段" },
+                    { label: "B", text: "动机阶段" },
+                    { label: "C", text: "习得阶段" },
+                    { label: "D", text: "回忆阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。加涅八阶段顺序：动机为首，先激发学习愿望，再进入后续学习环节。<br><br><strong>📚 知识点讲解：</strong>加涅将学习过程分为八个阶段，按固定顺序展开：动机→领会→习得→保持→回忆→概括→作业→反馈。动机阶段是起点，核心是激发学习期待。<br><br><strong>💡 解题思路：</strong>口诀“动 领 习 保 回 概 作 反”中，“动”即动机，明确排在第一位。`
+            },
+            {
+                type: "单选题",
+                stem: "在加涅学习八阶段中，学生对学习产生期待、建立学习愿望的阶段是（ ）",
+                options: [
+                    { label: "A", text: "动机阶段" },
+                    { label: "B", text: "领会阶段" },
+                    { label: "C", text: "概括阶段" },
+                    { label: "D", text: "反馈阶段" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。动机阶段核心心理活动是期待，作用是激发想学的内在动力。<br><br><strong>📚 知识点讲解：</strong>在动机阶段，学生需要产生学习愿望，教师通过创设情境、明确目标等手段激发学习动机。期待是这一阶段的关键心理过程。<br><br><strong>💡 解题思路：</strong>题干关键词“产生期待、建立学习愿望”直接对应动机阶段的核心描述。`
+            },
+            {
+                type: "单选题",
+                stem: "加涅学习八阶段中，也叫了解阶段，核心是集中注意、选择性知觉信息的是（ ）",
+                options: [
+                    { label: "A", text: "动机阶段" },
+                    { label: "B", text: "领会阶段" },
+                    { label: "C", text: "保持阶段" },
+                    { label: "D", text: "回忆阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。领会阶段也称了解阶段，关键词：注意、选择性知觉，作用是筛选关键知识信息。<br><br><strong>📚 知识点讲解：</strong>领会阶段是学习的关键入口，学生需要对刺激进行选择性加工，抓住重点信息。教师可通过突出重难点来帮助学生集中注意。<br><br><strong>💡 解题思路：</strong>题干中的“别称了解阶段”“注意、选择性知觉”是领会阶段的独特标签。`
+            },
+            {
+                type: "单选题",
+                stem: "学生将接收的新知识进行信息编码，纳入认知结构，属于加涅学习的（ ）",
+                options: [
+                    { label: "A", text: "领会阶段" },
+                    { label: "B", text: "习得阶段" },
+                    { label: "C", text: "保持阶段" },
+                    { label: "D", text: "概括阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。习得阶段（获得阶段）核心：信息编码，把新知识加工、初步理解内化。<br><br><strong>📚 知识点讲解：</strong>习得阶段是对知觉到的信息进行深层加工，将其编码并纳入已有认知结构中，实现知识的初步掌握。<br><br><strong>💡 解题思路：</strong>关键词“编码”是区分习得阶段与其他阶段的标志。领会是注意筛选，习得是编码加工。`
+            },
+            {
+                type: "单选题",
+                stem: "新知识经过编码后，存入长时记忆系统进行存储，这属于（ ）",
+                options: [
+                    { label: "A", text: "习得阶段" },
+                    { label: "B", text: "保持阶段" },
+                    { label: "C", text: "回忆阶段" },
+                    { label: "D", text: "概括阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。保持阶段核心：信息储存，把听懂的知识长久记在大脑中。<br><br><strong>📚 知识点讲解：</strong>保持阶段是知识从临时加工状态转入长时记忆储存的阶段，防止遗忘的关键就在于这一阶段的巩固效果。<br><br><strong>💡 解题思路：</strong>关键词“长时记忆”“存储”直接对应保持阶段。习得是编码，保持是储存；回忆是提取，三者容易混淆。`
+            },
+            {
+                type: "单选题",
+                stem: "考试时学生从大脑记忆中调取所学知识答题，对应加涅学习的（ ）",
+                options: [
+                    { label: "A", text: "保持阶段" },
+                    { label: "B", text: "回忆阶段" },
+                    { label: "C", text: "作业阶段" },
+                    { label: "D", text: "概括阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。回忆阶段核心：检索、信息提取，从记忆里调出已学知识。<br><br><strong>📚 知识点讲解：</strong>回忆阶段是将储存在长时记忆中的知识重新提取到工作记忆中，以供当前使用。考试调取知识正是这一阶段的体现。<br><br><strong>💡 解题思路：</strong>题干“从记忆中调取”即信息检索与提取，属于回忆阶段；保持阶段是“存入”；作业阶段是“外化应用”。`
+            },
+            {
+                type: "单选题",
+                stem: "加涅学习八阶段中，强调举一反三、知识迁移的是（ ）",
+                options: [
+                    { label: "A", text: "回忆阶段" },
+                    { label: "B", text: "概括阶段" },
+                    { label: "C", text: "作业阶段" },
+                    { label: "D", text: "反馈阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。概括阶段本质就是学习迁移，把书本知识运用到新情境、新题目中。<br><br><strong>📚 知识点讲解：</strong>概括阶段是教招核心考点，与学习迁移直接对应。学生通过变式练习、归纳总结，将所学原理和方法应用到新场景。<br><br><strong>💡 解题思路：</strong>口诀中“概括迁移”是固定搭配，举一反三、学以致用都是概括阶段的表现。`
+            },
+            {
+                type: "单选题",
+                stem: "学生通过做练习题、课堂实操、完成课后作业来表现学习结果，属于（ ）",
+                options: [
+                    { label: "A", text: "概括阶段" },
+                    { label: "B", text: "作业阶段" },
+                    { label: "C", text: "回忆阶段" },
+                    { label: "D", text: "反馈阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。作业阶段又称操作阶段，通过外在做题、实操，展现学习掌握情况。<br><br><strong>📚 知识点讲解：</strong>作业阶段的核心是让学生将内在知识外化表现，以检测掌握程度，但不负责纠错（纠错属于反馈阶段）。<br><br><strong>💡 解题思路：</strong>题干“做练习题、实操”正是作业阶段的典型行为。区别于反馈阶段：作业是检测，反馈是纠错强化。`
+            },
+            {
+                type: "单选题",
+                stem: "教师对学生作业、答题情况进行评价、纠错、给予奖惩强化，属于（ ）",
+                options: [
+                    { label: "A", text: "作业阶段" },
+                    { label: "B", text: "反馈阶段" },
+                    { label: "C", text: "概括阶段" },
+                    { label: "D", text: "回忆阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。反馈阶段核心：强化、矫正，告知对错、查漏补缺、巩固学习。<br><br><strong>📚 知识点讲解：</strong>反馈阶段是八阶段的终结环节，教师通过评价让学生知道结果，强化正确认知，纠正错误理解，从而巩固学习成果。<br><br><strong>💡 解题思路：</strong>题干关键词“评价、纠错、奖惩强化”对应反馈阶段。作业阶段只是做练习，不包含评价纠错功能。`
+            },
+            {
+                type: "单选题",
+                stem: "教师上课创设情境、导入新课，激发学生学习兴趣，对应的是（ ）",
+                options: [
+                    { label: "A", text: "动机阶段" },
+                    { label: "B", text: "领会阶段" },
+                    { label: "C", text: "习得阶段" },
+                    { label: "D", text: "保持阶段" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。创设情境、明确目标、激发兴趣，都是动机阶段教师的教学行为。<br><br><strong>📚 知识点讲解：</strong>动机阶段的教学要点在于让学生产生学习期待，教师可通过导入新课、设置悬念等方式激发学生的内在学习欲望。<br><br><strong>💡 解题思路：</strong>题干中“激发学习兴趣”是动机阶段的核心目标，而非领会阶段的“集中注意”或习得阶段的“讲授新知”。`
+            },
+            {
+                type: "单选题",
+                stem: "教师讲课突出重难点、用彩色粉笔标注关键内容，是为了服务（ ）",
+                options: [
+                    { label: "A", text: "动机阶段" },
+                    { label: "B", text: "领会阶段" },
+                    { label: "C", text: "保持阶段" },
+                    { label: "D", text: "回忆阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。突出重点、引导注意力，帮助学生选择性知觉知识，对应领会阶段。<br><br><strong>📚 知识点讲解：</strong>领会阶段的核心是注意和选择性知觉。教师通过标注关键内容、强调重难点，帮助学生从众多信息中筛选出核心知识。<br><br><strong>💡 解题思路：</strong>题干“突出重点、标注关键”直接服务于学生注意力的聚焦，属于领会阶段的教学策略。`
+            },
+            {
+                type: "单选题",
+                stem: "教师通过归纳总结、变式练习帮助学生学以致用，主要对应（ ）",
+                options: [
+                    { label: "A", text: "回忆阶段" },
+                    { label: "B", text: "概括阶段" },
+                    { label: "C", text: "作业阶段" },
+                    { label: "D", text: "反馈阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。变式练习、归纳迁移、举一反三，都是概括阶段的典型教学行为。<br><br><strong>📚 知识点讲解：</strong>概括阶段旨在实现学习迁移。教师通过变式练习和归纳总结，引导学生将知识运用到不同情境中，达到融会贯通。<br><br><strong>💡 解题思路：</strong>题干“归纳总结、变式练习”直接指向概括迁移能力的培养，对应概括阶段。作业阶段是单纯练习，不强调迁移。`
+            },
+            {
+                type: "单选题",
+                stem: "在加涅学习八阶段里，唯一实现学习迁移的阶段是（ ）",
+                options: [
+                    { label: "A", text: "回忆阶段" },
+                    { label: "B", text: "概括阶段" },
+                    { label: "C", text: "作业阶段" },
+                    { label: "D", text: "保持阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。考点固定：概括阶段=学习迁移。<br><br><strong>📚 知识点讲解：</strong>加涅八阶段中，概括阶段的独特标志就是实现学习迁移。教招考试中此对应关系考察频率很高。<br><br><strong>💡 解题思路：</strong>识记型考点，“概括=迁移”是固定搭配口诀中的核心部分。`
+            },
+            {
+                type: "单选题",
+                stem: "下列不属于加涅学习八阶段的是（ ）",
+                options: [
+                    { label: "A", text: "动机阶段" },
+                    { label: "B", text: "功能固着阶段" },
+                    { label: "C", text: "保持阶段" },
+                    { label: "D", text: "反馈阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。功能固着是问题解决的影响因素，不属于加涅八阶段。<br><br><strong>📚 知识点讲解：</strong>功能固着属于问题解决心理学中的概念，与学习过程的阶段分类无关。加涅八阶段严格围绕学习的信息加工过程展开。<br><br><strong>💡 解题思路：</strong>用口诀逐一核对：动领会保回概作反，其中没有“功能固着”，故B为错误项。`
+            },
+            {
+                type: "单选题",
+                stem: "加涅认为，学生暂时记住知识、防止遗忘，依靠的是（ ）",
+                options: [
+                    { label: "A", text: "习得阶段" },
+                    { label: "B", text: "保持阶段" },
+                    { label: "C", text: "回忆阶段" },
+                    { label: "D", text: "概括阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。保持阶段负责长久储存、抗遗忘。<br><br><strong>📚 知识点讲解：</strong>保持阶段是将编码后的信息存入长时记忆并维持的过程。减少干扰、及时复习等都有助于加强保持，防止遗忘。<br><br><strong>💡 解题思路：</strong>题干关键词“记住、防止遗忘”是保持阶段的功能。习得是“听懂”，保持是“记牢”，回忆是“调出”。`
+            },
+            {
+                type: "单选题",
+                stem: "学生解决新问题时，把课堂学的原理灵活运用，这是哪一阶段的表现（ ）",
+                options: [
+                    { label: "A", text: "回忆" },
+                    { label: "B", text: "概括" },
+                    { label: "C", text: "作业" },
+                    { label: "D", text: "反馈" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。灵活运用、解决新问题，就是概括迁移。<br><br><strong>📚 知识点讲解：</strong>将课堂原理应用到新情境、新问题中，属于知识迁移，是概括阶段的目的和体现。<br><br><strong>💡 解题思路：</strong>题干强调“灵活运用”和“新问题”，即举一反三、学以致用，直接对应概括阶段。`
+            },
+            {
+                type: "单选题",
+                stem: "加涅学习八阶段的正确顺序是（ ）",
+                options: [
+                    { label: "A", text: "动机—领会—习得—保持—回忆—概括—作业—反馈" },
+                    { label: "B", text: "动机—习得—领会—保持—回忆—概括—作业—反馈" },
+                    { label: "C", text: "领会—动机—习得—保持—回忆—概括—作业—反馈" },
+                    { label: "D", text: "动机—领会—保持—习得—回忆—概括—作业—反馈" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。严格背诵标准顺序：动机→领会→习得→保持→回忆→概括→作业→反馈，不可颠倒。<br><br><strong>📚 知识点讲解：</strong>八阶段顺序反映了完整的学习信息加工流程：从动机激发、信息输入（领会）、加工（习得）、储存（保持）、提取（回忆）、迁移（概括）到应用（作业）和强化（反馈），逻辑链条清晰。<br><br><strong>💡 解题思路：</strong>口诀“动领习保回概作反”直接对应A选项。B将领会和习得颠倒，C将动机后置，D将保持与习得顺序颠倒。`
+            },
+            {
+                type: "单选题",
+                stem: "作业阶段的主要目的是（ ）",
+                options: [
+                    { label: "A", text: "纠正错误" },
+                    { label: "B", text: "检测学习掌握程度" },
+                    { label: "C", text: "知识迁移" },
+                    { label: "D", text: "信息编码" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。作业只是展示、检测；纠错、强化是反馈阶段的事。<br><br><strong>📚 知识点讲解：</strong>区分作业阶段与反馈阶段：作业阶段让学生外化表现，以便了解其掌握程度；反馈阶段才进行评价、纠错和强化。<br><br><strong>💡 解题思路：</strong>题干问的是“作业阶段”的目的。A纠错属于反馈阶段；C迁移属于概括阶段；D编码属于习得阶段。故选B。`
+            },
+            {
+                type: "单选题",
+                stem: "学生考前背诵知识点，主动从记忆中提取信息，属于（ ）",
+                options: [
+                    { label: "A", text: "保持阶段" },
+                    { label: "B", text: "回忆阶段" },
+                    { label: "C", text: "习得阶段" },
+                    { label: "D", text: "概括阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。主动调取、检索记忆内容，是回忆阶段核心。<br><br><strong>📚 知识点讲解：</strong>回忆阶段是将保持阶段储存的知识提取到意识层面。背诵、提取、再认等都是回忆的表现。考前背诵属于主动的有意识回忆。<br><br><strong>💡 解题思路：</strong>题干关键词“从记忆中提取信息”与回忆阶段的“检索、提取”直接对应。保持是存储，回忆是提取。`
+            },
+            {
+                type: "单选题",
+                stem: "教师及时批改试卷、讲评错题，强化正确认知，对应（ ）",
+                options: [
+                    { label: "A", text: "作业阶段" },
+                    { label: "B", text: "反馈阶段" },
+                    { label: "C", text: "概括阶段" },
+                    { label: "D", text: "回忆阶段" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。讲评、纠错、评价、强化，都是反馈阶段。<br><br><strong>📚 知识点讲解：</strong>反馈阶段是学习的最后环节，通过批改和讲评为学生提供正确信息，强化正确认知，纠正错误理解，促进学习巩固。<br><br><strong>💡 解题思路：</strong>题干中“批改试卷、讲评错题”明显包含评价和纠错，属于反馈阶段。作业阶段只是做题本身，讲评已进入反馈环节。`
+            },
+            {
+                type: "判断题",
+                stem: "加涅学习八阶段中，领会阶段也称为获得阶段。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。领会阶段=了解阶段；习得阶段=获得阶段。二者不能混淆。<br><br><strong>📚 知识点讲解：</strong>领会阶段侧重注意和选择性知觉，称为了解阶段；习得阶段侧重信息编码和内化，称为获得阶段。<br><br><strong>💡 解题思路：</strong>题干将领会和习得的别称张冠李戴。记住：领会是了解，习得是获得。`
+            },
+            {
+                type: "判断题",
+                stem: "加涅学习过程的开端是动机阶段。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。先有学习动机，才会开展后续所有学习活动。<br><br><strong>📚 知识点讲解：</strong>动机是学习的发起阶段，是八阶段序列的起点，为后续学习过程提供动力支持。<br><br><strong>💡 解题思路：</strong>口诀“动机→领会→习得→保持→回忆→概括→作业→反馈”以动机为首。`
+            },
+            {
+                type: "判断题",
+                stem: "习得阶段的核心是对知识进行信息编码。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。习得阶段：接收新知→加工编码→初步理解。<br><br><strong>📚 知识点讲解：</strong>信息编码是习得阶段的关键心理过程，学生将领会到的信息进行深层加工，转化为有意义的知识结构。<br><br><strong>💡 解题思路：</strong>题干表述准确，习得阶段与编码密不可分。`
+            },
+            {
+                type: "判断题",
+                stem: "保持阶段是把知识储存在短时记忆中。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。保持阶段是存入长时记忆，实现长久保存。<br><br><strong>📚 知识点讲解：</strong>保持阶段对应长时记忆的存储，而非短时记忆（工作记忆）。短时记忆主要在领会和习得阶段发挥作用。<br><br><strong>💡 解题思路：</strong>题干将保持阶段定位为短时记忆是错误的，保持追求的是长期、牢固的记忆效果。`
+            },
+            {
+                type: "判断题",
+                stem: "概括阶段的核心特征是学习迁移、举一反三。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。教招核心考点：概括阶段=迁移应用。<br><br><strong>📚 知识点讲解：</strong>概括阶段的目的就是实现知识从当前学习情境向新情境的迁移，举一反三是其典型表现。<br><br><strong>💡 解题思路：</strong>题干对概括阶段的描述完全正确，这是考试中的固定考点。`
+            },
+            {
+                type: "判断题",
+                stem: "作业阶段主要功能是纠正学生的学习错误。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。作业只用来检测掌握情况；纠错、强化属于反馈阶段。<br><br><strong>📚 知识点讲解：</strong>作业阶段让学生外化学习结果，功能是提供检测依据；纠错和强化功能是后续反馈阶段的任务。<br><br><strong>💡 解题思路：</strong>常考点和易错点：作业阶段≠纠错，反馈阶段=纠错。题干将反馈的功能错扣在作业上。`
+            },
+            {
+                type: "判断题",
+                stem: "教师创设教学情境激发学生求知欲，属于领会阶段的教学行为。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。激发兴趣、求知欲，属于动机阶段。<br><br><strong>📚 知识点讲解：</strong>动机阶段关注学习期待和兴趣激发；领会阶段关注信息注意和筛选。创设情境激发兴趣是动机阶段的典型教学行为。<br><br><strong>💡 解题思路：</strong>题干“激发求知欲”是动机激发，而非领会阶段的知识感知。`
+            },
+            {
+                type: "判断题",
+                stem: "回忆阶段也叫信息检索与提取阶段。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。回忆就是从长时记忆里检索、提取知识。<br><br><strong>📚 知识点讲解：</strong>信息检索与提取是回忆阶段的核心心理过程。考试中“检索、提取”是识别回忆阶段的关键词。<br><br><strong>💡 解题思路：</strong>题干描述准确，回忆阶段即信息检索提取阶段。`
+            },
+            {
+                type: "判断题",
+                stem: "加涅八阶段中，反馈阶段是整个学习过程的最后阶段。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。顺序末尾：作业之后就是反馈，收尾强化。<br><br><strong>📚 知识点讲解：</strong>反馈阶段是八阶段的终结环节，学习过程始于动机，终于反馈，形成完整闭环。<br><br><strong>💡 解题思路：</strong>口诀“动领会保回概作反”末尾为“反（反馈）”，顺序正确。`
+            },
+            {
+                type: "判断题",
+                stem: "领会阶段学生主要进行知识的迁移运用。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。迁移运用是概括阶段；领会阶段只是注意、感知信息。<br><br><strong>📚 知识点讲解：</strong>领会阶段的任务是让学生注意并抓住知识要点，尚未涉及知识的迁移运用。迁移是后续概括阶段的核心。<br><br><strong>💡 解题思路：</strong>题干将概括阶段的功能错放在领会阶段。领会是认知入口，概括是知识输出。`
+            }
+        ];
+        
+        const APP_ID = 'gagne_eight_stages_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '加涅学习过程八阶段';
+            const content = `
+                <h3>一、秒杀口诀</h3>
+                <p><strong>动 领 习 保 回 概 作 反</strong><br>动机→领会→习得→保持→回忆→概括→作业→反馈</p>
+
+                <h3>二、八阶段完整版</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>阶段</th><th>核心心理过程</th><th>教师教学行为</th><th>大白话理解</th></tr></thead>
+                    <tbody>
+                        <tr><td>1. 动机阶段</td><td>期待、诱因</td><td>激发学习兴趣、明确学习目标</td><td>先让学生想学、有动力</td></tr>
+                        <tr><td>2. 领会阶段</td><td>注意、选择性知觉</td><td>突出重点、引导集中注意</td><td>学生注意知识、抓住关键信息</td></tr>
+                        <tr><td>3. 习得阶段</td><td>信息编码</td><td>讲授新知、梳理知识逻辑</td><td>把新知识加工、听懂、初步内化</td></tr>
+                        <tr><td>4. 保持阶段</td><td>信息储存（存入长时记忆）</td><td>减少干扰、帮助巩固</td><td>把知识记牢、存在大脑里</td></tr>
+                        <tr><td>5. 回忆阶段</td><td>信息检索、提取</td><td>给出线索、引导回忆</td><td>需要用时从脑子里调取出来</td></tr>
+                        <tr><td>6. 概括阶段</td><td>学习迁移、举一反三</td><td>归纳总结、变式练习</td><td>把知识用到新场景、会迁移</td></tr>
+                        <tr><td>7. 作业阶段</td><td>行为反应、外化表现</td><td>布置练习、实操任务</td><td>做题、练习、动手应用</td></tr>
+                        <tr><td>8. 反馈阶段</td><td>强化、矫正认知</td><td>批改评价、对错反馈、奖惩</td><td>告知对错、查漏补缺、强化学习</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>三、教招高频考点（必记）</h3>
+                <ul>
+                    <li><strong>概括阶段</strong>的核心是：<strong>学习迁移</strong>（举一反三、学以致用）。</li>
+                    <li><strong>领会阶段</strong>关键词：<strong>注意、选择性知觉</strong>；别称：了解阶段。</li>
+                    <li><strong>习得阶段</strong>关键词：<strong>编码</strong>；别称：获得阶段。</li>
+                    <li><strong>保持阶段</strong>关键词：<strong>储存</strong>（长时记忆）。</li>
+                    <li><strong>回忆阶段</strong>关键词：<strong>检索、提取</strong>。</li>
+                    <li><strong>作业阶段</strong>目的：<strong>检测掌握程度</strong>；<strong>反馈阶段</strong>才是纠错、强化。</li>
+                    <li>整个顺序<strong>不能乱</strong>：动→领→习→保→回→概→作→反。</li>
+                </ul>
+
+                <h3>四、极简背诵版（考前一秒默写）</h3>
+                <p>动机想学→领会注意→习得编码→保持储存→回忆提取→概括迁移→作业练习→反馈强化。</p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

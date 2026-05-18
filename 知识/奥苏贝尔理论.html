@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>奥苏贝尔理论刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">奥苏贝尔核心理论</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "type": "单选题",
+                "stem": "奥苏贝尔倡导的主要学习方式是（ ）",
+                "options": [
+                    {"label": "A", "text": "机械发现学习"},
+                    {"label": "B", "text": "有意义接受学习"},
+                    {"label": "C", "text": "机械接受学习"},
+                    {"label": "D", "text": "有意义发现学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（有意义接受学习）。奥苏贝尔认为学校中最主要的学习方式应该是有意义的接受学习，即教师讲授与学生理解相结合。</p><p><strong>📚 知识点讲解：</strong>奥苏贝尔是认知派的代表，他反对布鲁纳一味强调发现学习，认为接受学习也可以是有意义的，关键在于新旧知识是否建立了非人为、实质性的联系。</p><p><strong>💡 解题思路：</strong>看到“奥苏贝尔倡导”直接定位“有意义接受学习”。A、C带“机械”首先排除，D是布鲁纳的主张。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "奥苏贝尔将学习按<strong>学习方式</strong>划分为（ ）",
+                "options": [
+                    {"label": "A", "text": "机械与有意义"},
+                    {"label": "B", "text": "接受与发现"},
+                    {"label": "C", "text": "表征与概念"},
+                    {"label": "D", "text": "上位与下位"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（接受与发现）。奥苏贝尔从两个维度对学习进行分类：按学习方式分为接受学习和发现学习；按学习性质分为机械学习和有意义学习。</p><p><strong>📚 知识点讲解：</strong>学习方式是指知识获得的形式，接受学习是教师直接呈现知识，发现学习是学生自己探索得到知识。不要与学习性质（机械/有意义）混淆。</p><p><strong>💡 解题思路：</strong>题干明确问“学习方式”，对应“接受与发现”。A是“学习性质”，C和D是其他维度的分类。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "有意义学习的实质是新旧知识建立（ ）",
+                "options": [
+                    {"label": "A", "text": "人为、字面联系"},
+                    {"label": "B", "text": "非人为、实质性联系"},
+                    {"label": "C", "text": "偶然、临时联系"},
+                    {"label": "D", "text": "表面、形式联系"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（非人为、实质性联系）。这是奥苏贝尔有意义学习的核心定义：新旧知识之间建立内在的、非字面的逻辑联系。</p><p><strong>📚 知识点讲解：</strong>“实质性”指理解含义而非死记字面；“非人为”指联系是知识本身固有的，不是生硬拼凑的口诀。例如，理解了“半径是直径的一半”是基于圆的几何性质，而非背诵口诀。</p><p><strong>💡 解题思路：</strong>记住关键词“非人为、实质性”。其他选项都带有“人为”“偶然”“表面”等词，与定义相反。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于<strong>符号（表征）学习</strong>的是（ ）",
+                "options": [
+                    {"label": "A", "text": "掌握“水果”的概念"},
+                    {"label": "B", "text": "学习“猫”代表现实中的猫"},
+                    {"label": "C", "text": "理解圆的直径与半径关系"},
+                    {"label": "D", "text": "归纳总结一类事物"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（学习“猫”代表现实中的猫）。符号学习就是学习单个符号或词语代表什么，是最基础的表征学习。</p><p><strong>📚 知识点讲解：</strong>有意义学习分三个层级：表征学习（符号学习）、概念学习、命题学习。表征学习是学单个符号指代的事物，如“猫”这个字代表那种动物。A是概念学习，C是命题学习（关系）。</p><p><strong>💡 解题思路：</strong>看到“单个符号、字词”就定位表征学习。A需要掌握本质特征，C涉及概念间关系，D是归纳活动。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "掌握同类事物共同的本质特征，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "表征学习"},
+                    {"label": "B", "text": "概念学习"},
+                    {"label": "C", "text": "命题学习"},
+                    {"label": "D", "text": "下位学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（概念学习）。概念学习的实质就是掌握同类事物的共同本质特征，例如理解“水果”是指含水分和糖分的植物果实。</p><p><strong>📚 知识点讲解：</strong>概念学习高于表征学习，需要提炼出本质属性。命题学习则是学习概念之间的关系，如“苹果是水果”。</p><p><strong>💡 解题思路：</strong>题干中“共同本质特征”直接对应概念学习的定义。A是学符号，C是学关系，D是知识同化的分类。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "学习多个概念之间的关系，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "表征学习"},
+                    {"label": "B", "text": "概念学习"},
+                    {"label": "C", "text": "命题学习"},
+                    {"label": "D", "text": "上位学习"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（命题学习）。命题学习是最高层级的有意义学习，学习若干概念之间的关系，如“圆的半径是直径的一半”。</p><p><strong>📚 知识点讲解：</strong>层级由低到高：表征学习（符号）→ 概念学习（本质）→ 命题学习（关系）。判断是否为命题学习，看是否涉及至少两个概念的关系。</p><p><strong>💡 解题思路：</strong>题干明确“多个概念之间的关系”，直接定位命题学习。A是学符号，B是学单概念，D是知识同化方式。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "先学习“水果”，再学习苹果、香蕉，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "上位学习"},
+                    {"label": "B", "text": "下位学习"},
+                    {"label": "C", "text": "并列组合学习"},
+                    {"label": "D", "text": "发现学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（下位学习）。先学大概念“水果”，再学具体例子苹果、香蕉，是从上到下将新知识纳入原有概念，即下位学习（类属学习）。</p><p><strong>📚 知识点讲解：</strong>下位学习也叫类属学习，指新学习的知识是原有知识的特例或具体化。派生类属和相关类属都属于下位学习。</p><p><strong>💡 解题思路：</strong>先大后小→下位学习。口诀：“下先大后小”。A“上”是先小后大，C是平行关系。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "先学习苹果、香蕉，再归纳出“水果”这一概念，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "下位学习"},
+                    {"label": "B", "text": "上位学习"},
+                    {"label": "C", "text": "并列学习"},
+                    {"label": "D", "text": "表征学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（上位学习）。从具体例子苹果、香蕉中归纳概括出更大的概念“水果”，是从下到上的总括过程。</p><p><strong>📚 知识点讲解：</strong>上位学习也叫总括学习，新学习的概念包容性更广，原有观念为其下位观念。与下位学习方向正好相反。</p><p><strong>💡 解题思路：</strong>先小后大→上位学习。口诀：“上先小后集”。A是先大后小，C是平行。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "学习遗传与变异、需求与动机，无上下包含关系，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "下位学习"},
+                    {"label": "B", "text": "上位学习"},
+                    {"label": "C", "text": "并列组合学习"},
+                    {"label": "D", "text": "归属学习"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（并列组合学习）。遗传与变异、需求与动机之间是平行并列关系，互不包含，故属并列组合学习。</p><p><strong>📚 知识点讲解：</strong>并列组合学习指新知识与原有知识之间既非上位也非下位，但存在某种并列关系，可以联合起来使认知结构更完善。</p><p><strong>💡 解题思路：</strong>关键词“无上下包含关系”直接锁定并列组合学习。A和B都有包含关系，D不是一个标准术语。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "先于新知识呈现，概括性、包容性更强的引导性材料是（ ）",
+                "options": [
+                    {"label": "A", "text": "先行组织者"},
+                    {"label": "B", "text": "教科书目录"},
+                    {"label": "C", "text": "课后习题"},
+                    {"label": "D", "text": "变式"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（先行组织者）。先行组织者是奥苏贝尔提出的重要概念，指在新知识学习之前呈现的一种引导性材料。</p><p><strong>📚 知识点讲解：</strong>先行组织者的特点是概括性更高、包容性更强，能搭建新旧知识的桥梁，帮助学习者将新知识固定在原有认知结构中。</p><p><strong>💡 解题思路：</strong>题干描述完全符合先行组织者的定义。B、C、D不具备这种引导和组织功能。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "奥苏贝尔认为，学校中学生最主要的学习形式是（ ）",
+                "options": [
+                    {"label": "A", "text": "发现学习"},
+                    {"label": "B", "text": "接受学习"},
+                    {"label": "C", "text": "机械学习"},
+                    {"label": "D", "text": "合作学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（接受学习）。奥苏贝尔指出，学校教学大多是教师讲授、学生接受，因此接受学习是学校最主要的学习形式。</p><p><strong>📚 知识点讲解：</strong>但这并非提倡机械接受，而是强调接受学习也可以是有意义的。关键在于教学内容的组织要符合有意义学习的条件。</p><p><strong>💡 解题思路：</strong>A是布鲁纳所提倡的，C是奥苏贝尔反对的，D不属于奥苏贝尔核心分类。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "为了满足求知欲、好奇心而主动学习，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "认知内驱力"},
+                    {"label": "B", "text": "自我提高内驱力"},
+                    {"label": "C", "text": "附属内驱力"},
+                    {"label": "D", "text": "外部内驱力"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（认知内驱力）。认知内驱力源于好奇心和求知欲，是渴望获得知识、理解和解决问题的内部动机。</p><p><strong>📚 知识点讲解：</strong>奥苏贝尔将成就动机分为三种内驱力：认知内驱力（内部、最稳定）、自我提高内驱力（追求地位荣誉）、附属内驱力（获得赞许）。</p><p><strong>💡 解题思路：</strong>“求知欲、好奇心”是认知内驱力的标志性描述。B是为了名次，C是为了表扬。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "为了获得名次、荣誉、地位而努力学习，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "认知内驱力"},
+                    {"label": "B", "text": "自我提高内驱力"},
+                    {"label": "C", "text": "附属内驱力"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（自我提高内驱力）。自我提高内驱力是把学业成就看作赢得地位与自尊的途径，属外部动机。</p><p><strong>📚 知识点讲解：</strong>例如，为考上好大学、为得到第一名而学习，都属于自我提高内驱力。它与认知内驱力的区别在于学习本身是否有趣味。</p><p><strong>💡 解题思路：</strong>关键词“名次、荣誉、地位”直接对应自我提高内驱力。A是求知，C是求赞。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "为了得到老师表扬、父母奖励而认真学习，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "认知内驱力"},
+                    {"label": "B", "text": "自我提高内驱力"},
+                    {"label": "C", "text": "附属内驱力"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（附属内驱力）。附属内驱力是个体为了获得长者的赞许或认可而表现出努力的动机，儿童期尤为明显。</p><p><strong>📚 知识点讲解：</strong>附属内驱力在儿童早期最强，随着年龄增长，自我提高和认知内驱力逐渐增强。小学低年级孩子常为得到“小红花”而努力学习。</p><p><strong>💡 解题思路：</strong>“老师表扬、父母奖励”是附属内驱力的典型表现。A是兴趣驱动，B是地位驱动。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "三种内驱力中，最稳定、最持久的是（ ）",
+                "options": [
+                    {"label": "A", "text": "认知内驱力"},
+                    {"label": "B", "text": "自我提高内驱力"},
+                    {"label": "C", "text": "附属内驱力"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（认知内驱力）。认知内驱力是内部动机，指向学习任务本身，因此最为稳定和持久。</p><p><strong>📚 知识点讲解：</strong>外部动机（自我提高、附属）依赖于外在奖励或地位，一旦外部条件变化，动机就会减弱。而认知内驱力由好奇心驱动，不依赖外力。</p><p><strong>💡 解题思路：</strong>内部动机比外部动机更稳定，三个中只有认知内驱力是纯粹的内部动机。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "儿童时期占主导地位的内驱力是（ ）",
+                "options": [
+                    {"label": "A", "text": "认知内驱力"},
+                    {"label": "B", "text": "自我提高内驱力"},
+                    {"label": "C", "text": "附属内驱力"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（附属内驱力）。在儿童早期，附属内驱力最为突出，他们努力学习往往是为了获得家长和老师的喜爱。</p><p><strong>📚 知识点讲解：</strong>随着儿童进入青少年期，自我提高内驱力和认知内驱力逐渐成为主导动机。三种内驱力的比重随年龄变化。</p><p><strong>💡 解题思路：</strong>记住“儿童期附属最强”，即小孩子最在乎表扬和认可。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "奥苏贝尔的迁移理论是（ ）",
+                "options": [
+                    {"label": "A", "text": "形式训练说"},
+                    {"label": "B", "text": "共同要素说"},
+                    {"label": "C", "text": "认知结构迁移理论"},
+                    {"label": "D", "text": "概括化理论"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（认知结构迁移理论）。奥苏贝尔认为一切有意义学习都必然包含迁移，而原有认知结构是迁移产生的核心因素。</p><p><strong>📚 知识点讲解：</strong>认知结构迁移理论强调原有的知识经验对学习新知识的影响。学生能否迁移，在于其认知结构是否有可利用的、清晰的起固定作用的观念。</p><p><strong>💡 解题思路：</strong>人物与理论对应：奥苏贝尔→认知结构迁移。A是早期官能心理学，B是桑代克，D是贾德。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下位学习又被称为（ ）",
+                "options": [
+                    {"label": "A", "text": "总括学习"},
+                    {"label": "B", "text": "类属学习"},
+                    {"label": "C", "text": "并列学习"},
+                    {"label": "D", "text": "命题学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（类属学习）。下位学习也称类属学习，指新知识被纳入到原有更广泛的观念之下。</p><p><strong>📚 知识点讲解：</strong>例如原有“水果”概念，学习“苹果”这个新例子，就是把苹果归类到水果中。A是上位学习的别称。</p><p><strong>💡 解题思路：</strong>别称对应：下位=类属，上位=总括，并列=组合。直接匹配即可。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "上位学习又被称为（ ）",
+                "options": [
+                    {"label": "A", "text": "类属学习"},
+                    {"label": "B", "text": "总括学习"},
+                    {"label": "C", "text": "并列学习"},
+                    {"label": "D", "text": "符号学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（总括学习）。上位学习就是由具体例子归纳出更抽象概括的结论，所以又称总括学习。</p><p><strong>📚 知识点讲解：</strong>例如由苹果、香蕉、橘子概括出“水果”的本质特征，就是上位总括。A、C、D都不对。</p><p><strong>💡 解题思路：</strong>“上位”联想“总结概括”，故选“总括学习”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "先行组织者的主要作用是（ ）",
+                "options": [
+                    {"label": "A", "text": "简化学习内容"},
+                    {"label": "B", "text": "搭建新旧知识桥梁"},
+                    {"label": "C", "text": "增加学习难度"},
+                    {"label": "D", "text": "替代新知识"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（搭建新旧知识桥梁）。先行组织者的核心作用就是在新旧知识之间架设认知桥梁，促进同化。</p><p><strong>📚 知识点讲解：</strong>它通过呈现包容性更广的材料，激活学习者原有认知结构中的适当观念，使新知识容易被固定下来。</p><p><strong>💡 解题思路：</strong>“桥梁”“固定”是先行组织者的关键词。A、C、D均不符合其定义。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "奥苏贝尔认为，接受学习一定是机械学习。（ ）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（错误）。奥苏贝尔明确指出，接受学习可以是机械的，也可以是有意义的，关键在于是否建立了非人为、实质性的联系。</p><p><strong>📚 知识点讲解：</strong>教师有逻辑地组织材料，学生积极主动地将新知识纳入认知结构，这样就是有意义的接受学习，绝非机械学习。</p><p><strong>💡 解题思路：</strong>题干绝对化了，奥苏贝尔本人恰好反对这种看法，判为错误。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "派生类属学习和相关类属学习都属于（ ）",
+                "options": [
+                    {"label": "A", "text": "上位学习"},
+                    {"label": "B", "text": "下位学习"},
+                    {"label": "C", "text": "并列学习"},
+                    {"label": "D", "text": "命题学习"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（下位学习）。派生类属和相关类属是下位学习的两种具体形式，都是将新知识归入原有观念。</p><p><strong>📚 知识点讲解：</strong>派生类属是新知识只是原有概念的一个实例；相关类属则可能扩展或修正原有概念。两者都属类属学习。</p><p><strong>💡 解题思路：</strong>记住：派生和相关都是“类属”的下级分类，属“下位学习”。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "理解“圆的半径是直径的一半”，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "符号学习"},
+                    {"label": "B", "text": "概念学习"},
+                    {"label": "C", "text": "命题学习"},
+                    {"label": "D", "text": "下位学习"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（命题学习）。半径与直径是两个概念，这句话表达了它们之间的关系，是命题学习的典型例子。</p><p><strong>📚 知识点讲解：</strong>命题学习是有意义学习的最高层级，必须以概念学习为基础。看到至少两个概念关系的陈述，就是命题。</p><p><strong>💡 解题思路：</strong>关键词“关系”直接定位命题学习。A是学符号，B是学本质，D是知识同化方式。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于有意义学习的是（ ）",
+                "options": [
+                    {"label": "A", "text": "死记硬背口诀"},
+                    {"label": "B", "text": "理解原理内在逻辑"},
+                    {"label": "C", "text": "机械重复背诵"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（理解原理内在逻辑）。有意义学习强调理解知识的内在联系，而非死记硬背。</p><p><strong>📚 知识点讲解：</strong>A和C属于机械学习，缺乏对材料本质的理解，只是字面记忆。B涉及“理解”和“逻辑”，符合非人为、实质性联系。</p><p><strong>💡 解题思路：</strong>“理解”是有意义学习的标志，看到即可选。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "先行组织者分为（ ）",
+                "options": [
+                    {"label": "A", "text": "陈述性和比较性"},
+                    {"label": "B", "text": "上位和下位"},
+                    {"label": "C", "text": "认知和附属"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（陈述性和比较性）。陈述性组织者是提供概括性材料，比较性组织者则用于比较新旧知识的异同。</p><p><strong>📚 知识点讲解：</strong>当学习材料是全新的，常用陈述性组织者；当学习材料与旧知识易混淆时，用比较性组织者。</p><p><strong>💡 解题思路：</strong>记忆分类：陈述性（总括新知识）、比较性（分辨异同）。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "学生利用原有认知结构同化新知识，体现哪一理论（ ）",
+                "options": [
+                    {"label": "A", "text": "布鲁纳发现学习"},
+                    {"label": "B", "text": "奥苏贝尔有意义学习"},
+                    {"label": "C", "text": "行为主义"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（奥苏贝尔有意义学习）。奥苏贝尔认为有意义学习的心理机制就是同化，即新旧知识相互作用的过程。</p><p><strong>📚 知识点讲解：</strong>同化是皮亚杰的概念，奥苏贝尔将其引入学习理论，认为意义学习就是通过新旧知识同化实现的。</p><p><strong>💡 解题思路：</strong>看到“原有认知结构”和“同化”，直接对应奥苏贝尔。布鲁纳强调发现，行为主义忽视认知结构。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "不属于奥苏贝尔三种内驱力的是（ ）",
+                "options": [
+                    {"label": "A", "text": "认知内驱力"},
+                    {"label": "B", "text": "自我提高内驱力"},
+                    {"label": "C", "text": "生理内驱力"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（生理内驱力）。奥苏贝尔的成就动机内驱力只有三种：认知、自我提高、附属，不包含生理内驱力。</p><p><strong>📚 知识点讲解：</strong>生理内驱力（如饥饿、口渴）是基本生物动机，不属于成就动机范畴。奥苏贝尔关注的课堂学习动机主要是社会性动机。</p><p><strong>💡 解题思路：</strong>用排除法，A、B都是三种内驱力之一，C不属于。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "先学哺乳动物，再学老虎、狮子，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "上位"},
+                    {"label": "B", "text": "下位"},
+                    {"label": "C", "text": "并列"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（下位学习）。哺乳动物是大概念，老虎、狮子是具体的哺乳动物，先大后小，是下位学习。</p><p><strong>📚 知识点讲解：</strong>这与先学“水果”再学“苹果”逻辑一致，都是将新例子归入旧概念。</p><p><strong>💡 解题思路：</strong>“哺乳动物”包容性大，先学；“老虎”是具体种类，后学→下位学习。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "有意义学习的条件不包括（ ）",
+                "options": [
+                    {"label": "A", "text": "学习材料有逻辑意义"},
+                    {"label": "B", "text": "学习者有同化新知识基础"},
+                    {"label": "C", "text": "学习者有学习心向"},
+                    {"label": "D", "text": "必须采用发现学习"}
+                ],
+                "answer": 3,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是D（必须采用发现学习）。奥苏贝尔提倡接受学习也可以有意义，所以不要求必须是发现学习。</p><p><strong>📚 知识点讲解：</strong>有意义学习的条件包括：学习材料本身具有逻辑意义；学习者原有认知结构中具有同化新知识的适当观念；学习者具有有意义学习的心向。</p><p><strong>💡 解题思路：</strong>题干问“不包括”，发现学习不是必要条件，奥苏贝尔认为接受学习也可以有意义。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "认知结构迁移理论认为，影响迁移的核心是（ ）",
+                "options": [
+                    {"label": "A", "text": "智力高低"},
+                    {"label": "B", "text": "原有认知结构"},
+                    {"label": "C", "text": "学习时间"},
+                    {"label": "D", "text": "练习次数"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（原有认知结构）。奥苏贝尔认为迁移的发生取决于原有认知结构中是否有可利用的、稳定的起固定作用的观念。</p><p><strong>📚 知识点讲解：</strong>认知结构迁移理论强调学生的知识储备质量决定迁移能力，而不仅仅是智力或练习。教师应帮助建立清晰的认知结构。</p><p><strong>💡 解题思路：</strong>核心词“认知结构”直接选B。A、C、D并非该理论的核心因素。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "奥苏贝尔提倡有意义接受学习。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。奥苏贝尔的核心主张就是有意义接受学习，认为这是学校中最主要的学习形式。</p><p><strong>📚 知识点讲解：</strong>反对将接受学习等同于机械学习，强调通过教师组织有意义的材料，学生主动建立联系。</p><p><strong>💡 解题思路：</strong>完全正确，直接判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "接受学习必然是机械学习。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。奥苏贝尔明确指出，接受学习可以是有意义的，关键在于学习者是否理解并建立联系。</p><p><strong>📚 知识点讲解：</strong>如学生听教师讲课后，理解了知识的内在逻辑，这就是有意义的接受学习。</p><p><strong>💡 解题思路：</strong>题干是绝对化错误，判错。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "有意义学习的实质是新旧知识建立非人为、实质性联系。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。这正是奥苏贝尔有意义学习的核心定义。</p><p><strong>📚 知识点讲解：</strong>“非人为”指联系是知识本身固有的，“实质性”指理解含义而非字面。两者是有意义学习的两个标准。</p><p><strong>💡 解题思路：</strong>表述完全正确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "先学具体事例，再总结概括原理，属于下位学习。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。先具体后概括是从下到上的过程，属于上位学习（总括学习），而非下位学习。</p><p><strong>📚 知识点讲解：</strong>下位学习是先有概括性观念，再学具体例子。两者方向相反。</p><p><strong>💡 解题思路：</strong>题干描述的是上位学习，判为错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "并列组合学习不存在上下包含关系。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。并列组合学习就是新旧知识处于并列地位，既不是上位也不下位。</p><p><strong>📚 知识点讲解：</strong>例如学习遗传与变异、质量与能量，都是并列关系。</p><p><strong>💡 解题思路：</strong>定义准确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "先行组织者是在新知识学完之后呈现的材料。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。先行组织者是先于新知识呈现的引导性材料，而非学完之后再呈现。</p><p><strong>📚 知识点讲解：</strong>“先行”二字就表明在正式学习之前呈现。它起到搭建认知桥梁的作用。</p><p><strong>💡 解题思路：</strong>题干与“先行”的定义矛盾，判错。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "认知内驱力属于内部动机，最稳定持久。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。认知内驱力源于好奇心，是指向学习任务本身的内部动机，最为稳定。</p><p><strong>📚 知识点讲解：</strong>外部动机依赖于外在奖励，内部动机依赖于兴趣，所以更持久。</p><p><strong>💡 解题思路：</strong>表述准确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "附属内驱力在青少年时期占主导地位。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。附属内驱力在儿童期最强，青少年时期自我提高内驱力和认知内驱力逐渐增强。</p><p><strong>📚 知识点讲解：</strong>随着年龄增长，对赞许的依赖减弱，对成就和理解的追求上升。</p><p><strong>💡 解题思路：</strong>年龄阶段与主导内驱力不匹配，判错。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "奥苏贝尔提出了认知结构迁移理论。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。奥苏贝尔基于有意义学习理论，提出了认知结构迁移理论。</p><p><strong>📚 知识点讲解：</strong>该理论强调原有认知结构对学习迁移的决定作用，教师应帮助学生建立清晰稳固的知识结构。</p><p><strong>💡 解题思路：</strong>人物与理论对应正确，判对。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "概念学习高于命题学习。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。有意义学习的层级由低到高是：符号学习 < 概念学习 < 命题学习。命题学习层级最高。</p><p><strong>📚 知识点讲解：</strong>命题学习建立在概念学习基础上，涉及概念间关系，所以层级更高。</p><p><strong>💡 解题思路：</strong>顺序说反了，判错。</p>"
+            }
+        ];
+        
+        const APP_ID = 'ausubel_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '奥苏贝尔 核心理论（教招必考·完整版超好背）';
+            const content = `
+                <h3>一、人物定位</h3>
+                <p>奥苏贝尔 → <strong>认知派</strong>，核心：<strong>有意义接受学习理论</strong></p>
+                <h3>二、学习的两大分类（必考）</h3>
+                <p><strong>1. 按学习方式分</strong></p><ul><li><strong>接受学习</strong>：老师讲、学生听</li><li><strong>发现学习</strong>：自己探究、摸索</li></ul>
+                <p><strong>2. 按学习性质分</strong></p><ul><li><strong>机械学习</strong>：死记硬背</li><li><strong>有意义学习</strong>：理解内在逻辑</li></ul>
+                <p>✅ 奥苏贝尔最提倡：<strong>有意义接受学习</strong>（学校最主要学习方式）</p>
+                <h3>三、有意义学习</h3>
+                <p><strong>实质</strong>：新旧知识建立 <strong>非人为、实质性</strong> 的联系</p>
+                <p><strong>三个类型（由低到高）</strong></p>
+                <ol><li><strong>表征学习（符号学习）</strong>：学单个符号、字词</li><li><strong>概念学习</strong>：掌握同类事物共同本质特征</li><li><strong>命题学习</strong>：多个概念之间的关系（层次最高）</li></ol>
+                <h3>四、知识同化三种模式</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>类型</th><th>别称</th><th>特点</th><th>例子</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>下位学习</strong></td><td>类属学习</td><td>先大概念→再小例子</td><td>先学水果，再学苹果</td></tr>
+                        <tr><td><strong>上位学习</strong></td><td>总括学习</td><td>先小例子→再总结大概念</td><td>先学苹果香蕉，再总结水果</td></tr>
+                        <tr><td><strong>并列组合学习</strong></td><td>并列学习</td><td>平行并列，无上下位</td><td>遗传与变异、需求与动机</td></tr>
+                    </tbody>
+                </table>
+                <h3>五、先行组织者（重中之重）</h3>
+                <p><strong>定义</strong>：先于新知识呈现的、概括性更高、包容性更强的引导材料。<br><strong>作用</strong>：搭建新旧知识桥梁，促进有意义学习。<br><strong>分类</strong>：陈述性组织者、比较性组织者</p>
+                <h3>六、奥苏贝尔 三种成就动机内驱力</h3>
+                <ol><li><strong>认知内驱力</strong>：好奇、求知欲 👉 内部动机、最稳定</li><li><strong>自我提高内驱力</strong>：名次、地位、荣誉 👉 外部动机</li><li><strong>附属内驱力</strong>：老师家长表扬、奖励 👉 儿童期最强、外部动机</li></ol>
+                <h3>七、迁移理论</h3>
+                <p><strong>认知结构迁移理论</strong>：原有认知结构是迁移的核心。</p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                const wrongCount = questions.length - correctCount;
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                            <div class="stat-item"><div class="stat-value" style="color:#f5222d;">${wrongCount}</div><div class="stat-label">错题数量</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="viewWrongQuestions()">查看错题集</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function viewWrongQuestions() {
+            if (currentPage === 'quiz' && currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                currentFilter = 'wrong';
+                toggleSheet();
+            }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

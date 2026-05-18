@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>加德纳多元智能理论刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">加德纳多元智能理论</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "type": "单选题",
+                "stem": "多元智能理论的提出者是（ ）",
+                "options": [
+                    {"label": "A", "text": "布鲁姆"},
+                    {"label": "B", "text": "加德纳"},
+                    {"label": "C", "text": "维果茨基"},
+                    {"label": "D", "text": "皮亚杰"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（加德纳）。霍华德·加德纳于1983年提出多元智能理论，挑战了传统的单一智力观。</p><p><strong>📚 知识点讲解：</strong>加德纳认为智力不是单一的，而是多种智能的组合。传统智力测验主要测量语言和逻辑数学智能，而加德纳拓展到了八种智能。A布鲁姆提出教育目标分类学，C维果茨基提出最近发展区，D皮亚杰提出认知发展理论。</p><p><strong>💡 解题思路：</strong>看到“多元智能理论”直接对应加德纳。其他三位心理学家各有自己的理论，与多元智能无关，可快速排除。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "多元智能理论认为，人的智力特点是（ ）",
+                "options": [
+                    {"label": "A", "text": "单一固定的"},
+                    {"label": "B", "text": "多元独立、组合不同"},
+                    {"label": "C", "text": "只有语言一种"},
+                    {"label": "D", "text": "后天无法改变"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。多元智能理论的核心观点就是智力是多元的，各种智能相对独立，每个人的智能组合结构不同。</p><p><strong>📚 知识点讲解：</strong>加德纳反对把智力看作单一固定的能力。他提出八种智能，每个人身上都存在，但优势领域不同。例如有人语言强但空间弱，这是完全正常的。</p><p><strong>💡 解题思路：</strong>A、C的“单一”明显违背多元理念；D错误，加德纳认为智能可以通过教育培养。B全面概括了核心观点。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "传统智力理论主要只重视哪两种智能（ ）",
+                "options": [
+                    {"label": "A", "text": "语言、音乐"},
+                    {"label": "B", "text": "语言、逻辑数学"},
+                    {"label": "C", "text": "空间、人际"},
+                    {"label": "D", "text": "内省、自然观察"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。传统智力观和学校教育长期只关注语言智能（语文、阅读）和逻辑数学智能（数学、推理），忽视了其他六种。</p><p><strong>📚 知识点讲解：</strong>加德纳正是批判这种狭隘的智力观才提出多元智能。他指出音乐、空间、身体动觉、人际等同样是重要的智能形式。</p><p><strong>💡 解题思路：</strong>回忆口诀“语逻空音身人自内”，前两个就是语言和逻辑数学，这正是传统教育最看重的两点。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "擅长写作、演讲、语言表达能力极强的人，优势智能是（ ）",
+                "options": [
+                    {"label": "A", "text": "逻辑数学智能"},
+                    {"label": "B", "text": "语言智能"},
+                    {"label": "C", "text": "空间智能"},
+                    {"label": "D", "text": "人际智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（语言智能）。写作、演讲、语言表达直接对应语言智能的核心表现。</p><p><strong>📚 知识点讲解：</strong>语言智能敏感于语言文字的音、形、义，擅长用语言进行思维和表达。典型职业有作家、主持人、教师、记者。</p><p><strong>💡 解题思路：</strong>题干关键词“写作、演讲”直接指向语言智能。逻辑数学涉及计算推理，空间涉及画画方向，人际涉及交往。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "擅长推理、运算、逻辑思维强，理科成绩突出，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "语言智能"},
+                    {"label": "B", "text": "逻辑数学智能"},
+                    {"label": "C", "text": "空间智能"},
+                    {"label": "D", "text": "内省智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（逻辑数学智能）。推理、运算、逻辑分析是逻辑数学智能的典型表现。</p><p><strong>📚 知识点讲解：</strong>逻辑数学智能侧重对数字、逻辑关系和抽象模式的敏感度。擅长数学解题、编程、下棋和科学探究。</p><p><strong>💡 解题思路：</strong>看到“推理、运算、理科”等关键词，立即对应逻辑数学智能。排除语言、空间和内省。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "擅长画画、建筑设计、方向感好、能快速识图构图，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "空间智能"},
+                    {"label": "B", "text": "音乐智能"},
+                    {"label": "C", "text": "身体动觉智能"},
+                    {"label": "D", "text": "自然观察智能"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（空间智能）。绘画、设计、方向感、识图构图都属于空间智能的范畴。</p><p><strong>📚 知识点讲解：</strong>空间智能是指对视觉空间世界的准确感知和表现能力，包括对色彩、线条、形状、空间关系的敏感度。画家、建筑师、导航员都有很高的空间智能。</p><p><strong>💡 解题思路：</strong>题干中“画画、设计、方向、识图”全是空间智能关键词。身体动觉涉及运动和手工，自然观察涉及动植物。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "节奏感强、擅长唱歌、演奏乐器、对音律敏感，优势智能是（ ）",
+                "options": [
+                    {"label": "A", "text": "语言智能"},
+                    {"label": "B", "text": "音乐智能"},
+                    {"label": "C", "text": "空间智能"},
+                    {"label": "D", "text": "人际智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（音乐智能）。对节奏、音高、旋律的敏感和表现能力就是音乐智能。</p><p><strong>📚 知识点讲解：</strong>音乐智能包括对音乐元素的感知、辨别、改造和表达。歌手、作曲家、指挥家、乐器演奏者都以此见长。</p><p><strong>💡 解题思路：</strong>核心词“节奏、唱歌、乐器、音律”直接指向音乐智能。其他选项与音乐无关。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "运动员、舞蹈家、手工技艺高超、肢体协调性强，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "身体—动觉智能"},
+                    {"label": "B", "text": "人际智能"},
+                    {"label": "C", "text": "内省智能"},
+                    {"label": "D", "text": "空间智能"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（身体—动觉智能）。运用身体表达情感、解决问题或创造产品的能力，包括运动、舞蹈、手工操作等。</p><p><strong>📚 知识点讲解：</strong>身体动觉智能强调肢体的协调性、灵活性、平衡感以及动手操作能力。运动员、舞蹈家、演员、外科医生、工匠都需要这种智能。</p><p><strong>💡 解题思路：</strong>“运动、舞蹈、肢体协调、手工”明显是身体动觉智能的标志。人际是交往，内省是了解自己。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "善于人际交往、情商高、会沟通、擅长组织班级活动，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "内省智能"},
+                    {"label": "B", "text": "人际智能"},
+                    {"label": "C", "text": "语言智能"},
+                    {"label": "D", "text": "逻辑智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（人际智能）。人际智能是指察觉并区分他人情绪、意图、动机及感觉的能力，善于与人交往合作。</p><p><strong>📚 知识点讲解：</strong>人际智能高的人擅长理解他人、沟通、组织、协商，通常是班干部、管理者、心理咨询师、销售人员的优势智能。</p><p><strong>💡 解题思路：</strong>题干关键词“交往、沟通、组织、情商高”直接对应人际智能。内省是了解自己，语言是表达文字。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "善于自我反思、自律自省、能正确认识自己优缺点，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "人际智能"},
+                    {"label": "B", "text": "内省智能"},
+                    {"label": "C", "text": "自然观察智能"},
+                    {"label": "D", "text": "空间智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（内省智能）。内省智能是指认识自己、反思自己，并据此做出适当行为的能力。</p><p><strong>📚 知识点讲解：</strong>内省智能包括对自己的情绪、性格、动机、欲望的了解，以及自律、自省和自尊。哲学家、心理学家、善于自我反省的人内省智能较高。</p><p><strong>💡 解题思路：</strong>核心词“自我反思、自律、认识自己”明确指向内省智能。人际是针对他人，自然观察是针对生物和自然现象。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "喜欢观察花草鸟兽、分辨动植物、对自然事物敏感，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "自然观察智能"},
+                    {"label": "B", "text": "内省智能"},
+                    {"label": "C", "text": "空间智能"},
+                    {"label": "D", "text": "音乐智能"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（自然观察智能）。自然观察智能是指对自然界中各种事物进行观察、分类和辨别的能力。</p><p><strong>📚 知识点讲解：</strong>这是加德纳后期补充的第八种智能。生物学家、园艺家、动物学家、环保主义者往往具有较高的自然观察智能。</p><p><strong>💡 解题思路：</strong>题干中“花草鸟兽、动植物、自然事物”直接对应自然观察智能。空间智能是关于视觉空间和方位，不特指自然界。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "多元智能理论认为，每个人拥有的智能数量是（ ）",
+                "options": [
+                    {"label": "A", "text": "只有一种"},
+                    {"label": "B", "text": "多数人只有两种"},
+                    {"label": "C", "text": "都拥有多种智能"},
+                    {"label": "D", "text": "有的人天生缺少某类智能"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。加德纳认为每个人都同时具备八种智能，只是每种智能的发展水平和组合方式不同。</p><p><strong>📚 知识点讲解：</strong>不存在谁缺少某种智能，只存在优势智能和弱势智能的差异。例如，即使是数学天才，也具备音乐或身体动觉智能，只是可能没有充分发展。</p><p><strong>💡 解题思路：</strong>“人人都有”是多元智能的重要观点。A、B、D都否定了智力的多元性和普遍性，不符合加德纳理论。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "多元智能理论给教育的最大启示是（ ）",
+                "options": [
+                    {"label": "A", "text": "只用分数评价学生"},
+                    {"label": "B", "text": "因材施教、多元评价"},
+                    {"label": "C", "text": "只重视文化课成绩"},
+                    {"label": "D", "text": "忽视学生特长"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。多元智能理论直接导向因材施教和多元化评价，反对唯分数论。</p><p><strong>📚 知识点讲解：</strong>既然每个人有不同的优势智能，教育就应该提供多样化的学习方式和评价方式，发现学生的闪光点，让每个孩子都能获得成功体验。</p><p><strong>💡 解题思路：</strong>A、C、D都是传统单一评价的体现，违背多元智能精神。B是正面启示，为正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "老师不只用考试成绩评判学生，还看重美术、音乐、体育特长，符合（ ）",
+                "options": [
+                    {"label": "A", "text": "最近发展区理论"},
+                    {"label": "B", "text": "多元智能理论"},
+                    {"label": "C", "text": "认知发展理论"},
+                    {"label": "D", "text": "人格理论"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。从多维度评价学生，关注美术（空间）、音乐（音乐智能）、体育（身体动觉），正是多元智能理论的实践。</p><p><strong>📚 知识点讲解：</strong>多元智能理论主张用多元视角看待学生，考试分数只反映语言和逻辑数学智能，不能代表学生的全部。要综合考量多种智能。</p><p><strong>💡 解题思路：</strong>题干中“不只……还看重……”体现了评价的多元化，直接对应多元智能理论。其他选项不涉及智能多元化。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "某学生数学成绩一般，但绘画天赋极高，多元智能理论认为（ ）",
+                "options": [
+                    {"label": "A", "text": "属于差生"},
+                    {"label": "B", "text": "只是智能优势不同"},
+                    {"label": "C", "text": "智力低下"},
+                    {"label": "D", "text": "没有发展潜力"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。数学弱、绘画强，说明逻辑数学智能不是优势，但空间智能突出，这属于正常的智能结构差异。</p><p><strong>📚 知识点讲解：</strong>加德纳强调“没有差生”，只有智能类型的差异。学校教育应该帮助学生在优势领域取得成功，而不是仅仅盯着弱势科目。</p><p><strong>💡 解题思路：</strong>A、C、D都带有贬低色彩，与多元智能的积极学生观相悖。B是正面阐释，为正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "善于换位思考、理解他人情绪、擅长团队合作，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "内省智能"},
+                    {"label": "B", "text": "人际智能"},
+                    {"label": "C", "text": "语言智能"},
+                    {"label": "D", "text": "空间智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（人际智能）。理解他人情绪、换位思考、团队合作都是人际智能的核心表现。</p><p><strong>📚 知识点讲解：</strong>人际智能也称社交智能，是察觉他人情绪、动机并有效互动的能力。内省智能是指向内部的自我认知。</p><p><strong>💡 解题思路：</strong>区分人际和内省：人际是“懂别人”，内省是“懂自己”。题干全是关于他人的，选人际。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "擅长规划人生、自我约束、经常反思自己的行为对错，是（ ）",
+                "options": [
+                    {"label": "A", "text": "人际智能"},
+                    {"label": "B", "text": "内省智能"},
+                    {"label": "C", "text": "自然观察智能"},
+                    {"label": "D", "text": "音乐智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（内省智能）。规划人生、自我约束、反思对错都是内省智能的体现。</p><p><strong>📚 知识点讲解：</strong>内省智能帮助个体建立准确的自我认知，并据此调节自己的行为。善于自省的人往往具有清晰的自我定位和较强的自律性。</p><p><strong>💡 解题思路：</strong>题干全是关于“自己”的，没有涉及他人或外在事物，直接对应内省智能。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "能快速辨别星座、地形、地图路线，空间想象力极强，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "空间智能"},
+                    {"label": "B", "text": "逻辑智能"},
+                    {"label": "C", "text": "身体动觉智能"},
+                    {"label": "D", "text": "自然观察智能"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（空间智能）。辨别星座、地形、地图路线依赖空间感知和方向定位能力，是空间智能的典型表现。</p><p><strong>📚 知识点讲解：</strong>空间智能不仅包括艺术绘画，还涵盖方向感、导航能力和三维想象。注意与自然观察智能区分：自然观察针对生物和大自然，空间针对方位和视觉空间。</p><p><strong>💡 解题思路：</strong>关键词“辨别星座、地图路线”是空间智能的范畴。自然观察是观察动植物本身，而非空间方位。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "8大智能中，善于探究大自然奥秘、喜欢野外观察的是（ ）",
+                "options": [
+                    {"label": "A", "text": "内省智能"},
+                    {"label": "B", "text": "自然观察智能"},
+                    {"label": "C", "text": "人际智能"},
+                    {"label": "D", "text": "音乐智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（自然观察智能）。探究大自然奥秘、野外观察生物是自然观察智能的核心。</p><p><strong>📚 知识点讲解：</strong>自然观察智能是加德纳补充的第八种智能，强调对自然界的敏感度和分类能力。喜欢养动植物、观鸟、研究昆虫等都是其表现。</p><p><strong>💡 解题思路：</strong>“大自然、野外观察”直接锁定自然观察智能。其他选项均与自然无关。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "多元智能理论认为各种智能之间的关系是（ ）",
+                "options": [
+                    {"label": "A", "text": "相互独立"},
+                    {"label": "B", "text": "完全依附"},
+                    {"label": "C", "text": "强弱同步"},
+                    {"label": "D", "text": "无法发展"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A。加德纳强调各种智能相对独立，一项弱不影响其他项强。</p><p><strong>📚 知识点讲解：</strong>例如，一个人逻辑数学智能弱（数学差），但他的音乐智能可能非常突出。智能之间并不捆绑，各有独立的发展轨迹。</p><p><strong>💡 解题思路：</strong>B、C都认为智能相互牵连，这不符合多元智能的核心观点。D错误，智能可以后天发展。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "学校开设美术、音乐、体育、手工等多元课程，依据的理论是（ ）",
+                "options": [
+                    {"label": "A", "text": "多元智能理论"},
+                    {"label": "B", "text": "建构主义"},
+                    {"label": "C", "text": "行为主义"},
+                    {"label": "D", "text": "认知主义"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A。美术（空间智能）、音乐（音乐智能）、体育手工（身体动觉智能）等课程设置，正是基于多元智能理论。</p><p><strong>📚 知识点讲解：</strong>多元智能理论为学校开设多样化的课程提供了理论支撑。它告诉教育者，不可以只重视语文数学，其他方面同样重要。</p><p><strong>💡 解题思路：</strong>题干列举多种课程，对应多种智能，直接选多元智能理论。其他理论不专门强调课程种类的多元化。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "口齿伶俐、擅长讲故事、作文水平高，突出的是（ ）",
+                "options": [
+                    {"label": "A", "text": "逻辑数学智能"},
+                    {"label": "B", "text": "语言智能"},
+                    {"label": "C", "text": "人际智能"},
+                    {"label": "D", "text": "内省智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（语言智能）。口齿伶俐、讲故事、作文都是语言智能的体现。</p><p><strong>📚 知识点讲解：</strong>语言智能包括口头语言和书面语言的运用能力。典型表现是说话流利、词汇丰富、善于叙事和写作。</p><p><strong>💡 解题思路：</strong>题干中三项全与语言文字表达有关，直接指向语言智能。逻辑数学涉及数字推理，人际涉及社交。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "擅长下棋、推理谜题、逻辑缜密，优势智能是（ ）",
+                "options": [
+                    {"label": "A", "text": "语言智能"},
+                    {"label": "B", "text": "逻辑数学智能"},
+                    {"label": "C", "text": "空间智能"},
+                    {"label": "D", "text": "人际智能"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B（逻辑数学智能）。下棋需要策略推理，谜题需要逻辑分析，这些都是逻辑数学智能的经典表现。</p><p><strong>📚 知识点讲解：</strong>逻辑数学智能不仅限于学校数学，还包括各种需要推理、归纳、演绎的思维活动。棋手、侦探、科学家都高度依赖此智能。</p><p><strong>💡 解题思路：</strong>“下棋、推理、逻辑”直指逻辑数学智能。排除语言、空间和人际。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "演员、体操运动员、武术选手最突出的智能是（ ）",
+                "options": [
+                    {"label": "A", "text": "身体动觉智能"},
+                    {"label": "B", "text": "音乐智能"},
+                    {"label": "C", "text": "空间智能"},
+                    {"label": "D", "text": "人际智能"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（身体动觉智能）。演员用身体表演，运动员和武术选手依靠肢体动作，都高度依赖身体动觉智能。</p><p><strong>📚 知识点讲解：</strong>身体动觉智能指运用整个身体或身体部位解决问题或创造产品的能力。它既包括大肌肉群的运动能力，也包括精细的手工操作能力。</p><p><strong>💡 解题思路：</strong>题干中的职业都以身体动作为核心，选身体动觉智能。音乐智能侧重音律，空间侧重视觉设计。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列不属于加德纳八大智能的是（ ）",
+                "options": [
+                    {"label": "A", "text": "语言智能"},
+                    {"label": "B", "text": "逻辑数学智能"},
+                    {"label": "C", "text": "情绪智能"},
+                    {"label": "D", "text": "自然观察智能"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C（情绪智能）。八大智能中没有情绪智能，情绪智力是戈尔曼提出的概念，不属于加德纳的理论框架。</p><p><strong>📚 知识点讲解：</strong>加德纳八种智能：语言、逻辑数学、空间、音乐、身体动觉、人际、内省、自然观察。容易混淆的是人际智能（理解他人）和内省智能（理解自己），它们合并起来类似情绪智力的部分内容。</p><p><strong>💡 解题思路：</strong>通过口诀“语逻空音身人自内”逐一核对，没有“情绪”。A、B、D都在口诀内，选C。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "对待后进生，依据多元智能理论教师应（ ）",
+                "options": [
+                    {"label": "A", "text": "放弃不管"},
+                    {"label": "B", "text": "发现闪光点、扬长避短"},
+                    {"label": "C", "text": "只用成绩批评"},
+                    {"label": "D", "text": "统一标准要求"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。发现学生的优势智能并加以培养，是多元智能理论对待所有学生的基本态度。</p><p><strong>📚 知识点讲解：</strong>后进生只是在语言或逻辑数学智能上暂时落后，可能在其他智能上有过人之处。教师应发现闪光点，用多元评价激励学生。</p><p><strong>💡 解题思路：</strong>A、C、D均不符合多元智能的学生观。B体现因材施教和积极期待，为正确答案。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "既能认识自己，又能理解别人，分别对应的智能是（ ）",
+                "options": [
+                    {"label": "A", "text": "人际+空间"},
+                    {"label": "B", "text": "内省+人际"},
+                    {"label": "C", "text": "语言+音乐"},
+                    {"label": "D", "text": "逻辑+自然"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。认识自己对应内省智能，理解别人对应人际智能。</p><p><strong>📚 知识点讲解：</strong>内省指向内部自我，人际指向外部他人。两者都属于加德纳所称的“个人智能”范畴，但方向相反。</p><p><strong>💡 解题思路：</strong>用口诀定位：内省是关于“自己”的，人际是关于“他人”的。顺序不能反。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "多元智能理论主张评价学生要（ ）",
+                "options": [
+                    {"label": "A", "text": "单一分数评价"},
+                    {"label": "B", "text": "多元、多维度评价"},
+                    {"label": "C", "text": "只看文化课"},
+                    {"label": "D", "text": "只看品德"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是B。多元智能理论必然要求评价方式多元化，从多个维度评估学生的能力。</p><p><strong>📚 知识点讲解：</strong>纸笔考试只能测量语言和逻辑数学智能。而成长记录袋、作品展示、表演、观察记录等可以对其他智能进行评估。</p><p><strong>💡 解题思路：</strong>“多元评价”是多元智能理论的直接推论。A、C、D都是单一维度，不符合题意。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "天生路感好、从不迷路、擅长设计布局，属于（ ）",
+                "options": [
+                    {"label": "A", "text": "空间智能"},
+                    {"label": "B", "text": "自然观察智能"},
+                    {"label": "C", "text": "逻辑智能"},
+                    {"label": "D", "text": "内省智能"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是A（空间智能）。路感好、不迷路、擅长设计布局都依赖空间知觉和方向定位能力。</p><p><strong>📚 知识点讲解：</strong>空间智能包括对视觉空间的感知和操作能力。日常表现如认路能力强、布置房间合理、能想象物体旋转后的样子等。</p><p><strong>💡 解题思路：</strong>“路感、迷路、设计布局”都是空间智能的标志。自然观察是识别生物，不是识路。</p>"
+            },
+            {
+                "type": "单选题",
+                "stem": "关于多元智能说法错误的是（ ）",
+                "options": [
+                    {"label": "A", "text": "人人都有多种智能"},
+                    {"label": "B", "text": "智能可以后天培养发展"},
+                    {"label": "C", "text": "某方面弱就是智力差"},
+                    {"label": "D", "text": "智能结构人人不同"}
+                ],
+                "answer": 2,
+                "analysis": "<p><strong>🎯 答案解析：</strong>正确答案是C。多元智能理论反对“某方面弱就是智力差”的观点，认为那只是智能优势领域不同。</p><p><strong>📚 知识点讲解：</strong>A、B、D都是多元智能的正确表述。加德纳认为智能可以通过教育发展，每个人都有独特的智能轮廓。</p><p><strong>💡 解题思路：</strong>找错误选项。C与“没有差生，只有智能类型差异”的理念相违背，说法错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "多元智能理论由加德纳提出。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。霍华德·加德纳是美国心理学家，于1983年正式提出多元智能理论。</p><p><strong>📚 知识点讲解：</strong>加德纳是哈佛大学教育研究生院教授，他的多元智能理论对世界各国的教育改革产生了深远影响。</p><p><strong>💡 解题思路：</strong>人物对应正确，直接判断正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "多元智能理论认为人的智力是单一的，只有高低之分。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。多元智能理论恰恰反对单一智力观，主张智力是多元的、多种类的。</p><p><strong>📚 知识点讲解：</strong>传统智力观用IQ分数把人分为高低，而加德纳认为智力是多种能力的组合，没有单一的高低之分，只有不同的优势领域。</p><p><strong>💡 解题思路：</strong>题干与加德纳的核心观点完全相反，判断错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "每个人都同时具备八种智能，只是优势智能不同。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。这是多元智能理论的基本主张：人人具备所有智能，但发展水平和组合方式各有不同。</p><p><strong>📚 知识点讲解：</strong>不存在有人完全缺乏某种智能，只是某些智能处于休眠状态或发展较弱。教育的作用就是激活和发展这些潜力。</p><p><strong>💡 解题思路：</strong>符合加德纳的人人都有多元智能的观点，判断正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "传统智力评价只侧重语言和逻辑数学智能。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。传统学校教育和标准化测验主要测量语言能力和数理逻辑能力。</p><p><strong>📚 知识点讲解：</strong>这正是加德纳批判的焦点。语文和数学成了衡量智力的唯一标尺，而音乐、美术、体育、社交等才能被严重忽视。</p><p><strong>💡 解题思路：</strong>符合事实，判断正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "人际智能是善于自我反省、认识自己。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。善于自我反省、认识自己是内省智能，人际智能是善于与他人交往、理解他人。</p><p><strong>📚 知识点讲解：</strong>人际智能外向，指向他人；内省智能内向，指向自己。两者容易混淆，需仔细区分。</p><p><strong>💡 解题思路：</strong>题干描述错误地给人际智能安上了内省智能的定义，判断错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "内省智能强的人，擅长自我反思、自律自知。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。内省智能的核心就是认识自我、自我反思和自律。</p><p><strong>📚 知识点讲解：</strong>内省智能让人能够清晰地了解自己的情绪、动机、优缺点，并能据此调节行为。</p><p><strong>💡 解题思路：</strong>表述完全符合内省智能的定义，判断正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "多元智能理论主张用统一分数标准评价所有学生。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。多元智能理论反对统一分数标准，主张多元评价、因材施教。</p><p><strong>📚 知识点讲解：</strong>用统一分数衡量所有学生，只能考察有限的智能，会埋没大量在其他领域有天赋的学生。</p><p><strong>💡 解题思路：</strong>题干说法与多元智能的教育启示完全相反，判断错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "音乐智能、空间智能都属于加德纳多元智能范畴。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。音乐智能和空间智能都是八大智能的组成部分。</p><p><strong>📚 知识点讲解：</strong>口诀“语逻空音身人自内”中，“空”即空间智能，“音”即音乐智能。</p><p><strong>💡 解题思路：</strong>属于八大智能范畴，判断正确。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "智能之间相互依附，一项弱其他一定也弱。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法错误。加德纳认为智能之间是相互独立的，一项弱不代表其他也弱。</p><p><strong>📚 知识点讲解：</strong>例如，一个空间智能弱（容易迷路）的人，完全可能拥有很高的人际智能（善于交际）。智能发展不捆绑。</p><p><strong>💡 解题思路：</strong>题干说“相互依附”，与“相对独立”的核心观点矛盾，判断错误。</p>"
+            },
+            {
+                "type": "判断题",
+                "stem": "善于观察动植物、热爱大自然属于自然观察智能。",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<p><strong>🎯 答案解析：</strong>该说法正确。自然观察智能就是对自然界事物进行观察、辨识和分类的能力。</p><p><strong>📚 知识点讲解：</strong>喜欢动植物、热爱大自然、擅长观察自然现象都是自然观察智能的表现。</p><p><strong>💡 解题思路：</strong>表述完全正确，判断正确。</p>"
+            }
+        ];
+        
+        const APP_ID = 'gardner_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '加德纳 多元智能理论（教招必考·超好懂版）';
+            const content = `
+                <h3>一、核心人物</h3>
+                <p><strong>加德纳</strong> —— 提出<strong>多元智能理论</strong></p>
+                <h3>二、核心总观点（背这4句做题直接秒）</h3>
+                <ol>
+                    <li>人的<strong>智力不是单一的</strong>，而是<strong>多种智能组合</strong>。</li>
+                    <li>每个人<strong>都具备多种智能</strong>，只是<strong>优势智能不同</strong>。</li>
+                    <li>智能之间<strong>相互独立</strong>，某一项弱，不代表其他也弱。</li>
+                    <li><strong>没有差生，只有智能类型差异</strong>，主张<strong>因材施教、多元评价</strong>，不唯分数论。</li>
+                </ol>
+                <h3>三、八大智能（必背 + 口诀 + 通俗解释）</h3>
+                <p style="text-align:center;font-size:18px;font-weight:700;color:#4a90e2;">秒杀口诀：<strong>语逻空音 身人自内</strong></p>
+                <table class="knowledge-table">
+                    <thead><tr><th>智能类型</th><th>核心特长</th><th>典型职业</th><th>考试常考经典案例</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>语言智能</strong></td><td>善表达、会写作、口才好</td><td>作家、主持人、教师</td><td>擅长作文、演讲、讲故事</td></tr>
+                        <tr><td><strong>逻辑—数学智能</strong></td><td>善推理、会计算、逻辑强</td><td>数学家、程序员</td><td>擅长数学解题、逻辑推理、下棋</td></tr>
+                        <tr><td><strong>空间智能</strong></td><td>立体感强、会构图、方向感好</td><td>画家、建筑师、设计师</td><td>画画、识图、不迷路、设计造型</td></tr>
+                        <tr><td><strong>音乐智能</strong></td><td>懂节奏、辨音律、善歌唱</td><td>歌手、音乐家</td><td>唱歌好听、会乐器、对音调节奏敏感</td></tr>
+                        <tr><td><strong>身体—动觉智能</strong></td><td>肢体协调、动作灵活、动手能力强</td><td>运动员、舞蹈家、工匠</td><td>跳舞、体育运动、手工制作</td></tr>
+                        <tr><td><strong>人际智能</strong></td><td>善交往、懂沟通、会合作</td><td>班干部、管理者、心理咨询师</td><td>人缘好、会组织活动、善换位思考</td></tr>
+                        <tr><td><strong>自然观察智能</strong></td><td>爱自然、善观察、分辨动植物</td><td>生物学家、园艺师</td><td>喜欢花草鸟兽、观察自然现象</td></tr>
+                        <tr><td><strong>内省智能</strong></td><td>懂自己、会反思、自律自省</td><td>哲学家、修行者</td><td>经常自我反省、自知优缺点、自制力强</td></tr>
+                    </tbody>
+                </table>
+                <h3>四、教招高频考点</h3>
+                <ul>
+                    <li>传统智力只看<strong>语言+数理</strong>，加德纳增加了另外6种。</li>
+                    <li>评价方式：<strong>多元评价</strong>，不能只用成绩分数评价学生。</li>
+                    <li>教学启示：<strong>因材施教、扬长避短</strong>，发现学生特长。</li>
+                    <li>每个人智能<strong>结构不同</strong>，有优势有弱势，正常现象。</li>
+                </ul>
+                <h3>五、做题秒杀技巧</h3>
+                <p>题干出现：每个学生有不同特长 / 不能只用分数评价 / 因材施教 / 发现学生闪光点 / 擅长画画/音乐/运动/社交/观察自然 👉 直接选 <strong>加德纳 多元智能理论</strong></p>
+                <h3>六、最易混2组区分（必考易错）</h3>
+                <p><strong>1. 人际 VS 内省</strong><br>人际：<strong>懂别人、会社交</strong> | 内省：<strong>懂自己、会反思</strong></p>
+                <p><strong>2. 空间 VS 自然观察</strong><br>空间：画图、方位、立体设计 | 自然观察：看花草、鸟兽、大自然生物</p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

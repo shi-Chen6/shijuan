@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>六大课程评价模式刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">40</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">六大课程评价模式</div>
+                        <div class="progress-text">教招 · 人物+核心+关键词</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "被称为“课程评价之父”，提出目标评价模式的教育家是（ ）",
+                options: [
+                    { label: "A", text: "斯克里文" },
+                    { label: "B", text: "泰勒" },
+                    { label: "C", text: "斯塔弗尔比姆" },
+                    { label: "D", text: "斯塔克" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。泰勒=现代课程理论之父+课程评价之父，首创目标评价模式。<br><br><strong>📚 知识点讲解：</strong>泰勒（Ralph W. Tyler）在“八年研究”中系统提出了以教育目标为核心的课程评价理论，被誉为课程评价领域的奠基人。<br><br><strong>💡 解题思路：</strong>A斯克里文提出目标游离模式；C斯塔弗尔比姆提出CIPP模式；D斯塔克提出外观/应答模式。识记人物与称号的对应关系即可。`
+            },
+            {
+                type: "单选题",
+                stem: "主张课程评价严格以预先设定的教育目标为唯一评判标准的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价模式" },
+                    { label: "B", text: "目标游离评价模式" },
+                    { label: "C", text: "差距评价模式" },
+                    { label: "D", text: "外观评价模式" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。目标评价核心：以预设目标为中心，对照目标评结果。<br><br><strong>📚 知识点讲解：</strong>泰勒的目标评价模式将预设教育目标作为评价的唯一标准，评价只看最终结果是否达标，不关注过程和非预期效果。<br><br><strong>💡 解题思路：</strong>题干关键词“预先设定”“唯一评判标准”直接对应目标评价模式。B目标游离是抛开预设目标；C差距评价是对比标准与现实；D外观评价关注全貌。`
+            },
+            {
+                type: "单选题",
+                stem: "斯克里文提出的课程评价模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "CIPP" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。识记固定搭配：斯克里文—目标（目的）游离评价模式。<br><br><strong>📚 知识点讲解：</strong>斯克里文（Scriven）对泰勒的目标评价提出批判，主张评价应摆脱预设目标的束缚，关注课程实际产生的所有效果。<br><br><strong>💡 解题思路：</strong>A目标评价由泰勒提出；C选项CIPP由斯塔弗尔比姆提出；D差距评价由普罗沃斯提出。`
+            },
+            {
+                type: "单选题",
+                stem: "目标游离评价模式的核心主张是（ ）",
+                options: [
+                    { label: "A", text: "严格遵循预设目标评价" },
+                    { label: "B", text: "脱离预设目标，关注实际教育效果" },
+                    { label: "C", text: "只评价教学最终成果" },
+                    { label: "D", text: "从四维角度全面评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标游离：抛开原定目标，看重真实效果、非预期生成。<br><br><strong>📚 知识点讲解：</strong>目标游离评价模式的关键在于“游离”二字，评价者要有意识地不受预设目标的干扰，去发现课程实施中所有有价值的实际效果。<br><br><strong>💡 解题思路：</strong>A选项是目标评价的核心；C选项描述不完整；D选项是CIPP模式的特点。题干问目标游离的核心主张，B选项完美对应。`
+            },
+            {
+                type: "单选题",
+                stem: "CIPP课程评价模式的提出者是（ ）",
+                options: [
+                    { label: "A", text: "泰勒" },
+                    { label: "B", text: "斯克里文" },
+                    { label: "C", text: "斯塔弗尔比姆" },
+                    { label: "D", text: "普罗沃斯" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。斯塔弗尔比姆提出CIPP四维评价模式。<br><br><strong>📚 知识点讲解：</strong>斯塔弗尔比姆（Stufflebeam）提出CIPP模式，包含背景（Context）、输入（Input）、过程（Process）、成果（Product）四个维度的全方位评价。<br><br><strong>💡 解题思路：</strong>A泰勒提出目标评价；B斯克里文提出目标游离；D普罗沃斯提出差距评价。识记人物与模式的固定搭配。`
+            },
+            {
+                type: "单选题",
+                stem: "CIPP评价模式的四个维度依次是（ ）",
+                options: [
+                    { label: "A", text: "背景、输入、过程、成果" },
+                    { label: "B", text: "目标、过程、结果、反馈" },
+                    { label: "C", text: "预设、生成、过程、总结" },
+                    { label: "D", text: "标准、差距、实施、改进" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。C=背景、I=输入、P=过程、P=成果，固定顺序。<br><br><strong>📚 知识点讲解：</strong>CIPP四个字母分别对应四个评价维度，顺序不能颠倒，是教招考试中非常经典的识记考点。<br><br><strong>💡 解题思路：</strong>直接根据CIPP的字母缩写对应A选项。B选项无“输入”维度；C选项“预设”“生成”非CIPP术语；D选项是差距评价的要素。`
+            },
+            {
+                type: "单选题",
+                stem: "普罗沃斯创立的课程评价模式是（ ）",
+                options: [
+                    { label: "A", text: "外观评价" },
+                    { label: "B", text: "差距评价" },
+                    { label: "C", text: "自然评价" },
+                    { label: "D", text: "目标游离" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。普罗沃斯—差距评价模式。<br><br><strong>📚 知识点讲解：</strong>普罗沃斯（Provus）提出差距评价模式，核心是寻找理想标准与实际现状之间的差距，并通过后续行动弥补差距。<br><br><strong>💡 解题思路：</strong>A外观评价由斯塔克提出；C自然评价由古巴和林肯提出；D目标游离由斯克里文提出。识记对应关系即可。`
+            },
+            {
+                type: "单选题",
+                stem: "差距评价模式的核心是（ ）",
+                options: [
+                    { label: "A", text: "对照预设目标看达标度" },
+                    { label: "B", text: "寻找理想标准与实际现状的差距" },
+                    { label: "C", text: "只关注课堂生成性效果" },
+                    { label: "D", text: "采用质性描述不做量化" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。差距评价：先定理想标准，再找标准与现实的差距，进而弥补改进。<br><br><strong>📚 知识点讲解：</strong>差距评价模式的核心步骤是“定标准→找差距→补差距”。它将评价视为一个发现和修正不足的过程。<br><br><strong>💡 解题思路：</strong>A选项是目标评价的核心；C选项是目标游离的特点；D选项是自然评价的特点。题干关键词“寻找”和“差距”直接对应B选项。`
+            },
+            {
+                type: "单选题",
+                stem: "斯塔克提出的课程评价模式是（ ）",
+                options: [
+                    { label: "A", text: "自然评价模式" },
+                    { label: "B", text: "差距评价模式" },
+                    { label: "C", text: "外观（应答）评价模式" },
+                    { label: "D", text: "CIPP模式" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。斯塔克—外观/应答评价模式。<br><br><strong>📚 知识点讲解：</strong>斯塔克（Stake）提出外观评价模式，又称应答评价模式。他强调评价应呈现课程的全貌，并回应教师、学生、家长等各方的诉求。<br><br><strong>💡 解题思路：</strong>A自然评价由古巴和林肯提出；B差距评价由普罗沃斯提出；D选项CIPP由斯塔弗尔比姆提出。识记人物与模式的对应关系。`
+            },
+            {
+                type: "单选题",
+                stem: "外观（应答）评价模式的主要特点是（ ）",
+                options: [
+                    { label: "A", text: "只重结果轻过程" },
+                    { label: "B", text: "全面呈现课程全貌，回应各方诉求" },
+                    { label: "C", text: "只看非预期教学效果" },
+                    { label: "D", text: "聚焦弥补教学差距" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。外观评价：兼顾课程外在全貌，回应学生、教师、家长等多方需求。<br><br><strong>📚 知识点讲解：</strong>外观评价注重全景式描述，不仅看预设目标的达成，还关注课程实际运行的全貌，强调评价的多元性和回应性。<br><br><strong>💡 解题思路：</strong>A选项是目标评价的特点；C选项是目标游离的侧重；D选项是差距评价的核心。题干关键词“全貌”“各方诉求”对应外观评价。`
+            },
+            {
+                type: "单选题",
+                stem: "古巴、林肯创立的评价模式是（ ）",
+                options: [
+                    { label: "A", text: "自然质性评价模式" },
+                    { label: "B", text: "目标游离评价模式" },
+                    { label: "C", text: "差距评价模式" },
+                    { label: "D", text: "目标评价模式" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。古巴、林肯—自然（质性）评价模式。<br><br><strong>📚 知识点讲解：</strong>古巴（Guba）和林肯（Lincoln）是自然主义评价的代表人物，他们反对量化评价的霸权，主张在自然真实情境中进行质性描述和判断。<br><br><strong>💡 解题思路：</strong>B目标游离由斯克里文提出；C差距评价由普罗沃斯提出；D目标评价由泰勒提出。识记固定搭配即可。`
+            },
+            {
+                type: "单选题",
+                stem: "自然质性评价模式最突出的特征是（ ）",
+                options: [
+                    { label: "A", text: "标准化量化打分" },
+                    { label: "B", text: "自然真实情境、侧重质性文字描述" },
+                    { label: "C", text: "围绕预设目标评价" },
+                    { label: "D", text: "对比标准找差距" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。自然评价：拒绝刻板量化，在自然真实场景中做质性评价。<br><br><strong>📚 知识点讲解：</strong>自然质性评价强调在不受干预的天然情境中收集信息，用文字、叙事等方式呈现评价结果，关注教育现象的整体性和独特性。<br><br><strong>💡 解题思路：</strong>A选项与自然评价的核心主张相反；C选项是目标评价的特点；D选项是差距评价的特点。B选项完美描述了自然评价的两个关键词：自然情境、质性描述。`
+            },
+            {
+                type: "单选题",
+                stem: "最早、最传统、应用最广泛的课程评价模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价模式" },
+                    { label: "B", text: "目标游离评价模式" },
+                    { label: "C", text: "CIPP评价模式" },
+                    { label: "D", text: "自然评价模式" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。泰勒目标评价是史上第一个经典课程评价模式。<br><br><strong>📚 知识点讲解：</strong>泰勒在“八年研究”中首创的目标评价模式奠定了课程评价领域的基础，后续其他模式都是在批判或修正它的基础上发展起来的。<br><br><strong>💡 解题思路：</strong>根据课程评价的发展历史，目标评价是最早的系统化评价模式。B、C、D都是在目标评价之后出现的改良或替代模式。`
+            },
+            {
+                type: "单选题",
+                stem: "目标评价模式最大的弊端是（ ）",
+                options: [
+                    { label: "A", text: "过于重视教学过程" },
+                    { label: "B", text: "重结果轻过程，忽视课堂生成与个体差异" },
+                    { label: "C", text: "操作简单不易推广" },
+                    { label: "D", text: "评价标准模糊不清" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。只看是否达成预设目标，忽视过程、生成、学生个性。<br><br><strong>📚 知识点讲解：</strong>目标评价的“重结果轻过程”是其致命短板。它不关注教学中的意外收获和创造性表现，对所有学生使用同一把尺子衡量，忽视了学生的个体差异。<br><br><strong>💡 解题思路：</strong>A选项与事实相反，目标评价恰恰不重视过程；C选项错误，目标评价操作简单是其优点；D选项错误，目标评价标准清晰。`
+            },
+            {
+                type: "单选题",
+                stem: "某学校评价教学时，不局限于课前制定的教学目标，更看重学生课堂意外收获和成长，这属于（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "差距评价" },
+                    { label: "D", text: "CIPP评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。不局限预设目标、关注意外收获→目标游离。<br><br><strong>📚 知识点讲解：</strong>目标游离评价正是针对目标评价“唯预设目标论”的缺陷而提出的，它强调重视那些超出教师预期的、对学生发展有价值的教育效果。<br><br><strong>💡 解题思路：</strong>题干关键词“不局限于课前制定的教学目标”“意外收获”是目标游离模式的典型题眼。A选项完全围绕预设目标；C、D选项不强调非预期收获。`
+            },
+            {
+                type: "单选题",
+                stem: "从办学背景、资源投入、教学实施过程、最终育人成果四个方面综合评估学校课程，属于（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "CIPP评价" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。背景、输入、过程、成果→直接对应CIPP。<br><br><strong>📚 知识点讲解：</strong>CIPP模式的四个维度覆盖了教育活动的完整周期：背景评价分析需求，输入评价评估资源，过程评价监控实施，成果评价衡量成效。<br><br><strong>💡 解题思路：</strong>题干中“办学背景、资源投入、实施过程、育人成果”恰好对应CIPP的四个维度。A、B、D均不涵盖这四个方面。`
+            },
+            {
+                type: "单选题",
+                stem: "教育部门先制定理想的课程实施标准，再对比学校实际办学情况，找出不足并督促整改，这是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "差距评价" },
+                    { label: "C", text: "外观评价" },
+                    { label: "D", text: "自然评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。定标准、对比现实、找差距、补不足→差距评价。<br><br><strong>📚 知识点讲解：</strong>差距评价模式的实施步骤就是先设定理想标准，然后测量实际表现，找出两者之间的差距，最后采取措施缩小差距。<br><br><strong>💡 解题思路：</strong>题干完整描述了差距评价的四个核心步骤，是差距评价的典型应用场景。A目标评价不涉及“找差距”；C外观评价关注全貌；D自然评价不强调标准对比。`
+            },
+            {
+                type: "单选题",
+                stem: "评价者深入校园真实场景，不用分数量化，只用文字描述课程实施的真实状态，属于（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "CIPP评价" },
+                    { label: "C", text: "自然质性评价" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。真实自然场景、无量化、文字质性描述→自然评价。<br><br><strong>📚 知识点讲解：</strong>自然质性评价由古巴和林肯倡导，强调在自然情境中通过长期观察、深度访谈等方式收集资料，用叙事性、描述性文字呈现评价结果，反对用数字简化和歪曲教育现实。<br><br><strong>💡 解题思路：</strong>题干关键词“真实场景”“不用分数量化”“文字描述”直接对应自然质性评价的核心特征。A、B、D都或多或少含有量化或预设标准的成分。`
+            },
+            {
+                type: "单选题",
+                stem: "兼顾课程设计、实施、效果全貌，同时倾听教师、学生、家长多方意见开展评价，属于（ ）",
+                options: [
+                    { label: "A", text: "外观应答评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "差距评价" },
+                    { label: "D", text: "自然评价" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。呈现全貌、回应多方诉求→斯塔克外观评价。<br><br><strong>📚 知识点讲解：</strong>外观评价模式强调评价者要像画家一样描绘出课程的全景，同时要“应答”各类利益相关者的关切，收集他们的意见和感受作为评价依据。<br><br><strong>💡 解题思路：</strong>题干中“兼顾全貌”“倾听多方意见”是外观应答评价的核心特征。B目标游离不强调多方意见；C差距评价聚焦标准与现实的差距；D自然评价强调自然情境而非多方回应。`
+            },
+            {
+                type: "单选题",
+                stem: "下列不属于CIPP评价模式维度的是（ ）",
+                options: [
+                    { label: "A", text: "背景评价" },
+                    { label: "B", text: "输入评价" },
+                    { label: "C", text: "目标评价" },
+                    { label: "D", text: "成果评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。CIPP只有：背景、输入、过程、成果，无“目标评价”这一维度。<br><br><strong>📚 知识点讲解：</strong>CIPP四个字母分别代表Context、Input、Process、Product。注意“成果评价”是第二个P（Product），而非目标评价。目标评价是泰勒的模式，不属于CIPP的组成部分。<br><br><strong>💡 解题思路：</strong>A、B、D都是CIPP的标准维度。题干要求选“不属于”的选项，C选项“目标评价”正是不属于CIPP的维度。`
+            },
+            {
+                type: "单选题",
+                stem: "既不严格死守预设目标，也不刻意量化打分，重在还原教育真实面貌的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "自然评价" },
+                    { label: "C", text: "差距评价" },
+                    { label: "D", text: "CIPP评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。还原真实、质性非量化→自然评价。<br><br><strong>📚 知识点讲解：</strong>自然评价反对预设的标准化框架，主张评价者像研究自然现象一样去理解和描述教育现象，强调的是对真实面貌的呈现而非对预定标准的判断。<br><br><strong>💡 解题思路：</strong>题干中“不守预设目标”“不量化”同时否定了目标评价和量化评价的特征，“还原真实面貌”则指向自然评价的质性取向。A、C、D都一定程度依赖预设标准或量化指标。`
+            },
+            {
+                type: "单选题",
+                stem: "目标游离评价模式与目标评价模式最主要的区别是（ ）",
+                options: [
+                    { label: "A", text: "是否进行量化评价" },
+                    { label: "B", text: "是否拘泥于预设教育目标" },
+                    { label: "C", text: "是否关注教学结果" },
+                    { label: "D", text: "是否重视教师评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标评价死守预设目标；目标游离脱离预设目标。<br><br><strong>📚 知识点讲解：</strong>两者最根本的分歧在于如何看待预设目标。泰勒认为目标是评价的灵魂，斯克里文则认为目标可能是评价的牢笼。这一区别是理解两种模式的关键。<br><br><strong>💡 解题思路：</strong>A选项不是主要区别，两者都可以包含量化手段；C选项两者都关注教学结果，只是对“什么结果”的理解不同；D选项非主要区别。B选项精准抓住了两种模式的核心分歧。`
+            },
+            {
+                type: "单选题",
+                stem: "注重全程、全方位、系统性评价，贯穿课程从规划到收尾全过程的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "CIPP评价" },
+                    { label: "C", text: "差距评价" },
+                    { label: "D", text: "外观评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。CIPP是全过程四维综合评价。<br><br><strong>📚 知识点讲解：</strong>CIPP模式覆盖了课程方案从需求分析到成果检验的完整生命周期，是六大模式中最为系统和全面的评价模式。<br><br><strong>💡 解题思路：</strong>A目标评价只看最终结果是否达标；C差距评价主要关注标准与现实之间的缺口；D外观评价主要看外在全貌和回应诉求。B选项CIPP的“全过程、全方位”特点是其独特优势。`
+            },
+            {
+                type: "单选题",
+                stem: "下列哪一种评价模式最适合标准化考试、统一统考评价（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "自然评价" },
+                    { label: "D", text: "外观评价" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。目标评价标准统一、易量化，适合标准化评价。<br><br><strong>📚 知识点讲解：</strong>目标评价的优点在于标准清晰、易于操作和量化比较，这使得它天生适合有明确统一要求的大规模标准化考试评价。<br><br><strong>💡 解题思路：</strong>B目标游离关注非预期效果，与标准化考试的明确目标导向不符；C自然评价反对量化；D外观评价强调多维度、多元性。标准化统考最适合的正是目标评价模式。`
+            },
+            {
+                type: "单选题",
+                stem: "关注课程非预期效果、隐性教育价值的评价模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "差距评价" },
+                    { label: "D", text: "CIPP评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标游离专门看重非预期、隐性、生成性效果。<br><br><strong>📚 知识点讲解：</strong>目标游离评价最独特的贡献就是打开了对教育“副产品”的关注。斯克里文认为，这些非预期的收获有时比预期的目标更有价值。<br><br><strong>💡 解题思路：</strong>A目标评价被预设目标束缚，容易忽视隐性效果；C差距评价关注标准与现实的差距；D选项CIPP虽然全面，但不以“非预期”为核心特色。题干关键词“非预期效果”是目标游离的专属标签。`
+            },
+            {
+                type: "单选题",
+                stem: "差距评价模式的实施步骤核心是（ ）",
+                options: [
+                    { label: "A", text: "定目标—教—评" },
+                    { label: "B", text: "定标准—找差距—补差距" },
+                    { label: "C", text: "看过程—看生成—做总结" },
+                    { label: "D", text: "入情境—做描述—下结论" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。差距评价固定流程：设标准→找差距→改差距。<br><br><strong>📚 知识点讲解：</strong>普罗沃斯的差距评价模式是一个标准驱动的问题解决模式。它不满足于判断达标与否，而是要求诊断差距的成因并采取改进措施。<br><br><strong>💡 解题思路：</strong>A选项是泰勒目标评价的流程；C选项是目标游离的侧重点；D选项是自然评价的方法。B选项精准概括了差距评价的核心三步。`
+            },
+            {
+                type: "单选题",
+                stem: "外观评价模式又被称作（ ）",
+                options: [
+                    { label: "A", text: "目标游离模式" },
+                    { label: "B", text: "应答评价模式" },
+                    { label: "C", text: "质性评价模式" },
+                    { label: "D", text: "四维评价模式" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。外观评价别称应答评价模式。<br><br><strong>📚 知识点讲解：</strong>斯塔克的外观评价强调对各方诉求的“应答”，因此也称为应答评价模式。两个名称指代的是同一个理论。<br><br><strong>💡 解题思路：</strong>A目标游离是斯克里文的模式；C质性评价通常指自然评价；D四维评价指的是CIPP模式。外观=应答，是教招中的识记考点。`
+            },
+            {
+                type: "单选题",
+                stem: "排斥机械量化，主张在自然原生态环境中开展课程评价的是（ ）",
+                options: [
+                    { label: "A", text: "CIPP" },
+                    { label: "B", text: "目标评价" },
+                    { label: "C", text: "自然质性评价" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。自然评价核心：原生态、去量化、质性研究。<br><br><strong>📚 知识点讲解：</strong>自然质性评价是六大模式中最强调评价情境的自然性和方法的质性化的模式。它反对将复杂的教育现象简化为冷冰冰的数字。<br><br><strong>💡 解题思路：</strong>A选项CIPP和D选项差距评价都或多或少接受量化方法；B选项目标评价完全拥抱量化。只有C选项旗帜鲜明地主张“自然原生态”和“排斥机械量化”。`
+            },
+            {
+                type: "单选题",
+                stem: "泰勒课程原理的四个步骤中，居于首位的是（ ）",
+                options: [
+                    { label: "A", text: "选择学习经验" },
+                    { label: "B", text: "确定教育目标" },
+                    { label: "C", text: "组织学习经验" },
+                    { label: "D", text: "评价学习结果" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。泰勒原理：确定目标是核心第一步。<br><br><strong>📚 知识点讲解：</strong>泰勒的课程开发四步骤被称为“目标模式”，因为一切从确定目标开始。目标一旦确定，后续的选择经验、组织经验和评价结果都围绕目标展开。<br><br><strong>💡 解题思路：</strong>泰勒原理的四个步骤有严格的逻辑顺序：确定目标→选择经验→组织经验→评价结果。选项B是第一步，也是核心步骤。`
+            },
+            {
+                type: "单选题",
+                stem: "某教师评课只看本节课是否完成课前设定的三维教学目标，不关注课堂临时生成，属于（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离评价" },
+                    { label: "C", text: "自然评价" },
+                    { label: "D", text: "外观评价" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。只对标课前预设目标，无视生成→典型目标评价。<br><br><strong>📚 知识点讲解：</strong>目标评价模式在实际评课中的表现就是“唯目标论”——对照课前教案中设定的目标逐条检查是否完成，课堂中发生的超出预设的教学事件则被忽视。<br><br><strong>💡 解题思路：</strong>题干中“只看是否完成课前设定的三维教学目标”“不关注生成”直接对应目标评价“重预设、轻生成”的特点。B选项恰恰相反，是关注生成的。`
+            },
+            {
+                type: "单选题",
+                stem: "下列人物与评价模式匹配错误的是（ ）",
+                options: [
+                    { label: "A", text: "泰勒—目标评价" },
+                    { label: "B", text: "斯克里文—目标游离" },
+                    { label: "C", text: "斯塔弗尔比姆—差距评价" },
+                    { label: "D", text: "斯塔克—外观评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。斯塔弗尔比姆对应CIPP，不是差距评价。<br><br><strong>📚 知识点讲解：</strong>人物与模式的对应是教招考试的基础考点：泰勒→目标评价；斯克里文→目标游离；斯塔弗尔比姆→CIPP；普罗沃斯→差距评价；斯塔克→外观评价。<br><br><strong>💡 解题思路：</strong>题干要求选“匹配错误”的选项。A、B、D匹配正确；C选项将斯塔弗尔比姆错配给差距评价（由普罗沃斯提出），故选C。`
+            },
+            {
+                type: "单选题",
+                stem: "兼顾课程外在表现、各方人员诉求，不单一用分数评判的是（ ）",
+                options: [
+                    { label: "A", text: "外观评价" },
+                    { label: "B", text: "目标评价" },
+                    { label: "C", text: "差距评价" },
+                    { label: "D", text: "自然评价" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。外观评价重全貌、多方应答。<br><br><strong>📚 知识点讲解：</strong>外观评价的“外观”不是肤浅的表面评价，而是指对课程全貌的描绘；“应答”则是指对各方相关人员的关切给予回应，不采用单一的量化分数下定论。<br><br><strong>💡 解题思路：</strong>题干中“外在表现”“各方诉求”“不单用分数”分别对应外观评价的三个要点。B目标评价往往用目标达成度来评判；C差距评价用差距大小评判；D自然评价侧重质性描述。`
+            },
+            {
+                type: "单选题",
+                stem: "把课程评价分为计划差距、实施差距、成果差距的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "差距评价" },
+                    { label: "C", text: "CIPP" },
+                    { label: "D", text: "自然评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。差距评价全程围绕各类差距展开。<br><br><strong>📚 知识点讲解：</strong>普罗沃斯的差距评价模式将课程实施中可能出现的差距细分为不同类型，通过识别这些具体差距来诊断课程方案的问题所在。<br><br><strong>💡 解题思路：</strong>题干中“计划差距、实施差距、成果差距”的核心词就是“差距”，直接对应差距评价模式。A、C、D的评价模式分类中不使用“差距”这一概念框架。`
+            },
+            {
+                type: "单选题",
+                stem: "更适合艺术、人文类课程，注重真实体验和文字描述的评价模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "自然质性评价" },
+                    { label: "C", text: "CIPP" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。人文艺术适合非量化、重体验的自然评价。<br><br><strong>📚 知识点讲解：</strong>自然质性评价强调对教育经验的深度描述和理解，这与艺术、人文学科重视个体体验、情感表达和意义建构的特点高度契合。<br><br><strong>💡 解题思路：</strong>A目标评价的量化取向不适合侧重体验的艺术课程；C选项CIPP和D选项差距评价也偏重量化或标准化。B选项的自然评价倡导“重体验、文字描述”，最适合人文艺术领域。`
+            },
+            {
+                type: "单选题",
+                stem: "CIPP模式中，对学校师资、经费、设备等办学资源的评价属于（ ）",
+                options: [
+                    { label: "A", text: "背景评价" },
+                    { label: "B", text: "输入评价" },
+                    { label: "C", text: "过程评价" },
+                    { label: "D", text: "成果评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。输入评价=对人力、物力、财力等资源投入的评价。<br><br><strong>📚 知识点讲解：</strong>CIPP模式中的输入评价（Input Evaluation）专门评估实现目标所需的各种资源条件，包括师资配备、经费预算、教学设备、课程材料等是否充分和有效。<br><br><strong>💡 解题思路：</strong>A背景评价关注需求和目标设定的合理性；C过程评价关注教学实施情况；D成果评价关注最终成效。师资、经费、设备属于办学资源，对应输入评价。`
+            },
+            {
+                type: "单选题",
+                stem: "打破“唯目标论”，认为评价不应被预设目标束缚的学者是（ ）",
+                options: [
+                    { label: "A", text: "泰勒" },
+                    { label: "B", text: "斯克里文" },
+                    { label: "C", text: "斯塔弗尔比姆" },
+                    { label: "D", text: "普罗沃斯" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。斯克里文提出目标游离，反对死守预设目标。<br><br><strong>📚 知识点讲解：</strong>斯克里文是“唯目标论”最有力的批判者。他认为预设目标可能遗漏甚至遮蔽教育实践中真正有价值的成果，因此评价者需要从目标中“游离”出来。<br><br><strong>💡 解题思路：</strong>A泰勒是目标评价的提出者，恰恰坚持唯目标论；C斯塔弗尔比姆提出CIPP，超越了目标但未反对目标；D普罗沃斯提出差距评价。直接批判“唯目标论”的是斯克里文。`
+            },
+            {
+                type: "单选题",
+                stem: "只重结果、忽视过程与生成，刻板僵化是哪一模式的缺点（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离" },
+                    { label: "C", text: "外观评价" },
+                    { label: "D", text: "自然评价" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。目标评价固有缺点：重果轻过程、僵化刻板。<br><br><strong>📚 知识点讲解：</strong>目标评价模式的缺点与优点是一体两面的：它标准明确、易于操作，但正因其过于依赖预设的固定目标，导致灵活性不足，无法应对教学过程中的复杂性和动态生成。<br><br><strong>💡 解题思路：</strong>题干描述的缺点正是教材中对目标评价模式的经典批评。B目标游离正是为了纠正这一缺点而提出的；C外观评价和D自然评价都不具备这一缺点。`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于质性评价范畴的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "自然质性评价" },
+                    { label: "C", text: "CIPP量化评价" },
+                    { label: "D", text: "差距打分评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。自然评价是典型质性评价，其余多含量化成分。<br><br><strong>📚 知识点讲解：</strong>质性评价是与量化评价相对的评价取向，强调用文字、图片等非数字方式描述教育现象。自然质性评价是质性评价在课程领域的代表模式。<br><br><strong>💡 解题思路：</strong>A目标评价以量化达标判断为主；C选项和D选项名称中已带有“量化”“打分”字样。B选项自然质性评价明确以质性描述为特征。`
+            },
+            {
+                type: "单选题",
+                stem: "评价者不干预教学现场，完全融入真实课堂情境开展观察记录，属于（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "差距评价" },
+                    { label: "C", text: "自然评价" },
+                    { label: "D", text: "CIPP评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。不干预、真实情境、观察记录→自然评价。<br><br><strong>📚 知识点讲解：</strong>自然评价要求评价者像人类学家一样进入教育现场，在不干扰正常教学的前提下进行参与式观察，用详细记录的方式收集资料。<br><br><strong>💡 解题思路：</strong>题干中“不干预”“融入真实情境”“观察记录”是自然评价方法论的典型描述。A、B、D的评价方式都不以“自然融入、不做干预”为核心要求。`
+            },
+            {
+                type: "单选题",
+                stem: "六大课程评价模式中，兼具全面性、系统性、全程性的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "CIPP评价" },
+                    { label: "C", text: "外观评价" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。CIPP四维覆盖背景、投入、过程、结果，最全面系统。<br><br><strong>📚 知识点讲解：</strong>CIPP模式是六大模式中结构最完整、覆盖面最广的评价模式。它从需求分析到成果检验形成闭环，兼顾形成性评价和总结性评价的功能。<br><br><strong>💡 解题思路：</strong>A目标评价只重结果；C外观评价虽然全面但系统性不如CIPP；D差距评价专注于不足的改进。题干要求“兼具全面性、系统性、全程性”，CIPP是唯一满足全部三项的模式。`
+            }
+        ];
+        
+        const APP_ID = 'six_eval_modes_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '教招常考6大课程评价模式';
+            const content = `
+                <h3>一、必考3个（出题最多，必须熟记）</h3>
+                <p><strong>1. 目标评价模式</strong></p>
+                <ul><li>人物：<strong>泰勒</strong>（课程评价之父）</li><li>核心：先定<strong>预设目标</strong>，评价只看<strong>有没有达成目标</strong></li><li>特点：<strong>重结果、轻过程</strong>，标准固定、好量化</li><li>题眼：围绕目标、对照目标、标准化、重结果</li></ul>
+                <p><strong>2. 目标（目的）游离评价模式</strong></p>
+                <ul><li>人物：<strong>斯克里文</strong></li><li>核心：<strong>抛开预设目标</strong>，只看<strong>实际教育效果、非预期收获</strong></li><li>特点：<strong>重过程、重生成</strong>，关注意外收获</li><li>题眼：脱离原定目标、看实效、非预期、生成性</li></ul>
+                <p><strong>3. CIPP评价模式</strong></p>
+                <ul><li>人物：<strong>斯塔弗尔比姆</strong></li><li>核心：四维全方位评价，<strong>C背景、I输入、P过程、P成果</strong></li><li>特点：全程、全面、系统评价</li><li>题眼：背景、输入、过程、成果 四个词同时出现</li></ul>
+
+                <h3>二、次常考3个（偶尔考，识记即可）</h3>
+                <p><strong>4. 差距评价模式</strong></p>
+                <ul><li>人物：<strong>普罗沃斯</strong></li><li>核心：找<strong>标准</strong>和<strong>实际</strong>之间的<strong>差距</strong>，弥补差距</li><li>口诀：普罗找差距，对标补不足</li></ul>
+                <p><strong>5. 外观（应答）评价模式</strong></p>
+                <ul><li>人物：<strong>斯塔克</strong></li><li>核心：看<strong>表象、外在全貌</strong>，回应所有人的诉求</li><li>关键词：全貌、外在、应答各方需求</li></ul>
+                <p><strong>6. 自然（质性）评价模式</strong></p>
+                <ul><li>人物：<strong>古巴、林肯</strong></li><li>核心：不量化，<strong>自然情景、质性描述</strong>，强调人文、真实体验</li><li>关键词：自然、质性、不量化、真实情境</li></ul>
+
+                <h3>三、一页总表（考前直接默写）</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>评价模式</th><th>代表人物</th><th>核心一句话</th></tr></thead>
+                    <tbody>
+                        <tr><td>目标评价</td><td>泰勒</td><td>围着预设目标，重结果轻过程</td></tr>
+                        <tr><td>目标游离</td><td>斯克里文</td><td>抛开目标，看实际效果与生成</td></tr>
+                        <tr><td>CIPP</td><td>斯塔弗尔比姆</td><td>背景、输入、过程、成果四维评价</td></tr>
+                        <tr><td>差距评价</td><td>普罗沃斯</td><td>找标准与现实的差距</td></tr>
+                        <tr><td>外观/应答</td><td>斯塔克</td><td>看全貌、外在表现，回应需求</td></tr>
+                        <tr><td>自然质性</td><td>古巴、林肯</td><td>自然情境、质性描述、不量化</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>四、做题秒杀口诀</h3>
+                <ul>
+                    <li>看见<strong>围绕预设目标、重结果</strong> → 泰勒 目标评价</li>
+                    <li>看见<strong>脱离目标、看实际、非预期</strong> → 斯克里文 目标游离</li>
+                    <li>看见<strong>背景、输入、过程、成果</strong> → CIPP</li>
+                    <li>看见<strong>找差距、对标</strong> → 差距评价</li>
+                    <li>看见<strong>全貌、外在、应答</strong> → 斯塔克 外观评价</li>
+                    <li>看见<strong>自然、质性、不量化</strong> → 自然评价</li>
+                </ul>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

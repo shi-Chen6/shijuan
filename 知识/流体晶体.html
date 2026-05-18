@@ -1,0 +1,1910 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智力理论刷题 - 流体与晶体智力</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 顶部区域 */
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* 内容区域 */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+
+        /* 知识点学习模块 */
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .knowledge-page.hidden {
+            display: none;
+        }
+
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+
+        /* 选项区域 */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        /* 解析区域 */
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 0;
+            margin-top: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 800px; }
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .analysis-content strong {
+            color: var(--text-primary);
+        }
+
+        .knowledge-point {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .knowledge-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mnemonic {
+            margin-top: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .mnemonic-title {
+            font-weight: 600;
+            color: #ad6800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mnemonic-text {
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* 底部操作区域 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 答题卡面板 */
+        .sheet-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sheet-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .sheet-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            background: var(--bg-card);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            z-index: 400;
+            transform: translate(-50%, 100%);
+            transition: transform 0.3s ease;
+            max-height: 70vh;
+            overflow-y: auto;
+            width: min(430px, 100%);
+        }
+
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .sheet-number {
+            font-size: 16px;
+        }
+
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        /* 历史记录面板 */
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .history-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            background: var(--bg-card);
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            z-index: 400;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .history-panel.show {
+            transform: translateX(0);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .clear-history {
+            padding: 6px 12px;
+            background: #fff2f0;
+            color: var(--error-color);
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .history-item:active {
+            transform: scale(0.98);
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .history-stat {
+            text-align: center;
+        }
+
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        /* 完成页面 */
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+
+        /* 工具提示 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 响应式调整 */
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部区域 -->
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()">
+                        <i class="fas fa-arrow-left"></i>
+                    </div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">20</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">流体与晶体智力学习</div>
+                        <div class="progress-text">卡特尔智力理论 · 教招必考</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()">
+                        <i class="fas fa-th-large"></i>
+                    </div>
+                    <div class="icon-btn" onclick="toggleHistory()">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)">
+                        <i class="fas fa-font"></i>-
+                    </div>
+                    <div class="icon-btn" onclick="changeFontSize(1)">
+                        <i class="fas fa-font"></i>+
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 5%"></div>
+            </div>
+        </header>
+
+        <!-- 中部内容区域 -->
+        <main class="content-area" id="contentArea">
+            <!-- 知识点学习页面 -->
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <!-- 题目内容将通过JS动态插入 -->
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <!-- 底部操作区域 -->
+        <footer class="footer">
+            <div class="footer-content" id="footerContent"></div>
+        </footer>
+
+        <!-- 答题卡面板 -->
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid">
+                <!-- 答题卡项目将通过JS动态插入 -->
+            </div>
+        </div>
+
+        <!-- 历史记录面板 -->
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- 历史记录将通过JS动态插入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 题库数据
+
+        const questions = [
+            // 单选题
+
+            {
+                type: "单选题",
+                stem: "提出流体智力和晶体智力划分的心理学家是（ ）",
+                options: [
+                    { label: "A", text: "皮亚杰" },
+                    { label: "B", text: "维果茨基" },
+                    { label: "C", text: "卡特尔" },
+                    { label: "D", text: "奥苏贝尔" }
+                ],
+                answer: 2,
+                analysis: "<strong>解析：</strong>美国心理学家<strong>卡特尔（Raymond Cattell）</strong>于1963年提出了流体智力和晶体智力的双因素理论。<br><br><strong>补充说明：</strong>斯皮尔曼提出智力二因素论（G因素和S因素）；瑟斯顿提出群因素论；吉尔福特提出三维智力结构模型。"
+            },
+            {
+                type: "单选题",
+                stem: "依赖先天遗传、生理禀赋，不依赖后天学习的是（ ）",
+                options: [
+                    { label: "A", text: "晶体智力" },
+                    { label: "B", text: "流体智力" },
+                    { label: "C", text: "情绪智力" },
+                    { label: "D", text: "多元智力" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong><strong>流体智力（Fluid Intelligence）</strong>主要依赖于神经生理结构，是先天的、依赖于大脑神经通路的功能，较少受教育和文化影响。<br><br><strong>典型表现：</strong>反应速度、短时记忆、图形推理、快速适应新环境的能力。"
+            },
+            {
+                type: "单选题",
+                stem: "流体智力发展达到顶峰的年龄大致是（ ）",
+                options: [
+                    { label: "A", text: "10 岁左右" },
+                    { label: "B", text: "20～30 岁" },
+                    { label: "C", text: "40 岁左右" },
+                    { label: "D", text: "老年时期" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>研究表明，流体智力在<strong>20～30岁达到顶峰</strong>，之后随年龄增长逐渐下降。这与神经系统的发育和衰老过程一致。<br><br><strong>对比：</strong>晶体智力则持续增长，直到老年期才开始缓慢下降。"
+            },
+            {
+                type: "单选题",
+                stem: "词汇量、常识储备、人生阅历属于（ ）",
+                options: [
+                    { label: "A", text: "流体智力" },
+                    { label: "B", text: "晶体智力" },
+                    { label: "C", text: "空间智力" },
+                    { label: "D", text: "运动智力" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong><strong>晶体智力（Crystallized Intelligence）</strong>是通过学习、经验和实践积累起来的知识和技能。<br><br><strong>包括：</strong>词汇量、常识、专业知识、语言能力、数学技能等。这些能力会随着教育和经验的增加而不断提高。"
+            },
+            {
+                type: "单选题",
+                stem: "下列属于流体智力的是（ ）",
+                options: [
+                    { label: "A", text: "语文阅读理解" },
+                    { label: "B", text: "瞬时记忆、图形推理" },
+                    { label: "C", text: "历史知识储备" },
+                    { label: "D", text: "生活处世经验" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>流体智力主要涉及<strong>快速处理新信息、抽象推理和问题解决</strong>的能力。<br><br><strong>流体智力活动：</strong>瞬时记忆、图形推理、快速反应、空间想象、逻辑推理。<br><strong>晶体智力活动：</strong>阅读理解、知识储备、经验运用、语言理解。"
+            },
+            {
+                type: "单选题",
+                stem: "关于晶体智力发展趋势，说法正确的是（ ）",
+                options: [
+                    { label: "A", text: "30 岁后迅速下降" },
+                    { label: "B", text: "终身缓慢上升" },
+                    { label: "C", text: "少年时期达到顶峰" },
+                    { label: "D", text: "完全由遗传决定" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>晶体智力是<strong>通过后天学习和经验积累获得</strong>的，因此会随着年龄增长和经验丰富而<strong>终身缓慢上升</strong>，直到老年期才可能略有下降。<br><br><strong>实际表现：</strong>许多领域的专家（医生、教师、工程师）在中老年时期达到职业巅峰，正是晶体智力积累的结果。"
+            },
+            {
+                type: "单选题",
+                stem: "人到老年，下列哪项能力会明显衰退（ ）",
+                options: [
+                    { label: "A", text: "专业知识" },
+                    { label: "B", text: "人生阅历" },
+                    { label: "C", text: "快速记忆、反应速度" },
+                    { label: "D", text: "语言常识" }
+                ],
+                answer: 2,
+                analysis: "<strong>解析：</strong>随着年龄增长，<strong>神经系统功能衰退</strong>，导致流体智力相关的能力（快速记忆、反应速度、信息处理速度）明显下降。<br><br><strong>而晶体智力</strong>（专业知识、阅历、常识）通常保持稳定甚至继续增长，这也是为什么老年人往往更有智慧的原因。"
+            },
+            {
+                type: "单选题",
+                stem: "受学校教育、后天学习影响最大的是（ ）",
+                options: [
+                    { label: "A", text: "流体智力" },
+                    { label: "B", text: "晶体智力" },
+                    { label: "C", text: "两者一样" },
+                    { label: "D", text: "无法判断" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>晶体智力直接来源于<strong>学校教育、文化熏陶和实践经验</strong>。教育水平越高，晶体智力发展越好。<br><br><strong>流体智力</strong>虽然也受教育环境影响，但更多取决于先天神经生理基础，受教育的直接影响较小。"
+            },
+            {
+                type: "单选题",
+                stem: "下列说法错误的是（ ）",
+                options: [
+                    { label: "A", text: "流体智力随生理衰老而下降" },
+                    { label: "B", text: "晶体智力靠后天经验积累" },
+                    { label: "C", text: "流体智力终身持续上升" },
+                    { label: "D", text: "中年人学识比青年更丰富是晶体智力发展" }
+                ],
+                answer: 2,
+                analysis: "<strong>解析：</strong>流体智力的发展轨迹是<strong>倒U型曲线</strong>：童年快速上升，20-30岁达到顶峰，之后逐渐下降。不是终身持续上升。<br><br><strong>记忆口诀：</strong>流体先升后降，晶体持续上升。"
+            },
+            {
+                type: "单选题",
+                stem: "老师几十年教学经验越来越丰富，体现了哪种智力（ ）",
+                options: [
+                    { label: "A", text: "流体智力" },
+                    { label: "B", text: "晶体智力" },
+                    { label: "C", text: "一般智力" },
+                    { label: "D", text: "特殊智力" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>教学经验是<strong>通过长期实践和反思积累的专业知识与技能</strong>，属于典型的晶体智力。<br><br><strong>教师职业发展：</strong>新手教师→熟练教师→专家教师，这一过程主要体现晶体智力的增长，而流体智力可能已经开始下降。"
+            },
+            // 判断题
+
+            {
+                type: "判断题",
+                stem: "流体智力主要由后天学习和教育决定。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>错误。流体智力主要由<strong>先天遗传和生理禀赋</strong>决定，受教育和文化影响较小。<br><br><strong>证据：</strong>流体智力在不同文化背景下表现出较高的一致性，且与神经传导速度、脑容量等生理指标相关。"
+            },
+            {
+                type: "判断题",
+                stem: "晶体智力是后天通过学习、阅历逐步积累形成的。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: "<strong>解析：</strong>正确。晶体智力本质上是<strong>文化知识、技能和经验的结晶</strong>，完全依赖于后天的学习和社会化过程。<br><br><strong>教育意义：</strong>学校教育的主要目标就是发展学生的晶体智力，为其终身学习奠定基础。"
+            },
+            {
+                type: "判断题",
+                stem: "流体智力在 20～30 岁达到最高峰。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: "<strong>解析：</strong>正确。多项纵向研究证实，流体智力在20多岁达到顶峰，大约在23-30岁之间开始缓慢下降。<br><br><strong>个体差异：</strong>具体峰值年龄因人而异，但总体趋势一致。"
+            },
+            {
+                type: "判断题",
+                stem: "晶体智力随着年龄增长，成年后就开始快速下降。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>错误。晶体智力在成年后<strong>继续增长</strong>，通常在60岁左右才开始缓慢下降，且下降速度远慢于流体智力。<br><br><strong>实际应用：</strong>许多职业（如医生、律师、学者）的从业者可以在高龄时仍保持高水平的工作能力，这得益于晶体智力的稳定性。"
+            },
+            {
+                type: "判断题",
+                stem: "快速反应、瞬间记忆属于流体智力。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: "<strong>解析：</strong>正确。快速反应、瞬间记忆、图形推理、抽象思维等都是<strong>流体智力的典型表现</strong>，它们依赖于神经系统的处理速度和效率。<br><br><strong>神经机制：</strong>这些能力与大脑前额叶皮层的功能密切相关。"
+            },
+            {
+                type: "判断题",
+                stem: "词汇理解、文史常识属于晶体智力。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: "<strong>解析：</strong>正确。词汇理解、文史常识、专业知识等都是<strong>通过学习和记忆获得的知识结晶</strong>，属于晶体智力范畴。<br><br><strong>测量方法：</strong>韦氏智力测验中的词汇、常识、算术等分量表主要测量晶体智力。"
+            },
+            {
+                type: "判断题",
+                stem: "老年人记忆力变差，主要是晶体智力衰退。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>错误。老年人记忆力变差是<strong>流体智力衰退</strong>的表现，特别是工作记忆和处理速度的下降。<br><br><strong>补偿策略：</strong>老年人可以通过利用丰富的晶体智力（经验、策略）来补偿流体智力的衰退。"
+            },
+            {
+                type: "判断题",
+                stem: "流体智力受教育程度影响非常大。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>错误。流体智力受教育影响<strong>相对较小</strong>，而晶体智力受教育影响非常大。<br><br><strong>研究证据：</strong>控制教育水平后，不同群体的流体智力差异仍然存在；但晶体智力差异则显著缩小。"
+            },
+            {
+                type: "判断题",
+                stem: "晶体智力一辈子都有可能增长。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: "<strong>解析：</strong>正确。只要保持学习和接触新事物，晶体智力<strong>在一生中都可以继续增长</strong>，甚至在退休后仍能通过学习新技能而提升。<br><br><strong>终身学习：</strong>现代老年教育正是基于晶体智力可塑性的理念。"
+            },
+            {
+                type: "判断题",
+                stem: "卡特尔提出多元智能理论。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: "<strong>解析：</strong>错误。<strong>卡特尔提出流体-晶体智力理论</strong>；<strong>加德纳（Howard Gardner）</strong>提出多元智能理论（语言、逻辑-数学、空间、音乐、身体-动觉、人际、内省、自然观察等8种智能）。<br><br><strong>区分要点：</strong>卡特尔→两种智力；加德纳→多种智能。"
+            }
+        ];
+
+        // 应用状态
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        // 初始化
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '卡特尔：流体智力 & 晶体智力（教招必考 超好记）';
+            const content = `
+                <h3>一、提出者</h3>
+                <p><strong>卡特尔</strong>将智力分为两类：流体智力、晶体智力。</p>
+
+                <h3>二、流体智力</h3>
+                <p><strong>定义：</strong>天生遗传、与生俱来的智力，依赖生理发育、大脑先天禀赋，不依赖后天学习和经验。</p>
+                <p><strong>包含能力：</strong>知觉速度、瞬时记忆、反应速度、图形推理、逻辑敏捷度、运算速度。</p>
+                <p><strong>发展规律（必考）：</strong><span class="highlight">青少年快速上升 → 20～30 岁达到顶峰 → 之后随年龄增长逐渐下降</span></p>
+                <p><strong>特点：</strong>先天、生理、随衰老减退。</p>
+                <p><strong>例子：</strong>快速记一串数字、看图找规律、临场反应、做题反应快慢。</p>
+
+                <h3>三、晶体智力</h3>
+                <p><strong>定义：</strong>后天学习、教育、阅历、知识积累形成的智力，靠后天努力和生活经验沉淀。</p>
+                <p><strong>包含能力：</strong>词汇理解、常识知识、语言表达、专业技能、人生阅历、文史素养。</p>
+                <p><strong>发展规律（必考）：</strong><span class="highlight">一生持续上升，成年后还能慢慢增长，中老年也不会明显下降</span></p>
+                <p><strong>特点：</strong>后天、习得、越老越吃香。</p>
+                <p><strong>例子：</strong>成语积累、历史地理常识、教学经验、为人处世智慧、专业知识。</p>
+
+                <h3>四、核心对比（必背表格）</h3>
+                <table class="knowledge-table">
+                    <thead>
+                        <tr>
+                            <th>维度</th>
+                            <th>流体智力</th>
+                            <th>晶体智力</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>来源</td>
+                            <td>先天遗传、生理</td>
+                            <td>后天学习、经验积累</td>
+                        </tr>
+                        <tr>
+                            <td>依赖</td>
+                            <td>大脑生理成熟</td>
+                            <td>教育、阅历、练习</td>
+                        </tr>
+                        <tr>
+                            <td>发展趋势</td>
+                            <td>20-30 岁顶峰，之后下降</td>
+                            <td>终身缓慢上升，老年不衰退</td>
+                        </tr>
+                        <tr>
+                            <td>受教育影响</td>
+                            <td>影响很小</td>
+                            <td>影响很大</td>
+                        </tr>
+                        <tr>
+                            <td>衰退情况</td>
+                            <td>年老明显衰退</td>
+                            <td>年老保持甚至增长</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>五、经典通俗例子</h3>
+                <p><strong>年轻人：</strong>反应快、记性好（流体智力强）</p>
+                <p><strong>老年人：</strong>反应变慢、记性变差（流体下降），但学识渊博、经验老道（晶体智力仍强）</p>
+
+                <h3>六、极简口诀</h3>
+                <p>流体天生靠大脑，三十之后往下掉；<br>晶体后天靠学习，一辈子都在涨不低。</p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()">
+                    <i class="fas fa-play-circle"></i>
+                    我已学完，开始刷题
+                </button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 渲染题目
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `
+                <div class="question-card">
+                    <span class="question-type">${q.type}</span>
+                    <div class="question-stem">${q.stem}</div>
+            `;
+
+            // 如果有图片，显示图片
+
+            if (q.image) {
+                html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            }
+
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+
+                html += `
+                    <div class="${classes.join(' ')}" onclick="selectOption(${idx})">
+                        <div class="option-label">${opt.label}</div>
+                        <div class="option-text">${opt.text}</div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+
+            // 显示解析（如果已作答）
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">
+                                📝 答案解析
+                                <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">
+                                    ${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}
+                                </span>
+                            </div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">
+                            ${q.analysis}
+                            <div class="knowledge-point">
+                                <div class="knowledge-title">💡 知识点讲解</div>
+                                <div><strong>流体智力：</strong>先天遗传，依赖神经生理结构，20-30岁达顶峰，之后下降。包括：快速反应、瞬时记忆、图形推理、抽象思维。</div>
+                                <div style="margin-top: 8px;"><strong>晶体智力：</strong>后天学习，依赖经验积累，终身缓慢上升。包括：词汇量、专业知识、生活阅历、文化常识。</div>
+                            </div>
+                            <div class="mnemonic">
+                                <div class="mnemonic-title">🎯 极速记忆口诀</div>
+                                <div class="mnemonic-text">
+                                    流体天生靠大脑，三十之后往下掉；<br>
+                                    晶体后天靠学习，一辈子都在涨不低。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 如果是最后一题且已完成
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                
+                // 保存到历史记录
+
+                saveToHistory(correctCount, accuracy);
+                
+                html = `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <div class="stat-value">${correctCount}/${questions.length}</div>
+                                <div class="stat-label">答对题数</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${accuracy}%</div>
+                                <div class="stat-label">正确率</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            
+            // 渲染数学公式
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // 选择选项
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            
+            // 显示提示
+
+            const q = questions[currentIndex];
+            const isCorrect = idx === q.answer;
+            showToast(isCorrect ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        // 切换解析显示
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                icon.classList.remove('expanded');
+            }
+        }
+
+        // 上一题
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        // 下一题
+
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        // 更新头部信息
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        // 更新导航按钮
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                    上一题
+                </button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>
+                    下一题
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+        }
+
+        // 字体大小调整
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        // 答题卡相关
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            
+            if (panel.classList.contains('show')) {
+                overlay.classList.remove('show');
+                panel.classList.remove('show');
+            } else {
+                overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet();
+            }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) {
+                        statusClass = 'correct';
+                        statusText = '正确';
+                    } else {
+                        statusClass = 'wrong';
+                        statusText = '错误';
+                    }
+                }
+                
+                if (index === currentIndex) {
+                    statusClass += ' current';
+                }
+                
+                // 根据筛选条件决定是否显示
+
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                
+                html += `
+                    <div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})">
+                        <div class="sheet-number">${index + 1}</div>
+                        <div class="sheet-status">${statusText}</div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            
+            // 更新按钮状态
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        // 历史记录相关
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            
+            if (panel.classList.contains('show')) {
+                overlay.classList.remove('show');
+                panel.classList.remove('show');
+            } else {
+                overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory();
+            }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            
+            if (history.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div>暂无历史记录</div>
+                        <div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            history.forEach((record, index) => {
+                const date = new Date(record.timestamp);
+                const dateStr = date.toLocaleDateString('zh-CN', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                html += `
+                    <div class="history-item">
+                        <div class="history-date">${dateStr}</div>
+                        <div class="history-stats">
+                            <div class="history-stat">
+                                <div class="history-value">${record.correctCount}/${record.totalCount}</div>
+                                <div class="history-label">答对题数</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-value">${record.accuracy}%</div>
+                                <div class="history-label">正确率</div>
+                            </div>
+                        </div>
+                        <div class="history-actions">
+                            <button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button>
+                            <button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const record = {
+                timestamp: new Date().getTime(),
+                totalCount: questions.length,
+                correctCount: correctCount,
+                accuracy: accuracy,
+                answers: [...answers]
+            };
+            
+            history.unshift(record); // 添加到开头
+
+            if (history.length > 50) history.pop(); // 最多保存50条
+
+            
+            localStorage.setItem('fluid_quiz_history', JSON.stringify(history));
+        }
+
+        function getHistory() {
+            const saved = localStorage.getItem('fluid_quiz_history');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = [...record.answers];
+                currentIndex = 0;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                history.splice(index, 1);
+                localStorage.setItem('fluid_quiz_history', JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除');
+            }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？此操作不可恢复。')) return;
+            
+            localStorage.removeItem('fluid_quiz_history');
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        // 数据持久化
+
+        function saveAnswers() {
+            localStorage.setItem('fluid_quiz_answers', JSON.stringify({
+                currentIndex,
+                answers
+            }));
+        }
+
+        function saveSettings() {
+            localStorage.setItem('fluid_quiz_settings', JSON.stringify({
+                fontSize
+            }));
+        }
+
+        function loadAllData() {
+            // 加载答案
+
+            const savedAnswers = localStorage.getItem('fluid_quiz_answers');
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null);
+            }
+            
+            // 加载设置
+
+            const savedSettings = localStorage.getItem('fluid_quiz_settings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+        }
+
+        // 重新开始
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem('fluid_quiz_answers');
+                renderQuestion();
+                updateNavButtons();
+            }
+        }
+
+        // 返回主页
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 显示提示
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        }
+    </script>
+</body>
+</html>

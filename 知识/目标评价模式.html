@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>课程评价模式刷题：泰勒目标评价</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">30</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">目标评价模式（泰勒）</div>
+                        <div class="progress-text">课程评价 · 教招必考</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "目标评价模式的创始人是（ ）",
+                options: [
+                    { label: "A", text: "斯克里文" },
+                    { label: "B", text: "泰勒" },
+                    { label: "C", text: "斯塔弗尔比姆" },
+                    { label: "D", text: "布鲁姆" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。泰勒提出目标评价模式，被誉为"课程评价之父"和"现代课程理论之父"。<br><br><strong>📚 知识点讲解：</strong>泰勒（Ralph W. Tyler）在20世纪30-40年代主持"八年研究"时，系统提出了以教育目标为核心的评价理论。他确立了"确定目标→选择经验→组织经验→评价结果"的经典四步流程，是课程评价领域最早期、最经典的模式。<br><br><strong>💡 解题思路：</strong>A选项斯克里文提出的是目标游离评价模式；C选项斯塔弗尔比姆提出CIPP评价模式；D选项布鲁姆以教育目标分类学闻名。识记人物与理论的对应关系即可得出正确答案。`
+            },
+            {
+                type: "单选题",
+                stem: "被称为“课程评价之父”“现代课程理论之父”的教育家是（ ）",
+                options: [
+                    { label: "A", text: "斯宾塞" },
+                    { label: "B", text: "杜威" },
+                    { label: "C", text: "泰勒" },
+                    { label: "D", text: "夸美纽斯" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。泰勒同时拥有"课程评价之父"和"现代课程理论之父"两个称号，是教招考试的高频人物考点。<br><br><strong>📚 知识点讲解：</strong>泰勒的双重称号源于他在课程理论和课程评价两个领域的开创性贡献。他的"泰勒原理"（确定目标为核心）奠定了现代课程开发的基本框架，目标评价模式则是课程评价领域的奠基之作。<br><br><strong>💡 解题思路：</strong>A选项斯宾塞提出"什么知识最有价值"；B选项杜威是实用主义教育学的代表人物；D选项夸美纽斯是教育学之父。只有泰勒同时拥有"课程评价之父"的称号。`
+            },
+            {
+                type: "单选题",
+                stem: "目标评价模式进行课程评价的唯一核心依据是（ ）",
+                options: [
+                    { label: "A", text: "教学过程" },
+                    { label: "B", text: "预设教育目标" },
+                    { label: "C", text: "学生成绩" },
+                    { label: "D", text: "教师素养" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标评价模式一切围绕事先设定的教育目标展开，预设目标是评价的唯一核心标准和中心依据。<br><br><strong>📚 知识点讲解：</strong>泰勒认为，评价的本质就是判断教学结果在多大程度上实现了预设的教育目标。因此，目标既是教学的起点，也是评价的终点。评价只看结果是否达标，不关注教学过程中发生的其他变化。<br><br><strong>💡 解题思路：</strong>A选项教学过程恰是目标评价所忽视的；C选项学生成绩只是目标实现的证据之一；D选项教师素养不是目标评价的核心依据。目标评价围绕"预设目标"转，故选B。`
+            },
+            {
+                type: "单选题",
+                stem: "泰勒提出课程编制的四大基本问题，其中最首要、最核心的步骤是（ ）",
+                options: [
+                    { label: "A", text: "选择学习经验" },
+                    { label: "B", text: "确定教育目标" },
+                    { label: "C", text: "组织学习经验" },
+                    { label: "D", text: "评价学习结果" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。泰勒原理中，"确定教育目标"是第一步，也是最核心的步骤，后续所有环节都围绕目标展开。<br><br><strong>📚 知识点讲解：</strong>泰勒的四大经典问题是：①确定教育目标（核心）；②选择学习经验；③组织学习经验；④评价学习结果。目标处于首位，是选择、组织和评价经验的依据。这四步构成了"目标导向"的课程开发范式。<br><br><strong>💡 解题思路：</strong>A和C是中间执行环节；D是最后检验环节。从逻辑顺序和价值权重来看，确定目标都是首要核心步骤。口诀："泰勒目标先定下，教学评价全靠它"。`
+            },
+            {
+                type: "单选题",
+                stem: "目标评价模式最大的特点是（ ）",
+                options: [
+                    { label: "A", text: "重过程、轻结果" },
+                    { label: "B", text: "重结果、轻过程" },
+                    { label: "C", text: "既重过程又重结果" },
+                    { label: "D", text: "重视课堂生成" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标评价模式只看最终结果是否达成预设目标，忽视教学过程和课堂生成，重结果、轻过程是其最显著的特点。<br><br><strong>📚 知识点讲解：</strong>目标评价的"重结果、轻过程"特征使得它标准清晰、易于量化，适合标准化考试评价。但缺点也很明显：死板僵化，忽略师生在教学过程中的创造性表现、非预期收获和学生个体差异。<br><br><strong>💡 解题思路：</strong>A选项与目标评价特点完全相反；C选项是CIPP等改良模式的特征；D选项正是目标评价所忽视的。因此B是正确答案。`
+            },
+            {
+                type: "单选题",
+                stem: "主张抛开预设目标，以实际教育效果为评价依据的模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价模式" },
+                    { label: "B", text: "目标游离评价模式" },
+                    { label: "C", text: "CIPP评价模式" },
+                    { label: "D", text: "外观评价模式" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。斯克里文的目标游离模式主张脱离预设目标，关注课程方案实际产生的全部效果，包括非预期的"副产品"。<br><br><strong>📚 知识点讲解：</strong>目标游离评价模式是斯克里文对泰勒目标评价模式的批判与发展。他认为评价不应被预设目标束缚，而应关注教育实际产生的所有效果，尤其是那些意想不到的、有价值的"非预期效果"。<br><br><strong>💡 解题思路：</strong>A选项目标评价严格遵循预设目标；C选项CIPP是全方位的背景-输入-过程-成果评价；D选项外观模式由斯塔克提出。题干"抛开预设目标"直接对应目标游离模式。`
+            },
+            {
+                type: "单选题",
+                stem: "CIPP课程评价模式的提出者是（ ）",
+                options: [
+                    { label: "A", text: "泰勒" },
+                    { label: "B", text: "斯克里文" },
+                    { label: "C", text: "斯塔弗尔比姆" },
+                    { label: "D", text: "布鲁纳" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。斯塔弗尔比姆（Stufflebeam）提出CIPP评价模式，包含背景、输入、过程、成果四个维度的全方位评价。<br><br><strong>📚 知识点讲解：</strong>CIPP模式是C（Context背景评价）、I（Input输入评价）、P（Process过程评价）、P（Product成果评价）的缩写，突破了目标评价只看结果的局限，强调对教育全过程的综合评价。<br><br><strong>💡 解题思路：</strong>A选项泰勒提出目标评价模式；B选项斯克里文提出目标游离模式；D选项布鲁纳是认知结构理论代表人物。识记人物与评价模式的对应关系即可。`
+            },
+            {
+                type: "单选题",
+                stem: "下列不属于目标评价模式特点的是（ ）",
+                options: [
+                    { label: "A", text: "标准统一清晰" },
+                    { label: "B", text: "易于量化操作" },
+                    { label: "C", text: "重视学生个体差异" },
+                    { label: "D", text: "以目标为评价中心" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。目标评价模式死板固化，忽视学生个体差异和课堂生成，这正是其最主要的缺陷。<br><br><strong>📚 知识点讲解：</strong>目标评价模式优点：标准统一清晰、简单好操作、易于量化，适合标准化考试。缺点：只看结果不看过程、忽视师生创造性、忽视学生个体差异。C选项是目标评价所不具备的优点。<br><br><strong>💡 解题思路：</strong>题干要求选"不属于"的选项。A、B、D都是目标评价的特点或优点，C是目标评价的缺点，即目标评价不重视个体差异。故选C。`
+            },
+            {
+                type: "单选题",
+                stem: "在课程评价中，只衡量教学结果是否达到预先设定课程目标的是（ ）",
+                options: [
+                    { label: "A", text: "目标评价模式" },
+                    { label: "B", text: "目标游离模式" },
+                    { label: "C", text: "CIPP模式" },
+                    { label: "D", text: "应答模式" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。紧扣预设目标、对结果进行达标判断，是目标评价模式的核心特征。<br><br><strong>📚 知识点讲解：</strong>目标评价模式的评价逻辑很简单：预设目标→教学实施→测量结果→对比目标→判断达标程度。整个过程只关心"目标实现了没有"，不关心过程如何、有没有意外收获。<br><br><strong>💡 解题思路：</strong>B选项目标游离是抛开预设目标的；C选项CIPP评价维度更全面；D选项应答模式强调回应各方需求。题干"只衡量是否达到预设目标"完全匹配目标评价模式。`
+            },
+            {
+                type: "单选题",
+                stem: "泰勒认为，整个课程开发与评价的中心是（ ）",
+                options: [
+                    { label: "A", text: "课程内容" },
+                    { label: "B", text: "教育目标" },
+                    { label: "C", text: "教学方法" },
+                    { label: "D", text: "学生发展" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。在泰勒原理中，教育目标是课程开发与评价的起点、中心和最终评价标准。<br><br><strong>📚 知识点讲解：</strong>泰勒的课程理论被称为"目标模式"，因为目标在整个课程编制中居于核心地位。目标决定了选择什么内容、采用什么方法、如何组织教学、怎样评价效果。一切围绕目标运转。<br><br><strong>💡 解题思路：</strong>A选项课程内容是为实现目标服务的；C选项教学方法也是由目标决定的；D选项学生发展虽然重要，但在目标模式中以目标形式被预设。B是泰勒理论的核心。`
+            },
+            {
+                type: "单选题",
+                stem: "目标评价模式最主要的缺陷是（ ）",
+                options: [
+                    { label: "A", text: "操作复杂不易推广" },
+                    { label: "B", text: "忽视教学过程与生成性价值" },
+                    { label: "C", text: "没有统一评价标准" },
+                    { label: "D", text: "不适合标准化考试" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标评价只看结果达标与否，忽视教学过程中师生的创造性表现和非预期的生成性价值，这是其最大短板。<br><br><strong>📚 知识点讲解：</strong>课程评价中，"生成性价值"指在实施过程中因师生互动、情境变化而产生的超出预设目标的有价值的教育效果。目标评价模式由于严格对标预设目标，对这些意外收获视而不见，因此被批评为过于机械和狭隘。<br><br><strong>💡 解题思路：</strong>A选项与事实相反，目标评价操作简单易推广；C选项错误，目标评价有统一标准（就是预设目标）；D选项错误，目标评价正适合标准化考试。故选B。`
+            },
+            {
+                type: "单选题",
+                stem: "目的游离评价模式的提出者是（ ）",
+                options: [
+                    { label: "A", text: "泰勒" },
+                    { label: "B", text: "斯克里文" },
+                    { label: "C", text: "斯塔弗尔比姆" },
+                    { label: "D", text: "赫尔巴特" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。斯克里文（Scriven）提出目标游离评价模式，也叫目的游离评价模式，两种叫法通用。<br><br><strong>📚 知识点讲解：</strong>斯克里文认为，课程评价不应被预设目标局限，而应关注课程方案实际产生的所有效果。评价者应有意识地"游离"于目标之外，关注那些非预期的、可能是更有价值的教育成果。<br><br><strong>💡 解题思路：</strong>A选项泰勒提出目标评价；C选项斯塔弗尔比姆提出CIPP模式；D选项赫尔巴特是传统教育学代表人物。识记对应关系即可。`
+            },
+            {
+                type: "单选题",
+                stem: "CIPP评价模式四个维度不包括（ ）",
+                options: [
+                    { label: "A", text: "背景评价" },
+                    { label: "B", text: "输入评价" },
+                    { label: "C", text: "过程评价" },
+                    { label: "D", text: "目标评价" }
+                ],
+                answer: 3,
+                analysis: `<strong>🎯 答案解析：</strong>D。CIPP四个维度是：背景（Context）、输入（Input）、过程（Process）、成果（Product），不包括"目标评价"。<br><br><strong>📚 知识点讲解：</strong>CIPP模式由斯塔弗尔比姆提出，是一种决策导向的全过程评价模式。背景评价诊断需求，输入评价评估资源，过程评价监控实施，成果评价衡量成效。它比目标评价更全面，不把目标作为唯一标准。<br><br><strong>💡 解题思路：</strong>A、B、C分别对应C、I、P，D选项"目标评价"是泰勒的模式，不属于CIPP的维度。熟记CIPP四个字母的含义即可作答。`
+            },
+            {
+                type: "单选题",
+                stem: "最早、最经典、最传统的课程评价模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价模式" },
+                    { label: "B", text: "目标游离模式" },
+                    { label: "C", text: "CIPP模式" },
+                    { label: "D", text: "差距评价模式" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。泰勒的目标评价模式是课程评价领域的第一个系统化模式，是最早、最经典的模式。<br><br><strong>📚 知识点讲解：</strong>泰勒在"八年研究"中首创目标评价模式，标志着课程评价从经验判断走向科学评价。此后，斯克里文的目标游离模式、斯塔弗尔比姆的CIPP模式等都是在批判和修正目标评价的基础上发展起来的。<br><br><strong>💡 解题思路：</strong>B选项目标游离是批判目标评价后提出的；C选项CIPP是更后期的全面评价模式；D选项差距评价由普罗沃斯提出。按时间先后，泰勒的目标评价是最早的。`
+            },
+            {
+                type: "单选题",
+                stem: "更看重教育实际产生的非预期效果，不拘泥于原定目标的评价模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离" },
+                    { label: "C", text: "CIPP" },
+                    { label: "D", text: "外观" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标游离评价模式强调摆脱预设目标的束缚，关注课程实际产生的全部效果，包括非预期的"副产品"。<br><br><strong>📚 知识点讲解：</strong>斯克里文认为，预设目标只是课程设计者预期的成果，而课程实施中可能产生许多有价值的意外效果。评价者如果只盯着预设目标，就容易忽视这些"意外惊喜"，因此评价应当"游离"于目标之外。<br><br><strong>💡 解题思路：</strong>A选项目标评价正相反，紧扣预设目标；C选项CIPP虽然更全面，但仍以目标为参考点；D选项外观模式强调全景式描述。题干关键词"非预期效果"直接对应目标游离模式。`
+            },
+            {
+                type: "单选题",
+                stem: "泰勒课程原理的核心环节是（ ）",
+                options: [
+                    { label: "A", text: "组织教学活动" },
+                    { label: "B", text: "确定教育目标" },
+                    { label: "C", text: "课程实施" },
+                    { label: "D", text: "课程反思" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。泰勒原理以"确定教育目标"为核心环节，所有课程活动都围绕目标展开。<br><br><strong>📚 知识点讲解：</strong>泰勒的课程开发模式因此被称为"目标模式"——目标是课程开发的灵魂。确定目标后，再围绕目标选择和组织学习经验，最后对照目标评价结果。目标在整个流程中起统领作用。<br><br><strong>💡 解题思路：</strong>A和C是目标确定后的执行环节；D选项课程反思不是泰勒四步中的核心环节。从泰勒原理的逻辑结构看，确定目标是出发点，因此选B。`
+            },
+            {
+                type: "单选题",
+                stem: "某学校严格按照事先制定的教学目标，考核教师教学完成情况，这属于（ ）",
+                options: [
+                    { label: "A", text: "目标评价模式" },
+                    { label: "B", text: "目标游离模式" },
+                    { label: "C", text: "CIPP模式" },
+                    { label: "D", text: "非正式评价" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>A。"严格按照事先制定的教学目标"进行考核，是典型的目标评价模式做法。<br><br><strong>📚 知识点讲解：</strong>目标评价模式在教育实践中的应用场景——学校依据预设教学目标检查教师的教学完成情况，看教学目标是否达成，这是目标评价模式的标准操作方式。<br><br><strong>💡 解题思路：</strong>B选项目标游离是要抛开预设目标的；C选项CIPP评价内容更全面，不只考核目标达成；D选项非正式评价缺乏系统性。题干"严格按教学目标"正是目标评价的核心特征。`
+            },
+            {
+                type: "单选题",
+                stem: "目标评价模式适合下列哪种评价场景（ ）",
+                options: [
+                    { label: "A", text: "个性化艺术教学" },
+                    { label: "B", text: "标准化统考、常规课堂教学评价" },
+                    { label: "C", text: "创新课程生成评价" },
+                    { label: "D", text: "特色校本课程评价" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标评价模式标准统一、易于量化，最适合标准化统考和常规课堂教学评价。<br><br><strong>📚 知识点讲解：</strong>目标评价的优点在于标准清晰、操作简单、便于量化比较，特别适用于有明确统一要求的标准化考试评价。但对于需要关注个性化、创造性和生成性的教学场景（如艺术教育、校本课程），目标评价就显得过于死板。<br><br><strong>💡 解题思路：</strong>A、C、D都涉及个性化、创新性或生成性，超出了目标评价的能力范围。B选项的"标准化""常规"正是目标评价的适用范围。`
+            },
+            {
+                type: "单选题",
+                stem: "全方位从背景、输入、过程、成果进行综合评价的模式是（ ）",
+                options: [
+                    { label: "A", text: "目标评价" },
+                    { label: "B", text: "目标游离" },
+                    { label: "C", text: "CIPP" },
+                    { label: "D", text: "差距评价" }
+                ],
+                answer: 2,
+                analysis: `<strong>🎯 答案解析：</strong>C。CIPP模式从背景、输入、过程、成果四个维度进行全过程、全方位的综合评价。<br><br><strong>📚 知识点讲解：</strong>CIPP模式是斯塔弗尔比姆提出的决策导向评价模式。背景评价（Context）分析需求与问题；输入评价（Input）评估方案与资源；过程评价（Process）监控实施情况；成果评价（Product）衡量最终成效。四个维度覆盖了教育活动的全周期。<br><br><strong>💡 解题思路：</strong>A选项目标评价只看结果；B选项目标游离看实际效果但非全方位；D选项差距评价比较应然与实然。题干"背景、输入、过程、成果"直接对应CIPP的四个维度。`
+            },
+            {
+                type: "单选题",
+                stem: "关于目标评价模式和目标游离模式，说法正确的是（ ）",
+                options: [
+                    { label: "A", text: "二者都严格遵守预设目标" },
+                    { label: "B", text: "目标评价重预设，目标游离重实际效果" },
+                    { label: "C", text: "目标游离模式由泰勒提出" },
+                    { label: "D", text: "目标评价重视教学过程" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>B。目标评价围绕预设目标展开，目标游离则抛开预设目标关注实际教育效果，这是两者最本质的区别。<br><br><strong>📚 知识点讲解：</strong>泰勒的目标评价以预设目标为唯一标准，重结果；斯克里文的目标游离则关注实际产生的所有效果（包括非预期的），重实际。两者的出发点完全不同。<br><br><strong>💡 解题思路：</strong>A错误，目标游离不遵守预设目标；C错误，目标游离由斯克里文提出；D错误，目标评价重结果轻过程。只有B正确描述了二者的核心区别。`
+            },
+            {
+                type: "判断题",
+                stem: "目标评价模式是由斯克里文提出的。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。目标评价模式由泰勒提出，斯克里文提出的是目标游离评价模式，两者不可混淆。<br><br><strong>📚 知识点讲解：</strong>泰勒=目标评价模式（围预设目标转）；斯克里文=目标游离模式（抛开预设看实际）。这是教招考试中极容易混淆的人物-理论对应关系。<br><br><strong>💡 解题思路：</strong>题干张冠李戴，将斯克里文的贡献错扣在泰勒的模式上。记住口诀："泰勒目标，斯克游离"即可。`
+            },
+            {
+                type: "判断题",
+                stem: "泰勒被称为现代课程理论之父和课程评价之父。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。泰勒同时拥有这两个称号，是教招考试的高频人物考点。<br><br><strong>📚 知识点讲解：</strong>"现代课程理论之父"源于泰勒原理对课程开发领域的奠基性贡献；"课程评价之父"源于目标评价模式在课程评价领域的开创性地位。两个称号在考试中都可能出现。<br><br><strong>💡 解题思路：</strong>泰勒的双重称号是基本常识，直接判断为正确。`
+            },
+            {
+                type: "判断题",
+                stem: "目标评价模式的特点是重过程、轻结果。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。目标评价模式的特点是重结果、轻过程，而非重过程、轻结果。<br><br><strong>📚 知识点讲解：</strong>目标评价只关心最终结果是否达成预设目标，对教学过程中的师生互动、创造性表现、非预期收获等不予关注。这是目标评价模式最主要的缺陷。<br><br><strong>💡 解题思路：</strong>题干将目标评价的特点说反了。记住：目标评价=重结果轻过程；目标游离/CIPP=更关注过程和实际效果。`
+            },
+            {
+                type: "判断题",
+                stem: "教育目标是目标评价模式的核心评价标准。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。目标评价模式以预设教育目标为唯一核心标准和评价依据。<br><br><strong>📚 知识点讲解：</strong>泰勒认为评价的本质就是衡量教学结果在多大程度上实现了教育目标。因此，目标既是教学的出发点，也是评价的终点和核心标准。<br><br><strong>💡 解题思路：</strong>题干表述准确无误，是对目标评价模式核心特征的直接陈述。`
+            },
+            {
+                type: "判断题",
+                stem: "目标游离评价模式主张严格按照预设目标开展评价。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。目标游离模式恰恰相反，主张抛开预设目标，以教育实际产生的效果为评价依据。<br><br><strong>📚 知识点讲解：</strong>斯克里文的目标游离模式是对泰勒目标评价的批判和超越。他认为评价者应有意识地"游离"于目标之外，关注课程方案实际产生的全部效果，特别是非预期的、可能更有价值的"副产品"。<br><br><strong>💡 解题思路：</strong>题干将目标游离说成了目标评价。目标游离的"游离"二字就是指脱离预设目标的约束，因此题干说法错误。`
+            },
+            {
+                type: "判断题",
+                stem: "泰勒课程四步骤中，首要环节是选择学习经验。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。泰勒四步骤的首要核心环节是确定教育目标，而非选择学习经验。<br><br><strong>📚 知识点讲解：</strong>泰勒原理的四步顺序是：①确定教育目标（核心）→②选择学习经验→③组织学习经验→④评价学习结果。目标确定是第一步，也是统领后续所有环节的核心步骤。<br><br><strong>💡 解题思路：</strong>题干将第二步骤错放在首要位置。泰勒模式之所以叫"目标模式"，正因"确定目标"居首位。`
+            },
+            {
+                type: "判断题",
+                stem: "目标评价模式标准清晰、简单直观，容易量化操作。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。标准统一清晰、操作简单、易于量化，是目标评价模式最突出的优点。<br><br><strong>📚 知识点讲解：</strong>正因为有明确预设的目标作为标准，目标评价便于设计测量工具、进行数据对比和统计分析，特别适用于标准化考试和大规模教育评估。<br><br><strong>💡 解题思路：</strong>题干描述的是目标评价公认的优点，与教材表述一致，故正确。`
+            },
+            {
+                type: "判断题",
+                stem: "CIPP评价模式由斯塔弗尔比姆提出。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。CIPP模式（背景、输入、过程、成果）由美国学者斯塔弗尔比姆提出。<br><br><strong>📚 知识点讲解：</strong>人物与理论的对应关系：泰勒→目标评价；斯克里文→目标游离；斯塔弗尔比姆→CIPP。这三组对应是教招考试的高频考点。<br><br><strong>💡 解题思路：</strong>识记型判断，直接判断为正确。`
+            },
+            {
+                type: "判断题",
+                stem: "目标评价模式十分重视课堂教学的生成性和学生个体差异。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<strong>🎯 答案解析：</strong>错误。目标评价模式死板固化，忽视课堂生成和个体差异，这正是其最主要的缺陷。<br><br><strong>📚 知识点讲解：</strong>目标评价以统一的预设目标为标准，对所有学生一致对待，不关注学生在学习过程中的创造性表现和非预期的教育收获，也无法回应个体差异带来的不同学习效果。<br><br><strong>💡 解题思路：</strong>题干所述"重视生成性和个体差异"是目标评价做不到的，是目标游离或CIPP等改良模式所倡导的。`
+            },
+            {
+                type: "判断题",
+                stem: "目的游离评价模式也叫目标游离评价模式。（ ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<strong>🎯 答案解析：</strong>正确。"目的游离评价模式"和"目标游离评价模式"是同一概念的不同翻译，都指斯克里文提出的评价模式。<br><br><strong>📚 知识点讲解：</strong>Goal-Free Evaluation在国内有"目标游离"和"目的游离"两种译法。考试中两种说法都可能出现，指的都是斯克里文的同一个理论。<br><br><strong>💡 解题思路：</strong>两个名称通用，指同一理论，故题干描述正确。`
+            }
+        ];
+        
+        const APP_ID = 'taylor_objective_eval_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '泰勒：目标评价模式';
+            const content = `
+                <h3>一、人物+别称</h3>
+                <p><strong>泰勒</strong>——被誉为<strong>课程评价之父、现代课程理论之父</strong></p>
+                <p>提出：<strong>目标评价模式</strong>（最经典、最早的课程评价模式）</p>
+
+                <h3>二、核心一句话</h3>
+                <p><strong>先定目标，所有教学和评价都围着「预设目标」转。</strong></p>
+                <p>评价只看一件事：<strong>最终结果有没有达到事先定好的教育目标</strong>。</p>
+
+                <h3>三、四大流程（泰勒经典四步）</h3>
+                <p>1. <strong>确定教育目标</strong>（最首要、最核心）</p>
+                <p>2. 选择学习经验</p>
+                <p>3. 组织学习经验</p>
+                <p>4. <strong>评价学习结果</strong></p>
+
+                <h3>四、核心特点</h3>
+                <p>1. <strong>目标是评价的唯一标准、中心依据</strong></p>
+                <p>2. 先定目标→开展教学→最后对照目标打分评价</p>
+                <p>3. <strong>重结果、轻过程</strong></p>
+                <p>4. 看重预设，不看重课堂临时生成、学生个性差异</p>
+
+                <h3>五、优缺点</h3>
+                <p><strong>优点：</strong>标准清晰、简单好操作、容易量化；条理规整，适合统考、标准化考试评价。</p>
+                <p><strong>缺点：</strong>只看结果，忽视教学过程；死板僵化，忽略师生创造性、生成性课程；忽视学生个体差异。</p>
+
+                <h3>六、3个易混评价模式对比（必背）</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>人物</th><th>模式</th><th>核心特征</th><th>侧重</th></tr></thead>
+                    <tbody>
+                        <tr><td>泰勒</td><td>目标评价模式</td><td>围着预设目标转</td><td>重结果</td></tr>
+                        <tr><td>斯克里文</td><td>目标游离模式</td><td>抛开预设目标，看实际教育效果</td><td>重过程</td></tr>
+                        <tr><td>斯塔弗尔比姆</td><td>CIPP模式</td><td>背景、输入、过程、成果全方位评价</td><td>全过程</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>七、秒杀口诀</h3>
+                <p><strong>泰勒目标先定下，教学评价全靠它；只看结果不看过程，死板标准好量化。</strong></p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
