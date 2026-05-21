@@ -833,7 +833,10 @@
         <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
         <div class="sheet-panel" id="sheetPanel">
             <div class="sheet-header">
-                <div class="sheet-title">答题卡</div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="sheet-title">答题卡</div>
+                    <button onclick="exportWrongQuestionsCSV()" style="padding: 4px 10px; background: #fff2f0; color: #f5222d; border: 1px solid #ffccc7; border-radius: 12px; font-size: 12px; cursor: pointer;">导出错题</button>
+                </div>
                 <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
             </div>
             <div class="sheet-filters">
@@ -1404,6 +1407,50 @@
                 updateNavButtons(); } }
 
         function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+
+        
+        function exportWrongQuestionsCSV() {
+            let wrongQuestions = [];
+            if (typeof questions === 'undefined' || typeof answers === 'undefined') {
+                showToast('无法获取题目数据');
+                return;
+            }
+            questions.forEach((q, index) => {
+                if (answers[index] !== null && answers[index] !== q.answer) {
+                    wrongQuestions.push(q);
+                }
+            });
+
+            if (wrongQuestions.length === 0) {
+                showToast('暂无错题可以导出');
+                return;
+            }
+
+            let csvContent = "\uFEFF题目,类型,选项A,选项B,选项C,选项D,正确答案,解析\n";
+            
+            wrongQuestions.forEach(q => {
+                let stem = (q.stem || '').replace(/"/g, '""').replace(/\n/g, ' ');
+                let type = q.type || '';
+                let optA = q.options && q.options[0] ? q.options[0].text.replace(/"/g, '""').replace(/\n/g, ' ') : '';
+                let optB = q.options && q.options[1] ? q.options[1].text.replace(/"/g, '""').replace(/\n/g, ' ') : '';
+                let optC = q.options && q.options[2] ? q.options[2].text.replace(/"/g, '""').replace(/\n/g, ' ') : '';
+                let optD = q.options && q.options[3] ? q.options[3].text.replace(/"/g, '""').replace(/\n/g, ' ') : '';
+                let correctOpt = q.options && q.options[q.answer] ? q.options[q.answer].label : '';
+                let analysis = (q.analysis || '').replace(/<[^>]+>/g, '').replace(/"/g, '""').replace(/\n/g, ' ');
+                
+                csvContent += `"${stem}","${type}","${optA}","${optB}","${optC}","${optD}","${correctOpt}","${analysis}"\n`;
+            });
+
+            let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            let url = URL.createObjectURL(blob);
+            let link = document.createElement("a");
+            link.setAttribute("href", url);
+            let title = document.title.replace(/\s+/g, '_');
+            link.setAttribute("download", title + "_错题.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
         function showToast(message) { const toast = document.createElement('div');
             toast.className = 'toast';
