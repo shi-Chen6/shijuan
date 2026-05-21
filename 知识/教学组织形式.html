@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>教学组织形式刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5a623, #f7b84e);
+            color: white;
+        }
+        .review-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .review-mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+        .exit-review-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+        .exit-review-btn:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">教学组织形式</div>
+                        <div class="progress-text">教招核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "我国最基本、最普遍的教学组织形式是（）",
+            "options": [
+                { "label": "A", "text": "个别教学" },
+                { "label": "B", "text": "班级授课制" },
+                { "label": "C", "text": "分组教学" },
+                { "label": "D", "text": "道尔顿制" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>班级授课制</strong>。班级授课制是我国现代学校教育中最基本、最普遍采用的教学组织形式，是学校教学工作的主要形态。<br><br><strong>📚 知识点讲解：</strong>班级授课制由夸美纽斯系统论述，我国于1862年京师同文馆最早采用。其核心特点是“班、课、时”，即按班级授课、分课时进行、固定时间安排。班级授课制因效率高、便于系统传授知识而成为现代主流，但也存在难以因材施教、一刀切的问题。个别教学是古代主要形式，分组教学、道尔顿制等均为辅助或实验性质。<br><br><strong>💡 解题思路：</strong>题干关键词“最基本、最普遍”直接指向当前学校最主流的形式。个别教学属于古代，分组教学和道尔顿制应用范围有限。班级授课制是绝对主流，应选B。<br><br><strong>🧠 记忆口诀：</strong>班级授课最普遍，班课时三字诀。"
+        }, {
+            "type": "单选题",
+            "stem": "最早系统论述班级授课制的教育家是（）",
+            "options": [
+                { "label": "A", "text": "赫尔巴特" },
+                { "label": "B", "text": "夸美纽斯" },
+                { "label": "C", "text": "杜威" },
+                { "label": "D", "text": "洛克" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>夸美纽斯</strong>。夸美纽斯在《大教学论》中最早系统论述了班级授课制，奠定了其理论基础。<br><br><strong>📚 知识点讲解：</strong>夸美纽斯是捷克教育家，被称为“近代教育学之父”。他在《大教学论》中提出“把一切知识教给一切人”的泛智思想，并系统论证了班级授课制度，主张按年龄分班、统一教学。赫尔巴特是科学教育学之父，杜威是实用主义代表，洛克提出白板说，均与班级授课制的创立无关。<br><br><strong>💡 解题思路：</strong>班级授课制的理论奠基人是夸美纽斯，这是教招核心考点。赫尔巴特虽也是传统教育代表，但并非班级授课制的系统提出者。杜威反对传统教育，洛克是绅士教育代表。牢记“夸美纽斯=班级授课制”即可。<br><br><strong>🧠 记忆口诀：</strong>夸美纽斯大教学，班级授课他首倡。"
+        }, {
+            "type": "单选题",
+            "stem": "我国最早采用班级授课制的学校是（）",
+            "options": [
+                { "label": "A", "text": "京师大学堂" },
+                { "label": "B", "text": "京师同文馆" },
+                { "label": "C", "text": "南洋公学" },
+                { "label": "D", "text": "时务学堂" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>京师同文馆</strong>。1862年清政府创办的京师同文馆是我国最早采用班级授课制的学校。<br><br><strong>📚 知识点讲解：</strong>京师同文馆是洋务运动的产物，最初为培养外语翻译人才而设。它采用分班教学、统一课程的方式，标志着中国近代班级授课制的开端。京师大学堂是1898年戊戌变法期间设立，是北京大学的前身，时间晚于同文馆。南洋公学和时务学堂也均为晚清新式学堂，但同文馆最早。<br><br><strong>💡 解题思路：</strong>此题考查中国教育史知识。记住“1862年京师同文馆最早采用班级授课制”。干扰项京师大学堂常被混淆，但大学堂成立较晚。锁定同文馆即可。<br><br><strong>🧠 记忆口诀：</strong>一八六二同文馆，班级授课中国始。"
+        }, {
+            "type": "单选题",
+            "stem": "班级授课制的三大特点是（）",
+            "options": [
+                { "label": "A", "text": "班、课、时" },
+                { "label": "B", "text": "人、课、时" },
+                { "label": "C", "text": "班、组、时" },
+                { "label": "D", "text": "人、组、课" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>班、课、时</strong>。班级授课制以“班”为教学单位，以“课”为教学活动单元，以“时”为固定的上课时间。<br><br><strong>📚 知识点讲解：</strong>班级授课制的三大要素：①“班”——将学生按年龄和程度编成固定班级；②“课”——教学内容分成若干课时，一课接一课地进行；③“时”——每节课有统一固定的时间。这三者共同构成班级授课制的基本框架。其他选项如“人、组、课”等均不符合。<br><br><strong>💡 解题思路：</strong>直接回忆“班课时”口诀即可。班级授课制最核心的概括就是这三个字。A选项完全匹配。<br><br><strong>🧠 记忆口诀：</strong>班级授课三字经，班、课、时记住就行。"
+        }, {
+            "type": "单选题",
+            "stem": "废除班级授课，由学生自主设计项目开展学习的是（）",
+            "options": [
+                { "label": "A", "text": "道尔顿制" },
+                { "label": "B", "text": "设计教学法" },
+                { "label": "C", "text": "特朗普制" },
+                { "label": "D", "text": "导生制" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>设计教学法</strong>。设计教学法由克伯屈提出，主张废除班级授课制，由学生自主设计项目并开展学习。<br><br><strong>📚 知识点讲解：</strong>设计教学法是进步主义教育的产物，强调以学生兴趣为中心，打破学科界限和班级制度。学生根据自己的需要设计学习项目（如建造一个模型、筹划一次活动），在完成项目的过程中学习知识。道尔顿制虽也强调学生自学，但仍保留一定的实验室和作业安排，未完全废除班级框架。特朗普制是“大班+小班+个别”的组合，并未废除班级。导生制则是利用年长学生教学，仍保留群体形式。<br><br><strong>💡 解题思路：</strong>题干关键词“废除班级”“自主设计项目”直接对应克伯屈的设计教学法。道尔顿制以自学为主但保留教师辅导，特朗普制三结合，导生制是“大孩子教小孩子”。故选B。<br><br><strong>🧠 记忆口诀：</strong>克伯屈设计教学，废除班级自主学。"
+        }, {
+            "type": "单选题",
+            "stem": "学生以自学为主，教师只做个别辅导，不进行集体授课的是（）",
+            "options": [
+                { "label": "A", "text": "设计教学法" },
+                { "label": "B", "text": "道尔顿制" },
+                { "label": "C", "text": "文纳特卡制" },
+                { "label": "D", "text": "分组教学" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>道尔顿制</strong>。道尔顿制由柏克赫斯特创立，以学生自学为主，教师只进行个别辅导，不组织集体授课。<br><br><strong>📚 知识点讲解：</strong>道尔顿制的核心是“自由”与“合作”。学生与教师签订学习合同，自行安排学习进度，在实验室或学习室中独立完成作业。教师仅提供个别指导和答疑，不进行统一的班级讲授。设计教学法也强调学生自主，但更侧重项目设计而非单纯自学。文纳特卡制结合了个别学习与团体活动，非完全无集体授课。分组教学仍可能包含集体讲授环节。<br><br><strong>💡 解题思路：</strong>题干“自学为主”“无集体授课”是道尔顿制的典型特征。设计教学法虽废除班级但更强调项目，文纳特卡制有团体活动。锁定柏克赫斯特的道尔顿制。<br><br><strong>🧠 记忆口诀：</strong>道尔顿柏克赫斯特，自学为主无集体。"
+        }, {
+            "type": "单选题",
+            "stem": "特朗普制的组合模式是（）",
+            "options": [
+                { "label": "A", "text": "大班+小班+个别" },
+                { "label": "B", "text": "班级+小组+团体" },
+                { "label": "C", "text": "课内+课外+自学" },
+                { "label": "D", "text": "讲授+练习+作业" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>大班+小班+个别</strong>。特朗普制由特朗普提出，是一种灵活的教学组织形式，将大班上课、小班研究和个别教学结合起来。<br><br><strong>📚 知识点讲解：</strong>特朗普制又称“灵活的课程表”，试图综合班级授课、小组讨论和个别学习的优点。大班上课用于传授知识，小班研究用于深入讨论和合作，个别教学针对学生差异进行辅导。这种三合一模式体现了对教学组织形式的优化探索。其他选项的组合方式均非特朗普制的内容。<br><br><strong>💡 解题思路：</strong>特朗普制的“三合模式”即大班、小班、个别教学的结合。记住“特大班+小班+个别”即可直接选出A。<br><br><strong>🧠 记忆口诀：</strong>特朗普三合一，大班小班加个别。"
+        }, {
+            "type": "单选题",
+            "stem": "教师先教年长学生，再由年长学生教其他学生，该形式是（）",
+            "options": [
+                { "label": "A", "text": "道尔顿制" },
+                { "label": "B", "text": "导生制（贝尔‑兰卡斯特）" },
+                { "label": "C", "text": "文纳特卡制" },
+                { "label": "D", "text": "分组教学" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>导生制（贝尔‑兰卡斯特）</strong>。导生制由贝尔和兰卡斯特创立，先由教师教给年长且成绩好的学生（导生），再由他们转教其他学生。<br><br><strong>📚 知识点讲解：</strong>导生制又称贝尔‑兰卡斯特制，兴起于19世纪初的英国，旨在解决师资不足的问题。它利用学生之间的互助教学，可以有效扩大教育规模，适合普及初等教育。但这种模式教学质量难以保证，后逐渐被正规师范教育取代。道尔顿制强调自学，文纳特卡制个别与团体结合，分组教学则是按能力分班或班内分组，均非“大孩子教小孩子”。<br><br><strong>💡 解题思路：</strong>题干描述“教师先教年长学生，再由年长学生教其他”正是导生制的核心运作方式。抓住“导生”即“引导学生当小老师”的含义即可。<br><br><strong>🧠 记忆口诀：</strong>贝尔兰卡斯特制，导生传教省师资。"
+        }, {
+            "type": "单选题",
+            "stem": "文纳特卡制的提出者是（）",
+            "options": [
+                { "label": "A", "text": "克伯屈" },
+                { "label": "B", "text": "柏克赫斯特" },
+                { "label": "C", "text": "华虚朋" },
+                { "label": "D", "text": "特朗普" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>华虚朋</strong>。文纳特卡制由美国教育家华虚朋创立。<br><br><strong>📚 知识点讲解：</strong>文纳特卡制将课程分为两部分：个别学习（基本知识技能）和团体活动（创造性、社会性活动）。它试图兼顾学生的个性发展和集体合作能力。克伯屈是设计教学法的提出者，柏克赫斯特是道尔顿制创始人，特朗普提出了特朗普制。人物对应关系必须准确。<br><br><strong>💡 解题思路：</strong>人物匹配题：华虚朋→文纳特卡制，克伯屈→设计教学法，柏克赫斯特→道尔顿制，特朗普→特朗普制。直接提取记忆即可。<br><br><strong>🧠 记忆口诀：</strong>华虚朋文纳特卡，个别学习加团体。"
+        }, {
+            "type": "单选题",
+            "stem": "古代社会最主要的教学组织形式是（）",
+            "options": [
+                { "label": "A", "text": "班级授课" },
+                { "label": "B", "text": "个别教学" },
+                { "label": "C", "text": "分组教学" },
+                { "label": "D", "text": "导生制" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>个别教学</strong>。古代社会生产力有限，教育规模小，主要采用一对一或一对几的个别教学形式。<br><br><strong>📚 知识点讲解：</strong>个别教学制是古代社会最普遍的教学组织形式，如中国的私塾、西方的家庭教师等。教师针对每个学生的特点因材施教，效率较低但适应性强。班级授课制是近代工业革命后才大规模推广的，分组教学、导生制等更是近现代产物。<br><br><strong>💡 解题思路：</strong>题干明确“古代社会”，直接对应个别教学。班级授课制是现代主流，分组教学和导生制都是近现代探索，均不符合古代背景。<br><br><strong>🧠 记忆口诀：</strong>古代教学一对一，个别教学是主流。"
+        }, {
+            "type": "单选题",
+            "stem": "将学生打破原有年级，按能力水平重新编班，属于（）",
+            "options": [
+                { "label": "A", "text": "内部分组" },
+                { "label": "B", "text": "外部分组" },
+                { "label": "C", "text": "个别教学" },
+                { "label": "D", "text": "班级授课" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>外部分组</strong>。外部分组打破原有年级界限，按照学生的能力或成绩重新编班，形成跨年级的教学班。<br><br><strong>📚 知识点讲解：</strong>分组教学分为外部分组和内部分组。外部分组是跨年级的，如将不同年级数学能力强的学生编入同一个“快班”；内部分组则是在同一个班级内部，根据能力差异分成不同小组进行教学，不打破年级和班级界限。题干所述“打破原有年级”正是外部分组的典型特征。<br><br><strong>💡 解题思路：</strong>抓住关键词“打破原有年级”即可对应外部分组。内部分组是在班内分组，不跨年级。其他选项均不涉及能力编班。<br><br><strong>🧠 记忆口诀：</strong>外部分组跨年级，能力编班重新分。"
+        }, {
+            "type": "单选题",
+            "stem": "在同一个班级内，按学生能力差异分成不同小组教学，属于（）",
+            "options": [
+                { "label": "A", "text": "外部分组" },
+                { "label": "B", "text": "内部分组" },
+                { "label": "C", "text": "特朗普制" },
+                { "label": "D", "text": "道尔顿制" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>内部分组</strong>。内部分组是在同一班级内部，根据学生的能力、兴趣等差异分成不同小组进行教学。<br><br><strong>📚 知识点讲解：</strong>内部分组与外部分组的关键区别在于是否打破班级或年级界限。内部分组保持原有班级建制，仅在班内分组，如将学生分为A、B、C组进行分层教学。外部分组则跨班跨年级。特朗普制是大班+小班+个别的结合，道尔顿制是自学辅导制，均不强调班内分组。<br><br><strong>💡 解题思路：</strong>题干明确“同一个班级内”，直接对应内部分组。外部分组是跨年级，C和D均不匹配。<br><br><strong>🧠 记忆口诀：</strong>内部分组班内分，外部分组跨年级。"
+        }, {
+            "type": "单选题",
+            "stem": "班级授课制最大缺点是（）",
+            "options": [
+                { "label": "A", "text": "效率低" },
+                { "label": "B", "text": "难以因材施教" },
+                { "label": "C", "text": "管理困难" },
+                { "label": "D", "text": "普及性差" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>难以因材施教</strong>。班级授课制面向全体学生统一教学，容易忽视学生的个体差异，难以做到真正的因材施教。<br><br><strong>📚 知识点讲解：</strong>班级授课制的优点包括教学效率高、利于系统知识传授、便于发挥教师主导作用等；但其固有的缺陷是“一刀切”——用统一的内容、进度和方法对待所有学生，难以适应学生的个体差异。A项效率低是错误描述，班级授课制正是以高效率著称；C项管理困难并非最大缺点；D项普及性差也不符合事实。<br><br><strong>💡 解题思路：</strong>班级授课制的核心弊端就是“难以因材施教”，这是教学理论中的经典结论。效率低是个别教学的缺点，管理困难和普及性差均不准确。<br><br><strong>🧠 记忆口诀：</strong>班级授课效率高，一刀切难因材教。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于集体+小组+个别相结合的是（）",
+            "options": [
+                { "label": "A", "text": "道尔顿制" },
+                { "label": "B", "text": "特朗普制" },
+                { "label": "C", "text": "设计教学法" },
+                { "label": "D", "text": "个别教学" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>特朗普制</strong>。特朗普制灵活地将大班集体上课、小班分组研究和个别教学三者结合起来。<br><br><strong>📚 知识点讲解：</strong>特朗普制是综合性的教学组织形式，其“三合一”模式直接体现了集体、小组和个别教学的结合。道尔顿制以自学为主，缺少集体授课环节；设计教学法废除班级，侧重项目学习；个别教学是古代一对一形式，不涉及小组。因此只有特朗普制符合“集体+小组+个别”的描述。<br><br><strong>💡 解题思路：</strong>题干关键词“集体+小组+个别”直接匹配特朗普制的大班、小班、个别教学组合。其他形式都不具备这种综合特征。<br><br><strong>🧠 记忆口诀：</strong>特朗普三结合，集体小组个别全。"
+        }, {
+            "type": "单选题",
+            "stem": "主张个别学习与团体活动相结合的教学形式是（）",
+            "options": [
+                { "label": "A", "text": "导生制" },
+                { "label": "B", "text": "文纳特卡制" },
+                { "label": "C", "text": "道尔顿制" },
+                { "label": "D", "text": "分组教学" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>文纳特卡制</strong>。文纳特卡制将个别学习（基本知识技能）与团体活动（创造性社会活动）有机结合。<br><br><strong>📚 知识点讲解：</strong>文纳特卡制由华虚朋创立，其课程分为两部分：上午进行个别学习，学生自定步调掌握基本知识；下午开展团体活动，如戏剧、集会、合作项目等，培养社会性。这种“个别+团体”的模式是文纳特卡制最鲜明的特色。道尔顿制偏重自学而缺少团体活动，导生制是学生教学生，分组教学主要关注能力分组而非专门设计团体活动。<br><br><strong>💡 解题思路：</strong>题干“个别学习与团体活动结合”是文纳特卡制的标志。华虚朋正是以此著称。其他选项中道尔顿制无团体活动，导生制和分组教学均不匹配。<br><br><strong>🧠 记忆口诀：</strong>文纳特卡双结合，上午个别下午团。"
+        }, {
+            "type": "单选题",
+            "stem": "下列匹配错误的是（）",
+            "options": [
+                { "label": "A", "text": "夸美纽斯—班级授课制" },
+                { "label": "B", "text": "克伯屈—设计教学法" },
+                { "label": "C", "text": "柏克赫斯特—特朗普制" },
+                { "label": "D", "text": "华虚朋—文纳特卡制" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>匹配错误的是<strong>柏克赫斯特—特朗普制</strong>。柏克赫斯特是道尔顿制的创始人，特朗普制的提出者是特朗普。<br><br><strong>📚 知识点讲解：</strong>人物与教学组织形式的对应关系：夸美纽斯→班级授课制；克伯屈→设计教学法；柏克赫斯特→道尔顿制；华虚朋→文纳特卡制；特朗普→特朗普制。C选项将柏克赫斯特错误地对应到特朗普制，属于张冠李戴。A、B、D均正确。<br><br><strong>💡 解题思路：</strong>逐项核对：夸美纽斯确实系统论述班级授课制（A正确）；克伯屈确实提出设计教学法（B正确）；柏克赫斯特应与道尔顿制关联，而非特朗普制（C错误）；华虚朋确实创立文纳特卡制（D正确）。故选C。<br><br><strong>🧠 记忆口诀：</strong>柏克道尔顿，特朗普三合，人物流派不混淆。"
+        }, {
+            "type": "单选题",
+            "stem": "适合大规模普及教育、节省师资的是（）",
+            "options": [
+                { "label": "A", "text": "个别教学" },
+                { "label": "B", "text": "导生制" },
+                { "label": "C", "text": "道尔顿制" },
+                { "label": "D", "text": "设计教学法" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>导生制</strong>。导生制通过培养“导生”来转教其他学生，可以在师资匮乏的情况下快速扩大教育规模，节省师资。<br><br><strong>📚 知识点讲解：</strong>导生制（贝尔‑兰卡斯特制）的核心优势就是“省钱、省师资”。教师只需先培训少数导生，再由导生去教更多学生，一名教师可以间接负责上百名学生。这在19世纪普及初等教育的背景下非常实用。个别教学效率低，道尔顿制和设计教学法需要较多辅导，均不适合大规模普及。<br><br><strong>💡 解题思路：</strong>题干“大规模普及、节省师资”正是导生制诞生的背景和优势。班级授课制虽然也适合普及，但不在选项中。个别教学效率低，其他两项偏重个性化。选B。<br><br><strong>🧠 记忆口诀：</strong>导生省钱又省师，普及教育好帮手。"
+        }, {
+            "type": "单选题",
+            "stem": "最能体现因材施教、适应个体差异的传统形式是（）",
+            "options": [
+                { "label": "A", "text": "班级授课" },
+                { "label": "B", "text": "个别教学" },
+                { "label": "C", "text": "分组教学" },
+                { "label": "D", "text": "特朗普制" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>个别教学</strong>。个别教学制是教师针对单个学生进行教学，最能体现因材施教和适应个体差异。<br><br><strong>📚 知识点讲解：</strong>个别教学制是古代最原始的教学形式，教师可以完全根据学生的学习能力、兴趣和进度进行教学，真正做到“一对一”因材施教。班级授课制虽然效率高但难以兼顾差异，分组教学在一定程度上缓解了差异问题但仍以组为单位，特朗普制虽有别别教学环节但仍是综合模式。而题干问的是“传统形式”，个别教学最传统也最贴合。<br><br><strong>💡 解题思路：</strong>因材施教的传统形式就是个别教学。分组教学和特朗普制都是近代以后的改良形式，班级授课制则恰恰忽视差异。选B。<br><br><strong>🧠 记忆口诀：</strong>个别教学一对一，因材施教最传统。"
+        }, {
+            "type": "单选题",
+            "stem": "班级授课制的优点不包括（）",
+            "options": [
+                { "label": "A", "text": "教学效率高" },
+                { "label": "B", "text": "利于集体教育" },
+                { "label": "C", "text": "灵活个性化" },
+                { "label": "D", "text": "系统性强" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>灵活个性化</strong>。班级授课制采用统一教学，恰恰缺乏灵活性和个性化，这是其主要缺点而非优点。<br><br><strong>📚 知识点讲解：</strong>班级授课制的优点包括：①教学效率高，一名教师同时教众多学生；②利于集体教育，培养集体主义精神；③系统性强，按学科逻辑和课表循序渐进。但其缺点就是难以灵活个性化地照顾到每个学生的差异，即“一刀切”。因此C项“灵活个性化”不属于优点，反而是劣势。<br><br><strong>💡 解题思路：</strong>审题“不包括”，要求选出非优点项。班级授课制以统一、标准著称，灵活个性化是其对立面。A、B、D均为公认优点。故选C。<br><br><strong>🧠 记忆口诀：</strong>班级授课缺灵活，统一教学难个性。"
+        }, {
+            "type": "单选题",
+            "stem": "现代学校主流教学组织形式是（）",
+            "options": [
+                { "label": "A", "text": "个别教学" },
+                { "label": "B", "text": "班级授课制" },
+                { "label": "C", "text": "分组教学" },
+                { "label": "D", "text": "道尔顿制" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>班级授课制</strong>。班级授课制依然是现代学校教学的主流组织形式，是学校教育的基本形态。<br><br><strong>📚 知识点讲解：</strong>尽管出现了多种教学组织形式的探索和改革，但班级授课制凭借其高效、系统、经济的优势，始终在全球范围内占据主导地位。个别教学适用于古代，分组教学、道尔顿制等多为辅助或实验性质，并未取代班级授课制的主流地位。<br><br><strong>💡 解题思路：</strong>题干“现代学校主流”与第1题“最基本、最普遍”同义，答案一致为班级授课制。其他选项均为补充形式。<br><br><strong>🧠 记忆口诀：</strong>现代主流仍班级，班课时模式根基。"
+        }, {
+            "type": "判断题",
+            "stem": "班级授课制最早由夸美纽斯系统提出。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。夸美纽斯在《大教学论》中最早系统论述了班级授课制。<br><br><strong>📚 知识点讲解：</strong>夸美纽斯是班级授课制的理论奠基人，他主张将学生按年龄和程度分班，统一教学内容和进度。这一制度后来经赫尔巴特等人的完善，成为现代学校的基本教学形式。题干表述准确。<br><br><strong>💡 解题思路：</strong>班级授课制与夸美纽斯的对应关系是基础知识，判断为正确。<br><br><strong>🧠 记忆口诀：</strong>夸美纽斯立班级，大教学论奠根基。"
+        }, {
+            "type": "判断题",
+            "stem": "我国最早采用班级授课制的是京师大学堂。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。我国最早采用班级授课制的是1862年的<strong>京师同文馆</strong>，而非京师大学堂。<br><br><strong>📚 知识点讲解：</strong>京师同文馆是洋务派创办的第一所新式学堂，引进西方班级授课模式。京师大学堂成立于1898年，是近代第一所国立综合性大学，时间晚于同文馆。两者不可混淆。<br><br><strong>💡 解题思路：</strong>题干将“同文馆”误为“大学堂”，属于常见干扰。牢记“1862京师同文馆”即可判断为错误。<br><br><strong>🧠 记忆口诀：</strong>最早班级同文馆，大学堂在后莫搞混。"
+        }, {
+            "type": "判断题",
+            "stem": "道尔顿制以教师集体讲授为主，学生被动听课。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。道尔顿制恰恰相反，它以学生自学为主，教师只进行个别辅导，不进行集体讲授。<br><br><strong>📚 知识点讲解：</strong>道尔顿制的核心是“自由学习”与“合同制”。学生根据学习合同自行安排进度，在实验室独立学习，教师仅在必要时给予指导。题干描述的是班级授课制或传统教学的特征，与道尔顿制完全相反。<br><br><strong>💡 解题思路：</strong>道尔顿制=自学+个别辅导，无集体讲授。题干描述与道尔顿制精神相悖，判断为错误。<br><br><strong>🧠 记忆口诀：</strong>道尔顿自学为主，教师辅导不集体。"
+        }, {
+            "type": "判断题",
+            "stem": "设计教学法主张学生自主设计、自主开展学习。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。设计教学法由克伯屈提出，强调学生根据自己的兴趣自主设计学习项目并主动开展。<br><br><strong>📚 知识点讲解：</strong>设计教学法体现了进步教育“做中学”的理念，主张废除班级授课制，由学生自主确定学习目标和活动计划，在完成设计项目的过程中获得知识和技能。教师扮演指导者和协助者的角色。题干描述准确。<br><br><strong>💡 解题思路：</strong>设计教学法的“设计”二字本身就意味着学生自主策划。这是该教学法最核心的特征，判断为正确。<br><br><strong>🧠 记忆口诀：</strong>克伯屈设计教学，学生自主项目学。"
+        }, {
+            "type": "判断题",
+            "stem": "特朗普制是大班上课、小班研究、个别教学相结合。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。特朗普制灵活地将大班集体教学、小班分组研究和个别辅导融合在一起。<br><br><strong>📚 知识点讲解：</strong>特朗普制由劳伊德·特朗普提出，其模式为：大班上课（40%）用于高效传授知识，小班研究（20%）用于讨论和深入理解，个别教学（40%）用于独立学习和教师针对性辅导。这种“三合一”设计旨在综合各种形式的优点。题干概括准确。<br><br><strong>💡 解题思路：</strong>特朗普制=大班+小班+个别，这是标准表述。判断为正确。<br><br><strong>🧠 记忆口诀：</strong>特朗普三合一，大班小班个别集。"
+        }, {
+            "type": "判断题",
+            "stem": "内部分组是打破年级界限，按能力重新分班。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。打破年级界限、按能力重新分班的是<strong>外部分组</strong>，内部分组是在同一班级内按能力分组。<br><br><strong>📚 知识点讲解：</strong>外部分组跨年级，如将全校数学能力强的学生编入同一“快班”；内部分组则保持原班级不变，仅在班内按学生差异进行分组教学。题干将外部分组的特征错误地安在了内部分组头上。<br><br><strong>💡 解题思路：</strong>抓住关键“打破年级界限”对应外部分组。内部分组不跨年级。因此题干描述错误。<br><br><strong>🧠 记忆口诀：</strong>外跨年级内班分，分组二字要分清。"
+        }, {
+            "type": "判断题",
+            "stem": "班级授课制的主要缺点是一刀切，忽视学生个体差异。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。班级授课制面向全体统一教学，难以照顾个体差异，“一刀切”是其公认的主要缺陷。<br><br><strong>📚 知识点讲解：</strong>班级授课制用统一的教学内容、方法和进度要求所有学生，容易导致优等生“吃不饱”、后进生“跟不上”。尽管可通过分组、个别辅导等方式弥补，但制度本身的统一性使得因材施教难以充分实现。题干表述符合教育学基本结论。<br><br><strong>💡 解题思路：</strong>“一刀切”是班级授课制缺点的经典概括，判断为正确。<br><br><strong>🧠 记忆口诀：</strong>班级授课一刀切，个体差异难顾及。"
+        }, {
+            "type": "判断题",
+            "stem": "贝尔‑兰卡斯特制又称导生制，适合师资不足时普及教育。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。贝尔‑兰卡斯特制即导生制，其最大优势就是在师资匮乏时通过导生传递教学，实现大规模普及教育。<br><br><strong>📚 知识点讲解：</strong>导生制由英国教育家贝尔和兰卡斯特分别创立，后来合并称为贝尔‑兰卡斯特制。它利用学生教学生的方式，极大节省了师资成本，在19世纪欧美国家普及初等教育阶段发挥了重要作用。题干表述准确。<br><br><strong>💡 解题思路：</strong>导生制的别名、特点和适用情境均描述正确。判断为正确。<br><br><strong>🧠 记忆口诀：</strong>贝尔兰卡斯特导生，师资不足它能撑。"
+        }, {
+            "type": "判断题",
+            "stem": "文纳特卡制只强调学生自学，不开展团体活动。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。文纳特卡制不仅有个别学习，还特别强调团体活动，将二者有机结合。<br><br><strong>📚 知识点讲解：</strong>文纳特卡制由华虚朋创立，课程明确分为“个别学习”和“团体活动”两大块。个别学习用于掌握基本知识和技能，团体活动则包括戏剧、合作项目、社会活动等，培养创造性和集体意识。题干“不开展团体活动”与事实完全相反。<br><br><strong>💡 解题思路：</strong>文纳特卡制的“双元”结构是其标志，“只强调自学”是对该制度的片面理解。因此判断为错误。<br><br><strong>🧠 记忆口诀：</strong>文纳特卡有团体，个别学习不孤单。"
+        }, {
+            "type": "判断题",
+            "stem": "个别教学制是现代学校最主要的教学组织形式。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。现代学校最主要的教学组织形式是<strong>班级授课制</strong>，而非个别教学制。<br><br><strong>📚 知识点讲解：</strong>个别教学制是古代社会的教学形式，虽然因材施教效果好，但效率低下，无法满足普及教育的需要。班级授课制自近代以来逐渐成为世界范围内学校教学的基本组织形式，至今仍是主流。题干将古代与现代表述颠倒。<br><br><strong>💡 解题思路：</strong>现代主流=班级授课制，古代主流=个别教学。题干张冠李戴，判断为错误。<br><br><strong>🧠 记忆口诀：</strong>现代班级古个别，主流形式要分清。"
+        }];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'teaching_organization_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewPosition = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '教学组织形式（教招核心考点+8大形式速记）';
+            const content = `<h3>📖 必背核心知识点</h3>
+            <p><strong>定义：</strong>教学组织形式是师生开展教学活动的结构方式。<strong>班级授课制是我国最基本、最普遍的教学组织形式。</strong></p>
+
+            <h3>🏫 8大形式+代表人物+核心特点（必背）</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>形式</th><th>代表人物</th><th>核心特点</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>1. 个别教学制</strong></td><td>—</td><td>古代一对一；因材施教，效率低</td></tr>
+                    <tr><td><strong>2. 班级授课制</strong></td><td>夸美纽斯</td><td>班、课、时；我国1862年京师同文馆最早采用；效率高但一刀切</td></tr>
+                    <tr><td><strong>3. 分组教学</strong></td><td>—</td><td>外部分组（跨年级）、内部分组（班内）；因材施教</td></tr>
+                    <tr><td><strong>4. 设计教学法</strong></td><td>克伯屈</td><td>废除班级；学生自主设计项目学习</td></tr>
+                    <tr><td><strong>5. 道尔顿制</strong></td><td>柏克赫斯特</td><td>学生自学为主，教师个别辅导，无集体上课</td></tr>
+                    <tr><td><strong>6. 特朗普制</strong></td><td>特朗普</td><td>大班上课+小班研究+个别教学（三合模式，灵活课程表）</td></tr>
+                    <tr><td><strong>7. 贝尔‑兰卡斯特制（导生制）</strong></td><td>贝尔、兰卡斯特</td><td>导生（年长学生）教其他学生；适合师资不足时普及教育</td></tr>
+                    <tr><td><strong>8. 文纳特卡制</strong></td><td>华虚朋</td><td>个别学习+团体活动相结合</td></tr>
+                </tbody>
+            </table>
+
+            <h3>🧠 极简口诀</h3>
+            <p style="background:#f0f7ff;padding:12px;border-radius:8px;font-weight:600;">
+            个别一对一，班级夸美纽斯；<br>
+            分组内外分，设计克伯屈；<br>
+            道尔顿自学，特朗普三合；<br>
+            导生贝尔制，文纳特卡双。
+            </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = '';
+            if (reviewMode && wrongIndices.length > 0) {
+                html +=
+                    `<div style="text-align:center;padding:8px 0;margin-bottom:8px;"><span class="review-mode-badge">🔁 错题回顾 · 第 <span id="reviewPosNum">${reviewPosition + 1}</span>/<span id="reviewTotalNum">${wrongIndices.length}</span> 题</span></div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            if (currentIndex === questions.length - 1 && allAnswered && !reviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>回看错题${wrongCount > 0 ? ' (' + wrongCount + ')' : ''}</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (reviewMode && reviewPosition >= wrongIndices.length - 1 && allAnswered && currentIndex === wrongIndices[
+                    wrongIndices.length - 1]) {
+                html += `
+                    <div class="completion-screen" style="margin-top:20px;">
+                        <div class="completion-icon">✅</div>
+                        <h1 class="completion-title" style="font-size:20px;">错题回顾完毕！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了全部 <strong>${wrongIndices.length}</strong> 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()">退出回顾</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition > 0) {
+                    reviewPosition--;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition < wrongIndices.length - 1) {
+                    reviewPosition++;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (reviewMode && wrongIndices.length > 0) {
+                const isFirstWrong = reviewPosition === 0;
+                const isLastWrong = reviewPosition >= wrongIndices.length - 1;
+                footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirstWrong ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button><button class="nav-btn exit-review-btn" onclick="exitReviewMode()">退出回顾</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>`;
+                return;
+            }
+            footerContent.innerHTML =
+                `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function reviewWrongQuestions() {
+            wrongIndices = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongIndices.push(i);
+                }
+            }
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewPosition = 0;
+            currentIndex = wrongIndices[0];
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            reviewPosition = 0;
+            currentIndex = questions.length - 1;
+            renderQuestion();
+            updateNavButtons();
+            showToast('已退出错题回顾模式');
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = wrongIndices.indexOf(index);
+                if (pos >= 0) {
+                    reviewPosition = pos;
+                } else {
+                    exitReviewMode();
+                }
+            }
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+                index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                wrongIndices = [];
+                reviewPosition = 0;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (reviewMode) { exitReviewMode(); return; }
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
