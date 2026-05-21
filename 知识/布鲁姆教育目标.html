@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>布鲁姆教育目标分类与掌握学习刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5a623, #f7b84e);
+            color: white;
+        }
+        .review-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .review-mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+        .exit-review-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+        .exit-review-btn:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">布鲁姆教育目标分类</div>
+                        <div class="progress-text">教招必背 · 完整版</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "布鲁姆情感领域最高层次是（）",
+            "options": [
+                { "label": "A", "text": "接受" },
+                { "label": "B", "text": "反应" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "个性化" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>个性化</strong>。情感领域最高层次是个性化（品格化），即内化为人格、形成稳定行为习惯。<br><br><strong>📚 知识点讲解：</strong>克拉斯沃尔修订的情感领域目标由低到高为：接受、反应、价值化、组织、个性化。其中个性化是最高层级，表现为价值观内化为个体稳定的品格，如一生坚守善良与爱国。<br><br><strong>💡 解题思路：</strong>直接回忆口诀“接反价组个”，“个”即个性化。接受是最低层，反应是主动参与，组织是整合价值体系，均低于个性化。<br><br><strong>🧠 记忆口诀：</strong>情感五层接反价组个，最高品格个性化。"
+        }, {
+            "type": "单选题",
+            "stem": "学生主动参加志愿服务，属于情感领域的（）",
+            "options": [
+                { "label": "A", "text": "接受" },
+                { "label": "B", "text": "反应" },
+                { "label": "C", "text": "价值化" },
+                { "label": "D", "text": "组织" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>反应</strong>。主动参与活动、产生兴趣是反应层级的表现。<br><br><strong>📚 知识点讲解：</strong>反应是指学生不仅留意到刺激，而且主动参与、积极回应。例如主动参加志愿活动、积极回答品德问题。接受只是被动留意，价值化则更进一步表现为认可并践行价值。<br><br><strong>💡 解题思路：</strong>题干关键词“主动参加”对应主动参与，属于反应。接受是被动注意，价值化是认同并实践，组织是整合价值观，均不符合。<br><br><strong>🧠 记忆口诀：</strong>主动参与是反应，被动留意是接受。"
+        }, {
+            "type": "单选题",
+            "stem": "学生认同诚信品质，自觉做到诚实守信，属于（）",
+            "options": [
+                { "label": "A", "text": "接受" },
+                { "label": "B", "text": "反应" },
+                { "label": "C", "text": "价值化" },
+                { "label": "D", "text": "个性化" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>价值化</strong>。学生认同诚信并自觉践行，体现了对价值的认可与主动实践。<br><br><strong>📚 知识点讲解：</strong>价值化（评价）是指学生对某种价值观、行为准则产生认同，并自觉以此指导行为。题干中“认同诚信、自觉做到不说谎”正符合这一层级。接受只是不排斥，反应是参与但未必认同，个性化是内化为稳定品格。<br><br><strong>💡 解题思路：</strong>抓住“认同”“自觉践行”对应价值化。接受只是愿意听，反应是主动参加活动但未必内化，组织是整合多个价值观，个性化是终极品格。<br><br><strong>🧠 记忆口诀：</strong>认同践行价值化，诚信做人靠自觉。"
+        }, {
+            "type": "单选题",
+            "stem": "辛普森动作技能领域最高层级是（）",
+            "options": [
+                { "label": "A", "text": "模仿" },
+                { "label": "B", "text": "精准" },
+                { "label": "C", "text": "适应" },
+                { "label": "D", "text": "创新" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>创新</strong>。辛普森动作技能领域最高层级是创新，即创造新的动作模式。<br><br><strong>📚 知识点讲解：</strong>辛普森动作技能七层级：知觉、准备、模仿、机械动作、精准、适应、创新。创新是最高级，例如自创舞蹈动作。模仿是较低层级，精准是熟练完成复杂动作，适应是灵活调整。<br><br><strong>💡 解题思路：</strong>口诀“知准模机准适创”最后一字为“创”。A模仿是第三层，B精准是第五层，C适应是第六层，均非最高。<br><br><strong>🧠 记忆口诀：</strong>动作技能七层塔，创新最高是顶峰。"
+        }, {
+            "type": "单选题",
+            "stem": "学生跟着老师模仿投篮动作，属于（）",
+            "options": [
+                { "label": "A", "text": "知觉" },
+                { "label": "B", "text": "模仿" },
+                { "label": "C", "text": "机械动作" },
+                { "label": "D", "text": "适应" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>模仿</strong>。模仿是照着示范做动作，处于生疏笨拙阶段。<br><br><strong>📚 知识点讲解：</strong>模仿（指导下反应）是动作技能第三层，学生观察后尝试复制动作。知觉是感知线索，准备是身心调整，机械动作是熟练重复，适应是灵活应变。<br><br><strong>💡 解题思路：</strong>题干“跟着老师模仿”直接对应模仿层级。知觉只是看示范但未做，机械动作已自动化，适应是灵活调整，均不符合。<br><br><strong>🧠 记忆口诀：</strong>模仿阶段照猫画，生疏笨拙跟着做。"
+        }, {
+            "type": "单选题",
+            "stem": "熟练骑车、写字，属于动作技能的（）",
+            "options": [
+                { "label": "A", "text": "模仿" },
+                { "label": "B", "text": "机械动作" },
+                { "label": "C", "text": "精准" },
+                { "label": "D", "text": "创新" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>机械动作</strong>。熟练骑车、写字是经过反复练习后形成的基本自动化操作，属于机械动作层级。<br><br><strong>📚 知识点讲解：</strong>机械动作（操作）是动作技能第四层，学生能熟练重复动作，形成习惯。精准是第五层，要求动作连贯精确；模仿是第三层，仍不熟练；创新是最高层，创造新动作。<br><br><strong>💡 解题思路：</strong>熟练但并非复杂连贯动作，应为机械动作。精准如完美投篮，创新如自创舞步，模仿是初学阶段。<br><br><strong>🧠 记忆口诀：</strong>熟练重复机械层，骑车写字自动化。"
+        }, {
+            "type": "单选题",
+            "stem": "布鲁姆掌握学习的掌握标准是正确率达到（）",
+            "options": [
+                { "label": "A", "text": "60%–70%" },
+                { "label": "B", "text": "70%–80%" },
+                { "label": "C", "text": "80%–90%" },
+                { "label": "D", "text": "90%–100%" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>80%–90%</strong>。布鲁姆认为掌握学习需达到80%～90%的正确率才算掌握。<br><br><strong>📚 知识点讲解：</strong>掌握学习理论提出，只要给予足够时间和恰当教学，95%的学生都能达到掌握水平，掌握标准通常定为正确率80%～90%。60%～70%过低，90%以上虽理想但布鲁姆设定的范围是80%～90%。<br><br><strong>💡 解题思路：</strong>直接回忆布鲁姆掌握标准80%～90%。C项符合。<br><br><strong>🧠 记忆口诀：</strong>掌握学习八九十，达标才算真掌握。"
+        }, {
+            "type": "单选题",
+            "stem": "掌握学习认为学生能力差异主要影响（）",
+            "options": [
+                { "label": "A", "text": "能否学会" },
+                { "label": "B", "text": "学习时间长短" },
+                { "label": "C", "text": "学习兴趣" },
+                { "label": "D", "text": "学习态度" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>学习时间长短</strong>。布鲁姆认为学生能力差异只决定学会所需时间，不决定能否学会。<br><br><strong>📚 知识点讲解：</strong>掌握学习理论核心：只要提供足够时间与适当教学，几乎所有学生都能掌握。能力强的学得快，能力弱的学得慢，但最终都能学会。因此能力差异影响的是学习速度而非学习可能性。<br><br><strong>💡 解题思路：</strong>A项“能否学会”与掌握学习理念相悖，C、D兴趣态度并非能力差异的直接影响。B准确。<br><br><strong>🧠 记忆口诀：</strong>能力差异定快慢，能否学会看时间。"
+        }, {
+            "type": "单选题",
+            "stem": "掌握学习最核心的评价方式是（）",
+            "options": [
+                { "label": "A", "text": "诊断性评价" },
+                { "label": "B", "text": "形成性评价" },
+                { "label": "C", "text": "总结性评价" },
+                { "label": "D", "text": "相对评价" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>形成性评价</strong>。掌握学习以形成性评价为核心，通过及时反馈和矫正补差确保掌握。<br><br><strong>📚 知识点讲解：</strong>掌握学习实施流程：确定目标→诊断性评价→集体教学→形成性评价→矫正→终结性评价。其中形成性评价用于发现学习问题并及时矫正，是核心环节。诊断性评价用于摸底，总结性评价用于最终判定，相对评价并非主要方式。<br><br><strong>💡 解题思路：</strong>掌握学习强调反馈矫正，形成性评价正是为此服务。A、C为其他阶段评价，D与掌握学习理念不符。<br><br><strong>🧠 记忆口诀：</strong>掌握学习看形成，反馈矫正核心环。"
+        }, {
+            "type": "单选题",
+            "stem": "确立个人稳定的爱国品格，属于情感领域（）",
+            "options": [
+                { "label": "A", "text": "反应" },
+                { "label": "B", "text": "价值化" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "个性化" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>个性化</strong>。稳定的爱国品格是情感内化为人格，属于最高层个性化。<br><br><strong>📚 知识点讲解：</strong>个性化（品格化）是情感领域最高层，指价值观完全融入个人品格，行为表现出高度一致性和稳定性。题干中“稳定的爱国品格”正是这种表现。反应是主动参与，价值化是认同，组织是整合价值体系。<br><br><strong>💡 解题思路：</strong>关键词“稳定品格”对应最高层个性化。A、B、C均低于此层级。<br><br><strong>🧠 记忆口诀：</strong>稳定品格个性化，内化于心最高层。"
+        }, {
+            "type": "单选题",
+            "stem": "学生看老师示范实验操作，属于动作技能（）",
+            "options": [
+                { "label": "A", "text": "知觉" },
+                { "label": "B", "text": "准备" },
+                { "label": "C", "text": "模仿" },
+                { "label": "D", "text": "适应" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>知觉</strong>。观看示范、感知动作线索属于知觉层级。<br><br><strong>📚 知识点讲解：</strong>知觉是动作技能第一层，学生通过感官观察示范动作，形成初步感知。准备是身心调整，模仿是跟着做，适应是灵活应用。<br><br><strong>💡 解题思路：</strong>“看示范”但未做动作，即知觉。模仿需动手，准备是热身，适应是变通，排除。<br><br><strong>🧠 记忆口诀：</strong>知觉观察看示范，动作技能第一步。"
+        }, {
+            "type": "单选题",
+            "stem": "掌握学习理论的提出者是（）",
+            "options": [
+                { "label": "A", "text": "布鲁纳" },
+                { "label": "B", "text": "布鲁姆" },
+                { "label": "C", "text": "奥苏贝尔" },
+                { "label": "D", "text": "加涅" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>布鲁姆</strong>。掌握学习理论由布鲁姆提出。<br><br><strong>📚 知识点讲解：</strong>布鲁姆是美国教育心理学家，以教育目标分类学和掌握学习理论闻名。布鲁纳是结构主义，奥苏贝尔是有意义学习，加涅是学习层次理论。<br><br><strong>💡 解题思路：</strong>人物对应理论：布鲁姆→掌握学习，布鲁纳→发现学习，奥苏贝尔→有意义接受学习，加涅→信息加工。选B。<br><br><strong>🧠 记忆口诀：</strong>布鲁姆掌握学习，布鲁纳结构发现。"
+        }, {
+            "type": "单选题",
+            "stem": "学生灵活调整骑车姿势适应路况，属于（）",
+            "options": [
+                { "label": "A", "text": "精准" },
+                { "label": "B", "text": "适应" },
+                { "label": "C", "text": "创新" },
+                { "label": "D", "text": "机械动作" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>适应</strong>。根据情境灵活调整动作属于适应层级。<br><br><strong>📚 知识点讲解：</strong>适应是动作技能第六层，学生能根据环境变化灵活调整已掌握的动作模式。精准是完成复杂连贯动作但未必变通，创新是创造新动作，机械动作是熟练重复。<br><br><strong>💡 解题思路：</strong>题干“灵活调整”“适应路况”直接对应适应。精准要求动作准确连贯，创新是创造，机械动作缺乏变通。<br><br><strong>🧠 记忆口诀：</strong>适应灵活变通强，环境变化我不慌。"
+        }, {
+            "type": "单选题",
+            "stem": "下列不属于情感领域层级的是（）",
+            "options": [
+                { "label": "A", "text": "接受" },
+                { "label": "B", "text": "反应" },
+                { "label": "C", "text": "应用" },
+                { "label": "D", "text": "组织" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>应用</strong>。应用属于认知领域（布鲁姆认知目标），不属于情感领域。<br><br><strong>📚 知识点讲解：</strong>情感领域五层级：接受、反应、价值化、组织、个性化。认知领域包括知识、领会、应用、分析、综合、评价。应用是认知领域第三层，与情感无关。<br><br><strong>💡 解题思路：</strong>排除法：A、B、D均为情感领域，C是认知领域。选C。<br><br><strong>🧠 记忆口诀：</strong>认知应用非情感，情感接纳反价组个。"
+        }, {
+            "type": "单选题",
+            "stem": "掌握学习实施的第一步是（）",
+            "options": [
+                { "label": "A", "text": "形成性评价" },
+                { "label": "B", "text": "确定教学目标" },
+                { "label": "C", "text": "矫正教学" },
+                { "label": "D", "text": "集体教学" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>确定教学目标</strong>。掌握学习第一步是明确教学目标，后续才有评价与矫正。<br><br><strong>📚 知识点讲解：</strong>掌握学习流程：确定目标→诊断性评价→集体教学→形成性评价→矫正→终结性评价。目标确定是前提。A形成性评价在中间环节，C矫正在后，D集体教学在诊断评价之后。<br><br><strong>💡 解题思路：</strong>任何教学设计都从目标开始。掌握学习也不例外，先确定学生要掌握什么。选B。<br><br><strong>🧠 记忆口诀：</strong>目标先行第一步，掌握学习有方向。"
+        }, {
+            "type": "单选题",
+            "stem": "学生整合道德、个人利益，形成价值体系，属于（）",
+            "options": [
+                { "label": "A", "text": "反应" },
+                { "label": "B", "text": "价值化" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "个性化" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>组织</strong>。整合不同价值观、形成个人价值体系属于组织层级。<br><br><strong>📚 知识点讲解：</strong>组织是情感领域第四层，学生将各种价值观念进行比较、关联和整合，建立内在一致的价值体系。例如权衡利弊，确立道德优先。价值化是对单一价值的认同，个性化是体系内化为稳定品格。<br><br><strong>💡 解题思路：</strong>题干“整合”“形成价值体系”表明多价值协调，对应组织。价值化是认同单一价值，个性化是最终品格定型。<br><br><strong>🧠 记忆口诀：</strong>组织整合价值观，体系形成在组织。"
+        }, {
+            "type": "单选题",
+            "stem": "自创舞蹈动作属于动作技能的（）",
+            "options": [
+                { "label": "A", "text": "适应" },
+                { "label": "B", "text": "创新" },
+                { "label": "C", "text": "精准" },
+                { "label": "D", "text": "机械动作" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>创新</strong>。自创舞蹈动作是创造出新的动作模式，属于最高级创新。<br><br><strong>📚 知识点讲解：</strong>创新是动作技能第七层（最高），指创造出新颖的动作组合或运动方式。适应是灵活调整已有动作，精准是完成复杂动作，机械动作是熟练重复。<br><br><strong>💡 解题思路：</strong>“自创”即创造，直接匹配创新。适应是调整而非创造，精准和机械动作都不涉及新创。<br><br><strong>🧠 记忆口诀：</strong>创新创造新动作，舞蹈自编是创新。"
+        }, {
+            "type": "单选题",
+            "stem": "掌握学习理论认为，能掌握知识的学生比例约为（）",
+            "options": [
+                { "label": "A", "text": "50%" },
+                { "label": "B", "text": "70%" },
+                { "label": "C", "text": "95%" },
+                { "label": "D", "text": "100%" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>95%</strong>。布鲁姆断言，只要条件满足，95%的学生都能掌握所学内容。<br><br><strong>📚 知识点讲解：</strong>掌握学习基于“人人都能学习”的理念，认为学生能力呈正态分布，但学业成绩可以接近偏态分布，即大多数学生达到掌握水平。布鲁姆提出95%的学生可掌握，只有少数极特殊情况例外。<br><br><strong>💡 解题思路：</strong>数据记忆：掌握学习→95%学生能掌握。A、B比例偏低，D是理想化但不是布鲁姆观点。<br><br><strong>🧠 记忆口诀：</strong>掌握学习九十五，几乎人人都能行。"
+        }, {
+            "type": "单选题",
+            "stem": "下列匹配正确的是（）",
+            "options": [
+                { "label": "A", "text": "布鲁姆—发现学习" },
+                { "label": "B", "text": "辛普森—情感领域" },
+                { "label": "C", "text": "克拉斯沃尔—情感领域" },
+                { "label": "D", "text": "布鲁纳—掌握学习" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>克拉斯沃尔—情感领域</strong>。克拉斯沃尔修订了布鲁姆情感领域目标分类。<br><br><strong>📚 知识点讲解：</strong>匹配关系：布鲁姆→认知领域+掌握学习；布鲁纳→发现学习+结构主义；辛普森→动作技能领域；克拉斯沃尔→情感领域。A布鲁姆非发现学习，B辛普森非情感，D布鲁纳非掌握学习。<br><br><strong>💡 解题思路：</strong>回忆人物与领域对应：辛普森动作，克拉斯沃尔情感，布鲁姆认知+掌握。C正确。<br><br><strong>🧠 记忆口诀：</strong>克拉斯沃尔管情感，辛普森动作分七层。"
+        }, {
+            "type": "单选题",
+            "stem": "学生热身准备跳远，属于动作技能（）",
+            "options": [
+                { "label": "A", "text": "知觉" },
+                { "label": "B", "text": "准备" },
+                { "label": "C", "text": "模仿" },
+                { "label": "D", "text": "精准" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>准备</strong>。热身活动是身心调整，为动作做准备，属于准备层级。<br><br><strong>📚 知识点讲解：</strong>准备是动作技能第二层，包括心理、生理和情绪上的准备状态。知觉是观察感知，模仿是跟着做，精准是完成复杂动作。<br><br><strong>💡 解题思路：</strong>题干“热身准备”直接对应准备。知觉尚未做动作，模仿是尝试动作，精准是高质量完成，均不符。<br><br><strong>🧠 记忆口诀：</strong>准备身心调整好，热身预备第二步。"
+        }, {
+            "type": "判断题",
+            "stem": "情感领域最高层次是个性化（品格化）。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。情感领域最高层次就是个性化（品格化），指价值观内化为稳定人格。<br><br><strong>📚 知识点讲解：</strong>克拉斯沃尔情感五层：接受→反应→价值化→组织→个性化。个性化是最高层，表现为稳定的品格特征。题干表述准确。<br><br><strong>💡 解题思路：</strong>直接回忆口诀“接反价组个”，最后为个性化。判断正确。<br><br><strong>🧠 记忆口诀：</strong>情感顶点个性化，品格稳定最高层。"
+        }, {
+            "type": "判断题",
+            "stem": "价值化是情感领域最低层级。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。情感领域最低层级是<strong>接受</strong>，而非价值化。<br><br><strong>📚 知识点讲解：</strong>情感领域由低到高：接受（注意）→反应→价值化→组织→个性化。接受是学生愿意留意、不排斥，是最低要求。价值化已是第三层，属于较高层次。<br><br><strong>💡 解题思路：</strong>最低是接受，价值化是认同并践行。判断为错误。<br><br><strong>🧠 记忆口诀：</strong>情感最低是接受，价值化在三层级。"
+        }, {
+            "type": "判断题",
+            "stem": "动作技能领域最高层级是创新。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。辛普森动作技能七层最高为创新。<br><br><strong>📚 知识点讲解：</strong>动作技能层级：知觉、准备、模仿、机械动作、精准、适应、创新。创新是创造新动作模式，如自创舞蹈。题干准确。<br><br><strong>💡 解题思路：</strong>口诀“知准模机准适创”，末字“创”即创新。正确。<br><br><strong>🧠 记忆口诀：</strong>动作创新最高级，新招新式自创造。"
+        }, {
+            "type": "判断题",
+            "stem": "掌握学习要求学生正确率达到60%以上即可。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。掌握标准是正确率达到<strong>80%–90%</strong>，而非60%以上。<br><br><strong>📚 知识点讲解：</strong>布鲁姆认为掌握意味着学生对学习内容达到80%～90%的掌握程度，60%仅为及格线，远低于掌握标准。<br><br><strong>💡 解题思路：</strong>数据错误，60%太低。正确范围80%～90%。判断为错误。<br><br><strong>🧠 记忆口诀：</strong>掌握标准八九十，六十分不算掌握。"
+        }, {
+            "type": "判断题",
+            "stem": "掌握学习中，学生能力差就一定学不会。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。能力差异只影响学习时间长短，不决定能否学会。<br><br><strong>📚 知识点讲解：</strong>掌握学习核心理念：只要给足够时间和恰当教学，几乎所有学生都能学会。能力弱的学生只是需要更多时间，而非不能掌握。题干与理论相悖。<br><br><strong>💡 解题思路：</strong>掌握学习反对能力决定论。判断错误。<br><br><strong>🧠 记忆口诀：</strong>能力定快慢，非关能不能。"
+        }, {
+            "type": "判断题",
+            "stem": "形成性评价+及时矫正是掌握学习的关键。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。形成性评价和矫正补差是掌握学习的核心环节。<br><br><strong>📚 知识点讲解：</strong>掌握学习通过形成性评价发现学习问题，再通过矫正教学帮助未达标学生弥补不足，如此循环直至掌握。这是其区别于传统教学的关键。<br><br><strong>💡 解题思路：</strong>形成性评价+矫正正是掌握学习的灵魂。判断正确。<br><br><strong>🧠 记忆口诀：</strong>形成评价加矫正，掌握学习关键招。"
+        }, {
+            "type": "判断题",
+            "stem": "学生主动参与活动属于情感领域的接受阶段。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。主动参与属于<strong>反应</strong>层级，而非接受。<br><br><strong>📚 知识点讲解：</strong>接受是学生愿意留意、不排斥；反应是主动参与、产生兴趣。主动参与活动明显是反应层级。题干混淆了接受与反应。<br><br><strong>💡 解题思路：</strong>主动=反应，被动=接受。判断错误。<br><br><strong>🧠 记忆口诀：</strong>主动参与是反应，被动留意才接受。"
+        }, {
+            "type": "判断题",
+            "stem": "熟练完成实验操作属于机械动作层级。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。熟练完成实验操作是机械动作，即动作自动化。<br><br><strong>📚 知识点讲解：</strong>机械动作指经过练习形成熟练、自动化的操作，实验操作熟练后即达到此层级。精准是更高要求，适应是灵活调整。<br><br><strong>💡 解题思路：</strong>熟练操作对应机械动作。判断正确。<br><br><strong>🧠 记忆口诀：</strong>熟练实验机械层，基本自动不费心。"
+        }, {
+            "type": "判断题",
+            "stem": "情感领域顺序：接受→反应→价值化→组织→个性化。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。这正是克拉斯沃尔情感领域五层级的正确顺序。<br><br><strong>📚 知识点讲解：</strong>情感领域由低到高：接受（注意）、反应、价值化（评价）、组织、个性化（品格化）。口诀“接反价组个”概括此顺序。<br><br><strong>💡 解题思路：</strong>顺序完全正确。判断正确。<br><br><strong>🧠 记忆口诀：</strong>接反价组个，情感五步走。"
+        }, {
+            "type": "判断题",
+            "stem": "掌握学习适合精英教育，不适合后进生。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。掌握学习恰恰重点帮扶后进生，通过额外时间和矫正帮助他们达到掌握，而非精英教育。<br><br><strong>📚 知识点讲解：</strong>掌握学习关注全体学生，尤其是学习速度慢的学生。它提供个别化矫正和更多时间，使后进生也能达标。精英教育是只关注少数优秀者，与掌握学习理念背道而驰。<br><br><strong>💡 解题思路：</strong>掌握学习不放弃后进生，判断错误。<br><br><strong>🧠 记忆口诀：</strong>掌握学习帮后进，不搞精英全达标。"
+        }];
+
+        const APP_ID = 'bloom_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewPosition = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '布鲁姆：情感领域+动作技能领域+掌握学习理论';
+            const content = `<h3>❤️ 情感领域目标（克拉斯沃尔修订）</h3>
+            <p><strong>5个层级（由低到高，口诀：接反价组个）</strong></p>
+            <table class="knowledge-table">
+                <thead><tr><th>层级</th><th>含义</th><th>例子</th></tr></thead>
+                <tbody>
+                    <tr><td>1. 接受（注意）</td><td>被动留意、愿意关注</td><td>愿意听爱国故事</td></tr>
+                    <tr><td>2. 反应</td><td>主动参与、产生兴趣</td><td>主动参加志愿活动</td></tr>
+                    <tr><td>3. 价值化（评价）</td><td>认可价值、主动践行</td><td>认同诚信，不说谎</td></tr>
+                    <tr><td>4. 组织</td><td>整合价值观、形成体系</td><td>权衡利弊，确立道德优先</td></tr>
+                    <tr><td>5. 个性化（品格化）</td><td>内化人格、稳定行为习惯（最高级）</td><td>一生坚守善良、爱国</td></tr>
+                </tbody>
+            </table>
+
+            <h3>🤸 动作技能领域目标（辛普森7层级）</h3>
+            <p><strong>口诀：知准模机准适创</strong></p>
+            <table class="knowledge-table">
+                <thead><tr><th>层级</th><th>含义</th><th>例子</th></tr></thead>
+                <tbody>
+                    <tr><td>1. 知觉</td><td>感知动作线索、观察示范</td><td>看投篮示范</td></tr>
+                    <tr><td>2. 准备</td><td>身心准备、热身调整</td><td>热身准备跳远</td></tr>
+                    <tr><td>3. 指导下反应（模仿）</td><td>模仿动作，生疏笨拙</td><td>跟着模仿投篮</td></tr>
+                    <tr><td>4. 机械动作（操作）</td><td>熟练重复、基本自动化</td><td>熟练骑车、写字</td></tr>
+                    <tr><td>5. 复杂外显反应（精准）</td><td>精准完成复杂连贯动作</td><td>精准投篮、舞蹈</td></tr>
+                    <tr><td>6. 适应</td><td>灵活调整动作适应情境</td><td>调整姿势适应路况</td></tr>
+                    <tr><td>7. 创新</td><td>创造新的动作模式（最高级）</td><td>自创舞蹈动作</td></tr>
+                </tbody>
+            </table>
+
+            <h3>📚 掌握学习理论（布鲁姆核心考点）</h3>
+            <p><strong>核心观点：</strong>只要给予<strong>足够时间+恰当教学+及时反馈矫正</strong>，<strong>95%的学生</strong>都能掌握学习内容。</p>
+            <ul>
+                <li>掌握标准：<strong>正确率 80%～90%</strong></li>
+                <li>学生能力差异：只决定<strong>学习时间长短</strong>，不决定能不能学会</li>
+            </ul>
+            <p><strong>实施步骤：</strong>确定目标 → 诊断性评价（摸底）→ 集体教学 → 形成性评价 → 矫正补差 → 终结性评价</p>
+            <p><strong>关键评价方式：</strong><span class="highlight">形成性评价为主，及时反馈、查漏补缺</span></p>
+            <p><strong>教学启示：</strong>不放弃后进生；因材施教；给予足够学习时间；重视课后矫正。</p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = '';
+            if (reviewMode && wrongIndices.length > 0) {
+                html +=
+                    `<div style="text-align:center;padding:8px 0;margin-bottom:8px;"><span class="review-mode-badge">🔁 错题回顾 · 第 ${reviewPosition + 1}/${wrongIndices.length} 题</span></div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            if (currentIndex === questions.length - 1 && allAnswered && !reviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>回看错题${wrongCount > 0 ? ' (' + wrongCount + ')' : ''}</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (reviewMode && reviewPosition >= wrongIndices.length - 1 && allAnswered && currentIndex === wrongIndices[
+                    wrongIndices.length - 1]) {
+                html += `
+                    <div class="completion-screen" style="margin-top:20px;">
+                        <div class="completion-icon">✅</div>
+                        <h1 class="completion-title" style="font-size:20px;">错题回顾完毕！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了全部 <strong>${wrongIndices.length}</strong> 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()">退出回顾</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition > 0) {
+                    reviewPosition--;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition < wrongIndices.length - 1) {
+                    reviewPosition++;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (reviewMode && wrongIndices.length > 0) {
+                const isFirstWrong = reviewPosition === 0;
+                const isLastWrong = reviewPosition >= wrongIndices.length - 1;
+                footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirstWrong ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button><button class="nav-btn exit-review-btn" onclick="exitReviewMode()">退出回顾</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>`;
+                return;
+            }
+            footerContent.innerHTML =
+                `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function reviewWrongQuestions() {
+            wrongIndices = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongIndices.push(i);
+                }
+            }
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewPosition = 0;
+            currentIndex = wrongIndices[0];
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            reviewPosition = 0;
+            currentIndex = questions.length - 1;
+            renderQuestion();
+            updateNavButtons();
+            showToast('已退出错题回顾模式');
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = wrongIndices.indexOf(index);
+                if (pos >= 0) {
+                    reviewPosition = pos;
+                } else {
+                    exitReviewMode();
+                }
+            }
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+                index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                wrongIndices = [];
+                reviewPosition = 0;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (reviewMode) { exitReviewMode(); return; }
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

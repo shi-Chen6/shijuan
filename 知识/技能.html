@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>技能刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5a623, #f7b84e);
+            color: white;
+        }
+        .review-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .review-mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+        .exit-review-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+        .exit-review-btn:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">技能</div>
+                        <div class="progress-text">教招必背 · 操作+心智技能</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "下列属于心智技能的是（）",
+            "options": [
+                { "label": "A", "text": "骑车" },
+                { "label": "B", "text": "心算" },
+                { "label": "C", "text": "写字" },
+                { "label": "D", "text": "游泳" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>心算</strong>。心算属于大脑内部的智力活动，是心智技能；其余三项是动作技能。<br><br><strong>📚 知识点讲解：</strong>心智技能具有内潜性、观念性、简缩性，如心算、阅读、解题。操作技能具有外显性、客观性、展开性，如骑车、写字。<br><br><strong>💡 解题思路：</strong>关键词“心算”是内部思维活动。A、C、D都是需要肢体操作的动作技能。<br><br><strong>🧠 记忆口诀：</strong>心智内潜观念简，操作外显客观展。"
+        }, {
+            "type": "单选题",
+            "stem": "操作技能的特点不包括（）",
+            "options": [
+                { "label": "A", "text": "外显性" },
+                { "label": "B", "text": "客观性" },
+                { "label": "C", "text": "简缩性" },
+                { "label": "D", "text": "展开性" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>简缩性</strong>。简缩性是心智技能的特点，操作技能的特点是外显性、客观性、展开性。<br><br><strong>📚 知识点讲解：</strong>操作技能通过肢体动作表现，可见可测；心智技能在头脑中进行，高度简缩。C项偷换了技能类型特点。<br><br><strong>💡 解题思路：</strong>A、B、D都是操作技能的特点，C是心智技能特点。<br><br><strong>🧠 记忆口诀：</strong>操作外展客观，心智内潜简缩。"
+        }, {
+            "type": "单选题",
+            "stem": "冯忠良操作技能第三阶段是（）",
+            "options": [
+                { "label": "A", "text": "定向" },
+                { "label": "B", "text": "模仿" },
+                { "label": "C", "text": "整合" },
+                { "label": "D", "text": "熟练" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>整合</strong>。冯忠良操作技能四阶段为“定模整熟”，第三阶段是整合。<br><br><strong>📚 知识点讲解：</strong>操作技能形成阶段：操作定向（看示范）、操作模仿（动作僵硬）、操作整合（动作连贯）、操作熟练（自动化）。<br><br><strong>💡 解题思路：</strong>口诀“定模整熟”，第三对应整合。A、B、D分别为第一、二、四阶段。<br><br><strong>🧠 记忆口诀：</strong>定模整熟四阶段，整合第三动作连。"
+        }, {
+            "type": "单选题",
+            "stem": "动作僵硬、多余动作多，属于操作技能（）",
+            "options": [
+                { "label": "A", "text": "定向" },
+                { "label": "B", "text": "模仿" },
+                { "label": "C", "text": "整合" },
+                { "label": "D", "text": "熟练" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>模仿</strong>。操作模仿阶段动作不协调，多余动作多，主要靠视觉控制。<br><br><strong>📚 知识点讲解：</strong>模仿是练习初期，学生照着示范做，动作笨拙。定向只是观察未实操，整合时动作改善，熟练时高度自动化。<br><br><strong>💡 解题思路：</strong>“动作僵硬、多余动作多”是模仿阶段的典型特征。<br><br><strong>🧠 记忆口诀：</strong>模仿阶段动作僵，视觉控制多余忙。"
+        }, {
+            "type": "单选题",
+            "stem": "操作熟练阶段的控制方式主要是（）",
+            "options": [
+                { "label": "A", "text": "视觉" },
+                { "label": "B", "text": "动觉" },
+                { "label": "C", "text": "听觉" },
+                { "label": "D", "text": "触觉" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>动觉</strong>。操作熟练阶段主要依靠动觉（肌肉感觉）控制，视觉监控减弱。<br><br><strong>📚 知识点讲解：</strong>操作熟练后，动作自动化，不需要一直盯着。模仿阶段以视觉为主，熟练后动觉主导。<br><br><strong>💡 解题思路：</strong>熟练=动觉主导，模仿=视觉主导。A是模仿阶段特征。<br><br><strong>🧠 记忆口诀：</strong>熟练动觉为主导，视觉监控可放松。"
+        }, {
+            "type": "单选题",
+            "stem": "心智技能最后阶段是（）",
+            "options": [
+                { "label": "A", "text": "原型定向" },
+                { "label": "B", "text": "原型操作" },
+                { "label": "C", "text": "原型内化" },
+                { "label": "D", "text": "联结阶段" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>原型内化</strong>。冯忠良心智技能三阶段最后是原型内化，活动内化到大脑。<br><br><strong>📚 知识点讲解：</strong>三阶段：原型定向（明确模式）、原型操作（外化动手）、原型内化（内化简缩）。联结是菲茨操作技能第二阶段。<br><br><strong>💡 解题思路：</strong>口诀“定操内”，第三是内化。D属于操作技能阶段。<br><br><strong>🧠 记忆口诀：</strong>心智定操内化终，大脑运作简缩通。"
+        }, {
+            "type": "单选题",
+            "stem": "练习中期出现进步停滞，称为（）",
+            "options": [
+                { "label": "A", "text": "起伏现象" },
+                { "label": "B", "text": "高原现象" },
+                { "label": "C", "text": "消退现象" },
+                { "label": "D", "text": "同化现象" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>高原现象</strong>。高原现象指练习中期出现的暂时停滞，之后会继续进步。<br><br><strong>📚 知识点讲解：</strong>高原期产生原因包括方法固化、疲劳、兴趣下降。消退是指遗忘，起伏是波动，同化是奥苏贝尔遗忘理论。<br><br><strong>💡 解题思路：</strong>“中期进步停滞”是高原现象的典型描述。<br><br><strong>🧠 记忆口诀：</strong>练习中期高原现，暂时停滞再向前。"
+        }, {
+            "type": "单选题",
+            "stem": "菲茨&波斯纳提出操作技能三阶段顺序是（）",
+            "options": [
+                { "label": "A", "text": "联结—认知—自动化" },
+                { "label": "B", "text": "认知—联结—自动化" },
+                { "label": "C", "text": "认知—自动化—联结" },
+                { "label": "D", "text": "自动化—联结—认知" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>认知—联结—自动化</strong>。菲茨&波斯纳操作技能三阶段顺序固定。<br><br><strong>📚 知识点讲解：</strong>认知阶段了解任务，联结阶段建立动作链，自动化阶段不假思索。顺序不能颠倒。<br><br><strong>💡 解题思路：</strong>按认知→联结→自动化顺序选择B。<br><br><strong>🧠 记忆口诀：</strong>菲茨三阶认知始，联结自动化终成。"
+        }, {
+            "type": "单选题",
+            "stem": "加里培林心智技能最高阶段是（）",
+            "options": [
+                { "label": "A", "text": "物质化活动" },
+                { "label": "B", "text": "出声言语" },
+                { "label": "C", "text": "内部言语" },
+                { "label": "D", "text": "定向" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>内部言语</strong>。加里培林心智技能五阶段最高为内部言语阶段。<br><br><strong>📚 知识点讲解：</strong>五阶段：定向→物质化→出声言语→无声言语→内部言语。内部言语是高度简缩、自动化的智力活动。<br><br><strong>💡 解题思路：</strong>最高阶段内部言语。A、B是中间阶段，D是第一阶段。<br><br><strong>🧠 记忆口诀：</strong>加里培林五阶梯，内部言语最高级。"
+        }, {
+            "type": "单选题",
+            "stem": "写字属于（）",
+            "options": [
+                { "label": "A", "text": "粗大开放操作技能" },
+                { "label": "B", "text": "精细闭合操作技能" },
+                { "label": "C", "text": "心智技能" },
+                { "label": "D", "text": "习惯" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细闭合操作技能</strong>。写字是精细动作，环境固定，属于闭合型。<br><br><strong>📚 知识点讲解：</strong>操作技能细分：精细/粗大，闭合/开放。写字是小肌肉精细动作，书写环境稳定，故为精细闭合。<br><br><strong>💡 解题思路：</strong>写字精细且环境固定，选B。A粗大开放如跑步，C是内潜活动。<br><br><strong>🧠 记忆口诀：</strong>写字精细又闭合，粗大开放跑步乐。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于闭合型操作技能的是（）",
+            "options": [
+                { "label": "A", "text": "篮球" },
+                { "label": "B", "text": "羽毛球" },
+                { "label": "C", "text": "体操" },
+                { "label": "D", "text": "足球" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>体操</strong>。体操环境固定，动作模式化，属于闭合型操作技能。<br><br><strong>📚 知识点讲解：</strong>闭合型技能环境可预测，动作可事先计划；开放型技能需根据环境变化调整，如球类运动。<br><br><strong>💡 解题思路：</strong>球类环境多变，是开放型；体操环境稳定，是闭合型。<br><br><strong>🧠 记忆口诀：</strong>闭合环境固定做，体操套路是闭合。"
+        }, {
+            "type": "单选题",
+            "stem": "心智技能的核心特点是（）",
+            "options": [
+                { "label": "A", "text": "外显" },
+                { "label": "B", "text": "展开" },
+                { "label": "C", "text": "内潜简缩" },
+                { "label": "D", "text": "客观" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>内潜简缩</strong>。心智技能在头脑中进行，具有内潜性、简缩性。<br><br><strong>📚 知识点讲解：</strong>操作技能外显、客观、展开；心智技能内潜、观念、简缩。A、B、D是操作技能特点。<br><br><strong>💡 解题思路：</strong>心智技能=内潜简缩，选C。<br><br><strong>🧠 记忆口诀：</strong>心智内潜观念简，操作外显客观展。"
+        }, {
+            "type": "单选题",
+            "stem": "技能区别于习惯的关键是（）",
+            "options": [
+                { "label": "A", "text": "后天习得" },
+                { "label": "B", "text": "合乎法则" },
+                { "label": "C", "text": "练习形成" },
+                { "label": "D", "text": "自动化" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>合乎法则</strong>。技能是合乎法则的活动方式，习惯不一定合乎法则。<br><br><strong>📚 知识点讲解：</strong>技能和习惯都是后天练习形成的自动化行为，但技能必须符合活动的客观规律。不良习惯不符合法则，不是技能。<br><br><strong>💡 解题思路：</strong>关键区分：技能=合乎法则，习惯不一定。A、C、D二者都具备。<br><br><strong>🧠 记忆口诀：</strong>技能一定合法则，习惯好坏不一定。"
+        }, {
+            "type": "单选题",
+            "stem": "学生跟着老师模仿做操，属于（）",
+            "options": [
+                { "label": "A", "text": "原型定向" },
+                { "label": "B", "text": "操作模仿" },
+                { "label": "C", "text": "操作整合" },
+                { "label": "D", "text": "操作熟练" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>操作模仿</strong>。跟着老师做操是模仿阶段，照示范动作再现。<br><br><strong>📚 知识点讲解：</strong>原型定向是心智技能第一阶段，操作模仿是操作技能第二阶段。定向是观察，模仿是实操。<br><br><strong>💡 解题思路：</strong>“跟着做”即模仿，选B。A是心智技能阶段。<br><br><strong>🧠 记忆口诀：</strong>操作模仿跟着做，动作再现依样画。"
+        }, {
+            "type": "单选题",
+            "stem": "解题、阅读属于（）",
+            "options": [
+                { "label": "A", "text": "操作技能" },
+                { "label": "B", "text": "心智技能" },
+                { "label": "C", "text": "本能" },
+                { "label": "D", "text": "习惯" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>心智技能</strong>。解题和阅读是大脑内部的认知活动，属于心智技能。<br><br><strong>📚 知识点讲解：</strong>心智技能如心算、阅读、作文构思。操作技能如写字、骑车。本能是天生的，习惯未必合法则。<br><br><strong>💡 解题思路：</strong>解题阅读是智力活动，选B。<br><br><strong>🧠 记忆口诀：</strong>解题阅读心智功，内潜认知头脑中。"
+        }, {
+            "type": "单选题",
+            "stem": "练习曲线的整体趋势是（）",
+            "options": [
+                { "label": "A", "text": "匀速上升" },
+                { "label": "B", "text": "先慢后快" },
+                { "label": "C", "text": "先快后慢" },
+                { "label": "D", "text": "一直停滞" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>先快后慢</strong>。练习曲线总体上升，但前期进步快，后期进步慢。<br><br><strong>📚 知识点讲解：</strong>练习成绩随练习次数增加而提高，但速度不均。先快后慢是普遍规律。遗忘曲线也是先快后慢。<br><br><strong>💡 解题思路：</strong>练习曲线特征：先快后慢，整体上升。<br><br><strong>🧠 记忆口诀：</strong>练习成绩先快升，后期进步慢悠悠。"
+        }, {
+            "type": "单选题",
+            "stem": "动作连贯协调、多余动作减少，属于（）",
+            "options": [
+                { "label": "A", "text": "模仿" },
+                { "label": "B", "text": "整合" },
+                { "label": "C", "text": "熟练" },
+                { "label": "D", "text": "定向" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>整合</strong>。整合阶段动作开始连贯，多余动作减少，动觉控制增强。<br><br><strong>📚 知识点讲解：</strong>模仿阶段多余动作多，整合阶段动作协调，熟练阶段完全自动化。题干是整合阶段特征。<br><br><strong>💡 解题思路：</strong>“连贯协调”“多余减少”是整合标志。熟练是完全自动化。<br><br><strong>🧠 记忆口诀：</strong>整合连贯多余减，熟练自动化完全。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于连续型操作技能的是（）",
+            "options": [
+                { "label": "A", "text": "投篮" },
+                { "label": "B", "text": "骑车" },
+                { "label": "C", "text": "射箭" },
+                { "label": "D", "text": "举重" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>骑车</strong>。骑车动作连贯持续，属于连续型操作技能。<br><br><strong>📚 知识点讲解：</strong>连续型技能动作不间断，如骑车、跑步；断续型有明确开始和结束，如投篮、举重。<br><br><strong>💡 解题思路：</strong>骑车是连续动作，A、C、D都是断续型。<br><br><strong>🧠 记忆口诀：</strong>连续骑车跑不断，断续投篮有终点。"
+        }, {
+            "type": "单选题",
+            "stem": "原型操作阶段的特点是（）",
+            "options": [
+                { "label": "A", "text": "仅看示范" },
+                { "label": "B", "text": "外化动手实践" },
+                { "label": "C", "text": "内化脑中" },
+                { "label": "D", "text": "完全自动化" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>外化动手实践</strong>。原型操作是将心智模式外化为实际操作，动手实践。<br><br><strong>📚 知识点讲解：</strong>原型操作是心智技能第二阶段，学生动手操作，如摆弄学具。定向是了解模式，内化是转入头脑。<br><br><strong>💡 解题思路：</strong>“动手实践”对应原型操作。A是定向，C是内化，D不是该阶段。<br><br><strong>🧠 记忆口诀：</strong>原型操作外化练，动手实践记心间。"
+        }, {
+            "type": "单选题",
+            "stem": "本能不属于技能，因为技能需要（）",
+            "options": [
+                { "label": "A", "text": "先天遗传" },
+                { "label": "B", "text": "后天练习" },
+                { "label": "C", "text": "自动化" },
+                { "label": "D", "text": "简缩" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>后天练习</strong>。技能是通过后天练习形成的，本能是天生的。<br><br><strong>📚 知识点讲解：</strong>技能定义强调“通过练习形成”。本能如吮吸是先天获得，不需要练习。C、D是技能特点但不是与本能的关键区别。<br><br><strong>💡 解题思路：</strong>技能=后天练习，本能=先天遗传。<br><br><strong>🧠 记忆口诀：</strong>技能后天靠练习，本能天生不费功。"
+        }, {
+            "type": "判断题",
+            "stem": "心智技能具有内潜性、简缩性、观念性。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。心智技能在头脑中进行，具有内潜性、简缩性、观念性特点。<br><br><strong>📚 知识点讲解：</strong>心智技能如心算，看不见摸不着，高度简缩。操作技能外显客观展开。题干描述准确。<br><br><strong>💡 解题思路：</strong>符合心智技能特点，正确。<br><br><strong>🧠 记忆口诀：</strong>心智内潜观念简，操作外显客观展。"
+        }, {
+            "type": "判断题",
+            "stem": "习惯一定合乎法则，技能不一定。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。技能一定合乎法则，习惯不一定符合活动规律。<br><br><strong>📚 知识点讲解：</strong>技能是合乎法则的活动方式，习惯有好有坏，不良习惯不符合法则。题干把二者关系说反了。<br><br><strong>💡 解题思路：</strong>技能一定合法则，习惯不一定。错误。<br><br><strong>🧠 记忆口诀：</strong>技能必定合规矩，习惯好坏不保证。"
+        }, {
+            "type": "判断题",
+            "stem": "操作模仿阶段主要依靠动觉控制动作。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。模仿阶段主要依靠<strong>视觉控制</strong>，熟练阶段才以动觉为主。<br><br><strong>📚 知识点讲解：</strong>模仿时学生需要看着示范或自己的动作，视觉主导。熟练后闭眼也能完成，动觉主导。<br><br><strong>💡 解题思路：</strong>模仿=视觉，熟练=动觉。错误。<br><br><strong>🧠 记忆口诀：</strong>模仿视觉紧盯着，熟练动觉自动化。"
+        }, {
+            "type": "判断题",
+            "stem": "高原现象是技能永远无法提升。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。高原现象是暂时停滞，突破后仍可继续提升。<br><br><strong>📚 知识点讲解：</strong>高原期后成绩会继续上升，并非永久无法进步。题干将暂时停滞夸大。<br><br><strong>💡 解题思路：</strong>高原=暂时停滞，不是永远。错误。<br><br><strong>🧠 记忆口诀：</strong>高原暂时停一停，突破之后继续升。"
+        }, {
+            "type": "判断题",
+            "stem": "冯忠良心智技能三阶段：原型定向、原型操作、原型内化。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。冯忠良提出心智技能形成三阶段：原型定向→原型操作→原型内化。<br><br><strong>📚 知识点讲解：</strong>口诀“定操内”。定向是了解模式，操作是动手实践，内化是转入大脑。<br><br><strong>💡 解题思路：</strong>顺序正确，正确。<br><br><strong>🧠 记忆口诀：</strong>心智三阶定操内，内化入脑成技能。"
+        }, {
+            "type": "判断题",
+            "stem": "体操属于开放型操作技能。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。体操环境固定，动作套路化，属于<strong>闭合型</strong>操作技能。<br><br><strong>📚 知识点讲解：</strong>闭合型技能环境可预测，开放型技能环境多变（如球类）。体操场地固定，是闭合型。<br><br><strong>💡 解题思路：</strong>体操环境固定，闭合型。错误。<br><br><strong>🧠 记忆口诀：</strong>体操闭合套路定，球类开放应变灵。"
+        }, {
+            "type": "判断题",
+            "stem": "练习是技能形成的必要条件。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。技能是通过练习形成的，没有练习就没有技能。<br><br><strong>📚 知识点讲解：</strong>技能定义强调练习形成。练习是技能形成的唯一途径，必要条件不可替代。<br><br><strong>💡 解题思路：</strong>符合技能定义，正确。<br><br><strong>🧠 记忆口诀：</strong>技能形成靠练习，反复操练才熟练。"
+        }, {
+            "type": "判断题",
+            "stem": "操作熟练阶段多余动作消失，动作自动化。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。操作熟练阶段动作高度自动化，多余动作消失，动觉控制为主。<br><br><strong>📚 知识点讲解：</strong>熟练阶段是操作技能最高阶段，流畅协调，不假思索。题干描述准确。<br><br><strong>💡 解题思路：</strong>熟练=自动化+多余消失，正确。<br><br><strong>🧠 记忆口诀：</strong>熟练阶段自动化，多余动作全消失。"
+        }, {
+            "type": "判断题",
+            "stem": "心算、写作构思属于操作技能。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。心算和写作构思是大脑内部活动，属于<strong>心智技能</strong>。<br><br><strong>📚 知识点讲解：</strong>心智技能如计算、构思，内潜简缩；操作技能如写字、运动，外显展开。题干归类错误。<br><br><strong>💡 解题思路：</strong>心算构思是心智，不是操作。错误。<br><br><strong>🧠 记忆口诀：</strong>心算构思心智功，动作技能肢体动。"
+        }, {
+            "type": "判断题",
+            "stem": "加里培林认为心智技能最高阶段是内部言语阶段。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。加里培林五阶段最后是内部言语阶段，心智活动高度简缩。<br><br><strong>📚 知识点讲解：</strong>内部言语阶段是智力的最高形式，思维不依赖外部语言。题干表述正确。<br><br><strong>💡 解题思路：</strong>内部言语是加里培林最高阶段，正确。<br><br><strong>🧠 记忆口诀：</strong>加里内部言语阶，心智最高简缩完。"
+        }];
+
+        const APP_ID = 'skill_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewPosition = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '技能（操作技能与心智技能）';
+            const content = `<h3>📌 技能定义</h3>
+            <p>通过<strong>练习</strong>而形成的<strong>合乎法则</strong>的活动方式。不是本能，不是习惯。</p>
+
+            <h3>✋ 两大分类</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>类型</th><th>特点</th><th>例子</th></tr></thead>
+                <tbody>
+                    <tr><td>操作技能</td><td>外显性、客观性、展开性</td><td>骑车、写字、游泳</td></tr>
+                    <tr><td>心智技能</td><td>内潜性、观念性、简缩性</td><td>心算、阅读、解题</td></tr>
+                </tbody>
+            </table>
+
+            <h3>📈 形成阶段（冯忠良）</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>类型</th><th>阶段</th><th>特点</th></tr></thead>
+                <tbody>
+                    <tr><td rowspan="4">操作技能</td><td>操作定向</td><td>看示范，建立表象</td></tr>
+                    <tr><td>操作模仿</td><td>动作僵硬，视觉控制</td></tr>
+                    <tr><td>操作整合</td><td>动作连贯，动觉增强</td></tr>
+                    <tr><td>操作熟练</td><td>自动化，动觉主导</td></tr>
+                    <tr><td rowspan="3">心智技能</td><td>原型定向</td><td>明确心智模式</td></tr>
+                    <tr><td>原型操作</td><td>外化动手实践</td></tr>
+                    <tr><td>原型内化</td><td>内化简缩自动化</td></tr>
+                </tbody>
+            </table>
+
+            <h3>🏔 练习与高原现象</h3>
+            <p>练习曲线总体上升、<strong>先快后慢</strong>。高原现象：练习中期进步<strong>暂时停滞</strong>，之后可继续提升。</p>
+            <p>原因：方法固化、疲劳、兴趣下降。</p>
+
+            <h3>📝 极简口诀</h3>
+            <p style="background:#f0f7ff;padding:12px;border-radius:8px;font-weight:600;">
+            操作外展客观，心智内潜简缩；<br>
+            定模整熟四阶段，定操内化三步骤；<br>
+            练习先快后慢，中期高原停留。
+            </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = '';
+            if (reviewMode && wrongIndices.length > 0) {
+                html +=
+                    `<div style="text-align:center;padding:8px 0;margin-bottom:8px;"><span class="review-mode-badge">🔁 错题回顾 · 第 ${reviewPosition + 1}/${wrongIndices.length} 题</span></div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            if (currentIndex === questions.length - 1 && allAnswered && !reviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>回看错题${wrongCount > 0 ? ' (' + wrongCount + ')' : ''}</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (reviewMode && reviewPosition >= wrongIndices.length - 1 && allAnswered && currentIndex === wrongIndices[
+                    wrongIndices.length - 1]) {
+                html += `
+                    <div class="completion-screen" style="margin-top:20px;">
+                        <div class="completion-icon">✅</div>
+                        <h1 class="completion-title" style="font-size:20px;">错题回顾完毕！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了全部 <strong>${wrongIndices.length}</strong> 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()">退出回顾</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition > 0) {
+                    reviewPosition--;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition < wrongIndices.length - 1) {
+                    reviewPosition++;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (reviewMode && wrongIndices.length > 0) {
+                const isFirstWrong = reviewPosition === 0;
+                const isLastWrong = reviewPosition >= wrongIndices.length - 1;
+                footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirstWrong ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button><button class="nav-btn exit-review-btn" onclick="exitReviewMode()">退出回顾</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>`;
+                return;
+            }
+            footerContent.innerHTML =
+                `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function reviewWrongQuestions() {
+            wrongIndices = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongIndices.push(i);
+                }
+            }
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewPosition = 0;
+            currentIndex = wrongIndices[0];
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            reviewPosition = 0;
+            currentIndex = questions.length - 1;
+            renderQuestion();
+            updateNavButtons();
+            showToast('已退出错题回顾模式');
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = wrongIndices.indexOf(index);
+                if (pos >= 0) {
+                    reviewPosition = pos;
+                } else {
+                    exitReviewMode();
+                }
+            }
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+                index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                wrongIndices = [];
+                reviewPosition = 0;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (reviewMode) { exitReviewMode(); return; }
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

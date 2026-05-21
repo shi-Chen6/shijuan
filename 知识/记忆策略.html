@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>记忆策略刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5a623, #f7b84e);
+            color: white;
+        }
+        .review-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .review-mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+        .exit-review-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+        .exit-review-btn:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">记忆策略（学习策略）</div>
+                        <div class="progress-text">教招必背 · 30道真题</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "学生反复诵读课文，属于（）",
+            "options": [
+                { "label": "A", "text": "复述策略" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织策略" },
+                { "label": "D", "text": "元认知" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>复述策略</strong>。反复诵读是单纯的重复，不涉及深层加工，属于复述策略。<br><br><strong>📚 知识点讲解：</strong>复述策略是指通过重复、多读多背来保持信息，如划线、圈点、及时复习、分散复习等。精细加工强调理解和联想，组织策略强调归类整理。<br><br><strong>💡 解题思路：</strong>题干关键词“反复诵读”是典型的复述。B需要联想或记忆术，C需要梳理结构，D是自我监控，均不符合。<br><br><strong>🧠 记忆口诀：</strong>复述重复多背诵，精细联想加记忆，组织分类画导图。"
+        }, {
+            "type": "单选题",
+            "stem": "利用谐音记圆周率“山巅一寺一壶酒”，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "计划" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。谐音联想法是记忆术的一种，属于精细加工策略。<br><br><strong>📚 知识点讲解：</strong>精细加工策略通过联想、赋予意义来加深记忆，记忆术包括谐音法、缩略词法、位置记忆法等。谐音记忆把抽象数字变成生动画面。<br><br><strong>💡 解题思路：</strong>“谐音”直接对应精细加工。复述是简单重复，组织是结构化，计划是元认知。<br><br><strong>🧠 记忆口诀：</strong>谐音联想精加工，山巅一寺记圆周。"
+        }, {
+            "type": "单选题",
+            "stem": "学生画思维导图整理知识点，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织策略" },
+                { "label": "D", "text": "监控" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>组织策略</strong>。思维导图是将知识结构化、系统化，属于组织策略。<br><br><strong>📚 知识点讲解：</strong>组织策略包括归类、列提纲、画思维导图、表格、流程图等，目的是把零散知识变得有条理。复述是重复，精细加工是联想理解。<br><br><strong>💡 解题思路：</strong>“思维导图”是组织策略的典型代表。A、B、D均不涉及知识结构整理。<br><br><strong>🧠 记忆口诀：</strong>思维导图组织策，知识体系搭建好。"
+        }, {
+            "type": "单选题",
+            "stem": "做笔记、联系生活理解知识，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "资源管理" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。做笔记和联系生活都是对信息进行深层加工，属于精细加工策略。<br><br><strong>📚 知识点讲解：</strong>精细加工包括做笔记、提问、生成性学习、联系实际等，帮助理解记忆。复述只是简单重复，组织是归类整理。<br><br><strong>💡 解题思路：</strong>“做笔记”“联系生活”体现理解与联想，是精细加工。复述如划线，组织如列提纲。<br><br><strong>🧠 记忆口诀：</strong>笔记联系精加工，理解应用记得牢。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于复述策略的是（）",
+            "options": [
+                { "label": "A", "text": "谐音记忆" },
+                { "label": "B", "text": "划线圈点" },
+                { "label": "C", "text": "思维导图" },
+                { "label": "D", "text": "归类" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>划线圈点</strong>。划线、圈点批注是复述策略中常见的辅助手段。<br><br><strong>📚 知识点讲解：</strong>复述策略包含重复诵读、划线、多种感官参与、及时复习等。谐音是精细加工，思维导图和归类是组织策略。<br><br><strong>💡 解题思路：</strong>题干要求选复述策略，只有B属于。A是精细加工，C和D是组织策略。<br><br><strong>🧠 记忆口诀：</strong>划线圈点复述帮，重复加深不遗忘。"
+        }, {
+            "type": "单选题",
+            "stem": "用首字连词记忆历史朝代，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "调节" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。缩略词法（首字连词）是记忆术的一种，属于精细加工策略。<br><br><strong>📚 知识点讲解：</strong>缩略词法将材料的首字提取组成有意义的词句，如“二十四节气歌”。这属于深层加工，不是简单重复或分类。<br><br><strong>💡 解题思路：</strong>“首字连词”即缩略词法，是精细加工记忆术。A是复述，C是组织，D是元认知。<br><br><strong>🧠 记忆口诀：</strong>首字连词精细记，朝代歌诀巧记忆。"
+        }, {
+            "type": "单选题",
+            "stem": "把知识按类别整理归纳，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "计划" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>组织</strong>。按类别归纳就是组织策略中的归类。<br><br><strong>📚 知识点讲解：</strong>组织策略强调对知识进行归类、梳理，形成系统结构。复述是重复，精细加工是联想理解。<br><br><strong>💡 解题思路：</strong>“按类别整理”直接对应组织策略。A、B、D均不涉及分类结构。<br><br><strong>🧠 记忆口诀：</strong>归类整理组织法，知识体系模块化。"
+        }, {
+            "type": "单选题",
+            "stem": "元认知策略不包括（）",
+            "options": [
+                { "label": "A", "text": "计划" },
+                { "label": "B", "text": "监控" },
+                { "label": "C", "text": "调节" },
+                { "label": "D", "text": "谐音联想" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>谐音联想</strong>。谐音联想属于认知策略中的精细加工策略，不属于元认知策略。<br><br><strong>📚 知识点讲解：</strong>元认知策略是对认知过程的计划、监控和调节。计划制定学习步骤，监控检查掌握情况，调节调整方法。谐音是记忆术，属于认知策略。<br><br><strong>💡 解题思路：</strong>排除法：A、B、C都是元认知，D是精细加工。<br><br><strong>🧠 记忆口诀：</strong>元认知管计划监控调节，记忆术属于精细加工。"
+        }, {
+            "type": "单选题",
+            "stem": "多种感官同时记忆，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "资源管理" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>复述</strong>。多种感官参与是复述策略的一种方式，通过多通道重复增强记忆痕迹。<br><br><strong>📚 知识点讲解：</strong>复述策略包括眼耳手口脑并用，这是浅层加工，不涉及理解或结构重组。精细加工强调意义加工，组织强调整理结构。<br><br><strong>💡 解题思路：</strong>“多种感官”是复述策略常用方法，选A。<br><br><strong>🧠 记忆口诀：</strong>眼耳手口齐上阵，复述记忆印象深。"
+        }, {
+            "type": "单选题",
+            "stem": "过度学习150%属于（）",
+            "options": [
+                { "label": "A", "text": "复述策略" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "元认知" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>复述策略</strong>。过度学习是在刚好记住后继续重复学习，属于复述策略的范畴。<br><br><strong>📚 知识点讲解：</strong>过度学习150%效果最佳，本质是增加重复次数，强化记忆痕迹。精细加工强调理解和联想，组织强调整理，元认知强调监控。<br><br><strong>💡 解题思路：</strong>“过度学习”即额外重复，属于复述。<br><br><strong>🧠 记忆口诀：</strong>过度一百五，复述巩固足。"
+        }, {
+            "type": "单选题",
+            "stem": "生成性学习（自己总结知识）属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "监控" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。生成性学习是学生主动加工信息、自己总结和画图，属于精细加工策略。<br><br><strong>📚 知识点讲解：</strong>生成性学习强调学习者自己生成知识表征，如写概要、画图示，是对材料的深层加工。复述是简单重复，组织是分类整理。<br><br><strong>💡 解题思路：</strong>“自己总结”涉及深层理解，是精细加工。C组织策略虽也是生成结构，但生成性学习更侧重个体加工。<br><br><strong>🧠 记忆口诀：</strong>自己总结生成学，精细加工理解透。"
+        }, {
+            "type": "单选题",
+            "stem": "制定每日背诵计划，属于（）",
+            "options": [
+                { "label": "A", "text": "计划策略" },
+                { "label": "B", "text": "监控策略" },
+                { "label": "C", "text": "调节策略" },
+                { "label": "D", "text": "组织" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>计划策略</strong>。制定计划是元认知策略中的计划成分，包括设置目标、选择策略等。<br><br><strong>📚 知识点讲解：</strong>元认知策略分为计划、监控、调节。计划发生在学习前，监控在学习中，调节在学习后。组织策略是认知策略。<br><br><strong>💡 解题思路：</strong>“制定计划”对应元认知计划策略。B是检查，C是调整，D是认知策略。<br><br><strong>🧠 记忆口诀：</strong>计划在前定目标，元认知策略第一步。"
+        }, {
+            "type": "单选题",
+            "stem": "做题时发现知识点遗忘，立刻复习，属于（）",
+            "options": [
+                { "label": "A", "text": "计划" },
+                { "label": "B", "text": "监控" },
+                { "label": "C", "text": "调节" },
+                { "label": "D", "text": "复述" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>调节</strong>。发现遗忘后调整复习策略，属于元认知调节策略。<br><br><strong>📚 知识点讲解：</strong>调节策略是根据监控结果采取补救措施。计划是事前，监控是发现问题，调节是解决问题。复述是认知策略。<br><br><strong>💡 解题思路：</strong>“立刻复习”是对遗忘的补救，属于调节。B是发现遗忘但未行动，A、D不符。<br><br><strong>🧠 记忆口诀：</strong>监控发现忘，调节来补救，立刻复习对。"
+        }, {
+            "type": "单选题",
+            "stem": "关键词法记忆英语单词属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "资源管理" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。关键词法是通过联想谐音或形象来记忆外语单词，是典型的精细加工策略。<br><br><strong>📚 知识点讲解：</strong>关键词法属于记忆术，利用母语中的相似音或形象与外语单词建立联系。复述是单纯重复，组织是归类。<br><br><strong>💡 解题思路：</strong>关键词法=记忆术=精细加工。<br><br><strong>🧠 记忆口诀：</strong>关键词联想法，精细加工单词牢。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于组织策略的是（）",
+            "options": [
+                { "label": "A", "text": "重复朗读" },
+                { "label": "B", "text": "做笔记" },
+                { "label": "C", "text": "列提纲" },
+                { "label": "D", "text": "谐音记忆" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>列提纲</strong>。列提纲是组织策略的常用方法，将知识结构化。<br><br><strong>📚 知识点讲解：</strong>组织策略包括列提纲、思维导图、归类等。A是复述，B和D是精细加工。<br><br><strong>💡 解题思路：</strong>直接选C，列提纲属于组织策略。<br><br><strong>🧠 记忆口诀：</strong>列提纲组织策，知识框架立起来。"
+        }, {
+            "type": "单选题",
+            "stem": "分散复习优于集中复习，属于（）",
+            "options": [
+                { "label": "A", "text": "复述策略" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "调节" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>复述策略</strong>。分散复习是复述策略中的复习方式，属于重复记忆的范畴。<br><br><strong>📚 知识点讲解：</strong>复述策略强调复习的时机和方式，分散复习比集中复习效果好。精细加工是深度加工，组织是结构整理，调节是元认知。<br><br><strong>💡 解题思路：</strong>“分散复习”是关于如何重复，属复述策略。<br><br><strong>🧠 记忆口诀：</strong>分散复习复述策，间隔重复记得久。"
+        }, {
+            "type": "单选题",
+            "stem": "位置记忆法属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "监控" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。位置记忆法是记忆术的一种，利用熟悉的空间位置联想记忆。<br><br><strong>📚 知识点讲解：</strong>位置记忆法（记忆宫殿）是精细加工策略中视觉想象和地点联系的应用。复述重复，组织分类，监控自省。<br><br><strong>💡 解题思路：</strong>记忆术=精细加工。<br><br><strong>🧠 记忆口诀：</strong>位置记忆精细法，空间联想记得全。"
+        }, {
+            "type": "单选题",
+            "stem": "学习策略中，深层理解记忆主要依靠（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "计划" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>精细加工</strong>。精细加工通过理解、联想和意义赋予来实现深层加工，记忆效果最好。<br><br><strong>📚 知识点讲解：</strong>复述是浅层重复，组织是结构整理，精细加工才是深度理解。深层理解记忆依赖于对新旧知识的联系。<br><br><strong>💡 解题思路：</strong>题干明确“深层理解”，对应精细加工。<br><br><strong>🧠 记忆口诀：</strong>深层理解精加工，意义关联记得深。"
+        }, {
+            "type": "单选题",
+            "stem": "归类整理错题，属于（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "资源管理" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>组织</strong>。归类整理错题是将错题按知识点分类，属于组织策略。<br><br><strong>📚 知识点讲解：</strong>组织策略强调对材料进行归类、系统化。错题本的整理正是将分散的错误归类分析。A是重复，B是联想，D是学习环境管理。<br><br><strong>💡 解题思路：</strong>“归类”直接对应组织策略。<br><br><strong>🧠 记忆口诀：</strong>错题归类组织策，查漏补缺系统化。"
+        }, {
+            "type": "单选题",
+            "stem": "不属于认知策略的是（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "精细加工" },
+                { "label": "C", "text": "组织" },
+                { "label": "D", "text": "时间管理" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>时间管理</strong>。时间管理属于资源管理策略，不属于认知策略。<br><br><strong>📚 知识点讲解：</strong>认知策略包括复述、精细加工、组织。资源管理策略包括时间管理、环境管理、努力管理、求助等。A、B、C都是认知策略。<br><br><strong>💡 解题思路：</strong>时间管理是资源管理，选D。<br><br><strong>🧠 记忆口诀：</strong>认知策略复述精组织，资源时间环境加努力。"
+        }, {
+            "type": "判断题",
+            "stem": "复述策略侧重深层理解、联想记忆。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。复述策略是浅层重复，深层理解和联想记忆属于<strong>精细加工策略</strong>。<br><br><strong>📚 知识点讲解：</strong>复述侧重机械重复，精细加工侧重意义加工。题干混淆了两者。<br><br><strong>💡 解题思路：</strong>复述=浅层，精细加工=深层。错误。<br><br><strong>🧠 记忆口诀：</strong>复述浅层重复诵，精细深层联想通。"
+        }, {
+            "type": "判断题",
+            "stem": "谐音联想法、缩略词法属于精细加工策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。谐音和缩略词都是记忆术，属于精细加工策略。<br><br><strong>📚 知识点讲解：</strong>记忆术是精细加工的核心方法，通过联想赋予材料意义。题干表述准确。<br><br><strong>💡 解题思路：</strong>记忆术=精细加工，正确。<br><br><strong>🧠 记忆口诀：</strong>谐音缩略精细工，记忆术里显神通。"
+        }, {
+            "type": "判断题",
+            "stem": "思维导图、列提纲属于组织策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。思维导图和列提纲都是对知识进行结构化整理，属于组织策略。<br><br><strong>📚 知识点讲解：</strong>组织策略强调构建知识框架，思维导图是典型方法。复述是重复，精细加工是理解。<br><br><strong>💡 解题思路：</strong>符合组织策略定义，正确。<br><br><strong>🧠 记忆口诀：</strong>思维导图提纲组织，知识体系结构化。"
+        }, {
+            "type": "判断题",
+            "stem": "做笔记、联系实际学习属于复述策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。做笔记和联系实际是深层加工，属于<strong>精细加工策略</strong>，不是复述。<br><br><strong>📚 知识点讲解：</strong>做笔记需要理解后转化，联系实际是赋予意义，都属于精细加工。复述只是划线、重复诵读。<br><br><strong>💡 解题思路：</strong>做笔记≠复述，是精细加工。错误。<br><br><strong>🧠 记忆口诀：</strong>做笔记联系实际，精细加工非复述。"
+        }, {
+            "type": "判断题",
+            "stem": "元认知策略是对自己记忆过程的监控与调节。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。元认知策略就是对自己认知活动的计划、监控和调节。<br><br><strong>📚 知识点讲解：</strong>元认知包括元认知知识、元认知体验和元认知监控。策略层面分为计划、监控、调节。题干概括准确。<br><br><strong>💡 解题思路：</strong>符合元认知定义，正确。<br><br><strong>🧠 记忆口诀：</strong>元认知管自己，计划监控加调节。"
+        }, {
+            "type": "判断题",
+            "stem": "多种感官参与记忆属于精细加工策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。多种感官参与属于<strong>复述策略</strong>，不是精细加工。<br><br><strong>📚 知识点讲解：</strong>复述策略包括多种感官协同活动，加强记忆痕迹。精细加工涉及意义加工。题干归类错误。<br><br><strong>💡 解题思路：</strong>多感官=复述。错误。<br><br><strong>🧠 记忆口诀：</strong>多种感官复述法，精细加工靠联想。"
+        }, {
+            "type": "判断题",
+            "stem": "组织策略的核心是构建知识结构，系统化整理。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。组织策略就是将分散的知识归类、整理成系统结构。<br><br><strong>📚 知识点讲解：</strong>组织策略通过归类、提纲、思维导图等方式使知识结构化，有助于提取和应用。<br><br><strong>💡 解题思路：</strong>描述准确，正确。<br><br><strong>🧠 记忆口诀：</strong>组织策略建结构，系统整理记得清。"
+        }, {
+            "type": "判断题",
+            "stem": "生成性学习、关键词法都属于精细加工策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。生成性学习和关键词法都是深层加工，属于精细加工策略。<br><br><strong>📚 知识点讲解：</strong>生成性学习是自己总结、画图；关键词法是联想记忆。二者都涉及意义加工。题干正确。<br><br><strong>💡 解题思路：</strong>二者都是精细加工，正确。<br><br><strong>🧠 记忆口诀：</strong>生成关键词精细法，理解联想两手抓。"
+        }, {
+            "type": "判断题",
+            "stem": "计划、监控、调节属于资源管理策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。计划、监控、调节属于<strong>元认知策略</strong>，不是资源管理策略。<br><br><strong>📚 知识点讲解：</strong>资源管理策略是时间、环境、努力等外部资源的管理。元认知策略是对内部认知过程的控制。<br><br><strong>💡 解题思路：</strong>类别混淆，错误。<br><br><strong>🧠 记忆口诀：</strong>元认知管认知内，资源管理理外物。"
+        }, {
+            "type": "判断题",
+            "stem": "精细加工策略记忆效果优于复述策略。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。精细加工进行了深层意义加工，记忆效果比简单重复更好，保持更久。<br><br><strong>📚 知识点讲解：</strong>心理学研究表明，加工水平越深，记忆效果越好。精细加工比复述更深入。<br><br><strong>💡 解题思路：</strong>深层优于浅层，正确。<br><br><strong>🧠 记忆口诀：</strong>精细加工效果强，深层加工远复述。"
+        }];
+
+        const APP_ID = 'memory_strategies_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewPosition = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '记忆策略（认知策略三分类）';
+            const content = `<h3>📌 核心框架</h3>
+            <p><strong>学习策略 = 认知策略 + 元认知策略 + 资源管理策略</strong></p>
+            <p>记忆主要靠<strong>认知策略</strong>，分为三类：<strong>复述策略、精细加工策略、组织策略</strong>。</p>
+
+            <h3>1️⃣ 复述策略（浅层加工：重复记忆）</h3>
+            <p><strong>核心</strong>：单纯重复、反复识记，不深度加工。</p>
+            <ul>
+                <li>多种感官参与（眼耳手口脑并用）</li>
+                <li>及时复习、分散复习、过度学习（150%）</li>
+                <li>划线、圈点批注、重复诵读</li>
+                <li>整体识记、分段识记</li>
+            </ul>
+
+            <h3>2️⃣ 精细加工策略（深层加工：最高频考点）</h3>
+            <p><strong>核心</strong>：理解、联想、赋予意义，新旧知识挂钩。</p>
+            <p><strong>常用方法：</strong></p>
+            <ul>
+                <li><strong>记忆术</strong>（重中之重）：位置记忆法、缩略词法、谐音联想法、关键词法、视觉想象</li>
+                <li>做笔记、提问</li>
+                <li>生成性学习（自己总结、画图）</li>
+                <li>联系生活实际</li>
+            </ul>
+
+            <h3>3️⃣ 组织策略（结构化整理）</h3>
+            <p><strong>核心</strong>：归类、梳理结构，把零散知识系统化。</p>
+            <p><strong>常用方法：</strong>归类、列提纲、思维导图、结构图、表格、流程图</p>
+
+            <h3>🧠 元认知策略</h3>
+            <p><strong>计划</strong>（制定复习计划）、<strong>监控</strong>（自查记住没）、<strong>调节</strong>（遗忘就重新复习）</p>
+
+            <h3>⏳ 资源管理策略</h3>
+            <p>时间管理、环境、努力、工具、同伴互助</p>
+
+            <h3>💡 易混一句话区分</h3>
+            <table class="knowledge-table">
+                <tr><th>策略</th><th>核心方法</th></tr>
+                <tr><td>复述</td><td>重复、划线、多读多背</td></tr>
+                <tr><td>精细加工</td><td>谐音、联想、记忆术、做笔记</td></tr>
+                <tr><td>组织</td><td>分类、提纲、思维导图</td></tr>
+            </table>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = '';
+            if (reviewMode && wrongIndices.length > 0) {
+                html +=
+                    `<div style="text-align:center;padding:8px 0;margin-bottom:8px;"><span class="review-mode-badge">🔁 错题回顾 · 第 ${reviewPosition + 1}/${wrongIndices.length} 题</span></div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            if (currentIndex === questions.length - 1 && allAnswered && !reviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>回看错题${wrongCount > 0 ? ' (' + wrongCount + ')' : ''}</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (reviewMode && reviewPosition >= wrongIndices.length - 1 && allAnswered && currentIndex === wrongIndices[
+                    wrongIndices.length - 1]) {
+                html += `
+                    <div class="completion-screen" style="margin-top:20px;">
+                        <div class="completion-icon">✅</div>
+                        <h1 class="completion-title" style="font-size:20px;">错题回顾完毕！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了全部 <strong>${wrongIndices.length}</strong> 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()">退出回顾</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition > 0) {
+                    reviewPosition--;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition < wrongIndices.length - 1) {
+                    reviewPosition++;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (reviewMode && wrongIndices.length > 0) {
+                const isFirstWrong = reviewPosition === 0;
+                const isLastWrong = reviewPosition >= wrongIndices.length - 1;
+                footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirstWrong ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button><button class="nav-btn exit-review-btn" onclick="exitReviewMode()">退出回顾</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>`;
+                return;
+            }
+            footerContent.innerHTML =
+                `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function reviewWrongQuestions() {
+            wrongIndices = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongIndices.push(i);
+                }
+            }
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewPosition = 0;
+            currentIndex = wrongIndices[0];
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            reviewPosition = 0;
+            currentIndex = questions.length - 1;
+            renderQuestion();
+            updateNavButtons();
+            showToast('已退出错题回顾模式');
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = wrongIndices.indexOf(index);
+                if (pos >= 0) {
+                    reviewPosition = pos;
+                } else {
+                    exitReviewMode();
+                }
+            }
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+                index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                wrongIndices = [];
+                reviewPosition = 0;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (reviewMode) { exitReviewMode(); return; }
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

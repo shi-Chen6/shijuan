@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>班杜拉教育理论刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        /* 原有CSS完全保留，此处省略（与您提供的模板完全一致） */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .wrong-review-btn { background: #fff2f0; color: var(--error-color); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">班杜拉教育理论</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                "type": "单选题",
+                "stem": "班杜拉社会学习理论的核心是（）",
+                "options": [
+                    {"label": "A", "text": "经典条件反射"},
+                    {"label": "B", "text": "操作条件反射"},
+                    {"label": "C", "text": "观察学习"},
+                    {"label": "D", "text": "试误学习"}
+                ],
+                "answer": 2,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是C。班杜拉的核心理论是<strong>观察学习</strong>（替代学习），区别于传统行为主义的直接学习。<br><strong>📚 知识点讲解：</strong>班杜拉是社会学习理论创始人，强调通过观察他人行为间接学习，无需亲自强化；传统行为主义（如巴甫洛夫、斯金纳）依赖直接强化。<br><strong>💡 解题思路：</strong>排除A（巴甫洛夫）、B（斯金纳）、D（桑代克）的传统行为主义理论，锁定班杜拉的核心创新——观察学习。<br><strong>🧠 记忆口诀：</strong>班杜拉核心=观察学习，别混其他派。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉的波波玩偶实验证明了（）",
+                "options": [
+                    {"label": "A", "text": "经典条件反射"},
+                    {"label": "B", "text": "观察学习的存在"},
+                    {"label": "C", "text": "操作性条件反射"},
+                    {"label": "D", "text": "顿悟学习"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是B。波波玩偶实验显示儿童通过观察成人攻击行为学会攻击，直接证明观察学习的存在。<br><strong>📚 知识点讲解：</strong>波波玩偶实验是班杜拉的经典研究，让儿童观看成人攻击充气玩偶的视频，随后儿童在无提示下模仿攻击行为，验证观察学习的可行性。<br><strong>💡 解题思路：</strong>排除A（巴甫洛夫）、C（斯金纳）、D（苛勒）的实验结论，匹配班杜拉的实验目的。<br><strong>🧠 记忆口诀：</strong>波波玩偶=观察学习实证，记牢核心实验。"
+            },
+            {
+                "type": "单选题",
+                "stem": "观察学习的四个过程依次是（）",
+                "options": [
+                    {"label": "A", "text": "注意→保持→复制→动机"},
+                    {"label": "B", "text": "保持→注意→复制→动机"},
+                    {"label": "C", "text": "注意→复制→保持→动机"},
+                    {"label": "D", "text": "动机→注意→保持→复制"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是A。观察学习四过程为：注意（关注榜样）→保持（记忆行为）→复制（转化为行动）→动机（决定是否表现）。<br><strong>📚 知识点讲解：</strong>四过程是观察学习的完整链条，缺一不可：无注意则无法学习，无保持则无法回忆，无复制则无法实践，无动机则不会表现。<br><strong>💡 解题思路：</strong>用口诀“注保再动”快速排序，“注”=注意，“保”=保持，“再”=复制（再现），“动”=动机。<br><strong>🧠 记忆口诀：</strong>观察四过程=注保再动，顺序不乱。"
+            },
+            {
+                "type": "单选题",
+                "stem": "学生看到同学因乐于助人受表扬，自己也主动帮助他人，这是（）",
+                "options": [
+                    {"label": "A", "text": "直接强化"},
+                    {"label": "B", "text": "替代强化"},
+                    {"label": "C", "text": "自我强化"},
+                    {"label": "D", "text": "负强化"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是B。观察他人行为结果（同学受表扬）而调整自身行为（主动助人），属于替代强化。<br><strong>📚 知识点讲解：</strong>三种强化类型：①直接强化=自身行为直接获奖惩；②替代强化=观察他人结果调整行为；③自我强化=按自己标准奖惩自己。<br><strong>💡 解题思路：</strong>排除A（自身未直接获表扬）、C（无自我标准）、D（斯金纳的负强化概念），锁定“观察他人结果”。<br><strong>🧠 记忆口诀：</strong>看别人奖惩=替代强化，别混直接/自我。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉认为，影响自我效能感的最主要因素是（）",
+                "options": [
+                    {"label": "A", "text": "成败经验"},
+                    {"label": "B", "text": "替代性经验"},
+                    {"label": "C", "text": "言语说服"},
+                    {"label": "D", "text": "情绪唤醒"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是A。自身成败经验是影响自我效能感的最核心因素，成功增强信心，失败削弱信心。<br><strong>📚 知识点讲解：</strong>自我效能感四大影响因素：①成败经验（最主要）；②替代性经验（看相似者成功）；③言语说服（他人鼓励）；④情绪唤醒（积极情绪提升信心）。<br><strong>💡 解题思路：</strong>直接经验比间接经验更有说服力，排除B、C、D的次要因素。<br><strong>🧠 记忆口诀：</strong>自我效能首因=成败经验，记牢“成替言语情”顺序。"
+            },
+            {
+                "type": "单选题",
+                "stem": "学生按自己的学习计划完成任务后，奖励自己玩游戏，这是（）",
+                "options": [
+                    {"label": "A", "text": "直接强化"},
+                    {"label": "B", "text": "替代强化"},
+                    {"label": "C", "text": "自我强化"},
+                    {"label": "D", "text": "正强化"}
+                ],
+                "answer": 2,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是C。按自己的标准（完成学习计划）评价并奖励自己（玩游戏），属于自我强化。<br><strong>📚 知识点讲解：</strong>自我强化是班杜拉理论中独特的内部强化机制，体现个体的自主性；正强化是斯金纳的操作性条件作用概念，属于外部强化。<br><strong>💡 解题思路：</strong>排除A（无外部奖惩）、B（无观察他人）、D（斯金纳的外部强化），锁定“自己标准+自己奖励”。<br><strong>🧠 记忆口诀：</strong>自己奖自己=自我强化，别混正/负强化。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉三元交互决定论中的三个因素是（）",
+                "options": [
+                    {"label": "A", "text": "行为、认知、环境"},
+                    {"label": "B", "text": "刺激、反应、强化"},
+                    {"label": "C", "text": "认知、情感、行为"},
+                    {"label": "D", "text": "遗传、环境、教育"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是A。三元交互决定论认为行为、认知、环境三者相互影响，共同决定个体行为。<br><strong>📚 知识点讲解：</strong>传统行为主义只强调环境→行为，班杜拉加入认知因素，形成“行为↔认知↔环境”的动态交互系统。<br><strong>💡 解题思路：</strong>排除B（斯金纳的三要素）、C（缺少环境）、D（遗传决定论），匹配班杜拉的核心观点。<br><strong>🧠 记忆口诀：</strong>三元交互=行认环，三者联动。"
+            },
+            {
+                "type": "单选题",
+                "stem": "自我效能感是指个体对自己（）的主观判断",
+                "options": [
+                    {"label": "A", "text": "能力大小"},
+                    {"label": "B", "text": "能否成功完成特定任务"},
+                    {"label": "C", "text": "性格特点"},
+                    {"label": "D", "text": "社会地位"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是B。自我效能感是对“能否成功完成特定任务”的信念，而非客观能力评价。<br><strong>📚 知识点讲解：</strong>自我效能感≠能力：能力是客观技能，效能感是主观信心。例如，一个人可能能力强但自我效能感低（畏难），也可能能力弱但自我效能感高（自信）。<br><strong>💡 解题思路：</strong>排除A（客观能力）、C（性格）、D（社会地位），锁定“主观判断+特定任务”。<br><strong>🧠 记忆口诀：</strong>自我效能=我能行吗？（针对具体任务）。"
+            },
+            {
+                "type": "单选题",
+                "stem": "观察学习中，将记忆的榜样行为转化为实际行动的过程是（）",
+                "options": [
+                    {"label": "A", "text": "注意"},
+                    {"label": "B", "text": "保持"},
+                    {"label": "C", "text": "复制"},
+                    {"label": "D", "text": "动机"}
+                ],
+                "answer": 2,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是C。复制（再现）是将记忆中的榜样行为转化为实际外显行为的过程。<br><strong>📚 知识点讲解：</strong>四过程对应：注意（看）→保持（记）→复制（做）→动机（要不要做）。复制需要身体协调能力，例如幼儿看大人系鞋带，自己尝试系就是复制。<br><strong>💡 解题思路：</strong>用“注保再动”口诀：“再”=复制（再现），对应“做”的环节。<br><strong>🧠 记忆口诀：</strong>记到做=复制过程，别混保持/动机。"
+            },
+            {
+                "type": "单选题",
+                "stem": "老师对学生说“你很聪明，一定能学好数学”，这属于影响自我效能感的（）",
+                "options": [
+                    {"label": "A", "text": "成败经验"},
+                    {"label": "B", "text": "替代性经验"},
+                    {"label": "C", "text": "言语说服"},
+                    {"label": "D", "text": "情绪唤醒"}
+                ],
+                "answer": 2,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是C。他人的鼓励性言语（“你很聪明”）属于言语说服，会影响个体的自我效能感。<br><strong>📚 知识点讲解：</strong>言语说服是外部反馈的一种，尤其来自权威者（老师、家长）的评价，对儿童和青少年的自我效能感影响显著。<br><strong>💡 解题思路：</strong>排除A（无实际成败）、B（无观察他人）、D（无情绪变化），锁定“言语鼓励”。<br><strong>🧠 记忆口诀：</strong>别人夸你=言语说服，提升效能感。"
+            },
+            {
+                "type": "单选题",
+                "stem": "学生看到与自己水平相当的同学通过努力考上大学，增强了自己的信心，这是（）",
+                "options": [
+                    {"label": "A", "text": "成败经验"},
+                    {"label": "B", "text": "替代性经验"},
+                    {"label": "C", "text": "言语说服"},
+                    {"label": "D", "text": "情绪唤醒"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是B。观察与自己相似的他人（水平相当的同学）成功，会增强自身自我效能感，属于替代性经验。<br><strong>📚 知识点讲解：</strong>替代性经验的效力取决于“相似性”：越像自己的人成功，越能激发“我也能做到”的信心；若对方是天才，反而可能削弱信心。<br><strong>💡 解题思路：</strong>排除A（无自身成败）、C（无言语）、D（无情绪），锁定“看相似者成功”。<br><strong>🧠 记忆口诀：</strong>看同辈成功=替代性经验，信心倍增。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉认为，个体是否表现习得的行为，取决于（）",
+                "options": [
+                    {"label": "A", "text": "注意过程"},
+                    {"label": "B", "text": "保持过程"},
+                    {"label": "C", "text": "复制过程"},
+                    {"label": "D", "text": "动机过程"}
+                ],
+                "answer": 3,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是D。动机过程决定是否表现习得的行为，受强化（直接/替代/自我）驱动。<br><strong>📚 知识点讲解：</strong>即使学会了行为（注意→保持→复制），若无动机（如觉得做了没好处），也不会表现出来。例如，学生学会了助人为乐，但看到助人反被讹诈，就不会表现该行为。<br><strong>💡 解题思路：</strong>用“注保再动”口诀：“动”=动机，对应“做不做”的决策环节。<br><strong>🧠 记忆口诀：</strong>学而不做=缺动机，强化驱动表现。"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列不属于观察学习三种强化类型的是（）",
+                "options": [
+                    {"label": "A", "text": "直接强化"},
+                    {"label": "B", "text": "替代强化"},
+                    {"label": "C", "text": "自我强化"},
+                    {"label": "D", "text": "负强化"}
+                ],
+                "answer": 3,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是D。负强化是斯金纳操作性条件作用的概念，不属于班杜拉的观察学习强化类型。<br><strong>📚 知识点讲解：</strong>班杜拉的三种强化均围绕“观察学习”：直接（自己做）、替代（看别人做）、自我（自己评）；负强化是“撤销厌恶刺激以增加行为频率”，属于斯金纳理论。<br><strong>💡 解题思路：</strong>识别斯金纳的概念即可排除，班杜拉无“负强化”分类。<br><strong>🧠 记忆口诀：</strong>班杜拉强化=直替自，别混斯金纳的负强化。"
+            },
+            {
+                "type": "单选题",
+                "stem": "学生因考试成绩好而受到父母奖励，这是（）",
+                "options": [
+                    {"label": "A", "text": "直接强化"},
+                    {"label": "B", "text": "替代强化"},
+                    {"label": "C", "text": "自我强化"},
+                    {"label": "D", "text": "正强化"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是A。自身行为（考试好）直接获得外部奖励（父母奖励），属于直接强化。<br><strong>📚 知识点讲解：</strong>直接强化是传统行为主义的核心，班杜拉将其纳入观察学习体系，作为动机过程的驱动因素之一。<br><strong>💡 解题思路：</strong>排除B（无观察他人）、C（无自我标准）、D（斯金纳的外部强化，虽相关但本题问班杜拉的分类）。<br><strong>🧠 记忆口诀：</strong>自己做+别人奖=直接强化，最直观。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉社会学习理论强调（）的重要性",
+                "options": [
+                    {"label": "A", "text": "遗传"},
+                    {"label": "B", "text": "环境"},
+                    {"label": "C", "text": "认知"},
+                    {"label": "D", "text": "行为、认知、环境交互"}
+                ],
+                "answer": 3,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是D。三元交互决定论强调行为、认知、环境三者交互影响，而非单一因素。<br><strong>📚 知识点讲解：</strong>班杜拉反对“环境决定论”（如华生）和“认知决定论”，主张三者动态互动：环境塑造行为，行为改变环境，认知调节两者关系。<br><strong>💡 解题思路：</strong>排除A（遗传决定论）、B（环境决定论）、C（认知决定论），匹配班杜拉的核心立场。<br><strong>🧠 记忆口诀：</strong>班杜拉=三者交互，拒绝单一归因。"
+            },
+            {
+                "type": "单选题",
+                "stem": "观察学习中，个体关注榜样行为的过程是（）",
+                "options": [
+                    {"label": "A", "text": "注意"},
+                    {"label": "B", "text": "保持"},
+                    {"label": "C", "text": "复制"},
+                    {"label": "D", "text": "动机"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是A。注意是观察学习的第一个过程，指个体关注榜样的特征和行为。<br><strong>📚 知识点讲解：</strong>注意过程受榜样吸引力（如魅力、权威性）、观察者特征（如兴趣、唤醒水平）影响。例如，学生更易注意喜欢的老师的示范。<br><strong>💡 解题思路：</strong>用“注保再动”口诀：“注”=注意，对应“看”的环节。<br><strong>🧠 记忆口诀：</strong>先看榜样=注意过程，第一步不能少。"
+            },
+            {
+                "type": "单选题",
+                "stem": "学生因紧张而发挥失常，这体现了（）对自我效能感的影响",
+                "options": [
+                    {"label": "A", "text": "成败经验"},
+                    {"label": "B", "text": "替代性经验"},
+                    {"label": "C", "text": "言语说服"},
+                    {"label": "D", "text": "情绪唤醒"}
+                ],
+                "answer": 3,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是D。消极情绪（紧张）降低自我效能感，导致发挥失常，属于情绪唤醒的影响。<br><strong>📚 知识点讲解：</strong>情绪唤醒指个体的生理/情绪状态：积极情绪（放松、自信）提升效能感，消极情绪（焦虑、恐惧）降低效能感。<br><strong>💡 解题思路：</strong>排除A（无实际成败）、B（无观察他人）、C（无言语），锁定“紧张”这一情绪因素。<br><strong>🧠 记忆口诀：</strong>情绪好坏=影响效能，放松才能发挥好。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉提出自我效能感理论的时间是（）",
+                "options": [
+                    {"label": "A", "text": "1956年"},
+                    {"label": "B", "text": "1961年"},
+                    {"label": "C", "text": "1977年"},
+                    {"label": "D", "text": "1997年"}
+                ],
+                "answer": 2,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是C。1977年班杜拉在《社会学习理论》中首次系统提出自我效能感理论。<br><strong>📚 知识点讲解：</strong>1961年波波玩偶实验验证观察学习，1977年正式提出自我效能感，1997年出版《自我效能：控制的实施》深化该理论。<br><strong>💡 解题思路：</strong>排除A（无关年份）、B（波波玩偶实验年份）、D（深化理论年份），锁定1977年。<br><strong>🧠 记忆口诀：</strong>1977=自我效能诞生年，记牢关键节点。"
+            },
+            {
+                "type": "单选题",
+                "stem": "下列属于抽象观察学习的是（）",
+                "options": [
+                    {"label": "A", "text": "幼儿学走路"},
+                    {"label": "B", "text": "学生学习数学公式"},
+                    {"label": "C", "text": "模仿明星穿搭"},
+                    {"label": "D", "text": "自创舞蹈动作"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是B。抽象观察学习是学习榜样行为背后的规则/原理（如数学公式），而非具体动作。<br><strong>📚 知识点讲解：</strong>三种观察学习形式：①直接观察=模仿具体动作（幼儿学走路）；②抽象观察=学习规则（学生学公式）；③创造性观察=整合多个榜样创造新行为（自创舞蹈）。<br><strong>💡 解题思路：</strong>排除A（直接模仿）、C（直接模仿）、D（创造性观察），锁定“学习规则”。<br><strong>🧠 记忆口诀：</strong>学规则=抽象观察，学动作=直接观察。"
+            },
+            {
+                "type": "单选题",
+                "stem": "班杜拉认为，效能期待是指（）",
+                "options": [
+                    {"label": "A", "text": "对行为结果的预测"},
+                    {"label": "B", "text": "对自己能完成行为的信心"},
+                    {"label": "C", "text": "对他人行为的评价"},
+                    {"label": "D", "text": "对环境的认知"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>正确答案是B。效能期待是对“自己能否完成该行为”的信心，结果期待是对“行为会导致什么结果”的预测。<br><strong>📚 知识点讲解：</strong>两种期待的区别：例如“努力学习能考高分”是结果期待；“我有能力学好这门课”是效能期待。效能期待更直接影响行为动机。<br><strong>💡 解题思路：</strong>排除A（结果期待）、C（无关他人）、D（无关环境），锁定“对自己的信心”。<br><strong>🧠 记忆口诀：</strong>效能期待=我能做吗？结果期待=做了会怎样？"
+            },
+            {
+                "type": "判断题",
+                "stem": "班杜拉的社会学习理论属于行为主义，不关注认知因素。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是×。班杜拉是新行为主义代表，强调行为、认知、环境三者交互，高度重视认知因素。<br><strong>📚 知识点讲解：</strong>传统行为主义（如华生、斯金纳）忽略认知，班杜拉作为新行为主义，将认知纳入理论体系，是行为主义向认知主义过渡的关键人物。<br><strong>💡 解题思路：</strong>班杜拉的理论明确包含“认知”这一核心要素，因此“不关注认知”是错误的。<br><strong>🧠 记忆口诀：</strong>班杜拉=新行为主义+认知，三者联动。"
+            },
+            {
+                "type": "判断题",
+                "stem": "波波玩偶实验证明了观察学习的存在。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是√。波波玩偶实验通过儿童模仿成人攻击行为的结果，直接验证了观察学习的存在。<br><strong>📚 知识点讲解：</strong>实验中，儿童分为三组：看成人攻击玩偶并受表扬、看成人攻击玩偶并受批评、看成人攻击玩偶无奖惩。结果显示，无论成人是否受奖惩，儿童都学会了攻击行为，证明观察学习无需直接强化。<br><strong>💡 解题思路：</strong>实验目的就是验证观察学习，因此表述正确。<br><strong>🧠 记忆口诀：</strong>波波玩偶=观察学习实证，记牢核心结论。"
+            },
+            {
+                "type": "判断题",
+                "stem": "替代强化是指个体自身行为直接获得的奖励或惩罚。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是×。替代强化是观察他人行为结果而调整自身行为，自身直接获得奖励/惩罚的是直接强化。<br><strong>📚 知识点讲解：</strong>三种强化的核心区别：直接（自己做→自己得）、替代（别人做→我看后调整）、自我（我做→自己评）。<br><strong>💡 解题思路：</strong>“自身直接获得”属于直接强化，与替代强化的定义矛盾。<br><strong>🧠 记忆口诀：</strong>替代强化=看别人得奖惩，别混直接强化。"
+            },
+            {
+                "type": "判断题",
+                "stem": "自我效能感是个体对自己客观能力的评价。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是×。自我效能感是个体对自己能否成功完成特定任务的“主观判断与信念”，而非客观能力评价。<br><strong>📚 知识点讲解：</strong>客观能力是实际技能水平，主观信念是自我感知的信心。例如，一个数学能力强的学生可能因一次考试失利而自我效能感低，认为自己“学不好数学”。<br><strong>💡 解题思路：</strong>“主观判断”≠“客观评价”，表述混淆了两者。<br><strong>🧠 记忆口诀：</strong>自我效能=主观信心，不是客观能力。"
+            },
+            {
+                "type": "判断题",
+                "stem": "观察学习的四个过程是注意、保持、复制、动机。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是√。观察学习的完整四过程为：注意（关注）→保持（记忆）→复制（实践）→动机（决策）。<br><strong>📚 知识点讲解：</strong>四过程是递进关系，缺一不可。例如，学生上课注意听讲（注意），课后记住知识点（保持），考试时写出答案（复制），因为想考高分而努力（动机）。<br><strong>💡 解题思路：</strong>与教材定义完全一致，表述正确。<br><strong>🧠 记忆口诀：</strong>观察四过程=注保再动，顺序固定。"
+            },
+            {
+                "type": "判断题",
+                "stem": "班杜拉认为，影响自我效能感的最主要因素是替代性经验。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是×。影响自我效能感的最主要因素是“自身成败经验”，替代性经验是次要因素。<br><strong>📚 知识点讲解：</strong>自身成功会直接增强效能感，失败会直接削弱；替代性经验（看别人成功）的效力弱于自身经验。<br><strong>💡 解题思路：</strong>“最主要”的表述错误，应为成败经验。<br><strong>🧠 记忆口诀：</strong>自我效能首因=成败经验，别记错顺序。"
+            },
+            {
+                "type": "判断题",
+                "stem": "自我强化是指按自己的标准评价并奖励/惩罚自己。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是√。自我强化是班杜拉提出的内部强化机制，个体根据自身设定的标准，对自己的行为进行奖惩。<br><strong>📚 知识点讲解：</strong>例如，学生设定“每天背10个单词”的目标，完成后奖励自己看剧，未完成则惩罚自己多做练习，这就是自我强化。<br><strong>💡 解题思路：</strong>与定义完全一致，表述正确。<br><strong>🧠 记忆口诀：</strong>自己定标准+自己奖惩=自我强化。"
+            },
+            {
+                "type": "判断题",
+                "stem": "三元交互决定论认为，行为、认知、环境三者相互独立。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 1,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是×。三元交互决定论认为三者是“交互影响”的，而非相互独立。<br><strong>📚 知识点讲解：</strong>例如，环境（教室安静）影响认知（专注），认知（想考高分）影响行为（认真学习），行为（认真做题）又改变环境（老师表扬）。<br><strong>💡 解题思路：</strong>“相互独立”与“交互决定”的核心观点矛盾。<br><strong>🧠 记忆口诀：</strong>三元交互=三者联动，不是孤立。"
+            },
+            {
+                "type": "判断题",
+                "stem": "观察学习中，动机过程决定个体是否表现习得的行为。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是√。动机过程受强化（直接/替代/自我）驱动，决定是否将习得的行为表现出来。<br><strong>📚 知识点讲解：</strong>即使学会了行为（注意→保持→复制），若无动机（如觉得做了没好处），也不会表现。例如，学生学会了助人为乐，但看到助人反被误解，就不会表现该行为。<br><strong>💡 解题思路：</strong>与教材定义一致，表述正确。<br><strong>🧠 记忆口诀：</strong>学而不做=缺动机，强化驱动表现。"
+            },
+            {
+                "type": "判断题",
+                "stem": "班杜拉的理论强调榜样的重要性。（）",
+                "options": [
+                    {"label": "A", "text": "正确"},
+                    {"label": "B", "text": "错误"}
+                ],
+                "answer": 0,
+                "analysis": "<strong>🎯 答案解析：</strong>答案是√。观察学习的核心是“通过观察榜样学习”，榜样示范是班杜拉理论的关键教学策略。<br><strong>📚 知识点讲解：</strong>班杜拉认为，榜样的影响力远大于说教。例如，家长要求孩子诚实，自己却撒谎，孩子更可能模仿家长的撒谎行为，而非听从说教。<br><strong>💡 解题思路：</strong>观察学习的本质就是“榜样示范→模仿学习”，因此表述正确。<br><strong>🧠 记忆口诀：</strong>班杜拉=榜样为王，身教重于言教。"
+            }
+        ];
+        
+        // --- 核心防串联机制 ---
+        const APP_ID = 'bandura_quiz_2024_v1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let wrongReviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '班杜拉教育理论核心考点';
+            const content = `
+                <h3>一、核心理论全解（生平+四大核心+关键词）</h3>
+                <h3>1. 人物简介</h3>
+                <p>阿尔伯特·班杜拉（Albert Bandura，1925-2021），美国著名<strong>心理学家、社会学习理论创始人</strong>，新行为主义代表人物，提出观察学习与自我效能感理论。代表作：《社会学习理论》（1977）、《自我效能：控制的实施》（1997）。经典实验：<strong>波波玩偶实验</strong>（1961），证明观察学习的存在。</p>
+                
+                <h3>2. 社会学习理论核心：三元交互决定论</h3>
+                <p>班杜拉认为，人的行为由<strong>行为、认知、环境</strong>三者交互决定，而非单一因素决定。</p>
+                <ul>
+                    <li><strong>行为</strong>：个体的外显反应</li>
+                    <li><strong>认知</strong>：个体的思维、信念、期望</li>
+                    <li><strong>环境</strong>：外部刺激与情境</li>
+                </ul>
+                
+                <h3>3. 观察学习（替代学习）</h3>
+                <h3>（1）定义</h3>
+                <p>通过观察他人（榜样）的行为及其结果而间接学习，无需亲自体验强化。</p>
+                
+                <h3>（2）四过程（口诀：<strong>注保再动</strong>）</h3>
+                <table class="knowledge-table">
+                    <tr><th>过程</th><th>核心定义</th><th>典型例子</th></tr>
+                    <tr><td><strong>注意</strong></td><td>关注榜样行为与特征</td><td>学生专注看老师演示实验</td></tr>
+                    <tr><td><strong>保持</strong></td><td>记住榜样行为（表象/言语编码）</td><td>记住老师实验步骤</td></tr>
+                    <tr><td><strong>复制</strong>（再现）</td><td>将记忆转化为实际行为</td><td>学生模仿老师做实验</td></tr>
+                    <tr><td><strong>动机</strong></td><td>决定是否表现习得行为（强化驱动）</td><td>看到老师表扬做得好的同学，决定认真做</td></tr>
+                </table>
+                
+                <h3>（3）三种强化类型（教招高频）</h3>
+                <table class="knowledge-table">
+                    <tr><th>强化类型</th><th>核心定义</th><th>典型例子</th></tr>
+                    <tr><td><strong>直接强化</strong></td><td>自身行为直接获得奖励/惩罚</td><td>学生按时完成作业，老师表扬</td></tr>
+                    <tr><td><strong>替代强化</strong></td><td>观察他人行为结果而调整自身行为</td><td>看到同学作弊被处分，自己放弃作弊</td></tr>
+                    <tr><td><strong>自我强化</strong></td><td>按自己的标准评价并奖励/惩罚自己</td><td>完成学习计划后，奖励自己看电影</td></tr>
+                </table>
+                
+                <h3>（4）观察学习的三种形式</h3>
+                <ul>
+                    <li><strong>直接观察学习</strong>：简单模仿（如幼儿学说话）</li>
+                    <li><strong>抽象观察学习</strong>：学习规则/原理（如从榜样行为中学习道德规范）</li>
+                    <li><strong>创造性观察学习</strong>：整合多个榜样行为创造新行为（如综合多位老师的教学方法）</li>
+                </ul>
+                
+                <h3>4. 自我效能感理论（1977）</h3>
+                <h3>（1）定义</h3>
+                <p>个体对自己能否成功完成特定任务的<strong>主观判断与信念</strong>（非客观能力）。</p>
+                
+                <h3>（2）两种期待</h3>
+                <ul>
+                    <li><strong>结果期待</strong>：对行为会导致某结果的预测（如“努力学习能考高分”）</li>
+                    <li><strong>效能期待</strong>：对自己能完成该行为的信心（如“我有能力学好这门课”）</li>
+                </ul>
+                
+                <h3>（3）影响因素（四大因素，口诀：<strong>成替言语情</strong>）</h3>
+                <ul>
+                    <li><strong>成败经验</strong>（最主要）：成功增强效能感，失败降低（多次失败影响更大）</li>
+                    <li><strong>替代性经验</strong>：看到与自己相似的人成功，增强自身效能感</li>
+                    <li><strong>言语说服</strong>：他人鼓励/评价影响效能感（如老师说“你能行”）</li>
+                    <li><strong>情绪唤醒</strong>：积极情绪提升效能感，焦虑/恐惧降低效能感</li>
+                </ul>
+                
+                <h3>四、核心考点速记口诀</h3>
+                <ul>
+                    <li><strong>观察学习四过程</strong>：注保再动（注意→保持→复制→动机）</li>
+                    <li><strong>三种强化类型</strong>：直替自（直接强化、替代强化、自我强化）</li>
+                    <li><strong>自我效能感四因素</strong>：成替言语情（成败经验、替代性经验、言语说服、情绪唤醒）</li>
+                    <li><strong>三元交互决定论</strong>：行认环（行为、认知、环境）</li>
+                </ul>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn wrong-review-btn" onclick="reviewWrongQuestions()">回看错题</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const wrongIndexes = answers.reduce((acc, ans, idx) => {
+                if (ans !== questions[idx].answer) acc.push(idx);
+                return acc;
+            }, []);
+            history.unshift({
+                timestamp: new Date().getTime(),
+                totalCount: questions.length,
+                correctCount: correctCount,
+                accuracy: accuracy,
+                answers: [...answers],
+                wrongIndexes: wrongIndexes
+            });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function reviewWrongQuestions() {
+            const history = getHistory();
+            if (history.length === 0) { showToast('暂无历史记录'); return; }
+            const latest = history[0];
+            if (latest.wrongIndexes.length === 0) { showToast('没有错题哦！'); return; }
+            currentPage = 'wrongReview';
+            wrongReviewIndex = 0;
+            renderWrongQuestion();
+            updateNavButtonsForWrongReview();
+        }
+
+        function renderWrongQuestion() {
+            const history = getHistory();
+            const latest = history[0];
+            const wrongIdx = latest.wrongIndexes[wrongReviewIndex];
+            const q = questions[wrongIdx];
+            const contentArea = document.getElementById('quizContent');
+            
+            let html = `<div class="question-card"><span class="question-type">${q.type}（错题）</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = latest.answers[wrongIdx] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (isSelected && isCorrect) classes.push('correct');
+                else if (isSelected && !isCorrect) classes.push('wrong');
+                else if (isCorrect) classes.push('correct');
+                html += `<div class="${classes.join(' ')}"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            const isCorrect = latest.answers[wrongIdx] === q.answer;
+            html += `
+                <div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                </div>
+            `;
+
+            contentArea.innerHTML = html;
+            updateHeaderForWrongReview(latest.wrongIndexes.length);
+            updateNavButtonsForWrongReview(latest.wrongIndexes.length);
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function updateHeaderForWrongReview(totalWrong) {
+            document.getElementById('currentNum').textContent = wrongReviewIndex + 1;
+            document.getElementById('answeredCount').textContent = wrongReviewIndex + 1;
+            document.getElementById('totalCount').textContent = totalWrong;
+            document.getElementById('progressFill').style.width = `${(wrongReviewIndex + 1) / totalWrong * 100}%`;
+        }
+
+        function updateNavButtonsForWrongReview(totalWrong) {
+            const footerContent = document.getElementById('footerContent');
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" onclick="prevWrongQuestion()" ${wrongReviewIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button>
+                <button class="nav-btn next-btn" onclick="nextWrongQuestion()" ${wrongReviewIndex === totalWrong - 1 ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>
+            `;
+        }
+
+        function prevWrongQuestion() {
+            const history = getHistory();
+            const latest = history[0];
+            if (wrongReviewIndex > 0) {
+                wrongReviewIndex--;
+                renderWrongQuestion();
+                updateNavButtonsForWrongReview(latest.wrongIndexes.length);
+            }
+        }
+
+        function nextWrongQuestion() {
+            const history = getHistory();
+            const latest = history[0];
+            if (wrongReviewIndex < latest.wrongIndexes.length - 1) {
+                wrongReviewIndex++;
+                renderWrongQuestion();
+                updateNavButtonsForWrongReview(latest.wrongIndexes.length);
+            }
+        }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

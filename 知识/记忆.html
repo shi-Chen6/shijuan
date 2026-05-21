@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>记忆刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5a623, #f7b84e);
+            color: white;
+        }
+        .review-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .review-mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+        .exit-review-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+        .exit-review-btn:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">记忆</div>
+                        <div class="progress-text">教招核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "短时记忆的容量是（）",
+            "options": [
+                { "label": "A", "text": "5±2" },
+                { "label": "B", "text": "7±2" },
+                { "label": "C", "text": "9±2" },
+                { "label": "D", "text": "无限" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>7±2</strong>。短时记忆的容量为7±2个组块，这是米勒提出的经典结论。<br><br><strong>📚 知识点讲解：</strong>短时记忆又称工作记忆，容量有限，保持时间在1分钟以内。组块可以是单个数字、字母或熟悉单元。通过复述可以延长保持时间或转入长时记忆。<br><br><strong>💡 解题思路：</strong>短时记忆容量是7±2，长时记忆容量无限。A和C数值错误，D描述的是长时记忆。<br><br><strong>🧠 记忆口诀：</strong>短时容量七加减二，长时记忆无限大。"
+        }, {
+            "type": "单选题",
+            "stem": "瞬时记忆转入短时记忆的条件是（）",
+            "options": [
+                { "label": "A", "text": "复述" },
+                { "label": "B", "text": "注意" },
+                { "label": "C", "text": "理解" },
+                { "label": "D", "text": "复习" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>注意</strong>。瞬时记忆中的信息只有被注意、被选择，才能进入短时记忆。<br><br><strong>📚 知识点讲解：</strong>瞬时记忆保持时间极短（0.25–1秒），容量大。如果不加注意，信息迅速消失。注意像过滤器，把重要信息转入短时记忆。短时记忆进入长时记忆则需要复述。<br><br><strong>💡 解题思路：</strong>区分转化条件：瞬时→短时靠注意；短时→长时靠复述。A是短时转长时，C、D无关。<br><br><strong>🧠 记忆口诀：</strong>瞬时注意转短时，短时复述成长时。"
+        }, {
+            "type": "单选题",
+            "stem": "短时记忆转入长时记忆的条件是（）",
+            "options": [
+                { "label": "A", "text": "注意" },
+                { "label": "B", "text": "复述" },
+                { "label": "C", "text": "想象" },
+                { "label": "D", "text": "联想" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>复述</strong>。通过不断复述，短时记忆中的信息可以得到巩固，进而转入长时记忆。<br><br><strong>📚 知识点讲解：</strong>复述是信息保持的重要策略，包括机械复述和精细复述。精细复述（将新信息与旧知识联系）效果更好。<br><br><strong>💡 解题思路：</strong>与上题呼应：注意是瞬时转短时，复述是短时转长时。A是注意，C、D不是主要条件。<br><br><strong>🧠 记忆口诀：</strong>复述巩固短时记，转入长时永不忘。"
+        }, {
+            "type": "单选题",
+            "stem": "艾宾浩斯遗忘曲线表明遗忘的规律是（）",
+            "options": [
+                { "label": "A", "text": "匀速遗忘" },
+                { "label": "B", "text": "先慢后快" },
+                { "label": "C", "text": "先快后慢" },
+                { "label": "D", "text": "无规律" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>先快后慢</strong>。艾宾浩斯遗忘曲线显示，遗忘进程是不均衡的，在识记后最初一段时间遗忘最快，随后逐渐减慢。<br><br><strong>📚 知识点讲解：</strong>艾宾浩斯用无意义音节实验得出遗忘曲线，表明遗忘先快后慢、不均衡。24小时内遗忘最多，因此需要及时复习。<br><br><strong>💡 解题思路：</strong>遗忘曲线特征：先快后慢。A、B、D均不符合实验结论。<br><br><strong>🧠 记忆口诀：</strong>遗忘先快后慢行，及时复习记得牢。"
+        }, {
+            "type": "单选题",
+            "stem": "先学习的材料对后学习材料产生干扰，属于（）",
+            "options": [
+                { "label": "A", "text": "前摄抑制" },
+                { "label": "B", "text": "倒摄抑制" },
+                { "label": "C", "text": "消退抑制" },
+                { "label": "D", "text": "分化抑制" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>前摄抑制</strong>。前摄抑制指先学习的材料对识记和回忆后学习材料的干扰作用。<br><br><strong>📚 知识点讲解：</strong>干扰说是遗忘的重要理论。前摄抑制（前干扰后）和倒摄抑制（后干扰前）共同解释系列位置效应。早上学习无前摄抑制，晚上学习无倒摄抑制。<br><br><strong>💡 解题思路：</strong>题干“先干扰后”直接对应前摄抑制。B是后干扰先，C、D非干扰说概念。<br><br><strong>🧠 记忆口诀：</strong>前摄先干扰后，倒摄后干扰先。"
+        }, {
+            "type": "单选题",
+            "stem": "后学习的英语干扰之前的汉语拼音，属于（）",
+            "options": [
+                { "label": "A", "text": "前摄抑制" },
+                { "label": "B", "text": "倒摄抑制" },
+                { "label": "C", "text": "压抑说" },
+                { "label": "D", "text": "提取失败" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>倒摄抑制</strong>。后学习的材料对回忆先学习材料产生干扰，这是倒摄抑制。<br><br><strong>📚 知识点讲解：</strong>例如学了英语之后，再回忆之前学的汉语拼音容易出错，这就是倒摄抑制。前后干扰现象普遍存在，学习中可利用早晚时间减少干扰。<br><br><strong>💡 解题思路：</strong>“后干扰前”对应倒摄抑制。A是前干扰后，C、D是其他遗忘理论。<br><br><strong>🧠 记忆口诀：</strong>倒摄后学扰前学，英语干扰拼音例。"
+        }, {
+            "type": "单选题",
+            "stem": "考试时回忆不出知识点，出考场立刻想起，属于（）",
+            "options": [
+                { "label": "A", "text": "衰退说" },
+                { "label": "B", "text": "干扰说" },
+                { "label": "C", "text": "提取失败说（舌尖现象）" },
+                { "label": "D", "text": "压抑说" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>提取失败说（舌尖现象）</strong>。话到嘴边想不起来，离开考场突然想起，是因为缺少恰当的提取线索。<br><br><strong>📚 知识点讲解：</strong>提取失败说认为，信息已经储存在长时记忆中，但无法提取，就像知道某词却说不出来（舌尖现象）。提供线索或换个环境就能回忆出来。衰退说认为痕迹消退，干扰说认为是信息互相干扰，压抑说是情绪动机压抑。<br><br><strong>💡 解题思路：</strong>“出考场想起”典型提取失败，不是真的遗忘。A、B、D均不符合这一现象。<br><br><strong>🧠 记忆口诀：</strong>舌尖现象缺线索，提取失败非真忘。"
+        }, {
+            "type": "单选题",
+            "stem": "过度学习达到多少记忆效果最好（）",
+            "options": [
+                { "label": "A", "text": "100%" },
+                { "label": "B", "text": "120%" },
+                { "label": "C", "text": "150%" },
+                { "label": "D", "text": "200%" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>150%</strong>。过度学习指在刚好能背诵后再继续学习，达到150%时记忆效果最佳。<br><br><strong>📚 知识点讲解：</strong>例如背诵一篇课文需要30分钟，再额外学习15分钟（总共45分钟），即150%的学习量。过度学习低于150%效果不充分，高于150%可能产生疲劳、效率下降。<br><br><strong>💡 解题思路：</strong>数据记忆：最佳过度学习150%。A是刚好学会，B、D不是最佳比例。<br><br><strong>🧠 记忆口诀：</strong>过度学习一百五，记忆效果最突出。"
+        }, {
+            "type": "单选题",
+            "stem": "下列记忆保持时间最长久的是（）",
+            "options": [
+                { "label": "A", "text": "形象记忆" },
+                { "label": "B", "text": "情绪记忆" },
+                { "label": "C", "text": "逻辑记忆" },
+                { "label": "D", "text": "动作记忆" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>动作记忆</strong>。动作记忆（如骑车、游泳）一旦形成，往往保持最长久，不易遗忘。<br><br><strong>📚 知识点讲解：</strong>按内容分记忆类型：形象记忆、情绪记忆、逻辑记忆和动作记忆。其中动作记忆因涉及小脑和运动程序，最持久。情绪记忆也比较持久，但动作记忆更胜一筹。<br><br><strong>💡 解题思路：</strong>常见考点：动作记忆最持久。A、B、C均不及动作记忆保持时间长。<br><br><strong>🧠 记忆口诀：</strong>动作记忆最长久，骑车游泳终身留。"
+        }, {
+            "type": "单选题",
+            "stem": "做广播体操、骑车属于（）",
+            "options": [
+                { "label": "A", "text": "陈述性记忆" },
+                { "label": "B", "text": "程序性记忆" },
+                { "label": "C", "text": "情景记忆" },
+                { "label": "D", "text": "语义记忆" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>程序性记忆</strong>。程序性记忆是关于“怎么做”的记忆，如运动技能、操作步骤。<br><br><strong>📚 知识点讲解：</strong>陈述性记忆是关于“是什么”的知识（事实、概念），程序性记忆是关于“如何做”的技能。情景记忆是个体亲身经历的事件，语义记忆是概括性知识。<br><br><strong>💡 解题思路：</strong>体操、骑车是技能操作，属于程序性记忆。A是陈述知识，C是个人经历，D是概念知识。<br><br><strong>🧠 记忆口诀：</strong>程序记忆怎么做，技能操作靠它存。"
+        }, {
+            "type": "单选题",
+            "stem": "识记分为无意识记和（）",
+            "options": [
+                { "label": "A", "text": "机械识记" },
+                { "label": "B", "text": "意义识记" },
+                { "label": "C", "text": "有意识记" },
+                { "label": "D", "text": "内隐识记" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>有意识记</strong>。根据识记时有无目的，分为无意识记和有意识记。<br><br><strong>📚 知识点讲解：</strong>无意识记是无预定目的、无需意志努力的识记；有意识记是有目的、需要意志努力的识记。机械识记和意义识记是按识记方法划分的。<br><br><strong>💡 解题思路：</strong>识记按目的性分为无意识和有意识。A、B是按方法，D是内隐记忆的分类。<br><br><strong>🧠 记忆口诀：</strong>识记目的分有无，有意识记目的明。"
+        }, {
+            "type": "单选题",
+            "stem": "早上学习效果好，是因为不受（）干扰",
+            "options": [
+                { "label": "A", "text": "前摄抑制" },
+                { "label": "B", "text": "倒摄抑制" },
+                { "label": "C", "text": "双重抑制" },
+                { "label": "D", "text": "消退" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>前摄抑制</strong>。早上学习时，前面没有学习内容，所以不受前摄抑制的干扰，记忆效果较好。<br><br><strong>📚 知识点讲解：</strong>前摄抑制是先学对后学的干扰。早上起床后，大脑还没有受到先前学习内容的干扰，因此适合记忆新知识。晚上睡觉前学习不受倒摄抑制，效果也好。<br><br><strong>💡 解题思路：</strong>早上无先学材料，所以无前摄抑制。B是晚上学习的优势，C是中间部分。<br><br><strong>🧠 记忆口诀：</strong>早无前摄晚无倒，记忆黄金早晚时。"
+        }, {
+            "type": "单选题",
+            "stem": "系列位置效应中，中间部分记忆最差，受（）",
+            "options": [
+                { "label": "A", "text": "只前摄" },
+                { "label": "B", "text": "只倒摄" },
+                { "label": "C", "text": "双重抑制" },
+                { "label": "D", "text": "无抑制" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>双重抑制</strong>。中间部分既受前面材料的前摄抑制，又受后面材料的倒摄抑制，记忆效果最差。<br><br><strong>📚 知识点讲解：</strong>系列位置效应包括首因效应（开头记得好，无前摄抑制）和近因效应（结尾记得好，无倒摄抑制）。中间部分受双重抑制，所以最难记。<br><br><strong>💡 解题思路：</strong>中间受前后双重干扰，故为双重抑制。A、B片面，D错误。<br><br><strong>🧠 记忆口诀：</strong>中间部分双重扰，首尾效应记得牢。"
+        }, {
+            "type": "单选题",
+            "stem": "奥苏贝尔提出的遗忘理论是（）",
+            "options": [
+                { "label": "A", "text": "衰退说" },
+                { "label": "B", "text": "同化说" },
+                { "label": "C", "text": "压抑说" },
+                { "label": "D", "text": "干扰说" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>同化说</strong>。奥苏贝尔认为遗忘是知识的组织与认知结构简化的过程，即高级概念替代低级概念，是一种积极遗忘。<br><br><strong>📚 知识点讲解：</strong>同化说认为，当我们学习了更高级、更概括的知识后，低级细节知识被同化，遗忘是为了减轻记忆负担，使认知结构更清晰。这与其他消极遗忘理论不同。<br><br><strong>💡 解题思路：</strong>奥苏贝尔→同化说→积极遗忘。衰退说、干扰说、压抑说均不是其主张。<br><br><strong>🧠 记忆口诀：</strong>奥苏同化积极忘，高级替代低简化。"
+        }, {
+            "type": "单选题",
+            "stem": "弗洛伊德认为遗忘是由于（）",
+            "options": [
+                { "label": "A", "text": "线索不足" },
+                { "label": "B", "text": "情绪动机压抑" },
+                { "label": "C", "text": "时间消退" },
+                { "label": "D", "text": "知识同化" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>情绪动机压抑</strong>。弗洛伊德提出压抑说，认为遗忘是由情绪或动机的压抑作用引起的，尤其是痛苦的记忆会被无意识压抑。<br><br><strong>📚 知识点讲解：</strong>压抑说属于精神分析观点，遗忘不是痕迹消退，而是自我防御机制将不愉快经验压抑到潜意识中。提取失败说强调线索缺失，衰退说强调时间，同化说是奥苏贝尔的观点。<br><br><strong>💡 解题思路：</strong>弗洛伊德→压抑说→情绪动机。A是提取失败，C是衰退，D是同化说。<br><br><strong>🧠 记忆口诀：</strong>弗氏压抑痛苦忘，情绪动机藏无意识。"
+        }, {
+            "type": "单选题",
+            "stem": "学生能认出试卷上的选择题，属于（）",
+            "options": [
+                { "label": "A", "text": "识记" },
+                { "label": "B", "text": "保持" },
+                { "label": "C", "text": "再认" },
+                { "label": "D", "text": "回忆" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>再认</strong>。再认是指过去经历过的事物再次出现时能够识别出来。选择题选项提供了线索，只需认出正确项。<br><br><strong>📚 知识点讲解：</strong>记忆过程包括识记、保持、再认或回忆。再认与回忆的区别：再认有线索提示（如选择题），回忆需要独立回想（如简答题）。识记是记忆开始，保持是储存阶段。<br><br><strong>💡 解题思路：</strong>认得出=再认，想得出=回忆。选择题是再认，简答题是回忆。<br><br><strong>🧠 记忆口诀：</strong>再认出现能认出，回忆脑中自回想。"
+        }, {
+            "type": "单选题",
+            "stem": "长时记忆的特点是（）",
+            "options": [
+                { "label": "A", "text": "容量有限" },
+                { "label": "B", "text": "1分钟以内" },
+                { "label": "C", "text": "容量无限" },
+                { "label": "D", "text": "依赖注意" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>容量无限</strong>。长时记忆的容量被认为是无限的，保持时间可以从1分钟以上到终身。<br><br><strong>📚 知识点讲解：</strong>长时记忆储存着我们所有知识和经验，容量巨大。短时记忆容量7±2，保持时间短。瞬时记忆容量大但保持极短。依赖注意的是瞬时到短时的转化。<br><br><strong>💡 解题思路：</strong>长时容量无限，保持时间久。A是短时记忆特点，B是短时记忆时长，D是注意的功能。<br><br><strong>🧠 记忆口诀：</strong>长时容量无限大，一生记忆存其中。"
+        }, {
+            "type": "单选题",
+            "stem": "背诵课文开头结尾记得牢，中间差，体现（）",
+            "options": [
+                { "label": "A", "text": "干扰说" },
+                { "label": "B", "text": "衰退说" },
+                { "label": "C", "text": "压抑说" },
+                { "label": "D", "text": "同化说" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>干扰说</strong>。开头结尾记得牢正是系列位置效应，可以用前摄抑制和倒摄抑制来解释，属于干扰说的内容。<br><br><strong>📚 知识点讲解：</strong>干扰说认为遗忘是信息互相干扰所致。开头只受倒摄抑制，结尾只受前摄抑制，中间受双重抑制，所以开头结尾记得好，中间差。<br><br><strong>💡 解题思路：</strong>系列位置效应是干扰说的典型证据。衰退说强调时间，压抑说强调情绪，同化说强调简化。<br><br><strong>🧠 记忆口诀：</strong>开头结尾记得好，干扰抑制是原因。"
+        }, {
+            "type": "单选题",
+            "stem": "意义识记优于机械识记，原因是（）",
+            "options": [
+                { "label": "A", "text": "速度慢" },
+                { "label": "B", "text": "理解内容，联系旧知" },
+                { "label": "C", "text": "死记硬背" },
+                { "label": "D", "text": "时间短" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>理解内容，联系旧知</strong>。意义识记是在理解材料内在联系的基础上进行的识记，能与已有知识建立联系，因此效果更好。<br><br><strong>📚 知识点讲解：</strong>意义识记利用了精细加工和组织策略，使新知识融入认知结构。机械识记是死记硬背，缺乏理解。意义识记不仅记得快，而且保持更久。<br><br><strong>💡 解题思路：</strong>意义识记的核心是“理解+联系”。A、C、D不是意义识记的特点。<br><br><strong>🧠 记忆口诀：</strong>意义识记靠理解，联系旧知效果好。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于情景记忆的是（）",
+            "options": [
+                { "label": "A", "text": "数学公式" },
+                { "label": "B", "text": "第一次旅游的经历" },
+                { "label": "C", "text": "语法规则" },
+                { "label": "D", "text": "物理定理" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一次旅游的经历</strong>。情景记忆是关于个人亲身经历的、特定时间和地点的事件的记忆。<br><br><strong>📚 知识点讲解：</strong>长时记忆分为情景记忆和语义记忆。情景记忆像“心理时间旅行”，回忆个人往事；语义记忆是关于事实、概念和规则的知识。数学公式、语法规则、物理定理都属于语义记忆。<br><br><strong>💡 解题思路：</strong>亲身经历=情景记忆；知识概念=语义记忆。只有B是个人经历。<br><br><strong>🧠 记忆口诀：</strong>情景记忆亲身事，语义记忆知识库。"
+        }, {
+            "type": "判断题",
+            "stem": "短时记忆容量无限，可永久储存。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。短时记忆容量有限，约为7±2个组块；长时记忆才是容量无限、可永久储存的。<br><br><strong>📚 知识点讲解：</strong>短时记忆保持时间短，容量小，需要复述才能维持。题干将长时记忆的特点错误地安在了短时记忆上。<br><br><strong>💡 解题思路：</strong>短时容量7±2，长时容量无限。判断错误。<br><br><strong>🧠 记忆口诀：</strong>短时容量七加二，长时无限永留存。"
+        }, {
+            "type": "判断题",
+            "stem": "遗忘的规律是先快后慢，因此学习后要及时复习。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。艾宾浩斯遗忘曲线表明遗忘先快后慢，及时复习能有效防止遗忘。<br><br><strong>📚 知识点讲解：</strong>学习后最初几小时和一天内遗忘最快，因此要在大量遗忘发生前及时巩固。分散复习、过度学习等策略都基于此规律。<br><br><strong>💡 解题思路：</strong>遗忘规律与教学启示一致，判断正确。<br><br><strong>🧠 记忆口诀：</strong>遗忘先快后慢走，及时复习不能丢。"
+        }, {
+            "type": "判断题",
+            "stem": "倒摄抑制是先学内容干扰后学内容。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。倒摄抑制是<strong>后学内容干扰先学内容</strong>；前摄抑制才是先学干扰后学。<br><br><strong>📚 知识点讲解：</strong>前摄抑制：先学干扰后学；倒摄抑制：后学干扰先学。题干将二者颠倒。<br><br><strong>💡 解题思路：</strong>倒摄=后干扰先，前摄=先干扰后。判断错误。<br><br><strong>🧠 记忆口诀：</strong>前摄先扰后，倒摄后扰先。"
+        }, {
+            "type": "判断题",
+            "stem": "舌尖现象属于提取失败说，是缺少记忆线索。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。舌尖现象是话到嘴边说不出，但提供线索后能回忆，属于提取失败说。<br><br><strong>📚 知识点讲解：</strong>提取失败说认为信息储存在长时记忆中，只是当前缺乏有效的提取线索。这与痕迹消退或干扰不同。<br><br><strong>💡 解题思路：</strong>舌尖现象=提取失败=缺线索，正确。<br><br><strong>🧠 记忆口诀：</strong>舌尖现象线索少，提取失败非遗忘。"
+        }, {
+            "type": "判断题",
+            "stem": "过度学习100%时记忆效果最好。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。过度学习达到<strong>150%</strong>时记忆效果最佳，100%是刚好学会，没有额外巩固。<br><br><strong>📚 知识点讲解：</strong>过度学习指在能正确回忆后再继续学习一段时间。150%是效率最高的点，低于此巩固不足，高于此可能疲劳。<br><br><strong>💡 解题思路：</strong>最佳过度学习150%，不是100%。错误。<br><br><strong>🧠 记忆口诀：</strong>过度学习一百五，最佳巩固效率高。"
+        }, {
+            "type": "判断题",
+            "stem": "动作记忆是保持时间最持久的记忆类型。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。动作记忆（如骑车、游泳）一旦形成，往往终身不忘，保持最持久。<br><br><strong>📚 知识点讲解：</strong>动作记忆依赖于小脑等脑区，高度自动化，不易受干扰。情绪记忆也持久，但动作记忆更胜一筹。<br><br><strong>💡 解题思路：</strong>教材明确动作记忆最持久，正确。<br><br><strong>🧠 记忆口诀：</strong>动作记忆最持久，技能终身不易丢。"
+        }, {
+            "type": "判断题",
+            "stem": "奥苏贝尔的同化说认为遗忘都是消极的。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。同化说认为遗忘是积极的，高级知识替代低级知识，有助于简化认知结构。<br><br><strong>📚 知识点讲解：</strong>奥苏贝尔认为遗忘是认知组织的过程，遗忘一些细节是为了更好地掌握概括性知识。因此是一种积极的遗忘。<br><br><strong>💡 解题思路：</strong>同化说=积极遗忘，题干说“都是消极”错误。<br><br><strong>🧠 记忆口诀：</strong>同化积极简化知，高级替代低级遗。"
+        }, {
+            "type": "判断题",
+            "stem": "晚上学习效果好，是因为无倒摄抑制。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。晚上睡觉前学习，后面没有新学习内容，因此不受倒摄抑制干扰，记忆效果较好。<br><br><strong>📚 知识点讲解：</strong>倒摄抑制是后学对先学的干扰。晚上学习后直接入睡，没有后续材料干扰。早上则无前摄抑制。<br><br><strong>💡 解题思路：</strong>早晚优势分别源于无前摄和无倒摄，正确。<br><br><strong>🧠 记忆口诀：</strong>晚上学习无倒摄，记忆效果也出色。"
+        }, {
+            "type": "判断题",
+            "stem": "再认是事物不在眼前，在脑中回想。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。事物不在眼前脑中回想属于<strong>回忆</strong>；再认是事物再次出现时能认出来。<br><br><strong>📚 知识点讲解：</strong>再认如选择题，回忆如简答题。题干将再认与回忆的定义混淆了。<br><br><strong>💡 解题思路：</strong>再认=认出，回忆=想出。题干描述的是回忆，错误。<br><br><strong>🧠 记忆口诀：</strong>再认出现能认出，回忆脑中自提取。"
+        }, {
+            "type": "判断题",
+            "stem": "瞬时记忆通过复述转化为长时记忆。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。瞬时记忆先通过<strong>注意</strong>转入短时记忆，短时记忆再通过<strong>复述</strong>转入长时记忆，不能直接转化。<br><br><strong>📚 知识点讲解：</strong>记忆三级加工模型：瞬时记忆→（注意）→短时记忆→（复述）→长时记忆。题干缺少了短时记忆环节。<br><br><strong>💡 解题思路：</strong>转化路径是两步，不能跳过短时。错误。<br><br><strong>🧠 记忆口诀：</strong>瞬时注意到短时，短时复述进长时。"
+        }];
+
+        const APP_ID = 'memory_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewPosition = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '记忆（核心考点大全）';
+            const content = `<h3>📌 记忆三大环节</h3>
+            <p><strong>识记 → 保持 → 回忆/再认</strong></p>
+            <ul>
+                <li>识记：记住；保持：储存</li>
+                <li><strong>再认</strong>：事物再次出现能认出；<strong>回忆</strong>：事物不在脑中回想</li>
+            </ul>
+
+            <h3>⏳ 记忆按保持时间分类（最高频）</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>类型</th><th>保持时间</th><th>容量</th><th>转化条件</th></tr></thead>
+                <tbody>
+                    <tr><td>瞬时记忆</td><td>0.25–1秒</td><td>大</td><td>注意→短时</td></tr>
+                    <tr><td>短时记忆</td><td>1分钟以内</td><td>7±2个组块</td><td>复述→长时</td></tr>
+                    <tr><td>长时记忆</td><td>1分钟以上至终身</td><td>无限</td><td>—</td></tr>
+                </tbody>
+            </table>
+
+            <h3>📂 其他分类</h3>
+            <ul>
+                <li>按内容：形象、逻辑、情绪、动作记忆（<strong>动作记忆最持久</strong>）</li>
+                <li>按意识：外显记忆、内隐记忆</li>
+                <li>按加工：陈述性记忆（是什么）、程序性记忆（怎么做）</li>
+            </ul>
+
+            <h3>📉 遗忘规律：艾宾浩斯遗忘曲线</h3>
+            <p>规律：<strong>先快后慢、不均衡</strong>，24小时遗忘最快。启示：<strong>及时复习</strong></p>
+
+            <h3>🧩 五大遗忘理论（必背）</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>理论</th><th>核心观点</th><th>代表人物</th></tr></thead>
+                <tbody>
+                    <tr><td>衰退说</td><td>记忆痕迹随时间消退</td><td>—</td></tr>
+                    <tr><td>干扰说</td><td>前摄/倒摄抑制；系列位置效应</td><td>—</td></tr>
+                    <tr><td>压抑说</td><td>情绪、动机压抑导致遗忘</td><td>弗洛伊德</td></tr>
+                    <tr><td>提取失败说</td><td>线索不足，舌尖现象</td><td>—</td></tr>
+                    <tr><td>同化说</td><td>高级知识替代低级，积极遗忘</td><td>奥苏贝尔</td></tr>
+                </tbody>
+            </table>
+
+            <h3>💡 记忆提升方法</h3>
+            <ul>
+                <li><strong>过度学习</strong>：150%效果最佳</li>
+                <li>意义识记＞机械识记；及时复习；分散复习；多重编码</li>
+            </ul>
+
+            <h3>📝 极简口诀</h3>
+            <p style="background:#f0f7ff;padding:12px;border-radius:8px;font-weight:600;">
+            瞬时注转短，短时复述长；<br>七加二组块，遗忘先快降；<br>前倒摄干扰，舌尖缺线索；<br>过度一百五，记忆更牢靠。
+            </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = '';
+            if (reviewMode && wrongIndices.length > 0) {
+                html +=
+                    `<div style="text-align:center;padding:8px 0;margin-bottom:8px;"><span class="review-mode-badge">🔁 错题回顾 · 第 ${reviewPosition + 1}/${wrongIndices.length} 题</span></div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            if (currentIndex === questions.length - 1 && allAnswered && !reviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>回看错题${wrongCount > 0 ? ' (' + wrongCount + ')' : ''}</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (reviewMode && reviewPosition >= wrongIndices.length - 1 && allAnswered && currentIndex === wrongIndices[
+                    wrongIndices.length - 1]) {
+                html += `
+                    <div class="completion-screen" style="margin-top:20px;">
+                        <div class="completion-icon">✅</div>
+                        <h1 class="completion-title" style="font-size:20px;">错题回顾完毕！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了全部 <strong>${wrongIndices.length}</strong> 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()">退出回顾</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition > 0) {
+                    reviewPosition--;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition < wrongIndices.length - 1) {
+                    reviewPosition++;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (reviewMode && wrongIndices.length > 0) {
+                const isFirstWrong = reviewPosition === 0;
+                const isLastWrong = reviewPosition >= wrongIndices.length - 1;
+                footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirstWrong ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button><button class="nav-btn exit-review-btn" onclick="exitReviewMode()">退出回顾</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>`;
+                return;
+            }
+            footerContent.innerHTML =
+                `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function reviewWrongQuestions() {
+            wrongIndices = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongIndices.push(i);
+                }
+            }
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewPosition = 0;
+            currentIndex = wrongIndices[0];
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            reviewPosition = 0;
+            currentIndex = questions.length - 1;
+            renderQuestion();
+            updateNavButtons();
+            showToast('已退出错题回顾模式');
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = wrongIndices.indexOf(index);
+                if (pos >= 0) {
+                    reviewPosition = pos;
+                } else {
+                    exitReviewMode();
+                }
+            }
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+                index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                wrongIndices = [];
+                reviewPosition = 0;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (reviewMode) { exitReviewMode(); return; }
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
