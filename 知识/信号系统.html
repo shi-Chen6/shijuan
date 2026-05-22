@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>巴甫洛夫信号系统理论刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5a623, #f7b84e);
+            color: white;
+        }
+        .review-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .export-wrong-btn {
+            background: linear-gradient(135deg, #9b59b6, #c39bd3);
+            color: white;
+        }
+        .export-wrong-btn:disabled {
+            background: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .review-mode-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.5px;
+        }
+        .exit-review-btn {
+            background: #fff;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            font-weight: 700;
+        }
+        .exit-review-btn:active {
+            background: var(--primary-light);
+            transform: scale(0.98);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">巴甫洛夫信号系统理论</div>
+                        <div class="progress-text">教招核心 · 信号系统+高级神经活动</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "巴甫洛夫认为，对具体、现实的物理刺激发生反应的皮质机能系统是（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "操作性条件反射" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。对具体物理刺激（声、光、形、味等）发生反应的皮质机能系统属于第一信号系统。<br><br><strong>📚 知识点讲解：</strong>巴甫洛夫将信号系统分为两类：<span style='color:#4a90e2;font-weight:700;'>第一信号系统</span>是对具体、现实的物理刺激进行反应，人和动物共有；<span style='color:#e88b2c;font-weight:700;'>第二信号系统</span>是对语言、文字等抽象刺激进行反应，人独有。<br><br><strong>💡 解题思路：</strong>题干关键词“具体、现实的物理刺激”直接对应第一信号系统。<br><br><strong>🧠 记忆口诀：</strong>第一信号具体刺激，人畜共有；第二信号语言中介，人类独有。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于第二信号系统的是（）",
+            "options": [
+                { "label": "A", "text": "狗听到铃声流口水" },
+                { "label": "B", "text": "望梅生津" },
+                { "label": "C", "text": "谈虎色变" },
+                { "label": "D", "text": "杯弓蛇影" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>谈虎色变</strong>。谈论老虎（语言刺激）引起恐惧反应，属于第二信号系统。<br><br><strong>📚 知识点讲解：</strong>谈虎色变是人理解“虎”这个词的含义后产生的情绪反应，属于<span style='color:#e88b2c;font-weight:700;'>第二信号系统</span>。A是狗对铃声（物理刺激）的条件反射，属于第一信号系统；B望梅生津是看到梅子（具体视觉刺激），属于第一信号系统；D杯弓蛇影是看到杯中弓影（具体视觉刺激）误以为蛇，也属于第一信号系统。<br><br><strong>💡 解题思路：</strong>“谈”是语言刺激，选C。<br><br><strong>🧠 记忆口诀：</strong>谈虎色变语言生，第二信号系统明。"
+        }, {
+            "type": "单选题",
+            "stem": "第一信号系统和第二信号系统的本质区别在于（）",
+            "options": [
+                { "label": "A", "text": "是否需要条件刺激" },
+                { "label": "B", "text": "是否需要无条件刺激" },
+                { "label": "C", "text": "是否以语言为中介" },
+                { "label": "D", "text": "是否是条件反射" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>是否以语言为中介</strong>。第二信号系统以语言为中介，这是区别于第一信号系统的本质。<br><br><strong>📚 知识点讲解：</strong>第一信号系统是对具体物理刺激进行反应，无需语言理解；第二信号系统需要对语言、文字等抽象符号的理解。两者都是条件反射，但第二信号系统是建立在第一信号系统基础上的高级信号活动。<br><br><strong>💡 解题思路：</strong>本质区别在于有无语言中介。<br><br><strong>🧠 记忆口诀：</strong>第一具体无语言，第二抽象语言先。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于人和动物共有的信号系统是（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "两者都是" },
+                { "label": "D", "text": "两者都不是" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。第一信号系统是人和动物共有的低级信号系统。<br><br><strong>📚 知识点讲解：</strong>第二信号系统是人独有的，因为它需要语言理解能力。动物只能对具体物理刺激形成条件反射，不能理解语言含义。<br><br><strong>💡 解题思路：</strong>共有的是第一信号系统。<br><br><strong>🧠 记忆口诀：</strong>第一信号人畜共，第二信号人独有。"
+        }, {
+            "type": "单选题",
+            "stem": "学生看到数学老师拿着试卷走进教室就紧张，这属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "本能反应" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。看到试卷（具体物品刺激）产生的条件反射，属于第一信号系统。<br><br><strong>📚 知识点讲解：</strong>试卷是具体的视觉刺激，学生将试卷与考试压力联系起来，形成条件反射，这属于第一信号系统。如果是听到“要考试了”这句话而紧张，则属于第二信号系统。<br><br><strong>💡 解题思路：</strong>“看到试卷”是具体刺激，选A。<br><br><strong>🧠 记忆口诀：</strong>看实物第一，听语言第二。"
+        }, {
+            "type": "单选题",
+            "stem": "听到“酸梅”这个词就分泌唾液，这属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "操作性条件反射" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第二信号系统</strong>。听到“酸梅”这个词（语言刺激）引起唾液分泌，属于第二信号系统。<br><br><strong>📚 知识点讲解：</strong>人理解“酸梅”的语言含义后产生反应，这是第二信号系统的典型例子。如果是直接看到梅子分泌唾液，则属于第一信号系统（望梅生津）。<br><br><strong>💡 解题思路：</strong>“听到词”是语言刺激，选B。<br><br><strong>🧠 记忆口诀：</strong>听词反应第二系，见物反应第一系。"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫认为，第二信号系统是在（）基础上建立的",
+            "options": [
+                { "label": "A", "text": "无条件反射" },
+                { "label": "B", "text": "第一信号系统" },
+                { "label": "C", "text": "操作性条件反射" },
+                { "label": "D", "text": "本能反应" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。第二信号系统是在第一信号系统基础上发展起来的高级信号活动。<br><br><strong>📚 知识点讲解：</strong>儿童先通过第一信号系统认识具体事物，然后才学习语言符号，建立第二信号系统。两者是层级关系。<br><br><strong>💡 解题思路：</strong>第二信号建立在第一信号之上，选B。<br><br><strong>🧠 记忆口诀：</strong>第一打基础，第二上层筑。"
+        }, {
+            "type": "单选题",
+            "stem": "下列不属于第二信号系统的是（）",
+            "options": [
+                { "label": "A", "text": "读小说感动流泪" },
+                { "label": "B", "text": "听音乐放松心情" },
+                { "label": "C", "text": "看交通标志过马路" },
+                { "label": "D", "text": "小狗听到名字跑过来" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>小狗听到名字跑过来</strong>。小狗是对声音（物理刺激）形成条件反射，不理解语言含义，属于第一信号系统。<br><br><strong>📚 知识点讲解：</strong>动物只能建立第一信号系统的条件反射。A、B、C都涉及对语言或符号意义的理解，属于第二信号系统。<br><br><strong>💡 解题思路：</strong>动物行为=第一信号系统。<br><br><strong>🧠 记忆口诀：</strong>动物反应第一信，人类语言第二真。"
+        }, {
+            "type": "单选题",
+            "stem": "第二信号系统的核心特点是（）",
+            "options": [
+                { "label": "A", "text": "具体性" },
+                { "label": "B", "text": "抽象性" },
+                { "label": "C", "text": "动物性" },
+                { "label": "D", "text": "本能性" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>抽象性</strong>。第二信号系统以语言等抽象符号为刺激，具有抽象性。<br><br><strong>📚 知识点讲解：</strong>第一信号系统是具体性，第二信号系统是抽象性。这是两者的本质区别。<br><br><strong>💡 解题思路：</strong>第二信号=抽象，选B。<br><br><strong>🧠 记忆口诀：</strong>第一具体第二抽象。"
+        }, {
+            "type": "单选题",
+            "stem": "望梅止渴（成语故事中曹操用语言描述梅子）属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "以上都不是" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第二信号系统</strong>。曹操用语言描述梅子，士兵听后分泌唾液，这是对语言刺激的反应，属于第二信号系统。<br><br><strong>📚 知识点讲解：</strong>注意区分：望梅止渴这个成语故事是语言刺激，属于第二信号系统；而“望梅生津”如果是指直接看到梅子，则属于第一信号系统。<br><br><strong>💡 解题思路：</strong>“语言描述”是关键，选B。<br><br><strong>🧠 记忆口诀：</strong>望梅止渴用语言，第二信号经典例。"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于信号系统的说法正确的是（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统是人独有的" },
+                { "label": "B", "text": "第二信号系统是人和动物共有的" },
+                { "label": "C", "text": "第一信号系统是低级信号系统" },
+                { "label": "D", "text": "第二信号系统是低级信号系统" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统是低级信号系统</strong>。第一信号系统是人和动物共有的低级信号系统。<br><br><strong>📚 知识点讲解：</strong>A错误：第一信号系统是人和动物共有。B错误：第二信号系统是人独有。D错误：第二信号系统是高级信号系统。<br><br><strong>💡 解题思路：</strong>第一=低级，第二=高级，选C。<br><br><strong>🧠 记忆口诀：</strong>第一低级人畜共，第二高级人独尊。"
+        }, {
+            "type": "单选题",
+            "stem": "学生听到老师说“明天考试”就焦虑，这属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "本能反应" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第二信号系统</strong>。学生理解“明天考试”的语言含义后产生焦虑，属于第二信号系统。<br><br><strong>📚 知识点讲解：</strong>语言刺激引发的情绪反应是第二信号系统的典型表现。如果是看到试卷（具体物品）紧张，则属于第一信号系统。<br><br><strong>💡 解题思路：</strong>“老师说”是语言刺激，选B。<br><br><strong>🧠 记忆口诀：</strong>言语考试第二信，实物试卷第一信。"
+        }, {
+            "type": "单选题",
+            "stem": "鹦鹉学舌属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "操作性条件反射" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。鹦鹉模仿声音只是对声波（物理刺激）的模仿，不理解语言含义，属于第一信号系统。<br><br><strong>📚 知识点讲解：</strong>动物不能建立第二信号系统，因为它们没有真正的语言理解能力。鹦鹉学舌只是一种复杂的第一信号系统条件反射。<br><br><strong>💡 解题思路：</strong>鹦鹉不理解语义→第一信号系统。<br><br><strong>🧠 记忆口诀：</strong>鹦鹉学舌仿声音，第一信号不属人。"
+        }, {
+            "type": "单选题",
+            "stem": "看到红灯停步属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "本能反应" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。红灯是具体视觉刺激，看到后停车属于第一信号系统的条件反射。<br><br><strong>📚 知识点讲解：</strong>如果看到“禁止通行”的文字标志而停步，则属于第二信号系统（文字理解）。红灯是具体颜色，不涉及语言理解。<br><br><strong>💡 解题思路：</strong>红灯=具体视觉刺激，选A。<br><br><strong>🧠 记忆口诀：</strong>红灯实物第一信，交通文字第二信。"
+        }, {
+            "type": "单选题",
+            "stem": "下列匹配正确的是（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统—语言刺激" },
+                { "label": "B", "text": "第二信号系统—物理刺激" },
+                { "label": "C", "text": "第一信号系统—人和动物共有" },
+                { "label": "D", "text": "第二信号系统—人和动物共有" }
+            ],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统—人和动物共有</strong>。<br><br><strong>📚 知识点讲解：</strong>A、B颠倒：第一信号对应物理刺激，第二信号对应语言刺激。D错误：第二信号是人类独有。<br><br><strong>💡 解题思路：</strong>只有C正确。<br><br><strong>🧠 记忆口诀：</strong>第一人畜共，第二人独有。"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫认为，大脑皮质最基本的活动是（）",
+            "options": [
+                { "label": "A", "text": "无条件反射" },
+                { "label": "B", "text": "信号活动" },
+                { "label": "C", "text": "操作性条件反射" },
+                { "label": "D", "text": "本能反应" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>信号活动</strong>。巴甫洛夫认为大脑皮质最基本的活动是信号活动，即条件反射。<br><br><strong>📚 知识点讲解：</strong>信号活动包括第一信号系统和第二信号系统。无条件反射是先天本能，不是皮质的基本活动。<br><br><strong>💡 解题思路：</strong>巴甫洛夫强调信号活动，选B。<br><br><strong>🧠 记忆口诀：</strong>大脑皮质信号活，条件反射是基础。"
+        }, {
+            "type": "单选题",
+            "stem": "听老师讲课学习新知识属于（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统" },
+                { "label": "B", "text": "第二信号系统" },
+                { "label": "C", "text": "无条件反射" },
+                { "label": "D", "text": "操作性条件反射" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第二信号系统</strong>。老师讲课通过语言传授知识，学生理解语言含义，属于第二信号系统。<br><br><strong>📚 知识点讲解：</strong>课堂教学主要依靠第二信号系统，但也会结合第一信号系统（如直观教具）辅助理解。<br><br><strong>💡 解题思路：</strong>讲课=语言刺激，选B。<br><br><strong>🧠 记忆口诀：</strong>讲课知识第二信，直观辅助第一信。"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于第一信号系统的是（）",
+            "options": [
+                { "label": "A", "text": "谈梅生津" },
+                { "label": "B", "text": "望梅生津" },
+                { "label": "C", "text": "读梅生津" },
+                { "label": "D", "text": "写梅生津" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>望梅生津</strong>。看到梅子（具体视觉刺激）分泌唾液，属于第一信号系统。<br><br><strong>📚 知识点讲解：</strong>A、C、D都涉及语言（谈、读、写）刺激，属于第二信号系统。B是直接看到实物。<br><br><strong>💡 解题思路：</strong>“望”是看实物，选B。<br><br><strong>🧠 记忆口诀：</strong>望梅见实第一信，谈读写梅第二信。"
+        }, {
+            "type": "单选题",
+            "stem": "第二信号系统调节和控制着（）的活动",
+            "options": [
+                { "label": "A", "text": "无条件反射" },
+                { "label": "B", "text": "第一信号系统" },
+                { "label": "C", "text": "操作性条件反射" },
+                { "label": "D", "text": "本能反应" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统</strong>。第二信号系统是高级信号系统，对第一信号系统起调节和控制作用。<br><br><strong>📚 知识点讲解：</strong>例如，人看到红灯（第一信号）会停步，但如果交警喊话“可以走了”（第二信号），就会改变行为。语言可以调控具体刺激引发的反应。<br><br><strong>💡 解题思路：</strong>第二控制第一，选B。<br><br><strong>🧠 记忆口诀：</strong>第二高级控第一，语言调节行为力。"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于信号系统的说法错误的是（）",
+            "options": [
+                { "label": "A", "text": "第一信号系统是对具体刺激的反应" },
+                { "label": "B", "text": "第二信号系统是对抽象刺激的反应" },
+                { "label": "C", "text": "第二信号系统是人独有的" },
+                { "label": "D", "text": "第一信号系统是人类特有的高级信号系统" }
+            ],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>第一信号系统是人类特有的高级信号系统</strong>。第一信号系统是人和动物共有的<span style='color:#f5222d;font-weight:700;'>低级</span>信号系统。<br><br><strong>📚 知识点讲解：</strong>D项错误在于“人类特有”和“高级”。A、B、C均正确。<br><br><strong>💡 解题思路：</strong>第一低级，第二高级。选错误的D。<br><br><strong>🧠 记忆口诀：</strong>第一低级人畜共，第二高级人独尊。"
+        }, {
+            "type": "判断题",
+            "stem": "第一信号系统是人和动物共有的，第二信号系统是人独有的。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。这是两大信号系统的基本特征。<br><br><strong>📚 知识点讲解：</strong>第一信号系统是低级信号系统，人和动物共有；第二信号系统以语言为中介，是人独有的高级信号系统。<br><br><strong>💡 解题思路：</strong>正确。<br><br><strong>🧠 记忆口诀：</strong>第一人畜共，第二人独有。"
+        }, {
+            "type": "判断题",
+            "stem": "望梅止渴（成语故事）属于第一信号系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。望梅止渴的成语故事中，曹操用语言描述梅子，属于<span style='color:#e88b2c;font-weight:700;'>第二信号系统</span>。<br><br><strong>📚 知识点讲解：</strong>区分：直接看到梅子分泌唾液是望梅生津（第一信号系统）；听说梅子分泌唾液是谈梅生津（第二信号系统）。故事中是“说”梅子。<br><br><strong>💡 解题思路：</strong>语言描述→第二信号系统。错误。<br><br><strong>🧠 记忆口诀：</strong>说梅第二，看梅第一。"
+        }, {
+            "type": "判断题",
+            "stem": "第二信号系统是在第一信号系统的基础上建立的。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。第二信号系统是在第一信号系统基础上发展而来的高级信号活动。<br><br><strong>📚 知识点讲解：</strong>儿童发展过程中，先通过具体事物建立第一信号系统，然后才发展语言和抽象思维（第二信号系统）。<br><br><strong>💡 解题思路：</strong>正确。<br><br><strong>🧠 记忆口诀：</strong>第一打基础，第二上层筑。"
+        }, {
+            "type": "判断题",
+            "stem": "小狗听到主人叫它的名字跑过来，属于第二信号系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。小狗只是对声音（物理刺激）形成条件反射，不理解语言含义，属于<span style='color:#4a90e2;font-weight:700;'>第一信号系统</span>。<br><br><strong>📚 知识点讲解：</strong>动物没有真正的语言理解能力，不能建立第二信号系统。名字对狗而言只是特定声音信号。<br><br><strong>💡 解题思路：</strong>动物=第一信号系统，错误。<br><br><strong>🧠 记忆口诀：</strong>动物反应第一信，人类语言第二真。"
+        }, {
+            "type": "判断题",
+            "stem": "第一信号系统是对具体、现实的物理刺激发生反应的皮质机能系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。这是第一信号系统的标准定义。<br><br><strong>📚 知识点讲解：</strong>第一信号系统对声、光、形、味等物理刺激形成条件反射。<br><br><strong>💡 解题思路：</strong>正确。<br><br><strong>🧠 记忆口诀：</strong>第一信号具体物，声光形味条件反。"
+        }, {
+            "type": "判断题",
+            "stem": "谈虎色变属于第二信号系统，因为是语言刺激引发的反应。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。谈虎色变是通过语言（谈论老虎）引起的恐惧反应，属于第二信号系统。<br><br><strong>📚 知识点讲解：</strong>语言作为抽象刺激，需要大脑皮质的第二信号系统参与。<br><br><strong>💡 解题思路：</strong>正确。<br><br><strong>🧠 记忆口诀：</strong>谈虎色变语生惧，第二信号无误。"
+        }, {
+            "type": "判断题",
+            "stem": "巴甫洛夫认为，大脑皮质最基本的活动是信号活动。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。巴甫洛夫认为大脑皮质最基本的活动就是信号活动，即建立条件反射。<br><br><strong>📚 知识点讲解：</strong>信号活动包括第一和第二信号系统，是人和动物适应环境的高级神经活动。<br><br><strong>💡 解题思路：</strong>正确。<br><br><strong>🧠 记忆口诀：</strong>皮质活动信号主，条件反射靠它。"
+        }, {
+            "type": "判断题",
+            "stem": "学生看到“危险”标志就绕行，属于第一信号系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。学生理解“危险”标志的文字含义（抽象概念），属于<span style='color:#e88b2c;font-weight:700;'>第二信号系统</span>。<br><br><strong>📚 知识点讲解：</strong>交通标志中的文字或符号如果涉及语义理解，就属于第二信号系统。如果是单纯红色灯光（具体刺激）则是第一信号系统。<br><br><strong>💡 解题思路：</strong>理解文字含义→第二信号系统。错误。<br><br><strong>🧠 记忆口诀：</strong>文字标志第二信，颜色灯光第一信。"
+        }, {
+            "type": "判断题",
+            "stem": "第二信号系统是低级信号系统，第一信号系统是高级信号系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。第一信号系统是<span style='color:#4a90e2;font-weight:700;'>低级</span>信号系统，第二信号系统是<span style='color:#e88b2c;font-weight:700;'>高级</span>信号系统。<br><br><strong>📚 知识点讲解：</strong>题干将高低级关系颠倒了。<br><br><strong>💡 解题思路：</strong>第一低，第二高。错误。<br><br><strong>🧠 记忆口诀：</strong>第一低级第二高，顺序牢记不颠倒。"
+        }, {
+            "type": "判断题",
+            "stem": "信号系统理论是巴甫洛夫在经典条件反射研究中提出的。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>正确</strong>。巴甫洛夫在经典条件反射实验基础上提出了信号系统理论。<br><br><strong>📚 知识点讲解：</strong>信号系统理论是对条件反射的进一步分类，是巴甫洛夫高级神经活动学说的核心内容。<br><br><strong>💡 解题思路：</strong>正确。<br><br><strong>🧠 记忆口诀：</strong>经典条件反射基，信号系统由此提。"
+        }, {
+            "type": "判断题",
+            "stem": "“一朝被蛇咬，十年怕井绳”属于条件反射中的分化。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。怕井绳是对蛇和绳子<span style='color:#f5222d;font-weight:700;'>相似刺激分不清</span>，属于条件反射的<span style='color:#e88b2c;font-weight:700;'>泛化</span>；分化是能精准区分不同刺激。<br><br><strong>📚 知识点讲解：</strong>泛化是指条件反射建立初期，对与条件刺激相似的刺激也产生反应；分化则是通过强化和消退，只对特定刺激产生反应。井绳与蛇形似，引起恐惧反应是泛化。<br><br><strong>💡 解题思路：</strong>分不清=泛化，分得清=分化。错误。<br><br><strong>🧠 记忆口诀：</strong>泛化分不清，分化辨得明。"
+        }, {
+            "type": "判断题",
+            "stem": "小狗听到主人喊名字就跑过来，属于第二信号系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。小狗只对声音（物理刺激）反应，不懂语言含义，属于<span style='color:#4a90e2;font-weight:700;'>第一信号系统</span>。<br><br><strong>📚 知识点讲解：</strong>第二信号系统必须以语言理解为基础，动物不具备这一能力。<br><br><strong>💡 解题思路：</strong>动物行为=第一信号系统。错误。<br><br><strong>🧠 记忆口诀：</strong>动物第一信，人类第二新。"
+        }, {
+            "type": "判断题",
+            "stem": "谈虎色变属于第一信号系统，望梅生津属于第二信号系统。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。谈虎色变是语言刺激，属于<span style='color:#e88b2c;font-weight:700;'>第二信号系统</span>；望梅生津是看到实物，属于<span style='color:#4a90e2;font-weight:700;'>第一信号系统</span>。题干颠倒。<br><br><strong>📚 知识点讲解：</strong>谈=语言→第二信号；望=看到实物→第一信号。<br><br><strong>💡 解题思路：</strong>完全颠倒，错误。<br><br><strong>🧠 记忆口诀：</strong>谈二望一，分清不易。"
+        }, {
+            "type": "判断题",
+            "stem": "高级神经活动强、平衡、灵活的类型，对应粘液质。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。强、平衡、灵活对应<span style='color:#e88b2c;font-weight:700;'>多血质</span>；粘液质是强、平衡、<span style='color:#4a90e2;font-weight:700;'>不灵活</span>。<br><br><strong>📚 知识点讲解：</strong>巴甫洛夫高级神经活动类型与气质对应：不可遏制型→胆汁质；活泼型→多血质；安静型→粘液质；抑郁型→抑郁质。<br><br><strong>💡 解题思路：</strong>灵活=多血质，不灵活=粘液质。错误。<br><br><strong>🧠 记忆口诀：</strong>强平灵活多血质，强平不活粘液质。"
+        }, {
+            "type": "判断题",
+            "stem": "无条件反射是后天学习形成的，条件反射是先天本能。（）",
+            "options": [
+                { "label": "A", "text": "正确" },
+                { "label": "B", "text": "错误" }
+            ],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法<strong>错误</strong>。无条件反射是<span style='color:#4a90e2;font-weight:700;'>先天本能</span>（如膝跳反射）；条件反射是<span style='color:#e88b2c;font-weight:700;'>后天习得</span>（如狗听铃声流口水）。<br><br><strong>📚 知识点讲解：</strong>无条件反射不需要学习，是种族遗传；条件反射需要个体经验。题干完全颠倒。<br><br><strong>💡 解题思路：</strong>先天=无条件，后天=条件。错误。<br><br><strong>🧠 记忆口诀：</strong>无条件先天本能，条件后天学习成。"
+        }];
+
+        const APP_ID = 'pavlov_signal_system_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewPosition = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '巴甫洛夫信号系统理论与全套考点整合';
+            const content = `<h3>📌 两大信号系统速记表</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>信号系统</th><th>核心定义</th><th>刺激类型</th><th>特点</th></tr></thead>
+                <tbody>
+                    <tr><td>第一信号系统</td><td>对具体物理刺激反应</td><td>物理性刺激（有形）</td><td>人和动物共有，低级</td></tr>
+                    <tr><td>第二信号系统</td><td>对语言、文字等抽象刺激反应</td><td>语言性刺激（无形）</td><td>人独有，高级</td></tr>
+                </tbody>
+            </table>
+
+            <h3>🔍 易错易混点辨析</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>例子</th><th>正确归类</th><th>关键点</th></tr></thead>
+                <tbody>
+                    <tr><td>鹦鹉学舌</td><td>第一信号</td><td>模仿声音，不懂语义</td></tr>
+                    <tr><td>望梅止渴（成语）</td><td>第二信号</td><td>语言描述梅子</td></tr>
+                    <tr><td>杯弓蛇影</td><td>第一信号</td><td>具体视觉刺激</td></tr>
+                    <tr><td>谈梅生津</td><td>第二信号</td><td>谈论梅子</td></tr>
+                    <tr><td>小狗听指令</td><td>第一信号</td><td>声音条件反射</td></tr>
+                </tbody>
+            </table>
+
+            <h3>🧠 经典条件反射五大规律</h3>
+            <p><strong>获得、消退、泛化、分化、恢复</strong>。泛化：分不清（怕井绳）；分化：分得清（区分己已巳）。</p>
+
+            <h3>📊 高级神经活动类型与气质</h3>
+            <table class="knowledge-table">
+                <thead><tr><th>神经类型</th><th>气质</th><th>特点</th></tr></thead>
+                <tbody>
+                    <tr><td>不可遏制型</td><td>胆汁质</td><td>强、不平衡，冲动</td></tr>
+                    <tr><td>活泼型</td><td>多血质</td><td>强、平衡、灵活</td></tr>
+                    <tr><td>安静型</td><td>粘液质</td><td>强、平衡、不灵活</td></tr>
+                    <tr><td>抑郁型</td><td>抑郁质</td><td>弱，敏感</td></tr>
+                </tbody>
+            </table>
+
+            <h3>📝 极简口诀</h3>
+            <p style="background:#f0f7ff;padding:12px;border-radius:8px;font-weight:600;">
+            第一具体人畜共，第二语言人独有；<br>
+            泛化分不清，分化辨得明；<br>
+            胆汁冲动多血活，粘液稳来抑郁弱。
+            </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+
+            let html = '';
+            if (reviewMode && wrongIndices.length > 0) {
+                html +=
+                    `<div style="text-align:center;padding:8px 0;margin-bottom:8px;"><span class="review-mode-badge">🔁 错题回顾 · 第 ${reviewPosition + 1}/${wrongIndices.length} 题</span></div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            if (currentIndex === questions.length - 1 && allAnswered && !reviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = questions.length - correctCount;
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>回看错题${wrongCount > 0 ? ' (' + wrongCount + ')' : ''}</button>
+                            <button class="action-btn export-wrong-btn" onclick="exportWrongQuestionsCSV()" ${wrongCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;background:#e0e0e0;color:#aaa;"' : ''}>导出错题CSV</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (reviewMode && reviewPosition >= wrongIndices.length - 1 && allAnswered && currentIndex === wrongIndices[
+                    wrongIndices.length - 1]) {
+                html += `
+                    <div class="completion-screen" style="margin-top:20px;">
+                        <div class="completion-icon">✅</div>
+                        <h1 class="completion-title" style="font-size:20px;">错题回顾完毕！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了全部 <strong>${wrongIndices.length}</strong> 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()">退出回顾</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition > 0) {
+                    reviewPosition--;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewPosition < wrongIndices.length - 1) {
+                    reviewPosition++;
+                    currentIndex = wrongIndices[reviewPosition];
+                    renderQuestion();
+                    updateNavButtons();
+                }
+                return;
+            }
+            if (currentIndex < questions.length - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (reviewMode && wrongIndices.length > 0) {
+                const isFirstWrong = reviewPosition === 0;
+                const isLastWrong = reviewPosition >= wrongIndices.length - 1;
+                footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirstWrong ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一错题</button><button class="nav-btn exit-review-btn" onclick="exitReviewMode()">退出回顾</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一错题 <i class="fas fa-chevron-right"></i></button>`;
+                return;
+            }
+            footerContent.innerHTML =
+                `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function reviewWrongQuestions() {
+            wrongIndices = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongIndices.push(i);
+                }
+            }
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewPosition = 0;
+            currentIndex = wrongIndices[0];
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            reviewPosition = 0;
+            currentIndex = questions.length - 1;
+            renderQuestion();
+            updateNavButtons();
+            showToast('已退出错题回顾模式');
+        }
+
+        function exportWrongQuestionsCSV() {
+            const wrongList = [];
+            for (let i = 0; i < questions.length; i++) {
+                if (answers[i] !== null && answers[i] !== questions[i].answer) {
+                    wrongList.push(i);
+                }
+            }
+            if (wrongList.length === 0) {
+                showToast('没有错题可导出');
+                return;
+            }
+            let csvContent = '\uFEFF序号,题目类型,题目,选项,正确答案,你的答案,解析\n';
+            wrongList.forEach((idx, order) => {
+                const q = questions[idx];
+                const stem = q.stem.replace(/"/g, '""');
+                const optionsStr = q.options.map(o => `${o.label}. ${o.text}`).join(' | ');
+                const correctAns = q.options[q.answer].text;
+                const userAns = q.options[answers[idx]].text;
+                const analysis = q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""');
+                csvContent += `${order + 1},"${q.type}","${stem}","${optionsStr}","${correctAns}","${userAns}","${analysis}"\n`;
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = '巴甫洛夫错题集.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            showToast('错题CSV已导出');
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer))
+                        return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = wrongIndices.indexOf(index);
+                if (pos >= 0) {
+                    reviewPosition = pos;
+                } else {
+                    exitReviewMode();
+                }
+            }
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+                index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                wrongIndices = [];
+                reviewPosition = 0;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (reviewMode) { exitReviewMode(); return; }
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
