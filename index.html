@@ -900,7 +900,17 @@
                     if (s.wrongQuestions && s.wrongQuestions.length) {
                         groupedWrong[exam.title] = {
                             link: exam.link,
-                            wrongs: s.wrongQuestions.map(wq => ({ num: wq.num, question: wq.question || '' }))
+                            wrongs: s.wrongQuestions.map(wq => ({ 
+                                num: wq.num, 
+                                question: wq.question || '',
+                                type: wq.type,
+                                options: wq.options,
+                                answer: wq.answer,
+                                correctAnswer: wq.correctAnswer,
+                                analysis: wq.analysis,
+                                explanation: wq.explanation,
+                                userAnswer: wq.userAnswer
+                            }))
                         };
                         totalWrong += s.wrongQuestions.length;
                     }
@@ -1014,7 +1024,30 @@
                         .btn-json { background: #10b981; color: white; }
                         @media print {
                             .btn-bar { display: none; }
-                            body { max-width: 100%; padding: 10mm; }
+                            body { max-width: 100%; padding: 0; background: white; font-size: 13px; }
+                            .exam-section { border: none; margin-bottom: 20px; }
+                            .exam-header { 
+                                background: transparent; 
+                                color: black; 
+                                border-bottom: 2px solid #333; 
+                                padding: 8px 0; 
+                                margin-bottom: 10px; 
+                            }
+                            .exam-body { 
+                                padding: 0; 
+                                column-count: 2; 
+                                column-gap: 30px; 
+                            }
+                            .question-item { 
+                                break-inside: avoid; 
+                                page-break-inside: avoid; 
+                                padding: 10px 0; 
+                                border-bottom: 1px dashed #ccc; 
+                            }
+                            .answer-block, .analysis-block, .options {
+                                break-inside: avoid; 
+                                page-break-inside: avoid;
+                            }
                         }
                     </style>
                 </head>
@@ -1031,9 +1064,15 @@
                                 ${wrongs.map((w, idx) => {
                                     let optionsHtml = '';
                                     if (w.options) {
-                                        optionsHtml = Object.entries(w.options).map(([key, val]) => `
-                                            <div class="option">${key}. ${val}</div>
-                                        `).join('');
+                                        if (Array.isArray(w.options)) {
+                                            optionsHtml = w.options.map(opt => `
+                                                <div class="option">${opt.label}. ${opt.text}</div>
+                                            `).join('');
+                                        } else {
+                                            optionsHtml = Object.entries(w.options).map(([key, val]) => `
+                                                <div class="option">${key}. ${val}</div>
+                                            `).join('');
+                                        }
                                     }
                                     
                                     let answerHtml = '';
@@ -1067,17 +1106,71 @@
                     `).join('')}
                     
                     <div class="btn-bar">
-                        <button class="btn btn-print" onclick="window.print()">🖨️ 打印/预览</button>
-                        <button class="btn btn-json" onclick="(function(){
-                            const data = ${JSON.stringify(groupedWrong)};
+                        <button class="btn btn-print" onclick="window.print()">🖨️ 打印</button>
+                        <button class="btn btn-json" onclick="downloadCSV()">💾 导出为csv</button>
+                    </div>
+                    <script id="exportScript">
+                        const groupedWrong = ${JSON.stringify(groupedWrong)};
+                        
+                        function getTypeLabel(type) {
+                            if (type === 'single') return '单选题';
+                            if (type === 'multiple') return '多选题';
+                            if (type === 'judge') return '判断题';
+                            return '';
+                        }
+                        
+                        function downloadCSV() {
+                            let csvContent = '\\uFEFF'; // BOM for Excel
+                            csvContent += '试卷,题目,类型,选项,回答,正确答案,解析\\n';
+                            
+                            function escapeCsv(str) {
+                                if (str === null || str === undefined) return '';
+                                str = String(str).replace(/\"/g, '\"\"'); // Escape quotes
+                                if (str.includes(',') || str.includes('\"') || str.includes('\\n')) {
+                                    str = '\"' + str + '\"';
+                                }
+                                return str;
+                            }
+
+                            for (const [title, { wrongs }] of Object.entries(groupedWrong)) {
+                                for (const w of wrongs) {
+                                    let optionsStr = '';
+                                    if (w.options) {
+                                        if (Array.isArray(w.options)) {
+                                            optionsStr = w.options.map(opt => \`\${opt.label}. \${opt.text}\`).join('; ');
+                                        } else {
+                                            optionsStr = Object.entries(w.options).map(([k, v]) => \`\${k}. \${v}\`).join('; ');
+                                        }
+                                    }
+                                    let typeStr = w.type ? getTypeLabel(w.type) : '';
+                                    let answerVal = w.answer || w.correctAnswer || '';
+                                    if (Array.isArray(answerVal)) answerVal = answerVal.join('、');
+                                    let userAnsStr = w.userAnswer || '';
+                                    if (Array.isArray(userAnsStr)) userAnsStr = userAnsStr.join('、');
+                                    let analysisStr = w.analysis || w.explanation || '';
+                                    
+                                    const row = [
+                                        title,
+                                        w.question || '',
+                                        typeStr,
+                                        optionsStr,
+                                        userAnsStr,
+                                        answerVal,
+                                        analysisStr
+                                    ].map(escapeCsv).join(',');
+                                    
+                                    csvContent += row + '\\n';
+                                }
+                            }
+
                             const a = document.createElement('a');
-                            a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
-                            a.download = '错题本_按试卷分组.json';
+                            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+                            a.download = '错题本.csv';
                             document.body.appendChild(a);
                             a.click();
                             document.body.removeChild(a);
-                        })()">💾 下载 JSON</button>
-                    </div>
+                        }
+                    ${'</sc' + 'ript>'}
                 </body>
                 </html>
             `;

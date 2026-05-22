@@ -2782,6 +2782,96 @@
         
         // 初始化应用
         document.addEventListener('DOMContentLoaded', init);
-    </script>
+    
+        
+
+// 新增导出错题为CSV功能
+        function escapeCSV(str) {
+            if (str === null || str === undefined) return '';
+            let s = String(str);
+            s = s.replace(/<[^>]+>/g, '');
+            s = s.replace(/"/g, '""');
+            if (s.indexOf(',') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('"') >= 0) {
+                s = '"' + s + '"';
+            }
+            return s;
+        }
+
+        const exportBtn = document.getElementById('exportMistakesBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                let wrongQuestions = [];
+                questions.forEach((q, i) => {
+                    const questionId = q.id.toString();
+                    const userAnswer = userAnswers[questionId];
+                    if (userAnswer !== undefined) {
+                        let isCorrect = false;
+                        if (Array.isArray(q.correctAnswer)) {
+                            if (Array.isArray(userAnswer)) {
+                                isCorrect = q.correctAnswer.length === userAnswer.length &&
+                                           q.correctAnswer.every(ans => userAnswer.includes(ans));
+                            }
+                        } else {
+                            isCorrect = userAnswer === q.correctAnswer;
+                        }
+                        if (!isCorrect) {
+                            wrongQuestions.push(q);
+                        }
+                    }
+                });
+
+                if (wrongQuestions.length === 0) {
+                    alert('没有错题可以导出哦！');
+                    return;
+                }
+                
+                let csvContent = '\uFEFF题目,类型,选项,正确答案,解析\n';
+                
+                wrongQuestions.forEach(q => {
+                    let qTypeLabel = '';
+                    if (q.type === 'single') qTypeLabel = '单选题';
+                    else if (q.type === 'multiple') qTypeLabel = '多选题';
+                    else if (q.type === 'judge') qTypeLabel = '判断题';
+                    else qTypeLabel = q.type || '';
+                    
+                    let optionsStr = '';
+                    if (q.options && Array.isArray(q.options)) {
+                        q.options.forEach(opt => {
+                            optionsStr += opt.id + ': ' + opt.text + '  ';
+                        });
+                    } else if (q.options) {
+                        for (let key in q.options) {
+                            optionsStr += key + ': ' + q.options[key] + '  ';
+                        }
+                    } else if (q.type === 'judge') {
+                        optionsStr = 'A: 正确  B: 错误';
+                    }
+                    
+                    let ansStr = q.correctAnswer;
+                    if (Array.isArray(ansStr)) ansStr = ansStr.join('');
+
+                    const rowStr = [
+                        q.question || '',
+                        qTypeLabel,
+                        optionsStr.trim(),
+                        ansStr,
+                        q.explanation || q.analysis || ''
+                    ].map(escapeCSV).join(',');
+                    
+                    csvContent += rowStr + '\n';
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', document.title + '错题.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+
+</script>
 </body>
 </html>

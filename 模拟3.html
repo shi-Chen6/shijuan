@@ -663,7 +663,8 @@
                 <div class="sheet-handle"></div>
                 <div class="sheet-title">📋 题目列表（点击跳转）</div>
                 <div class="sheet-grid" id="sheetGrid"></div>
-                <button class="sheet-close" id="sheetClose">关闭</button>
+                <button class="sheet-close" id="exportMistakesBtn" style="background:#4A6CF7; color:#fff; border:none; margin-bottom:10px;">导出错题 (CSV)</button>
+                  <button class="sheet-close" id="sheetClose">关闭</button>
             </div>
         </div>
 
@@ -2526,7 +2527,89 @@ const allQuestions = [
             console.log('  总题数：' + allQuestions.length + ' 题（单选60+多选10+判断30）');
             console.log('  支持：本地存储进度、字体调整、解析折叠、滑动导航');
             console.log('  点击左上角←按钮查看题目列表');
-        })();
-    </script>
+        
+
+// 新增导出错题为CSV功能
+        function escapeCSV(str) {
+            if (str === null || str === undefined) return '';
+            let s = String(str);
+            s = s.replace(/<[^>]+>/g, '');
+            s = s.replace(/"/g, '""');
+            if (s.indexOf(',') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('"') >= 0) {
+                s = '"' + s + '"';
+            }
+            return s;
+        }
+
+        const exportBtn = document.getElementById('exportMistakesBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                let wrongQuestions = [];
+                if (typeof allQuestions !== 'undefined' && typeof answeredMap !== 'undefined') {
+                    allQuestions.forEach((q) => {
+                        const ans = answeredMap[q.id];
+                        if (ans && !ans.isCorrect) {
+                            wrongQuestions.push(q);
+                        }
+                    });
+                }
+
+                if (wrongQuestions.length === 0) {
+                    if(typeof showToast === 'function') showToast('没有错题可以导出哦！');
+                    else alert('没有错题可以导出哦！');
+                    return;
+                }
+                
+                let csvContent = '\uFEFF题目,类型,选项,正确答案,解析\n';
+                
+                wrongQuestions.forEach(q => {
+                    let qTypeLabel = '';
+                    if (q.type === 'single') qTypeLabel = '单选题';
+                    else if (q.type === 'multi' || q.type === 'multiple') qTypeLabel = '多选题';
+                    else if (q.type === 'judge') qTypeLabel = '判断题';
+                    else qTypeLabel = q.type || '';
+                    
+                    let optionsStr = '';
+                    if (q.options && Array.isArray(q.options)) {
+                        q.options.forEach(opt => {
+                            let letter = opt.letter || opt.id;
+                            optionsStr += letter + ': ' + opt.text + '  ';
+                        });
+                    } else if (q.options) {
+                        for (let key in q.options) {
+                            optionsStr += key + ': ' + q.options[key] + '  ';
+                        }
+                    } else if (q.type === 'judge') {
+                        optionsStr = 'A: 正确  B: 错误';
+                    }
+                    
+                    let ansStr = q.answer;
+                    if (Array.isArray(ansStr)) ansStr = ansStr.join('');
+
+                    const rowStr = [
+                        q.stem || q.question || '',
+                        qTypeLabel,
+                        optionsStr.trim(),
+                        ansStr,
+                        q.parse || q.explanation || q.analysis || ''
+                    ].map(escapeCSV).join(',');
+                    
+                    csvContent += rowStr + '\n';
+                });
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', document.title + '错题.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        }
+
+})();
+    
+        </script>
 </body>
 </html>

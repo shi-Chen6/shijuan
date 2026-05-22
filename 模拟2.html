@@ -411,6 +411,7 @@
                 <div class="rate-item"><span>判断题正确率</span><span id="rateJudge">0%</span></div>
             </div>
             <div class="summary-actions">
+                <button class="summary-btn btn-wrong" id="exportMistakesBtn" style="background:#4A6CF7; color:#fff;">导出错题</button>
                 <button class="summary-btn btn-wrong" id="viewMistakesBtn">📝 看错题</button>
                 <button class="summary-btn btn-restart" id="restartBtn">🔄 重新开始</button>
             </div>
@@ -1217,7 +1218,77 @@
             }
 
             init();
-        })();
-    </script>
+        
+
+// 新增导出错题为CSV功能
+            function escapeCSV(str) {
+                if (str === null || str === undefined) return '';
+                let s = String(str);
+                // 去除可能干扰的HTML标签
+                s = s.replace(/<[^>]+>/g, '');
+                s = s.replace(/"/g, '""');
+                if (s.indexOf(',') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('"') >= 0) {
+                    s = '"' + s + '"';
+                }
+                return s;
+            }
+
+            const exportMistakesBtn = $('#exportMistakesBtn');
+            if(exportMistakesBtn) {
+                exportMistakesBtn.addEventListener('click', () => {
+                    const mistakes = typeof generateMistakeList === 'function' ? generateMistakeList() : (typeof mistakeList !== 'undefined' ? mistakeList : []);
+                    if (!mistakes || mistakes.length === 0) {
+                        if(typeof showToast === 'function') showToast('没有错题可以导出哦！');
+                        else alert('没有错题可以导出哦！');
+                        return;
+                    }
+                    
+                    let csvContent = '\uFEFF题目,类型,选项,正确答案,解析\n';
+                    
+                    mistakes.forEach(idx => {
+                        const q = typeof allQuestions !== 'undefined' ? allQuestions[idx] : null;
+                        if (!q) return;
+                        
+                        let qTypeLabel = q.type;
+                        if(typeof getTypeLabel === 'function') qTypeLabel = getTypeLabel(q.type);
+                        else {
+                            if(q.type === 'single') qTypeLabel = '单选题';
+                            if(q.type === 'multiple') qTypeLabel = '多选题';
+                            if(q.type === 'judge') qTypeLabel = '判断题';
+                        }
+                        
+                        let optionsStr = '';
+                        if (q.options) {
+                            for (let key in q.options) {
+                                // 保证选项内容在一行或者带双引号
+                                optionsStr += key + ': ' + q.options[key] + '  ';
+                            }
+                        }
+                        
+                        const rowStr = [
+                            q.question || '',
+                            qTypeLabel || '',
+                            optionsStr.trim(),
+                            q.answer || '',
+                            q.analysis || ''
+                        ].map(escapeCSV).join(',');
+                        
+                        csvContent += rowStr + '\n';
+                    });
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', document.title + '错题.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+
+})();
+    
+            </script>
 </body>
 </html>
