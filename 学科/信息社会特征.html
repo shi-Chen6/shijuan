@@ -1,0 +1,1824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>信息社会特征刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* 新增题型及扩展样式 */
+        .question-type.diff-basic {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        .question-type.diff-mid {
+            background: #fffbe6;
+            color: #d48806;
+        }
+        .question-type.diff-high {
+            background: #fff2f0;
+            color: #cf1322;
+        }
+        .textarea-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        .textarea-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .task-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .submit-btn,
+        .draft-btn,
+        .clear-input-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .draft-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .clear-input-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .submit-btn:active,
+        .draft-btn:active,
+        .clear-input-btn:active {
+            transform: scale(0.97);
+        }
+        .hit-rate-bar {
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .hit-rate-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .hit-rate-fill.excellent {
+            background: var(--success-color);
+        }
+        .hit-rate-fill.good {
+            background: #73d13d;
+        }
+        .hit-rate-fill.ok {
+            background: var(--warning-color);
+        }
+        .hit-rate-fill.weak {
+            background: var(--error-color);
+        }
+        .tag-excellent,
+        .tag-good,
+        .tag-ok,
+        .tag-weak {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-excellent {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .tag-good {
+            background: #d4edda;
+            color: #389e0d;
+        }
+        .tag-ok {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .tag-weak {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .sheet-item.partial {
+            border-color: var(--warning-color);
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-btn {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffd591;
+        }
+        .analysis-content .highlight-hit {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #155724;
+            font-weight: 600;
+        }
+        .analysis-content .highlight-miss {
+            background: #f8d7da;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #721c24;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">信息社会特征</div>
+                        <div class="progress-text">高中信息技术 · 社会形态</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "信息社会区别于农业、工业社会的核心生产资源是（ ）",
+            "options": [{ "label": "A", "text": "土地" }, { "label": "B", "text": "矿产能源" }, { "label": "C", "text": "信息与数据" }, { "label": "D", "text": "劳动力" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。信息社会以信息、数据为核心资源；土地对应农业社会，能源对应工业社会。<br><strong>📚 知识点讲解：</strong>三种社会形态的核心资源不同：农业社会靠土地和劳动力，工业社会靠矿产和能源，信息社会靠信息和数据。<br><strong>💡 解题思路：</strong>信息社会的关键词是\u201C信息\u201D，直接排除土地、矿产和劳动力。<br><strong>🧠 记忆口诀：</strong>农业靠土地，工业靠能源，信息靠数据。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "网上购物、移动支付、线上办公，主要体现信息社会哪一特征（ ）",
+            "options": [{ "label": "A", "text": "生活数字化网络化" }, { "label": "B", "text": "资源单一化" }, { "label": "C", "text": "时空界限不断强化" }, { "label": "D", "text": "产业传统化" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。线上支付、办公购物，都是生活数字化网络化的典型体现。<br><strong>📚 知识点讲解：</strong>信息社会最直观的变化就是日常生活向线上迁移，衣食住行都可通过网络完成。<br><strong>💡 解题思路：</strong>题干中的行为都是数字化生活的表现，不属于产业或资源特征。<br><strong>🧠 记忆口诀：</strong>网上购物移动支，生活数字化显特征。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列不属于信息技术普及应用领域的是（ ）",
+            "options": [{ "label": "A", "text": "智能交通调度" }, { "label": "B", "text": "线上政务办理" }, { "label": "C", "text": "手工农耕劳作" }, { "label": "D", "text": "远程医疗诊断" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。手工农耕属于传统农业劳作，未运用现代信息技术。<br><strong>📚 知识点讲解：</strong>信息技术已渗透到交通、政务、医疗等各行各业，但传统农耕中尚未普及。<br><strong>💡 解题思路：</strong>手工农耕是纯人工操作，与信息技术无关。<br><strong>🧠 记忆口诀：</strong>手工农耕传统作，信息技术未渗透。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "互联网打破地域与时间限制，跨区域实时交流常态化，体现（ ）",
+            "options": [{ "label": "A", "text": "时空约束弱化" }, { "label": "B", "text": "信息资源封闭" }, { "label": "C", "text": "线下生活消亡" }, { "label": "D", "text": "产业模式固定" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。网络打破地域时间阻碍，体现时空约束弱化的特征。<br><strong>📚 知识点讲解：</strong>信息社会中，距离和时差不再是沟通的主要障碍，跨国协作成为常态。<br><strong>💡 解题思路：</strong>打破限制就是弱化约束。<br><strong>🧠 记忆口诀：</strong>互联网破时空限，跨区交流如比邻。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "电商、云计算、人工智能属于信息社会催生的（ ）",
+            "options": [{ "label": "A", "text": "传统农业" }, { "label": "B", "text": "数字新兴产业" }, { "label": "C", "text": "老式重工业" }, { "label": "D", "text": "手工制造业" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。电商、人工智能均是信息社会诞生的数字新兴产业。<br><strong>📚 知识点讲解：</strong>信息社会不仅改造传统产业，还催生了大量全新的数字经济形态。<br><strong>💡 解题思路：</strong>电商等是新兴数字产业。<br><strong>🧠 记忆口诀：</strong>电商云计算AI，数字产业新生代。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "工业社会发展主要依靠的核心资源是（ ）",
+            "options": [{ "label": "A", "text": "信息数据" }, { "label": "B", "text": "土地作物" }, { "label": "C", "text": "矿产能源" }, { "label": "D", "text": "网络技术" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。工业社会依靠矿产、能源作为核心发展资源。<br><strong>📚 知识点讲解：</strong>蒸汽机、电力等都依赖矿产和能源，这是工业革命的基础。<br><strong>💡 解题思路：</strong>工业社会关键词是能源。<br><strong>🧠 记忆口诀：</strong>工业社会靠矿产，能源驱动大生产。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "学生足不出户参加线上网课学习，反映信息社会（ ）",
+            "options": [{ "label": "A", "text": "生活学习数字化" }, { "label": "B", "text": "必须现场才能学习" }, { "label": "C", "text": "信息无法远程传递" }, { "label": "D", "text": "网络作用十分有限" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。线上网课体现学习生活走向数字化、网络化。<br><strong>📚 知识点讲解：</strong>教育领域的信息化让学习不再受限于物理教室，资源更加公平可及。<br><strong>💡 解题思路：</strong>线上学习是数字化生活的表现。<br><strong>🧠 记忆口诀：</strong>网课学习数字化，足不出户知天下。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "传统工厂改用智能机械自动生产，属于信息社会哪项特征（ ）",
+            "options": [{ "label": "A", "text": "产业数字化转型" }, { "label": "B", "text": "资源消耗无变化" }, { "label": "C", "text": "完全脱离信息技术" }, { "label": "D", "text": "生产效率持续降低" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。传统工厂引入智能技术生产，属于产业数字化转型。<br><strong>📚 知识点讲解：</strong>工业4.0、智能制造等都是产业数字化的体现。<br><strong>💡 解题思路：</strong>工厂用智能机械就是数字化转型。<br><strong>🧠 记忆口诀：</strong>工厂智能改，产业数字化。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "信息社会中推动行业发展、创造价值的关键能力是（ ）",
+            "options": [{ "label": "A", "text": "体力劳作能力" }, { "label": "B", "text": "信息处理运用能力" }, { "label": "C", "text": "土地耕种能力" }, { "label": "D", "text": "矿产开采能力" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。信息的收集、处理、运用能力，是信息社会核心竞争力。<br><strong>📚 知识点讲解：</strong>在信息社会中，数据素养和信息技术能力是个人和组织发展的基础。<br><strong>💡 解题思路：</strong>信息社会靠信息能力。<br><strong>🧠 记忆口诀：</strong>信息处理是核心，数据运用创价值。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "政府开设线上办事大厅，民众在家即可办理业务，体现（ ）",
+            "options": [{ "label": "A", "text": "政务信息化" }, { "label": "B", "text": "拒绝网络办事" }, { "label": "C", "text": "地域限制极强" }, { "label": "D", "text": "产业形态落后" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。线上办理政务业务，是政务信息化的具体表现。<br><strong>📚 知识点讲解：</strong>电子政务让公共服务更加高效便民，是信息社会的重要标志。<br><strong>💡 解题思路：</strong>政府线上服务就是政务信息化。<br><strong>🧠 记忆口诀：</strong>政务线上办，信息化体现。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于信息社会特征说法错误的是（ ）",
+            "options": [{ "label": "A", "text": "信息成为核心发展资源" }, { "label": "B", "text": "信息技术覆盖各行各业" }, { "label": "C", "text": "生活事务全部脱离线下" }, { "label": "D", "text": "跨区域信息共享便捷" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。数字化并非完全脱离线下，线上线下生活共存互补。<br><strong>📚 知识点讲解：</strong>信息社会是线上线下的融合，不是完全取代。很多事务仍需要线下执行。<br><strong>💡 解题思路：</strong>\u201C全部脱离\u201D太绝对，错误。<br><strong>🧠 记忆口诀：</strong>线上线下融合存，非全部脱离线下。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "从农业社会到信息社会，产业发展的整体变化趋势是（ ）",
+            "options": [{ "label": "A", "text": "逐步数字化智能化" }, { "label": "B", "text": "回归纯手工劳作" }, { "label": "C", "text": "只依靠能源推动发展" }, { "label": "D", "text": "产业类型一成不变" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。社会产业整体朝着数字化、智能化方向升级发展。<br><strong>📚 知识点讲解：</strong>从机械化到电气化，再到数字化智能化，产业发展趋势是技术含量越来越高。<br><strong>💡 解题思路：</strong>数字化智能化是趋势。<br><strong>🧠 记忆口诀：</strong>农业到信息，数字智能化。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "跨国公司员工线上开会协作，不受国家距离影响，主要得益于（ ）",
+            "options": [{ "label": "A", "text": "时空界限被网络弱化" }, { "label": "B", "text": "传统书信传递信息" }, { "label": "C", "text": "只能当面沟通交流" }, { "label": "D", "text": "区域信息相互隔绝" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。网络消除距离阻碍，实现跨国家、跨区域协作交流。<br><strong>📚 知识点讲解：</strong>视频会议、即时通讯等技术让地球成为一个村庄。<br><strong>💡 解题思路：</strong>线上开会突破距离，是时空弱化的体现。<br><strong>🧠 记忆口诀：</strong>网络破距离，开会无国界。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "不属于信息社会产业数字化表现的是（ ）",
+            "options": [{ "label": "A", "text": "智能流水线加工产品" }, { "label": "B", "text": "线下集市现金摆摊买卖" }, { "label": "C", "text": "大数据分析市场行情" }, { "label": "D", "text": "直播电商售卖商品" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。线下现金摆摊属于传统交易模式，不属于数字化产业表现。<br><strong>📚 知识点讲解：</strong>数字化产业利用信息技术进行生产、销售和管理。<br><strong>💡 解题思路：</strong>现金摆摊是最传统的交易方式。<br><strong>🧠 记忆口诀：</strong>现金摆摊传统式，数字产业已升级。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "信息社会信息技术普及带来的直接影响是（ ）",
+            "options": [{ "label": "A", "text": "信息传递速度大幅加快" }, { "label": "B", "text": "资源获取难度持续变大" }, { "label": "C", "text": "社会交流频次不断减少" }, { "label": "D", "text": "生产工作效率普遍下降" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。信息技术让信息传递、沟通交流速度显著提升。<br><strong>📚 知识点讲解：</strong>这是信息技术最直接的效用，也是信息社会的根本驱动力。<br><strong>💡 解题思路：</strong>信息技术提高速度，不是降低效率。<br><strong>🧠 记忆口诀：</strong>信息技术加速器，传递瞬间到全球。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "信息社会以信息、数据作为核心生产资源。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。信息与数据是信息社会最核心的生产资源。<br><strong>📚 知识点讲解：</strong>这与农业社会（土地）和工业社会（能源）形成鲜明对比。<br><strong>💡 解题思路：</strong>信息社会信息为王。<br><strong>🧠 记忆口诀：</strong>信息数据资源化，社会核心驱动力。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "互联网能够弱化时间与地理空间对人们交流的限制。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。互联网突破时空限制，远距离实时交流成为常态。<br><strong>📚 知识点讲解：</strong>互联网是信息社会的基础设施，打破了物理世界的时间和空间壁垒。<br><strong>💡 解题思路：</strong>网络让距离不再是问题。<br><strong>🧠 记忆口诀：</strong>互联网通天下，时空限制被淡化。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "线上购物、远程学习都是生活数字化的典型表现。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。网购、远程学习都是生活数字化常见现象。<br><strong>📚 知识点讲解：</strong>日常生活事务全面向线上迁移是信息社会的重要标志。<br><strong>💡 解题思路：</strong>这些是数字化生活实例。<br><strong>🧠 记忆口诀：</strong>购物学习线上化，生活数字化浪潮。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "信息技术仅能用于娱乐聊天，无法应用在工业生产中。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误（×）。信息技术广泛应用于工业、交通、医疗等众多领域。<br><strong>📚 知识点讲解：</strong>信息技术早已渗透到各行各业，工业生产中的自动控制、质量检测等大量使用信息技术。<br><strong>💡 解题思路：</strong>\u201C仅能\u201D过于片面。<br><strong>🧠 记忆口诀：</strong>信息技术用途广，工农业均沾光。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "信息社会会诞生传统社会没有的数字新兴产业。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。数字电商、云计算等都是信息社会全新的产业类型。<br><strong>📚 知识点讲解：</strong>信息社会催生了大量传统社会不存在的产业，如互联网服务、人工智能等。<br><strong>💡 解题思路：</strong>新兴产业是信息社会特征。<br><strong>🧠 记忆口诀：</strong>信息社会新产业，电商云算AI强。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "农业社会依靠土地和劳动力作为主要发展依托。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。农业社会主要依靠土地、劳动力开展生产发展。<br><strong>📚 知识点讲解：</strong>农业社会的经济基础是土地耕作和人力劳动。<br><strong>💡 解题思路：</strong>这是历史常识。<br><strong>🧠 记忆口诀：</strong>农业社会土和劳，靠天吃饭基础牢。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "传统行业结合信息技术，可以实现数字化转型升级。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。传统行业融合信息技术，可完成数字化升级改造。<br><strong>📚 知识点讲解：</strong>这就是产业数字化的核心内容。<br><strong>💡 解题思路：</strong>传统+数字=升级。<br><strong>🧠 记忆口诀：</strong>传统行业加数字，转型升级焕新生。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "进入信息社会后，所有线下生活、线下产业都会彻底消失。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误（×）。信息社会线上线下生活共存，线下产业不会彻底消失。<br><strong>📚 知识点讲解：</strong>许多基础产业如餐饮、建筑等依然以线下为主，只是融入了信息技术。<br><strong>💡 解题思路：</strong>\u201C彻底消失\u201D绝对化错误。<br><strong>🧠 记忆口诀：</strong>线上线下共存，非彻底被取代。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "信息处理能力越强，在信息社会中的发展优势越明显。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确（√）。信息处理运用能力是信息社会重要的个人核心素养。<br><strong>📚 知识点讲解：</strong>在信息爆炸的时代，能够高效处理信息的人具备更大竞争优势。<br><strong>💡 解题思路：</strong>能力强优势大。<br><strong>🧠 记忆口诀：</strong>信息能力强，发展优势显。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "工业能源、土地资源在信息社会中不再具备任何作用。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误（×）。土地、能源依旧发挥作用，只是不再是核心主导资源。<br><strong>📚 知识点讲解：</strong>信息社会仍然需要土地和能源，但经济发展的主要动力已转向信息。<br><strong>💡 解题思路：</strong>基础资源仍有用，只是地位降。<br><strong>🧠 记忆口诀：</strong>土地能源仍在用，核心地位已让位。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "简要写出信息社会的五大主要特征。",
+            "answer": "①信息成为社会核心战略资源；②信息技术在全社会全方位普及应用；③社会生活呈现数字化、网络化特点；④各类产业朝着数字化方向转型升级；⑤网络互通弱化时间与空间的约束界限。",
+            "keywords": ["信息", "核心资源", "信息技术", "普及", "数字化", "网络化", "产业数字化", "时空弱化"],
+            "analysis": "<strong>🎯 答案解析：</strong>五大特征涵盖资源、技术、生活、产业、时空五个维度。<br><strong>📚 知识点讲解：</strong>这五个特征相互关联，共同描绘了信息社会的整体面貌。<br><strong>💡 解题思路：</strong>从资源到生活到产业到时空，依次列举。<br><strong>🧠 记忆口诀：</strong>信息核心技普及，生活数字产业转，网络弱化时空限。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "对比农业社会、工业社会、信息社会三者的核心生产资源。",
+            "answer": "农业社会：核心资源为土地、劳动力；工业社会：核心资源为矿产、各类能源；信息社会：核心资源为信息、数据资源。",
+            "keywords": ["农业社会", "土地", "劳动力", "工业社会", "矿产", "能源", "信息社会", "信息", "数据"],
+            "analysis": "<strong>🎯 答案解析：</strong>三种社会形态的核心资源截然不同，反映了生产力发展的三个阶段。<br><strong>📚 知识点讲解：</strong>资源的变化体现了人类对自然资源依赖程度的降低，向知识密集型转变。<br><strong>💡 解题思路：</strong>分别简述每种社会的核心资源。<br><strong>🧠 记忆口诀：</strong>农业土地劳动力，工业矿产和能源，信息数据创价值。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "结合生活实际，说说信息技术普及给个人生活与社会产业分别带来哪些改变。",
+            "answer": "个人生活：学习可线上听课、不受场地限制；消费出行扫码即可完成，便捷高效；足不出户能和远方亲友沟通，生活办事效率大幅提升。社会产业：传统工农业智能化生产，提升产量与质量；诞生电商、人工智能等新产业，丰富经济形态；跨区域产业协作更加方便，推动整体经济快速发展。",
+            "keywords": ["线上学习", "扫码出行", "沟通", "效率", "智能化生产", "新产业", "电商", "人工智能", "跨区域协作"],
+            "analysis": "<strong>🎯 答案解析：</strong>从个人生活的便利性和产业的高效化、创新化两方面阐述。<br><strong>📚 知识点讲解：</strong>信息技术是双刃剑，在带来便利的同时也带来挑战，但本题侧重正面改变。<br><strong>💡 解题思路：</strong>分个人和产业两个层面回答，举实例说明。<br><strong>🧠 记忆口诀：</strong>个人生活便利化，产业升级创新化。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "如今日常出行扫码打车付款、工厂智能生产、跨省线上会议、网上预约办事都成为常态，请结合信息社会特征作答：",
+            "tasks": ["（1）上述现象分别体现信息社会哪些核心特征？", "（2）网络弱化时空界限，给人们工作生活带来什么便利？", "（3）简述产业数字化转型对社会生产带来的积极作用。"],
+            "answer": "（1）扫码出行付款→生活数字化网络化；工厂智能生产→产业数字化转型；跨省线上会议→时空界限弱化、信息技术普及；网上预约办事→政务信息化、信息技术全域应用。（2）无需奔波往返现场，节省时间出行成本；异地人员随时沟通协作，工作安排更加灵活；远距离办事、学习、交流均可正常开展，生活便利度大幅提高。（3）提升生产自动化水平，减少人工失误；有效提高生产效率，扩大生产规模；催生新型产业，丰富社会经济结构；推动传统行业革新，整体经济发展质量提升。",
+            "keywords": [
+                ["生活数字化", "产业数字化", "时空弱化", "政务信息化"],
+                ["节省时间", "灵活安排", "远距离办事"],
+                ["自动化", "效率", "新产业", "经济质量"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）每个现象匹配对应的信息社会特征；（2）从时间、空间、效率角度说明便利；（3）从自动化、效率、创新、经济四方面阐述。<br><strong>📚 知识点讲解：</strong>综合考察信息社会特征在实际生活中的体现以及带来的积极影响。<br><strong>💡 解题思路：</strong>逐一对应分析，层次分明。<br><strong>🧠 记忆口诀：</strong>扫码生活数，智能生产转，会议时空弱，办事政务信。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "对比过去工业时代与当下信息社会，人们的学习、经商、沟通方式发生巨大变化：",
+            "tasks": ["（1）从核心资源角度，说明两个社会形态最本质的区别。", "（2）列举两项学习方面的信息化改变。", "（3）分析信息社会全面发展过程中，个人需要具备什么核心能力适应社会。"],
+            "answer": "（1）本质区别：工业社会依靠矿产、能源作为核心发展资源；信息社会以信息、数据为核心资源，依靠信息技术推动发展。（2）示例：线上网课远程学习；借助网络资料库查询学习知识；线上提交作业、线上考试测评。（任选两项即可）（3）需要具备信息获取、筛选、处理的能力；熟练运用信息技术设备的操作能力；网络沟通协作能力；辨别网络信息真伪的判断能力。",
+            "keywords": [
+                ["工业社会", "矿产能源", "信息社会", "信息数据"],
+                ["线上网课", "网络资料库", "线上作业"],
+                ["信息获取", "处理", "设备操作", "辨别真伪"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）核心资源差异是根本；（2）学习方式的信息化举例；（3）提出数字时代必备的素养。<br><strong>📚 知识点讲解：</strong>本题从资源、学习、能力三个角度深化对信息社会的理解。<br><strong>💡 解题思路：</strong>先对比资源，再给学习例子，最后总结能力要求。<br><strong>🧠 记忆口诀：</strong>资源不同根，学习线上化，能力要跟上。"
+        }];
+
+        const APP_ID = 'info_society_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextInputType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getAnswerStatus(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return 'unanswered';
+            if (isChoiceType(q)) return a === q.answer ? 'correct' : 'wrong';
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return 'unanswered';
+                const hr = a.hitRate || 0;
+                if (hr >= 0.8) return 'correct';
+                if (hr >= 0.4) return 'partial';
+                return 'wrong';
+            }
+            return 'unanswered';
+        }
+
+        function isAnswerCorrect(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(q)) return a === q.answer;
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return false;
+                const hr = a.hitRate || 0;
+                if (q.type === '简答题') return hr >= 0.6;
+                if (q.type === '综合应用题') return hr >= 0.7;
+                return hr >= 0.6;
+            }
+            return false;
+        }
+
+        function isAnswered(index) {
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(questions[index])) return typeof a === 'number';
+            if (isTextInputType(questions[index])) return a && a.submitted === true;
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '信息社会核心特征与变革';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>信息社会</strong>是以信息技术发展为支撑，<strong>信息取代土地、能源成为核心生产资源</strong>，社会生产、日常生活、政务管理、文化交流全面朝着数字化、网络化、智能化方向发展的新型社会形态。</p>
+                <h3>🔑 五大核心特征</h3>
+                <p><strong>1. 信息成为核心战略资源：</strong>数据与信息是创造价值的关键要素。</p>
+                <p><strong>2. 信息技术全方位普及应用：</strong>渗透教育、医疗、工业等各行各业。</p>
+                <p><strong>3. 社会生活数字化、网络化：</strong>网购、移动支付、线上办公成为主流。</p>
+                <p><strong>4. 产业结构数字化转型升级：</strong>传统产业智能化改造，催生数字新兴产业。</p>
+                <p><strong>5. 网络互通弱化时空界限：</strong>跨地区协作、远程办事常态化。</p>
+                <h3>📋 三类社会形态核心资源对比</h3>
+                <table class="knowledge-table"><tr><th>社会形态</th><th>核心资源</th></tr><tr><td>农业社会</td><td>土地、劳动力</td></tr><tr><td>工业社会</td><td>矿产、能源</td></tr><tr><td>信息社会</td><td>信息、数据</td></tr></table>
+                <h3>⚠️ 易错提醒</h3>
+                <ul><li>信息是核心资源，不是能源或土地；信息技术用途广泛，不只是娱乐；线上线下共存，非彻底取代。</li></ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveIndex() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices[Math.min(currentIndex, reviewIndices.length - 1)];
+            return currentIndex;
+        }
+
+        function getEffectiveTotal() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            const contentArea = document.getElementById('quizContent');
+            const aVal = answers[effIndex];
+            let diffClass = '';
+            if (q.difficulty === '基础') diffClass = 'diff-basic';
+            else if (q.difficulty === '中档') diffClass = 'diff-mid';
+            else if (q.difficulty === '提高') diffClass = 'diff-high';
+
+            let html = `<div class="question-card"><span class="question-type ${diffClass}">${q.type} · ${q.difficulty || ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.tableData) html += q.tableData;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = (aVal !== null && aVal !== undefined && typeof aVal === 'number') && aVal === idx;
+                    const isCorrectAns = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (aVal !== null && aVal !== undefined && typeof aVal === 'number') {
+                        if (isSelected && isCorrectAns) classes.push('correct');
+                        else if (isSelected && !isCorrectAns) classes.push('wrong');
+                        else if (isCorrectAns) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (isTextInputType(q)) {
+                const isSubmitted = aVal && aVal.submitted;
+                const userInput = (aVal && aVal.userInput) ? aVal.userInput : '';
+                if (q.tasks && q.tasks.length > 0) {
+                    html += `<ol class="task-list">`;
+                    q.tasks.forEach(t => { html += `<li>${t}</li>`; });
+                    html += `</ol>`;
+                }
+                html += `<textarea class="textarea-input" id="textAnswerInput" placeholder="请在此输入你的回答..." ${isSubmitted ? 'disabled' : ''}>${userInput}</textarea>`;
+                if (!isSubmitted) {
+                    html += `<div class="submit-row">
+                        <button class="draft-btn" onclick="saveDraft(${effIndex})"><i class="fas fa-save"></i> 保存草稿</button>
+                        <button class="clear-input-btn" onclick="clearInput(${effIndex})"><i class="fas fa-eraser"></i> 清空输入</button>
+                        <button class="submit-btn" onclick="submitTextAnswer(${effIndex})"><i class="fas fa-check-circle"></i> 提交作答</button>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+
+            if (isAnswered(effIndex)) {
+                const status = getAnswerStatus(effIndex);
+                let badgeHtml = '';
+                if (status === 'correct') badgeHtml = '<span class="result-badge correct">✓ 回答正确</span>';
+                else if (status === 'partial') badgeHtml = '<span class="result-badge partial">△ 部分正确</span>';
+                else badgeHtml = '<span class="result-badge wrong">✗ 回答错误</span>';
+
+                if (isTextInputType(q) && aVal && aVal.submitted) {
+                    const hr = aVal.hitRate || 0;
+                    const hrPercent = Math.round(hr * 100);
+                    let hrClass = 'weak', tagHtml = '<span class="tag-weak">需加强</span>';
+                    if (q.type === '简答题') {
+                        if (hr >= 0.6) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">回答较好</span>'; }
+                        else if (hr >= 0.3) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">部分正确</span>'; }
+                    } else if (q.type === '综合应用题') {
+                        if (hr >= 0.85) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">优秀</span>'; }
+                        else if (hr >= 0.7) { hrClass = 'good'; tagHtml = '<span class="tag-good">良好</span>'; }
+                        else if (hr >= 0.5) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">合格</span>'; }
+                    }
+                    html += `<div class="analysis-card" style="padding:16px; margin-top:16px;">
+                        <p><strong>📝 你的回答：</strong></p>
+                        <div style="background:#fafafa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre-wrap;">${escapeHtml(aVal.userInput || '')}</div>
+                        <p><strong>关键词命中率：</strong>${tagHtml} <span style="font-weight:700;">${hrPercent}%</span></p>
+                        <div class="hit-rate-bar"><div class="hit-rate-fill ${hrClass}" style="width:${hrPercent}%"></div></div>
+                        ${aVal.hitKeywords && aVal.hitKeywords.length > 0 ? `<p><strong>✅ 命中关键词：</strong>${aVal.hitKeywords.map(k => '<span class="highlight-hit">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        ${aVal.missedKeywords && aVal.missedKeywords.length > 0 ? `<p><strong>❌ 未命中关键词：</strong>${aVal.missedKeywords.map(k => '<span class="highlight-miss">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        <p style="margin-top:10px;"><strong>📋 标准答案：</strong>${q.answer}</p>
+                    </div>`;
+                }
+
+                html += `<div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 答案分析 ${badgeHtml}</div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                </div>`;
+            }
+
+            const allAnsweredInScope = reviewMode ? reviewIndices.every(i => isAnswered(i)) : questions.every((_, i) => isAnswered(i));
+            const lastInScope = (currentIndex >= getEffectiveTotal() - 1);
+
+            if (lastInScope && allAnsweredInScope && !reviewMode) {
+                let totalQ = questions.length, correctCount = 0;
+                questions.forEach((_, i) => { if (isAnswerCorrect(i)) correctCount++; });
+                const accuracy = Math.round(correctCount / totalQ * 100);
+                saveToHistory(correctCount, accuracy);
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">🎉</div>
+                    <h1 class="completion-title">刷题完成！</h1>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${totalQ}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()"><i class="fas fa-redo"></i> 重新开始</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-exclamation-triangle"></i> 回看错题</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            if (lastInScope && allAnsweredInScope && reviewMode) {
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">📋</div>
+                    <h1 class="completion-title">错题回顾完成！</h1>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="exitReviewMode()"><i class="fas fa-arrow-left"></i> 返回刷题</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-redo"></i> 再次回看</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effIndex = getEffectiveIndex();
+            if (!isChoiceType(questions[effIndex])) return;
+            if (answers[effIndex] !== null && typeof answers[effIndex] === 'number') return;
+            answers[effIndex] = idx;
+            saveAnswers();
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            showToast(idx === questions[effIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const userInput = textarea.value.trim();
+            if (!userInput) { showToast('请输入你的回答后再提交'); return; }
+            const q = questions[effIndex];
+            let allKeywords = [];
+            if (q.type === '简答题') allKeywords = q.keywords || [];
+            else if (q.type === '综合应用题' && q.keywords && Array.isArray(q.keywords)) {
+                q.keywords.forEach(kArr => { if (Array.isArray(kArr)) allKeywords = allKeywords.concat(kArr); });
+            }
+            const hitKeywords = [], missedKeywords = [];
+            const inputLower = userInput.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (inputLower.includes(kw.toLowerCase())) hitKeywords.push(kw);
+                else missedKeywords.push(kw);
+            });
+            const hitRate = allKeywords.length > 0 ? hitKeywords.length / allKeywords.length : 0;
+            answers[effIndex] = { userInput, submitted: true, hitRate, hitKeywords, missedKeywords, totalKeywords: allKeywords.length };
+            saveAnswers();
+            clearDraft(effIndex);
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            const hrPercent = Math.round(hitRate * 100);
+            if (q.type === '简答题') {
+                if (hitRate >= 0.6) showToast(`回答较好！命中率 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.3) showToast(`部分正确，命中率 ${hrPercent}%`);
+                else showToast(`需加强，命中率 ${hrPercent}%`);
+            } else {
+                if (hitRate >= 0.85) showToast(`优秀！完成度 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.7) showToast(`良好！完成度 ${hrPercent}%`);
+                else if (hitRate >= 0.5) showToast(`合格，完成度 ${hrPercent}%`);
+                else showToast(`需加强，完成度 ${hrPercent}%`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveDraft(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const drafts = getDrafts(); drafts[effIndex] = textarea.value;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+            showToast('草稿已保存 ✓');
+        }
+
+        function clearInput(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            if (textarea.value.trim() && !confirm('确定要清空输入内容吗？')) return;
+            textarea.value = '';
+            clearDraft(effIndex);
+            showToast('输入已清空');
+        }
+
+        function getDrafts() { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; }
+        function clearDraft(effIndex) { const drafts = getDrafts(); delete drafts[effIndex]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('恭喜！没有错题需要回顾 🎉'); return; }
+            reviewMode = true; reviewIndices = wrongIndices; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; reviewIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast('已返回正常刷题模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('没有错题可导出'); return; }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题号,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongIndices.forEach(i => {
+                const q = questions[i]; const aVal = answers[i];
+                let userAnswerStr = '', correctAnswerStr = '', hitRateStr = '', resultStr = '';
+                if (isChoiceType(q)) {
+                    const selectedLabel = (typeof aVal === 'number' && aVal >= 0 && q.options[aVal]) ? q.options[aVal].label : '未作答';
+                    const correctLabel = q.options[q.answer] ? q.options[q.answer].label : '';
+                    userAnswerStr = selectedLabel; correctAnswerStr = correctLabel;
+                    hitRateStr = (typeof aVal === 'number' && aVal === q.answer) ? '100%' : '0%';
+                    resultStr = (typeof aVal === 'number' && aVal === q.answer) ? '正确' : '错误';
+                } else if (isTextInputType(q)) {
+                    userAnswerStr = (aVal && aVal.userInput) ? aVal.userInput.replace(/\n/g, ' ').replace(/"/g, '""') : '未作答';
+                    correctAnswerStr = q.answer ? q.answer.replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                    hitRateStr = (aVal && aVal.submitted) ? Math.round((aVal.hitRate || 0) * 100) + '%' : '未提交';
+                    const hr = (aVal && aVal.submitted) ? (aVal.hitRate || 0) : 0;
+                    if (q.type === '简答题') resultStr = hr >= 0.6 ? '回答较好' : (hr >= 0.3 ? '部分正确' : '需加强');
+                    else resultStr = hr >= 0.85 ? '优秀' : (hr >= 0.7 ? '良好' : (hr >= 0.5 ? '合格' : '需加强'));
+                }
+                const analysisPlain = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                csvContent += `"${q.type}","${i+1}","${q.stem.replace(/"/g,'""')}","${userAnswerStr}","${correctAnswerStr}","${hitRateStr}","${resultStr}","${analysisPlain}"\n`;
+            });
+            const dateStr = new Date().toISOString().slice(0,10);
+            const filename = `错题本_信息社会特征_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); link.href = url; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast(`错题已导出：${filename}`);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling, icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < getEffectiveTotal() - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            let answeredCount = 0;
+            const scope = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            scope.forEach(i => { if (isAnswered(i)) answeredCount++; });
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = effectiveTotal;
+            document.getElementById('progressFill').style.width = effectiveTotal > 0 ? `${(answeredCount / effectiveTotal) * 100}%` : '0%';
+            if (reviewMode) document.getElementById('questionInfo').querySelector('.progress-text').textContent = `错题回顾 · ${answeredCount}/${effectiveTotal} 已答`;
+        }
+
+        function updateNavButtons() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('footerContent').innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${currentIndex >= effectiveTotal - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay'), panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid'); let html = '';
+            questions.forEach((q, index) => {
+                const status = getAnswerStatus(index);
+                let statusClass = 'unanswered', statusText = '未答';
+                if (status === 'correct') { statusClass = 'correct'; statusText = '正确'; }
+                else if (status === 'wrong') { statusClass = 'wrong'; statusText = '错误'; }
+                else if (status === 'partial') { statusClass = 'partial'; statusText = '部分'; }
+                if (index === getEffectiveIndex() && !reviewMode) statusClass += ' current';
+                if (reviewMode && reviewIndices.includes(index) && reviewIndices.indexOf(index) === currentIndex) statusClass += ' current';
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && status !== 'unanswered') return;
+                    if (currentFilter === 'correct' && status !== 'correct') return;
+                    if (currentFilter === 'wrong' && status !== 'wrong' && status !== 'partial') return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index+1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) { const pos = reviewIndices.indexOf(index); if (pos >= 0) currentIndex = pos; else { reviewMode = false; reviewIndices = []; currentIndex = index; } }
+            else currentIndex = index;
+            renderQuestion(); updateNavButtons(); toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay'), panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList'), history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            history.unshift({ timestamp: Date.now(), totalCount: questions.length, correctCount, accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = record.answers.map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    return a;
+                });
+                currentIndex = 0; reviewMode = false; reviewIndices = [];
+                saveAnswers();
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion(); updateNavButtons(); toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() {
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers: serializableAnswers, reviewMode, reviewIndices }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0; reviewMode = data.reviewMode || false; reviewIndices = data.reviewIndices || [];
+                answers = (data.answers || new Array(questions.length).fill(null)).map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    if (isChoiceType(questions[i]) && typeof a === 'number') return a;
+                    return null;
+                });
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            const drafts = getDrafts();
+            if (Object.keys(drafts).length > 0) {
+                Object.keys(drafts).forEach(idx => {
+                    const i = parseInt(idx);
+                    if (i >= 0 && i < questions.length && isTextInputType(questions[i]) && !isAnswered(i)) {
+                        if (!answers[i] || !answers[i].submitted) { if (!answers[i]) answers[i] = { userInput: drafts[idx], submitted: false, hitRate: 0, hitKeywords: [], missedKeywords: [], totalKeywords: 0 }; else if (!answers[i].submitted) answers[i].userInput = drafts[idx]; }
+                    }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm('确定要重新开始吗？当前进度将被清除。')) return;
+            currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+            localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message;
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div'); div.textContent = str; return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HTTP协议刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        /* 新增题型与增强功能样式 */
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-match-result { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.7; }
+        .keyword-match-result.good { background: var(--success-light); border: 1px solid #b7eb8f; color: #135200; }
+        .keyword-match-result.partial { background: var(--warning-light); border: 1px solid #ffe58f; color: #7c5200; }
+        .keyword-match-result.weak { background: var(--error-light); border: 1px solid #ffa39e; color: #820014; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">HTTP协议</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"HTTP协议的默认端口号是（ ）","options":[{"label":"A","text":"21"},{"label":"B","text":"80"},{"label":"C","text":"443"},{"label":"D","text":"8080"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 80</strong>。HTTP协议默认使用80端口，HTTPS默认使用443端口，FTP默认使用21端口。<br><strong>📚 知识点讲解：</strong>端口号用于区分同一台服务器上运行的不同网络服务，HTTP服务默认监听80端口。<br><strong>💡 解题思路：</strong>记住HTTP=80，HTTPS=443，FTP=21。<br><strong>🧠 记忆口诀：</strong>HTTP八零，HTTPS四四三，FTP二一，端口记心间。"},{"type":"单选题","difficulty":"基础","stem":"HTTPS协议的默认端口号是（ ）","options":[{"label":"A","text":"21"},{"label":"B","text":"80"},{"label":"C","text":"443"},{"label":"D","text":"8080"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 443</strong>。HTTPS协议默认使用443端口，用于安全的网页传输。<br><strong>📚 知识点讲解：</strong>443端口专门用于HTTPS服务，浏览器访问https网站时默认连接此端口。<br><strong>💡 解题思路：</strong>HTTPS比HTTP多了一层SSL/TLS，端口也不同。<br><strong>🧠 记忆口诀：</strong>HTTP八零HTTPS四四三，安全端口要记牢。"},{"type":"单选题","difficulty":"基础","stem":"HTTP协议采用的通信模式是（ ）","options":[{"label":"A","text":"点对点模式"},{"label":"B","text":"广播模式"},{"label":"C","text":"请求-响应模式"},{"label":"D","text":"对等模式"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 请求-响应模式</strong>。HTTP协议由客户端主动发起请求，服务器被动返回响应。<br><strong>📚 知识点讲解：</strong>服务器不会主动向客户端推送数据，这是HTTP的基本特点之一。<br><strong>💡 解题思路：</strong>浏览器请求→服务器响应，是典型的请求-响应模式。<br><strong>🧠 记忆口诀：</strong>HTTP请求响应，客户端主动问，服务器被动答，不请不送不主动。"},{"type":"单选题","difficulty":"基础","stem":"下列关于HTTP协议特点的说法，错误的是（ ）","options":[{"label":"A","text":"无状态"},{"label":"B","text":"明文传输"},{"label":"C","text":"服务器主动推送数据"},{"label":"D","text":"基于TCP协议"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 服务器主动推送数据</strong>。HTTP协议中服务器不会主动推送数据，只能被动响应客户端的请求。<br><strong>📚 知识点讲解：</strong>HTTP四大特点：请求-响应、无状态、明文传输、灵活可扩展。<br><strong>💡 解题思路：</strong>A、B、D都是HTTP的特点，C错误。<br><strong>🧠 记忆口诀：</strong>HTTP四大特点：请响无明灵——请求响应、无状态、明文、灵活。"},{"type":"单选题","difficulty":"基础","stem":"用于从服务器获取资源的HTTP请求方法是（ ）","options":[{"label":"A","text":"GET"},{"label":"B","text":"POST"},{"label":"C","text":"PUT"},{"label":"D","text":"DELETE"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. GET</strong>。GET方法用于从服务器获取资源，是最常用的HTTP请求方法。<br><strong>📚 知识点讲解：</strong>GET语义是“读取”，不应改变服务器状态，参数拼接在URL后面。<br><strong>💡 解题思路：</strong>GET获取，POST提交，语义区分清楚。<br><strong>🧠 记忆口诀：</strong>GET获取资源读，POST提交数据写，PUT更新DELETE删，HTTP方法各司职。"},{"type":"单选题","difficulty":"基础","stem":"用于向服务器提交数据的HTTP请求方法是（ ）","options":[{"label":"A","text":"GET"},{"label":"B","text":"POST"},{"label":"C","text":"HEAD"},{"label":"D","text":"OPTIONS"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. POST</strong>。POST方法用于向服务器提交数据，如提交表单、上传文件等。<br><strong>📚 知识点讲解：</strong>POST参数放在请求体中，相对GET更安全，但仍是明文传输。<br><strong>💡 解题思路：</strong>提交数据用POST，浏览网页用GET。<br><strong>🧠 记忆口诀：</strong>POST提交数据忙，表单上传它担当，参数藏在请求体，长度不限相对安。"},{"type":"单选题","difficulty":"基础","stem":"表示“请求成功”的HTTP状态码是（ ）","options":[{"label":"A","text":"200"},{"label":"B","text":"302"},{"label":"C","text":"404"},{"label":"D","text":"500"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 200</strong>。200 OK表示请求已成功处理，是最常见的成功状态码。<br><strong>📚 知识点讲解：</strong>2xx表示成功，3xx表示重定向，4xx客户端错误，5xx服务器错误。<br><strong>💡 解题思路：</strong>200是成功的标志。<br><strong>🧠 记忆口诀：</strong>200成功OK，一切顺利无问题。"},{"type":"单选题","difficulty":"基础","stem":"表示“资源不存在”的HTTP状态码是（ ）","options":[{"label":"A","text":"200"},{"label":"B","text":"302"},{"label":"C","text":"404"},{"label":"D","text":"500"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 404</strong>。404 Not Found表示请求的资源不存在，是最常见的客户端错误。<br><strong>📚 知识点讲解：</strong>404是4xx客户端错误，表示请求的URL地址有误或资源已被删除。<br><strong>💡 解题思路：</strong>404页面不存在，是最熟悉的错误。<br><strong>🧠 记忆口诀：</strong>404找不到，网页不存在；地址输错了，检查URL。"},{"type":"单选题","difficulty":"基础","stem":"表示“服务器内部错误”的HTTP状态码是（ ）","options":[{"label":"A","text":"200"},{"label":"B","text":"302"},{"label":"C","text":"404"},{"label":"D","text":"500"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 500</strong>。500 Internal Server Error表示服务器在处理请求时发生了内部错误。<br><strong>📚 知识点讲解：</strong>500是5xx服务器错误，通常是服务器端代码bug或配置问题。<br><strong>💡 解题思路：</strong>500是服务器内部出错了，不是客户端的问题。<br><strong>🧠 记忆口诀：</strong>500服务器错，内部出问题；不是你的错，等待修复吧。"},{"type":"单选题","difficulty":"基础","stem":"HTTPS协议在HTTP的基础上增加了（ ）","options":[{"label":"A","text":"数据压缩层"},{"label":"B","text":"SSL/TLS安全层"},{"label":"C","text":"缓存层"},{"label":"D","text":"应用层"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. SSL/TLS安全层</strong>。HTTPS在HTTP和TCP之间增加了SSL/TLS安全层，实现数据加密传输。<br><strong>📚 知识点讲解：</strong>SSL/TLS提供加密、完整性校验和身份认证三大安全功能。<br><strong>💡 解题思路：</strong>HTTPS的核心就是加了安全层。<br><strong>🧠 记忆口诀：</strong>HTTPS加安全层，SSL/TLS中间挡，加密传输防窃听，小锁图标地址栏。"},{"type":"单选题","difficulty":"中档","stem":"下列关于GET和POST方法的说法，正确的是（ ）","options":[{"label":"A","text":"GET方法比POST方法安全"},{"label":"B","text":"POST方法的参数暴露在URL中"},{"label":"C","text":"GET方法适合传输大量数据"},{"label":"D","text":"POST方法用于向服务器提交数据"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. POST方法用于向服务器提交数据</strong>。这是POST的核心语义。<br><strong>📚 知识点讲解：</strong>GET参数在URL中不安全，受长度限制；POST参数在请求体中，相对安全。<br><strong>💡 解题思路：</strong>A、B、C都与事实相反。<br><strong>🧠 记忆口诀：</strong>POST提交数据，GET获取资源；GET参数URL见，POST藏在请求体。"},{"type":"单选题","difficulty":"中档","stem":"下列关于HTTP状态码的说法，错误的是（ ）","options":[{"label":"A","text":"1xx表示信息响应"},{"label":"B","text":"2xx表示成功响应"},{"label":"C","text":"4xx表示服务器错误"},{"label":"D","text":"5xx表示服务器错误"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 4xx表示服务器错误</strong>。4xx表示客户端错误，5xx才表示服务器错误。<br><strong>📚 知识点讲解：</strong>4xx是客户端问题（如404地址错误），5xx是服务器问题（如500代码bug）。<br><strong>💡 解题思路：</strong>4客户5服务，记住这个区分。<br><strong>🧠 记忆口诀：</strong>四客户五服务，状态码要分清；404你错了，500服务器错。"},{"type":"单选题","difficulty":"中档","stem":"下列关于HTTPS协议的说法，错误的是（ ）","options":[{"label":"A","text":"HTTPS比HTTP更安全"},{"label":"B","text":"HTTPS需要数字证书"},{"label":"C","text":"HTTPS默认使用80端口"},{"label":"D","text":"HTTPS加密传输数据"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. HTTPS默认使用80端口</strong>。HTTPS默认使用443端口，HTTP才使用80端口。<br><strong>📚 知识点讲解：</strong>端口不同是HTTP和HTTPS的基本区别之一。<br><strong>💡 解题思路：</strong>A、B、D都正确，C端口说反了。<br><strong>🧠 记忆口诀：</strong>HTTP端口80，HTTPS端口443；安全加密用443，明文传输用80。"},{"type":"单选题","difficulty":"中档","stem":"当用户在浏览器中输入网址并按下回车时，第一步执行的操作是（ ）","options":[{"label":"A","text":"建立TCP连接"},{"label":"B","text":"发送HTTP请求"},{"label":"C","text":"DNS域名解析"},{"label":"D","text":"接收HTTP响应"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. DNS域名解析</strong>。浏览器需要先将域名转换为IP地址，才能建立TCP连接。<br><strong>📚 知识点讲解：</strong>HTTP工作流程：DNS解析→TCP连接→发送请求→接收响应→渲染页面。<br><strong>💡 解题思路：</strong>不知道IP地址就无法连接，所以DNS是第一步。<br><strong>🧠 记忆口诀：</strong>DNS解析第一步，域名变IP才能连；TCP握手建立连接，HTTP请求随后发。"},{"type":"单选题","difficulty":"中档","stem":"HTTP协议的无状态性是指（ ）","options":[{"label":"A","text":"服务器不处理客户端的请求"},{"label":"B","text":"服务器不记住客户端的历史请求"},{"label":"C","text":"客户端不发送请求给服务器"},{"label":"D","text":"客户端不接收服务器的响应"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 服务器不记住客户端的历史请求</strong>。每次请求都是独立的，服务器不会记住上次请求的信息。<br><strong>📚 知识点讲解：</strong>无状态通过Cookie和Session技术来解决。<br><strong>💡 解题思路：</strong>无状态就像一个健忘的服务员，每次都不记得你。<br><strong>🧠 记忆口诀：</strong>HTTP无状态，每次请求都全新；Cookie和Session，记住状态靠它们。"},{"type":"判断题","difficulty":"基础","stem":"HTTP是超文本传输协议的缩写。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。HTTP是HyperText Transfer Protocol的缩写，即超文本传输协议。<br><strong>📚 知识点讲解：</strong>HTTP是万维网的核心协议。<br><strong>💡 解题思路：</strong>这是HTTP的全称。<br><strong>🧠 记忆口诀：</strong>HTTP全称超文本传输协议。"},{"type":"判断题","difficulty":"基础","stem":"HTTP协议默认使用443端口。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。HTTP默认使用80端口，HTTPS默认使用443端口。<br><strong>📚 知识点讲解：</strong>端口号是HTTP和HTTPS的基本区别。<br><strong>💡 解题思路：</strong>HTTP=80，HTTPS=443。<br><strong>🧠 记忆口诀：</strong>HTTP八零HTTPS四四三。"},{"type":"判断题","difficulty":"基础","stem":"HTTP是一种无状态的协议。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。无状态是HTTP协议的基本特点之一。<br><strong>📚 知识点讲解：</strong>服务器不保存客户端的状态信息。<br><strong>💡 解题思路：</strong>符合HTTP的定义。<br><strong>🧠 记忆口诀：</strong>HTTP无状态是基本特征。"},{"type":"判断题","difficulty":"基础","stem":"GET方法的参数放在请求体中。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。GET方法的参数拼接在URL后面，POST方法的参数放在请求体中。<br><strong>📚 知识点讲解：</strong>参数位置是GET和POST的重要区别。<br><strong>💡 解题思路：</strong>GET参数在URL中可见，POST在请求体中。<br><strong>🧠 记忆口诀：</strong>GET参数URL中，POST参数请求体。"},{"type":"判断题","difficulty":"基础","stem":"POST方法适合传输敏感信息。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。POST虽然参数不在URL中，但仍然是明文传输，不适合传输敏感信息。敏感信息必须用HTTPS加密。<br><strong>📚 知识点讲解：</strong>只有HTTPS才能保证传输安全。<br><strong>💡 解题思路：</strong>POST只是相对安全，不是真正安全。<br><strong>🧠 记忆口诀：</strong>POST非绝对安全，敏感信息需HTTPS。"},{"type":"判断题","difficulty":"基础","stem":"404状态码表示服务器内部错误。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。404表示资源不存在，属于客户端错误；500才表示服务器内部错误。<br><strong>📚 知识点讲解：</strong>4xx客户端问题，5xx服务器问题。<br><strong>💡 解题思路：</strong>404是客户端问题，500是服务器问题。<br><strong>🧠 记忆口诀：</strong>404找不到页面，500服务器出错。"},{"type":"判断题","difficulty":"基础","stem":"HTTPS协议比HTTP协议更安全。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。HTTPS通过SSL/TLS加密传输，比HTTP明文传输更安全。<br><strong>📚 知识点讲解：</strong>HTTPS提供加密、完整性校验和身份认证。<br><strong>💡 解题思路：</strong>这是HTTPS的核心优势。<br><strong>🧠 记忆口诀：</strong>HTTPS更安全，加密传输保隐私。"},{"type":"判断题","difficulty":"中档","stem":"HTTP协议中，服务器可以主动向客户端推送数据。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。HTTP采用请求-响应模式，服务器不能主动推送数据。<br><strong>📚 知识点讲解：</strong>只能由客户端发起请求，服务器被动响应。<br><strong>💡 解题思路：</strong>服务器不请不送，只能被动应答。<br><strong>🧠 记忆口诀：</strong>服务器不主动，客户端先请求。"},{"type":"判断题","difficulty":"中档","stem":"所有HTTP请求都有请求体。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。GET请求没有请求体，只有POST、PUT等请求才有请求体。<br><strong>📚 知识点讲解：</strong>GET参数在URL中，不需要请求体。<br><strong>💡 解题思路：</strong>GET请求没有Body。<br><strong>🧠 记忆口诀：</strong>GET请求无身体，POST请求有Body。"},{"type":"判断题","difficulty":"中档","stem":"HTTPS协议不需要TCP协议支持。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。HTTPS仍然基于TCP协议，只是在HTTP和TCP之间增加了SSL/TLS安全层。<br><strong>📚 知识点讲解：</strong>HTTPS的传输层仍然是TCP。<br><strong>💡 解题思路：</strong>HTTPS=HTTP+SSL/TLS，底层TCP不变。<br><strong>🧠 记忆口诀：</strong>HTTPS底层TCP，加密层在中间加。"},{"type":"简答题","difficulty":"中档","stem":"请简述HTTP协议的工作流程。","answer":"HTTP工作流程：1. DNS解析：将域名转换为IP地址。2. 建立TCP连接：浏览器与服务器通过三次握手建立TCP连接。3. 发送HTTP请求：浏览器向服务器发送HTTP请求报文。4. 服务器处理请求：服务器接收并处理请求，生成HTTP响应报文。5. 返回HTTP响应：服务器将响应报文发送给浏览器。6. 关闭TCP连接：数据传输完成后关闭连接。7. 浏览器渲染页面。","keywords":["DNS解析","TCP连接","三次握手","HTTP请求","服务器处理","HTTP响应","渲染页面"],"analysis":"<strong>🎯 答案解析：</strong>HTTP工作流程为：DNS解析→TCP连接→发送请求→服务器处理→返回响应→关闭连接→渲染页面。<br><strong>📚 知识点讲解：</strong>这是从输入网址到看到网页的完整过程，涉及DNS、TCP和HTTP三个协议。<br><strong>💡 解题思路：</strong>按时间顺序描述，突出关键步骤。<br><strong>🧠 记忆口诀：</strong>DNS解析IP得，TCP握手连起来，HTTP请求发过去，服务器响应返回来。"},{"type":"简答题","difficulty":"中档","stem":"请比较GET和POST方法的区别。","answer":"1.语义不同：GET获取资源，POST提交数据。2.参数位置：GET参数在URL中，POST参数在请求体中。3.可见性：GET参数明文可见，POST参数相对隐蔽。4.数据长度：GET受URL长度限制，POST理论无限制。5.幂等性：GET是幂等的，POST非幂等。6.安全性：GET参数暴露在URL中安全性低，POST相对安全。7.缓存：GET可缓存，POST默认不缓存。","keywords":["GET","POST","参数位置","幂等","缓存","安全性","数据长度"],"analysis":"<strong>🎯 答案解析：</strong>GET和POST最本质区别是语义不同：GET用于读，POST用于写。<br><strong>📚 知识点讲解：</strong>从参数位置、可见性、长度限制、幂等性、安全性等多方面对比。<br><strong>💡 解题思路：</strong>从多个维度对比，强调语义是最核心的区别。<br><strong>🧠 记忆口诀：</strong>GET读POST写，参数位置不同；URL见Body藏，幂等缓存异。"},{"type":"简答题","difficulty":"提高","stem":"请简述HTTP和HTTPS的区别。","answer":"1.安全性：HTTP明文传输不安全；HTTPS加密传输安全。2.端口：HTTP默认80端口；HTTPS默认443端口。3.证书：HTTP不需要数字证书；HTTPS需要SSL/TLS证书。4.速度：HTTP连接快；HTTPS需要额外SSL/TLS握手，稍慢。5.标识：HTTP地址栏显示http://；HTTPS显示https://和小锁图标。6.适用场景：HTTP用于公开信息；HTTPS用于敏感信息传输。","keywords":["安全性","端口","证书","速度","加密","443","80","SSL"],"analysis":"<strong>🎯 答案解析：</strong>HTTPS在HTTP基础上增加了SSL/TLS安全层，提供加密、完整性校验和身份认证。<br><strong>📚 知识点讲解：</strong>HTTPS是HTTP的安全版本，核心区别在于安全性和端口。<br><strong>💡 解题思路：</strong>从安全性、端口、证书、速度、标识等方面对比。<br><strong>🧠 记忆口诀：</strong>HTTP明文不安全，HTTPS加密保；端口80和443，证书速度也有别。"},{"type":"综合应用题","difficulty":"提高","stem":"当你在浏览器中输入https://www.baidu.com并按下回车时，发生了哪些网络通信过程？请结合HTTP和HTTPS协议进行说明。","tasks":[{"id":1,"stem":"请描述从输入网址到看到页面的完整通信过程。","answer":"1.DNS解析：将www.baidu.com解析为IP地址。2.TCP连接：通过三次握手建立TCP连接。3.SSL/TLS握手：浏览器和服务器协商加密算法，服务器返回数字证书，浏览器验证证书，生成会话密钥，后续通信加密。4.发送HTTPS请求：浏览器向服务器发送加密的HTTP请求。5.服务器处理：服务器解密请求并处理。6.返回HTTPS响应：服务器返回加密的HTTP响应。7.浏览器解密渲染：浏览器解密响应并渲染页面。","keywords":["DNS","TCP","三次握手","SSL","TLS","握手","证书","加密","解密","渲染"]},{"id":2,"stem":"为什么HTTPS比HTTP安全？请说明HTTPS提供的安全功能。","answer":"HTTPS通过SSL/TLS协议提供三大安全功能：1.防窃听：数据加密传输，即使被截获也无法解密。2.防篡改：数据完整性校验，防止传输过程中被修改。3.防冒充：通过数字证书验证服务器身份，防止钓鱼网站。","keywords":["加密","防窃听","防篡改","防冒充","数字证书","SSL","TLS"]}],"answer":"（1）过程：DNS解析→TCP连接→SSL/TLS握手→发送HTTPS请求→服务器处理→返回HTTPS响应→浏览器解密渲染。（2）HTTPS通过SSL/TLS提供加密、完整性校验和身份认证三大安全功能。","keywords":["DNS","TCP","SSL","TLS","握手","加密","证书","完整性","身份认证"],"analysis":"<strong>🎯 答案解析：</strong>HTTPS在HTTP基础上增加了SSL/TLS握手过程，提供加密传输和身份认证。<br><strong>📚 知识点讲解：</strong>SSL/TLS握手是HTTPS安全的关键步骤，涉及证书验证和密钥协商。<br><strong>💡 解题思路：</strong>按时间顺序描述通信过程，重点突出SSL/TLS握手的安全作用。<br><strong>🧠 记忆口诀：</strong>HTTPS先TCP再三握手，SSL/TLS证书验证后加密通；防窃听防篡改防冒充，小锁图标保安全。"},{"type":"综合应用题","difficulty":"提高","stem":"某同学在登录一个网站时，输入了正确的账号密码，但点击“登录”按钮后页面没有任何反应。请分析可能的原因（至少写出3种）。","tasks":[{"id":1,"stem":"请从网络、服务器、客户端三个方面分析可能的原因。","answer":"网络方面：1.网络连接中断或不稳定，请求无法发送。2.防火墙或安全软件拦截了登录请求。服务器方面：1.服务器过载或故障，无法处理请求返回500错误。2.服务器SSL证书过期，浏览器阻止请求。客户端方面：1.浏览器JavaScript被禁用，登录按钮事件未触发。2.浏览器缓存了旧页面代码。3.账号密码实际上输入错误但用户未察觉。","keywords":["网络中断","防火墙","服务器过载","500错误","证书过期","JavaScript","缓存","账号错误"]},{"id":2,"stem":"如果登录请求返回了HTTP 401状态码，这说明什么问题？","answer":"401 Unauthorized表示请求未经授权，通常是用户未登录或登录凭证（如Cookie、Token）无效或过期。需要检查登录状态或重新登录。","keywords":["401","未授权","登录凭证","Cookie","Token"]}],"answer":"（1）可能原因：网络中断、防火墙拦截、服务器过载、证书过期、JavaScript禁用、浏览器缓存、账号输入错误。（2）401表示未授权，需要检查登录凭证。","keywords":["网络","服务器","客户端","401","未授权","防火墙","缓存"],"analysis":"<strong>🎯 答案解析：</strong>登录无反应可能源于网络、服务器或客户端问题，需要从多个角度排查。<br><strong>📚 知识点讲解：</strong>HTTP通信涉及多个环节，任何环节出问题都可能导致请求失败。<br><strong>💡 解题思路：</strong>从网络层、服务器层、客户端层三个维度分析。<br><strong>🧠 记忆口诀：</strong>登录无反应查三层：网络断、服务器挂、客户端bug，逐项排查找原因。"}];
+        
+        const APP_ID = 'http_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = 'HTTP协议（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>HTTP（超文本传输协议）</strong>是万维网的核心应用层协议，用于浏览器和Web服务器之间的通信。它是一种<strong>无状态、基于请求-响应模式</strong>的协议，默认端口号为<strong>80</strong>。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. HTTP四大基本特点</strong></p>
+                <ul>
+                    <li><strong>请求-响应模式</strong>：客户端主动请求，服务器被动响应</li>
+                    <li><strong>无状态性</strong>：服务器不记住历史请求（通过Cookie/Session弥补）</li>
+                    <li><strong>明文传输</strong>：数据不加密，存在安全隐患</li>
+                    <li><strong>灵活可扩展</strong>：支持传输任意类型数据</li>
+                </ul>
+                <p><strong>2. HTTP工作流程</strong>：DNS解析→TCP三次握手→发送HTTP请求→服务器处理→返回HTTP响应→TCP四次挥手→浏览器渲染</p>
+                <p><strong>3. GET与POST方法对比（必考）</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>比较维度</th><th>GET</th><th>POST</th></tr>
+                    <tr><td>核心语义</td><td>获取资源（读）</td><td>提交资源（写）</td></tr>
+                    <tr><td>参数位置</td><td>URL后面</td><td>请求体中</td></tr>
+                    <tr><td>可见性</td><td>明文可见</td><td>相对隐蔽</td></tr>
+                    <tr><td>数据长度</td><td>受URL长度限制</td><td>理论上无限制</td></tr>
+                    <tr><td>幂等性</td><td>是</td><td>否</td></tr>
+                    <tr><td>安全性</td><td>低</td><td>相对较高</td></tr>
+                </table>
+                <p><strong>4. HTTP状态码</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>范围</th><th>含义</th><th>常见状态码</th></tr>
+                    <tr><td>1xx</td><td>信息响应</td><td>100 Continue</td></tr>
+                    <tr><td>2xx</td><td>成功</td><td>200 OK</td></tr>
+                    <tr><td>3xx</td><td>重定向</td><td>302 Found</td></tr>
+                    <tr><td>4xx</td><td>客户端错误</td><td>404 Not Found、403 Forbidden</td></tr>
+                    <tr><td>5xx</td><td>服务器错误</td><td>500 Internal Server Error</td></tr>
+                </table>
+                <p><strong>5. HTTP vs HTTPS</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>比较维度</th><th>HTTP</th><th>HTTPS</th></tr>
+                    <tr><td>安全性</td><td>明文传输</td><td>加密传输</td></tr>
+                    <tr><td>默认端口</td><td>80</td><td>443</td></tr>
+                    <tr><td>证书要求</td><td>不需要</td><td>需要SSL/TLS证书</td></tr>
+                    <tr><td>连接速度</td><td>快</td><td>稍慢</td></tr>
+                </table>
+                <h3>📚 教材典型案例</h3>
+                <p><strong>浏览器访问百度</strong>（GET请求）、<strong>用户登录网站</strong>（POST请求）、<strong>404错误页面</strong>、<strong>HTTPS小锁图标</strong></p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul>
+                    <li>❌ 认为POST是安全的（只有HTTPS才安全）</li>
+                    <li>❌ 混淆4xx和5xx错误</li>
+                    <li>❌ 认为HTTP是有状态的</li>
+                    <li>❌ 混淆HTTP(80)和HTTPS(443)端口</li>
+                </ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) { const t = q.type; if (t === '单选题') return '单选题'; if (t === '判断题') return '判断题'; if (t === '简答题') return '简答题'; if (t === '综合应用题') return '综合应用题'; return t; }
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getActualIndex() { if (reviewMode && wrongIndices.length > 0) return wrongIndices[reviewIndex]; return currentIndex; }
+        function getTotalInMode() { if (reviewMode && wrongIndices.length > 0) return wrongIndices.length; return questions.length; }
+        function getCurrentPosition() { if (reviewMode && wrongIndices.length > 0) return reviewIndex + 1; return currentIndex + 1; }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex();
+            const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            let html = '';
+            if (reviewMode) html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx;
+                    const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) { if (isSelected && isCorrect) classes.push('correct'); else if (isSelected && !isCorrect) classes.push('wrong'); else if (isCorrect) classes.push('correct'); } else if (isSelected) classes.push('selected');
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') html += renderTextAnswerArea(actualIdx, q);
+            else if (q.type === '综合应用题') html += renderComprehensiveArea(actualIdx, q);
+            html += '</div>';
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) { const isCorrect = answers[actualIdx] === q.answer; html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`; }
+                else if (isTextType(q)) { const result = evaluateTextAnswer(actualIdx, q); html += buildTextResultCard(actualIdx, q, result); }
+            }
+            const allAnsweredInMode = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allAnsweredInMode) || (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount(); const accuracy = Math.round(correctCount / questions.length * 100); const wrongCount = getWrongCount();
+                if (!reviewMode) saveToHistory(correctCount, accuracy);
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount);
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') ta.value = answers[actualIdx]; const draft = getDraft(actualIdx); if (ta && answers[actualIdx] === null && draft) ta.value = draft; } }, 50);
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const savedAnswer = answers[actualIdx]; const draft = getDraft(actualIdx); const displayVal = (savedAnswer !== null && typeof savedAnswer === 'string') ? savedAnswer : (draft || ''); const disabled = savedAnswer !== null && typeof savedAnswer === 'string';
+            let html = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea><div class="text-answer-buttons">`;
+            if (!disabled) { html += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`; }
+            else html += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            html += `</div></div>`; return html;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) { let html = ''; if (q.tasks && q.tasks.length > 0) { html += `<ul class="tasks-list">`; q.tasks.forEach(task => { html += `<li><span class="task-id">${task.id}</span> ${task.stem}</li>`; }); html += `</ul>`; } html += renderTextAnswerArea(actualIdx, q); return html; }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const badgeClass = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong'); const badgeText = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${badgeClass}">${badgeText}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div><span class="score-tag ${result.progressClass}">${result.levelLabel}</span><p style="margin-top:8px;"><strong>命中关键词：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p><p><strong>未命中关键词：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount) {
+            let html = `<div class="completion-screen"><div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div><h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wrongCount > 0 && !reviewMode) { html += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+            if (reviewMode && wrongCount > 0) html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            html += `</div></div>`; return html;
+        }
+
+        function selectOption(idx) { const actualIdx = getActualIndex(); if (answers[actualIdx] !== null) return; if (!isChoiceType(questions[actualIdx])) return; answers[actualIdx] = idx; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(idx === questions[actualIdx].answer ? '回答正确！✓' : '回答错误 ✗'); }
+        function submitTextAnswer(actualIdx) { if (answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const userAnswer = ta.value.trim(); if (!userAnswer) { showToast('请先输入你的回答'); return; } answers[actualIdx] = userAnswer; clearDraft(actualIdx); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const result = evaluateTextAnswer(actualIdx, questions[actualIdx]); showToast(result.level === 'good' ? '回答较好！✓' : (result.level === 'partial' ? '部分正确 △' : '需加强 ✗')); }
+        function saveDraftOnly(actualIdx) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const val = ta.value.trim(); if (val) { saveDraft(actualIdx, val); showToast('草稿已保存 ✓'); } else { clearDraft(actualIdx); showToast('草稿已清空'); } }
+        function clearTextInput(actualIdx) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(actualIdx); showToast('输入已清空'); }
+
+        function evaluateTextAnswer(actualIdx, q) {
+            const userAnswer = (answers[actualIdx] && typeof answers[actualIdx] === 'string') ? answers[actualIdx] : ''; const allKeywords = []; let referenceAnswer = '';
+            if (q.type === '简答题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; } else if (q.type === '综合应用题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            const totalKeywords = allKeywords.length; const hitKeywords = []; const missedKeywords = []; const userLower = userAnswer.toLowerCase();
+            allKeywords.forEach(kw => { if (userLower.includes(kw.toLowerCase())) hitKeywords.push(kw); else missedKeywords.push(kw); });
+            const hitCount = hitKeywords.length; const hitRate = totalKeywords > 0 ? Math.round((hitCount / totalKeywords) * 100) : 0; let level, levelLabel, progressClass;
+            if (q.type === '简答题') { if (hitRate >= 60) { level = 'good'; levelLabel = '回答较好'; progressClass = 'excellent'; } else if (hitRate >= 30) { level = 'partial'; levelLabel = '部分正确'; progressClass = 'pass'; } else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; } }
+            else { if (hitRate >= 80) { level = 'good'; levelLabel = '优秀'; progressClass = 'excellent'; } else if (hitRate >= 60) { level = 'good'; levelLabel = '良好'; progressClass = 'good'; } else if (hitRate >= 40) { level = 'partial'; levelLabel = '合格'; progressClass = 'pass'; } else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; } }
+            return { userAnswer, referenceAnswer, totalKeywords, hitCount, hitRate, hitKeywords, missedKeywords, level, levelLabel, progressClass };
+        }
+
+        function getCorrectCount() { let count = 0; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] === q.answer) count++; } else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'good') count++; } }); return count; }
+        function getWrongCount() { let count = 0; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] !== q.answer) count++; } else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') count++; } }); return count; }
+        function getWrongIndicesArray() { const arr = []; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] !== q.answer) arr.push(i); } else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') arr.push(i); } }); return arr; }
+        function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length > 0) return wrongIndices.every(wi => answers[wi] !== null); return answers.every(a => a !== null); }
+
+        function startReviewWrong() { wrongIndices = getWrongIndicesArray(); if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display = 'block'; document.getElementById('questionInfo').style.display = 'block'; document.getElementById('pageTitle').style.display = 'none'; document.querySelector('.progress-bar').style.display = 'block'; renderQuestion(); updateNavButtons(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); }
+        function exitReviewMode() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('已退出错题回顾模式'); }
+
+        function exportWrongCSV() {
+            const wrongArr = getWrongIndicesArray(); if (wrongArr.length === 0) { showToast('没有错题可导出'); return; } const moduleName = 'HTTP协议'; const dateStr = new Date().toISOString().slice(0, 10); const fileName = `错题本_${moduleName}_${dateStr}.csv`; const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wrongArr.forEach(i => { const q = questions[i]; const qType = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g, '""'); let userAns = '', correctAns = '', hitRate = '', result = '';
+                if (isChoiceType(q)) { userAns = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : ''; correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); result = answers[i] === q.answer ? '正确' : '错误'; hitRate = answers[i] === q.answer ? '100%' : '0%'; }
+                else if (isTextType(q)) { userAns = (answers[i] && typeof answers[i] === 'string') ? answers[i] : ''; correctAns = q.answer || ''; const evalR = evaluateTextAnswer(i, q); hitRate = evalR.hitRate + '%'; result = evalR.levelLabel; }
+                const analysisText = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : ''; rows.push([qType, '"'+stem+'"', '"'+userAns.replace(/"/g, '""')+'"', '"'+correctAns.replace(/"/g, '""')+'"', hitRate, result, '"'+analysisText+'"']); });
+            const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n'); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：' + fileName);
+        }
+
+        function toggleAnalysis(header) { const content = header.nextElementSibling; const icon = header.querySelector('.toggle-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); } else { content.style.display = 'none'; icon.classList.remove('expanded'); } }
+        function prevQuestion() { if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() { if (currentPage !== 'quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const answeredCount = answers.filter(a => a !== null).length; document.getElementById('answeredCount').textContent = answeredCount; document.getElementById('totalCount').textContent = questions.length; document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`; }
+        function updateNavButtons() { const footerContent = document.getElementById('footerContent'); if (currentPage !== 'quiz') return; const totalInMode = getTotalInMode(); const currentPos = getCurrentPosition(); const isFirst = currentPos <= 1; const isLast = currentPos >= totalInMode; const allDone = checkAllAnsweredInMode(); footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+
+        function changeFontSize(delta) { fontSize = Math.max(14, Math.min(22, fontSize + delta)); document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const overlay = document.getElementById('sheetOverlay'); const panel = document.getElementById('sheetPanel'); if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); } else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); } }
+
+        function renderAnswerSheet() { const grid = document.getElementById('sheetGrid'); let html = ''; questions.forEach((q, index) => { let statusClass = 'unanswered'; let statusText = '未答'; if (answers[index] !== null) { if (isChoiceType(q)) { if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; } else { statusClass = 'wrong'; statusText = '错误'; } } else if (isTextType(q)) { const result = evaluateTextAnswer(index, q); if (result.level === 'good') { statusClass = 'correct'; statusText = '较好'; } else if (result.level === 'partial') { statusClass = 'correct'; statusText = '部分'; } else { statusClass = 'wrong'; statusText = '加强'; } } } if (index === getActualIndex() && !reviewMode) statusClass += ' current'; if (reviewMode && wrongIndices.includes(index) && wrongIndices[reviewIndex] === index) statusClass += ' current';
+            if (currentFilter !== 'all') { if (currentFilter === 'unanswered' && answers[index] !== null) return; if (currentFilter === 'correct') { if (answers[index] === null) return; if (isChoiceType(q) && answers[index] !== q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level === 'weak') return; } } if (currentFilter === 'wrong') { if (answers[index] === null) return; if (isChoiceType(q) && answers[index] === q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level !== 'weak') return; } } }
+            html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`; }); grid.innerHTML = html; }
+
+        function filterQuestions(filter, e) { currentFilter = filter; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(index) { reviewMode = false; wrongIndices = []; currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() { const overlay = document.getElementById('historyOverlay'); const panel = document.getElementById('historyPanel'); if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); } else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const list = document.getElementById('historyList'); const history = getHistory(); if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; } let html = ''; history.forEach((record, index) => { const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`; }); list.innerHTML = html; }
+        function saveToHistory(correctCount, accuracy) { const history = getHistory(); history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] }); if (history.length > 50) history.pop(); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); }
+
+        function getHistory() { try { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; } catch(e) { console.warn('历史记录数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() { try { const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS); if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); reviewMode = data.reviewMode || false; wrongIndices = data.wrongIndices || []; reviewIndex = data.reviewIndex || 0; } } catch(e) { console.warn('答题进度数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); } try { const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS); if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); } } catch(e) { console.warn('设置数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); } }
+
+        function saveDraft(index, value) { const drafts = getDrafts(); drafts[index] = value; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDraft(index) { const drafts = getDrafts(); return drafts[index] || null; }
+        function clearDraft(index) { const drafts = getDrafts(); delete drafts[index]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDrafts() { try { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; } catch(e) { console.warn('草稿数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion(); updateNavButtons(); renderAnswerSheet(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage(); renderAnswerSheet(); } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>数据分析的基本方法刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">数据分析的基本方法</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div>
+            <div class="sheet-filters"><button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button><button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button><button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button><button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button></div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{type:"单选题",difficulty:"基础",stem:"数据分析的第一个步骤是（ ）",options:[{label:"A",text:"数据收集"},{label:"B",text:"明确问题"},{label:"C",text:"数据预处理"},{label:"D",text:"数据分析"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 明确问题</strong>。数据分析的第一步是明确要解决的问题，只有目标清晰，才能有针对性地收集和分析数据。<br><strong>📚 知识点讲解：</strong>数据分析五步流程：明确问题→数据收集→数据预处理→数据分析→结果呈现与决策。<br><strong>💡 解题思路：</strong>没有明确的问题，后续步骤将失去方向。<br><strong>🧠 记忆口诀：</strong>数据分析第一步，明确问题定方向，目标清晰再动手，避免盲目走弯路。"},{type:"单选题",difficulty:"基础",stem:"数据分析中最耗时的步骤是（ ）",options:[{label:"A",text:"明确问题"},{label:"B",text:"数据收集"},{label:"C",text:"数据预处理"},{label:"D",text:"结果呈现"}],answer:2,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 数据预处理</strong>。数据预处理通常占整个分析过程的60%-80%，因为原始数据往往存在缺失、错误、重复等问题。<br><strong>📚 知识点讲解：</strong>数据清洗是保证分析结果准确性的关键步骤。<br><strong>💡 解题思路：</strong>脏数据多，清洗最费时。<br><strong>🧠 记忆口诀：</strong>数据分析预处理，耗时最长六到八，缺失异常重复值，清洗干净再分析。"},{type:"单选题",difficulty:"基础",stem:"比较不同班级的数学平均分，适合使用哪种分析方法？（ ）",options:[{label:"A",text:"对比分析法"},{label:"B",text:"趋势分析法"},{label:"C",text:"结构分析法"},{label:"D",text:"相关性分析法"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 对比分析法</strong>。对比分析法用于比较两个或多个具有可比性的数据，找出差异和规律。<br><strong>📚 知识点讲解：</strong>横向对比：同一时间不同对象；纵向对比：同一对象不同时间。<br><strong>💡 解题思路：</strong>比较班级平均分属于横向对比。<br><strong>🧠 记忆口诀：</strong>对比分析比大小，横向纵向找差异，班级成绩比较时，横向对比最合适。"},{type:"单选题",difficulty:"基础",stem:"分析某地区近10年的人口变化趋势，适合使用哪种分析方法？（ ）",options:[{label:"A",text:"对比分析法"},{label:"B",text:"趋势分析法"},{label:"C",text:"结构分析法"},{label:"D",text:"分组分析法"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 趋势分析法</strong>。趋势分析法专门用于分析数据随时间变化的规律和趋势。<br><strong>📚 知识点讲解：</strong>时间序列数据适合用折线图呈现。<br><strong>💡 解题思路：</strong>“近10年”表明是时间序列数据。<br><strong>🧠 记忆口诀：</strong>趋势分析看时间，折线图里显规律，上升下降或平稳，未来预测有依据。"},{type:"单选题",difficulty:"基础",stem:"分析家庭每月的支出结构，适合使用哪种图表？（ ）",options:[{label:"A",text:"柱状图"},{label:"B",text:"折线图"},{label:"C",text:"饼图"},{label:"D",text:"散点图"}],answer:2,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 饼图</strong>。饼图适合展示各部分占总体的比例关系，是结构分析法的核心工具。<br><strong>📚 知识点讲解：</strong>结构分析法关注总体内部各组成部分的占比。<br><strong>💡 解题思路：</strong>支出结构需要看比例，饼图最佳。<br><strong>🧠 记忆口诀：</strong>结构分析看比例，饼图展现各部分，支出结构如何分，饼图一眼就看清。"},{type:"单选题",difficulty:"基础",stem:"分析两个变量之间的相关性，适合使用哪种图表？（ ）",options:[{label:"A",text:"柱状图"},{label:"B",text:"折线图"},{label:"C",text:"饼图"},{label:"D",text:"散点图"}],answer:3,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 散点图</strong>。散点图用点的位置表示两个变量的值，能够直观展示相关性。<br><strong>📚 知识点讲解：</strong>相关系数r定量描述相关程度。<br><strong>💡 解题思路：</strong>散点图是观察相关性的首选工具。<br><strong>🧠 记忆口诀：</strong>相关分析散点图，点分布看关联，正相关同方向，负相关反着走。"},{type:"单选题",difficulty:"基础",stem:"相关系数r的取值范围是（ ）",options:[{label:"A",text:"0 ≤ r ≤ 1"},{label:"B",text:"-1 ≤ r ≤ 1"},{label:"C",text:"-1 ≤ r ≤ 0"},{label:"D",text:"0 ≤ r ≤ 100"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>B. -1 ≤ r ≤ 1</strong>。r=1表示完全正相关，r=-1表示完全负相关，r=0表示不相关。<br><strong>📚 知识点讲解：</strong>|r|越接近1，相关性越强。<br><strong>💡 解题思路：</strong>相关系数范围必须牢记。<br><strong>🧠 记忆口诀：</strong>相关系数r范围，负一到一之间，正值正负值负，零值无关联系断。"},{type:"单选题",difficulty:"基础",stem:"下列关于相关性和因果关系的说法，正确的是（ ）",options:[{label:"A",text:"相关性一定意味着因果关系"},{label:"B",text:"因果关系一定意味着相关性"},{label:"C",text:"相关性和因果关系没有任何联系"},{label:"D",text:"相关性越强，因果关系越明显"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 因果关系一定意味着相关性</strong>。有因果关系必然有相关性，但反过来不一定。<br><strong>📚 知识点讲解：</strong>相关性不等于因果关系，可能存在混淆变量。<br><strong>💡 解题思路：</strong>因果蕴含相关，相关不一定是因果。<br><strong>🧠 记忆口诀：</strong>因果一定有相关，相关未必是因果，混淆变量中间扰，冰淇淋和溺水例。"},{type:"单选题",difficulty:"基础",stem:"将班级学生按性别分组，比较男生和女生的成绩差异，这种分析方法是（ ）",options:[{label:"A",text:"对比分析法"},{label:"B",text:"趋势分析法"},{label:"C",text:"结构分析法"},{label:"D",text:"分组分析法"}],answer:3,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 分组分析法</strong>。分组分析法是将总体按某个特征划分为不同组，然后比较各组差异。<br><strong>📚 知识点讲解：</strong>分组原则：组内差异小，组间差异大。<br><strong>💡 解题思路：</strong>先分组（按性别），再分析（比较成绩）。<br><strong>🧠 记忆口诀：</strong>分组分析先分类，性别成绩组间比，组内差异尽量小，组间差异要明显。"},{type:"单选题",difficulty:"基础",stem:"下列属于数据预处理操作的是（ ）",options:[{label:"A",text:"制作图表"},{label:"B",text:"计算平均值"},{label:"C",text:"处理缺失值"},{label:"D",text:"撰写分析报告"}],answer:2,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 处理缺失值</strong>。数据预处理包括缺失值、异常值、重复值处理和数据格式转换。<br><strong>📚 知识点讲解：</strong>数据清洗是预处理的核心任务。<br><strong>💡 解题思路：</strong>A、B属于分析，D属于呈现。<br><strong>🧠 记忆口诀：</strong>预处理清脏数据，缺失异常和重复，格式转换标准化，分析之前必须做。"},{type:"单选题",difficulty:"中档",stem:"某同学分析了“冰淇淋销量与溺水人数”的数据，发现两者呈正相关，于是得出“冰淇淋销量增加导致溺水人数增加”的结论。这个结论的错误在于（ ）",options:[{label:"A",text:"数据收集不完整"},{label:"B",text:"混淆了相关性和因果关系"},{label:"C",text:"对比的数据不具有可比性"},{label:"D",text:"以偏概全"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 混淆了相关性和因果关系</strong>。两者都受气温升高影响，气温才是共同原因。<br><strong>📚 知识点讲解：</strong>冰淇淋和溺水没有直接因果，只有相关。<br><strong>💡 解题思路：</strong>识别出“因果倒置”或“第三变量”。<br><strong>🧠 记忆口诀：</strong>冰淇淋和溺水例，相关并非有因果，气温升高是推手，混淆变量要警惕。"},{type:"单选题",difficulty:"中档",stem:"下列关于结构分析法的说法，错误的是（ ）",options:[{label:"A",text:"用于分析总体内部各组成部分的比例关系"},{label:"B",text:"所有部分的占比之和必须等于100%"},{label:"C",text:"适合使用饼图呈现结果"},{label:"D",text:"可以分析数据随时间的变化趋势"}],answer:3,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 可以分析数据随时间的变化趋势</strong>。分析时间趋势是趋势分析法的功能。<br><strong>📚 知识点讲解：</strong>结构分析法专注静态构成比例。<br><strong>💡 解题思路：</strong>趋势分析才看时间变化。<br><strong>🧠 记忆口诀：</strong>结构分析看比例，时间趋势它不管，趋势分析看时间，两者功能要分清。"},{type:"单选题",difficulty:"中档",stem:"下列关于趋势分析法的说法，正确的是（ ）",options:[{label:"A",text:"用于比较不同对象之间的差异"},{label:"B",text:"用于分析数据随时间的变化规律"},{label:"C",text:"用于分析总体的结构特征"},{label:"D",text:"用于分析两个变量之间的相关性"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 用于分析数据随时间的变化规律</strong>。这是趋势分析法的核心定义。<br><strong>📚 知识点讲解：</strong>趋势分析是预测的基础。<br><strong>💡 解题思路：</strong>A对比分析，C结构分析，D相关分析。<br><strong>🧠 记忆口诀：</strong>趋势分析随时间，规律变化看得清，上升下降和周期，未来预测有根据。"},{type:"单选题",difficulty:"中档",stem:"下列行为中，属于数据分析误区的是（ ）",options:[{label:"A",text:"对原始数据进行清洗后再分析"},{label:"B",text:"用相对数比较不同规模的对象"},{label:"C",text:"根据一次考试的成绩判断学生的学习能力"},{label:"D",text:"区分相关性和因果关系"}],answer:2,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 根据一次考试的成绩判断学生的学习能力</strong>。这属于以偏概全，是常见误区。<br><strong>📚 知识点讲解：</strong>一次成绩不能代表整体学习能力。<br><strong>💡 解题思路：</strong>A、B、D都是正确的做法。<br><strong>🧠 记忆口诀：</strong>以偏概全是误区，一次成绩定能力，忽略基数和因果，数据分析需谨慎。"},{type:"单选题",difficulty:"中档",stem:"高中阶段最常用的数据分析工具是（ ）",options:[{label:"A",text:"Python"},{label:"B",text:"SPSS"},{label:"C",text:"Excel"},{label:"D",text:"R"}],answer:2,analysis:"<strong>🎯 答案解析：</strong>正确答案是<strong>C. Excel</strong>。Excel/WPS表格功能强大、操作简单，是高中阶段最常用的数据分析工具。<br><strong>📚 知识点讲解：</strong>Python和R是专业工具，高中作为拓展。<br><strong>💡 解题思路：</strong>高中教材以Excel为主。<br><strong>🧠 记忆口诀：</strong>数据分析Excel强，高中阶段最常用，函数图表都支持，入门简单上手快。"},{type:"判断题",difficulty:"基础",stem:"数据分析的目的是从数据中提取有价值的信息，为决策提供依据。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。这是数据分析的核心定义。<br><strong>📚 知识点讲解：</strong>数据分析的最终目标是辅助决策。<br><strong>💡 解题思路：</strong>符合数据分析的本质。<br><strong>🧠 记忆口诀：</strong>数据分析为决策，提取信息找规律，科学依据做判断，数据驱动时代行。"},{type:"判断题",difficulty:"基础",stem:"原始数据可以直接用于分析，不需要预处理。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。原始数据往往存在缺失、错误等问题，必须经过预处理才能保证分析准确性。<br><strong>📚 知识点讲解：</strong>数据预处理是分析前的必要步骤。<br><strong>💡 解题思路：</strong>直接分析脏数据会得出错误结论。<br><strong>🧠 记忆口诀：</strong>原始数据要清洗，缺失异常先处理，直接分析不可取，垃圾进则垃圾出。"},{type:"判断题",difficulty:"基础",stem:"对比分析法只能用于同一时间点不同对象之间的对比。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。对比分析还包括纵向对比（同一对象不同时间）和标准对比。<br><strong>📚 知识点讲解：</strong>横向、纵向、标准对比都是对比分析。<br><strong>💡 解题思路：</strong>对比分析有多种形式。<br><strong>🧠 记忆口诀：</strong>对比分析三形式，横向纵向和标准，时间对象都能比，不仅限于同一时。"},{type:"判断题",difficulty:"基础",stem:"趋势分析法适合分析时间序列数据。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。趋势分析专门用于时间序列数据。<br><strong>📚 知识点讲解：</strong>折线图是趋势分析最常用的图表。<br><strong>💡 解题思路：</strong>时间序列=趋势分析。<br><strong>🧠 记忆口诀：</strong>趋势分析时间序，折线图里看变化，年季月日随时间，规律趋势显出来。"},{type:"判断题",difficulty:"基础",stem:"结构分析法中，所有部分的占比之和可以大于100%。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。各部分占比之和必须等于100%，否则说明分析存在错误。<br><strong>📚 知识点讲解：</strong>这是结构分析的基本要求。<br><strong>💡 解题思路：</strong>总和必须为100%。<br><strong>🧠 记忆口诀：</strong>结构分析比例和，必须等于一百整，大于小于都是错，计算仔细再呈现。"},{type:"判断题",difficulty:"基础",stem:"散点图可以用来分析两个变量之间的相关性。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。散点图是分析相关性的最佳可视化工具。<br><strong>📚 知识点讲解：</strong>点的分布形态反映相关方向和强度。<br><strong>💡 解题思路：</strong>散点图=相关性可视化。<br><strong>🧠 记忆口诀：</strong>散点图看两变量，相关关系直观现，点聚成线正相关，散乱无章不相关。"},{type:"判断题",difficulty:"基础",stem:"相关系数r=1表示两个变量完全正相关。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。r=1表示完全正相关，一个变量增加，另一个也按固定比例增加。<br><strong>📚 知识点讲解：</strong>r=1是理想状态，实际数据很难达到。<br><strong>💡 解题思路：</strong>r=1是完全正相关。<br><strong>🧠 记忆口诀：</strong>相关系数等于一，完全正相关关系，变量同步同方向，理想状态极少见。"},{type:"判断题",difficulty:"基础",stem:"相关性意味着因果关系。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:1,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。相关性不等于因果关系，这是数据分析最重要的原则之一。<br><strong>📚 知识点讲解：</strong>相关可能是巧合或第三变量导致。<br><strong>💡 解题思路：</strong>牢记“相关≠因果”。<br><strong>🧠 记忆口诀：</strong>相关不等于是因果，混淆变量在作祟，实验验证才可靠，轻率结论要避免。"},{type:"判断题",difficulty:"基础",stem:"分组分析法可以发现隐藏在总体中的规律。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。分组后可以揭示不同群体间的差异，发现总体中隐藏的模式。<br><strong>📚 知识点讲解：</strong>分组分析常用于市场细分、成绩分析等。<br><strong>💡 解题思路：</strong>分组即细分，能发现隐藏差异。<br><strong>🧠 记忆口诀：</strong>分组分析寻差异，组间比较找规律，总体隐藏特征明，精细分析靠分组。"},{type:"判断题",difficulty:"基础",stem:"数据分析的最后一步是结果呈现与决策。",options:[{label:"A",text:"正确"},{label:"B",text:"错误"}],answer:0,analysis:"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。分析结果需要可视化呈现，并据此提出决策建议。<br><strong>📚 知识点讲解：</strong>数据分析五步流程的终点。<br><strong>💡 解题思路：</strong>最后一步是呈现结论。<br><strong>🧠 记忆口诀：</strong>数据分析五步走，最后呈现与决策，图表报告来展示，科学建议助行动。"},{type:"简答题",difficulty:"中档",stem:"请简述数据分析的基本流程。",answer:"数据分析的基本流程分为五个步骤：1.明确问题：确定分析目标和要解决的问题。2.数据收集：获取分析所需的原始数据。3.数据预处理：清洗和整理数据，处理缺失值、异常值等。4.数据分析：运用对比、趋势、结构、相关等方法分析数据。5.结果呈现与决策：将结果可视化并得出结论，提出决策建议。",keywords:["明确问题","数据收集","数据预处理","数据分析","结果呈现"],analysis:"<strong>🎯 答案解析：</strong>数据分析五步流程：明确问题→数据收集→数据预处理→数据分析→结果呈现与决策。<br><strong>📚 知识点讲解：</strong>数据预处理是最耗时的步骤，通常占60%-80%。<br><strong>💡 解题思路：</strong>按逻辑顺序描述，突出每个步骤的核心任务。<br><strong>🧠 记忆口诀：</strong>明确收集预处理，分析结果五步走，问题导向是起点，数据驱动决策优。"},{type:"简答题",difficulty:"中档",stem:"请简述对比分析法、趋势分析法和结构分析法的区别和适用场景。",answer:"对比分析法：比较两个或多个具有可比性的数据，找出差异。适用于比较大小、找出差距、评价优劣。趋势分析法：分析数据随时间的变化规律和趋势。适用于时间序列数据，如经济增长、气温变化。结构分析法：分析总体内部各组成部分的比例关系。适用于分析支出结构、人口结构等，常用饼图呈现。",keywords:["对比分析","趋势分析","结构分析","时间序列","比例","饼图"],analysis:"<strong>🎯 答案解析：</strong>三种方法分别侧重比较差异、时间变化和构成比例。<br><strong>📚 知识点讲解：</strong>根据分析目的选择合适的方法。<br><strong>💡 解题思路：</strong>从定义、适用场景、典型图表三个维度区分。<br><strong>🧠 记忆口诀：</strong>对比赛差异，趋势看时间，结构算比例，三法各不同，场景定方法。"},{type:"简答题",difficulty:"提高",stem:"为什么说“相关性不等于因果关系”？请举例说明。",answer:"相关性只说明两个变量变化趋势有关联，但不意味着一个变量导致另一个变化。可能原因：1.存在第三个混淆变量同时影响两者（如气温影响冰淇淋销量和溺水人数）。2.因果关系方向相反（如身材好的人更适合成为游泳运动员，而非游泳导致身材好）。3.纯属巧合（如巧克力销量与诺贝尔奖数量）。",keywords:["相关性","因果关系","混淆变量","巧合","反向因果"],analysis:"<strong>🎯 答案解析：</strong>相关不等于因果，需排除混淆变量和反向因果。<br><strong>📚 知识点讲解：</strong>用冰淇淋和溺水的经典案例说明第三变量的影响。<br><strong>💡 解题思路：</strong>先讲原理，再举实例说明可能的原因。<br><strong>🧠 记忆口诀：</strong>相关不是因果，混淆变量中间藏，反向因果和巧合，实验验证才可靠。"},{type:"综合应用题",difficulty:"提高",stem:"下表是某班级期中考试的数学成绩数据：| 学号 | 性别 | 数学成绩 | 学习时间（小时/周） |\n| 1 | 男 | 85 | 10 |\n| 2 | 女 | 92 | 12 |\n| 3 | 男 | 78 | 8 |\n| 4 | 女 | 88 | 11 |\n| 5 | 男 | 65 | 6 |\n| 6 | 女 | 95 | 14 |\n| 7 | 男 | 72 | 7 |\n| 8 | 女 | 82 | 9 |\n| 9 | 男 | 90 | 13 |\n| 10 | 女 | 76 | 7 |\n请回答以下问题：",tasks:[{id:1,stem:"请计算全班的数学平均分。",answer:"全班平均分 = (85+92+78+88+65+95+72+82+90+76)/10 = 82.3分。",keywords:["平均分","82.3"]},{id:2,stem:"请使用分组分析法，比较男生和女生的数学平均分差异。",answer:"男生平均分 = (85+78+65+72+90)/5 = 78分；女生平均分 = (92+88+95+82+76)/5 = 86.6分。女生比男生高8.6分。",keywords:["分组","男生","女生","78","86.6"]},{id:3,stem:"请使用相关性分析法，分析学习时间与数学成绩之间的相关性。",answer:"计算相关系数r≈0.94，存在强正相关，学习时间越长成绩越高。",keywords:["相关系数","0.94","正相关"]},{id:4,stem:"请根据以上分析结果，提出提高班级数学成绩的建议。",answer:"建议增加学习时间，特别是男生；开展学习互助小组；提高学习效率；定期跟踪分析。",keywords:["学习时间","互助","效率","跟踪"]}],answer:"（1）82.3分；（2）男生78，女生86.6，女生更优；（3）强正相关，r≈0.94；（4）增加学习时间，互助，提高效率。",keywords:["82.3","78","86.6","0.94","正相关","学习时间"],analysis:"<strong>🎯 答案解析：</strong>通过计算平均分、分组比较和相关分析，得出女生成绩更好，学习时间与成绩强正相关。<br><strong>📚 知识点讲解：</strong>综合应用了分组分析和相关性分析。<br><strong>💡 解题思路：</strong>先计算，再分析，最后提建议。<br><strong>🧠 记忆口诀：</strong>平均分组相关析，数据驱动提建议，增加时间互帮助，科学决策提成绩。"},{type:"综合应用题",difficulty:"提高",stem:"某同学记录了自己家庭2025年1月的支出情况：食品2500元，住房3000元，交通800元，教育1500元，娱乐600元，医疗400元，其他200元。请回答以下问题：",tasks:[{id:1,stem:"计算该家庭1月的总支出。",answer:"总支出 = 2500+3000+800+1500+600+400+200 = 9000元。",keywords:["9000","总支出"]},{id:2,stem:"使用结构分析法计算各项支出占总支出的比例。",answer:"食品27.8%，住房33.3%，交通8.9%，教育16.7%，娱乐6.7%，医疗4.4%，其他2.2%。",keywords:["比例","27.8%","33.3%","16.7%"]},{id:3,stem:"制作一个饼图展示支出结构。",answer:"以总支出为100%，各扇形对应支出项目，标注名称和占比。",keywords:["饼图","扇形","占比"]},{id:4,stem:"根据分析结果，提出合理的消费建议。",answer:"住房和食品占比较高，可适当节约娱乐支出，制定预算，建立应急基金。",keywords:["节约","预算","应急"]}],answer:"（1）9000元；（2）食品27.8%，住房33.3%等；（3）饼图；（4）节约娱乐，制定预算。",keywords:["9000","27.8%","33.3%","饼图","节约"],analysis:"<strong>🎯 答案解析：</strong>通过结构分析法，发现住房和食品是主要支出，娱乐支出可适当控制。<br><strong>📚 知识点讲解：</strong>结构分析法用于分析支出构成，为家庭理财提供依据。<br><strong>💡 解题思路：</strong>先算总额，再算比例，最后给出建议。<br><strong>🧠 记忆口诀：</strong>支出结构饼图现，住房食品占大头，娱乐可节制定预算，应急基金要储备。"}];
+        const APP_ID = 'data_analysis_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0, currentPage = 'learn', answers = new Array(questions.length).fill(null), fontSize = 16, currentFilter = 'all', reviewMode = false, wrongIndices = [], reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllData(); renderKnowledgePage(); switchToKnowledgePage(); renderQuestion(); renderAnswerSheet(); renderHistory(); updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            document.getElementById('knowledgeTitle').textContent = '数据分析的基本方法（高中信息科技）';
+            document.getElementById('knowledgeContent').innerHTML = `<h3>📖 核心定义</h3><p><strong>数据分析</strong>是运用统计方法和工具对数据进行整理、清洗、分析和解释，提取有价值信息，发现规律和趋势，为决策提供科学依据的过程。本质是<strong>从数据中提取信息，从信息中提炼知识，从知识中指导决策</strong>。</p><h3>🔍 核心要点拆解</h3><p><strong>1. 数据分析基本流程（高频考点）</strong></p><table class="knowledge-table"><tr><th>步骤</th><th>核心任务</th></tr><tr><td>1.明确问题</td><td>确定分析目标</td></tr><tr><td>2.数据收集</td><td>获取原始数据</td></tr><tr><td>3.数据预处理</td><td>清洗缺失、异常、重复值</td></tr><tr><td>4.数据分析</td><td>运用对比、趋势等方法</td></tr><tr><td>5.结果呈现与决策</td><td>图表报告，提出建议</td></tr></table><p>数据预处理最耗时（占60%-80%）。</p><p><strong>2. 五种基本分析方法</strong></p><ul><li><strong>对比分析法</strong>：横向/纵向/标准对比，找差异。工具：柱状图。</li><li><strong>趋势分析法</strong>：分析随时间变化规律。工具：折线图。</li><li><strong>结构分析法</strong>：分析内部比例，占比之和=100%。工具：饼图。</li><li><strong>相关性分析法</strong>：分析变量关联，r∈[-1,1]。工具：散点图。<strong>相关≠因果！</strong></li><li><strong>分组分析法</strong>：按特征分组比较差异。组内差异小，组间差异大。</li></ul><p><strong>3. 常见误区</strong>：以偏概全、因果倒置、忽略基数、虚假相关。</p><p><strong>4. 常用工具</strong>：Excel/WPS表格（高中首选）。</p><h3>⚠️ 易错点</h3><ul><li>混淆相关与因果</li><li>结构分析占比和≠100%</li><li>对比数据不可比</li><li>忽略数据预处理</li></ul>`;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0; renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) { return { '单选题':'单选题','判断题':'判断题','简答题':'简答题','综合应用题':'综合应用题' }[q.type] || q.type; }
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+        function getActualIndex() { return reviewMode && wrongIndices.length ? wrongIndices[reviewIndex] : currentIndex; }
+        function getTotalInMode() { return reviewMode && wrongIndices.length ? wrongIndices.length : questions.length; }
+        function getCurrentPosition() { return reviewMode && wrongIndices.length ? reviewIndex + 1 : currentIndex + 1; }
+
+        function renderQuestion() {
+            const ai = getActualIndex(), q = questions[ai], area = document.getElementById('quizContent');
+            const tim = getTotalInMode(), cp = getCurrentPosition();
+            let h = '';
+            if (reviewMode) h += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${cp}/${tim} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            h += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty?' · '+q.difficulty:''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) h += `<img src="${q.image}" class="question-image">`;
+            if (isChoiceType(q)) {
+                h += `<div class="options-container">`;
+                q.options.forEach((o, i) => {
+                    const sel = answers[ai] === i, cor = q.answer === i;
+                    let cls = ['option-item'];
+                    if (answers[ai] !== null) { if (sel && cor) cls.push('correct'); else if (sel && !cor) cls.push('wrong'); else if (cor) cls.push('correct'); } else if (sel) cls.push('selected');
+                    h += `<div class="${cls.join(' ')}" onclick="selectOption(${i})"><div class="option-label">${o.label}</div><div class="option-text">${o.text}</div></div>`;
+                });
+                h += `</div>`;
+            } else if (q.type === '简答题') { h += renderTextAnswerArea(ai, q); }
+            else if (q.type === '综合应用题') { h += renderComprehensiveArea(ai, q); }
+            h += `</div>`;
+            if (answers[ai] !== null) {
+                if (isChoiceType(q)) {
+                    const cor = answers[ai] === q.answer;
+                    h += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${cor?'correct':'wrong'}">${cor?'✓ 回答正确':'✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;">${q.analysis}</div></div>`;
+                } else if (isTextType(q)) {
+                    const res = evaluateTextAnswer(ai, q);
+                    h += buildTextResultCard(ai, q, res);
+                }
+            }
+            const done = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length-1 && done) || (!reviewMode && currentIndex === questions.length-1 && answers.every(a => a !== null))) {
+                const cc = getCorrectCount(), ac = Math.round(cc/questions.length*100), wc = getWrongCount();
+                if (!reviewMode) saveToHistory(cc, ac);
+                h += buildCompletionScreen(cc, ac, wc);
+            }
+            area.innerHTML = h; updateHeader();
+            setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[ai] !== null && typeof answers[ai]==='string') ta.value = answers[ai]; const dr = getDraft(ai); if (ta && answers[ai]===null && dr) ta.value = dr; } }, 50);
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderTextAnswerArea(ai, q) {
+            const saved = answers[ai], draft = getDraft(ai);
+            const dv = (saved !== null && typeof saved === 'string') ? saved : (draft || '');
+            const dis = saved !== null && typeof saved === 'string';
+            let h = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${dis?'disabled':''}>${escapeHtml(dv)}</textarea><div class="text-answer-buttons">`;
+            if (!dis) h += `<button class="btn-draft" onclick="saveDraftOnly(${ai})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${ai})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${ai})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            else h += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            return h + `</div></div>`;
+        }
+
+        function renderComprehensiveArea(ai, q) { let h = ''; if (q.tasks && q.tasks.length) { h += `<ul class="tasks-list">`; q.tasks.forEach(t => h += `<li><span class="task-id">${t.id}</span> ${t.stem}</li>`); h += `</ul>`; } return h + renderTextAnswerArea(ai, q); }
+
+        function buildTextResultCard(ai, q, res) {
+            const bc = res.level==='good'?'correct':(res.level==='partial'?'partial':'wrong');
+            const bt = res.level==='good'?'✓ 回答较好':(res.level==='partial'?'△ 部分正确':'✗ 需加强');
+            return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.userAnswer||'（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${res.hitCount}/${res.totalKeywords} 个（${res.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${res.progressClass}" style="width:${res.hitRate}%;"></div></div><span class="score-tag ${res.progressClass}">${res.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${res.hitKeywords.length?res.hitKeywords.map(k=>'<span class="keyword-highlight">'+k+'</span>').join('、'):'无'}</p><p><strong>未命中：</strong>${res.missedKeywords.length?res.missedKeywords.map(k=>'<span class="keyword-missed">'+k+'</span>').join('、'):'无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+        }
+
+        function buildCompletionScreen(cc, ac, wc) {
+            let h = `<div class="completion-screen"><div class="completion-icon">${ac>=80?'🎉':ac>=60?'👍':'💪'}</div><h1 class="completion-title">${reviewMode?'错题回顾完成！':'刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode?'你已经回顾了所有错题':'太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${cc}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${ac}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wc}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wc>0 && !reviewMode) { h += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+            if (reviewMode && wc>0) h += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            return h + `</div></div>`;
+        }
+
+        function selectOption(i) { const ai = getActualIndex(); if (answers[ai] !== null || !isChoiceType(questions[ai])) return; answers[ai] = i; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(i===questions[ai].answer?'回答正确！✓':'回答错误 ✗'); }
+        function submitTextAnswer(ai) { if (answers[ai]!==null && typeof answers[ai]==='string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const ua = ta.value.trim(); if (!ua) { showToast('请先输入你的回答'); return; } answers[ai] = ua; clearDraft(ai); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const res = evaluateTextAnswer(ai, questions[ai]); showToast(res.level==='good'?'回答较好！✓':(res.level==='partial'?'部分正确 △':'需加强 ✗')); }
+        function saveDraftOnly(ai) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const v = ta.value.trim(); if (v) { saveDraft(ai, v); showToast('草稿已保存 ✓'); } else { clearDraft(ai); showToast('草稿已清空'); } }
+        function clearTextInput(ai) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(ai); showToast('输入已清空'); }
+
+        function evaluateTextAnswer(ai, q) {
+            const ua = (answers[ai] && typeof answers[ai]==='string') ? answers[ai] : ''; const ak = []; let ra = '';
+            if (q.type==='简答题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; } else if (q.type==='综合应用题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; }
+            const tk = ak.length, hk = [], mk = []; const ul = ua.toLowerCase();
+            ak.forEach(k => { if (ul.includes(k.toLowerCase())) hk.push(k); else mk.push(k); });
+            const hc = hk.length, hr = tk>0 ? Math.round((hc/tk)*100) : 0; let l, ll, pc;
+            if (q.type==='简答题') { if (hr>=60) { l='good'; ll='回答较好'; pc='excellent'; } else if (hr>=30) { l='partial'; ll='部分正确'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+            else { if (hr>=80) { l='good'; ll='优秀'; pc='excellent'; } else if (hr>=60) { l='good'; ll='良好'; pc='good'; } else if (hr>=40) { l='partial'; ll='合格'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+            return { userAnswer:ua, referenceAnswer:ra, totalKeywords:tk, hitCount:hc, hitRate:hr, hitKeywords:hk, missedKeywords:mk, level:l, levelLabel:ll, progressClass:pc };
+        }
+
+        function getCorrectCount() { let c=0; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]===q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') c++; } }); return c; }
+        function getWrongCount() { let c=0; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') c++; } }); return c; }
+        function getWrongIndicesArray() { const a=[]; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) a.push(i); } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') a.push(i); } }); return a; }
+        function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length) return wrongIndices.every(wi=>answers[wi]!==null); return answers.every(a=>a!==null); }
+
+        function startReviewWrong() { wrongIndices = getWrongIndicesArray(); if (!wrongIndices.length) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display='block'; document.getElementById('questionInfo').style.display='block'; document.getElementById('pageTitle').style.display='none'; document.querySelector('.progress-bar').style.display='block'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); }
+        function exitReviewMode() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast('已退出错题回顾模式'); }
+
+        function exportWrongCSV() {
+            const wa = getWrongIndicesArray(); if (!wa.length) { showToast('没有错题可导出'); return; }
+            const mn = '数据分析的基本方法', ds = new Date().toISOString().slice(0,10), fn = `错题本_${mn}_${ds}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wa.forEach(i => { const q = questions[i], qt = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g,'""'); let ua='',ca='',hr='',res='';
+                if (isChoiceType(q)) { ua = (answers[i]!==null && answers[i]!==undefined) ? (q.options[answers[i]]?q.options[answers[i]].text:String(answers[i])) : ''; ca = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); res = answers[i]===q.answer?'正确':'错误'; hr = answers[i]===q.answer?'100%':'0%'; }
+                else { ua = (answers[i]&&typeof answers[i]==='string')?answers[i]:''; ca = q.answer||''; const er = evaluateTextAnswer(i,q); hr = er.hitRate+'%'; res = er.levelLabel; }
+                const at = q.analysis ? q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""') : '';
+                rows.push([qt,'"'+stem+'"','"'+ua.replace(/"/g,'""')+'"','"'+ca.replace(/"/g,'""')+'"',hr,res,'"'+at+'"']); });
+            const csv = '\uFEFF' + rows.map(r=>r.join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href=url; link.download=fn; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：'+fn);
+        }
+
+        function toggleAnalysis(h) { const c = h.nextElementSibling; const i = h.querySelector('.toggle-icon'); if (c.style.display==='none') { c.style.display='block'; i.classList.add('expanded'); } else { c.style.display='none'; i.classList.remove('expanded'); } }
+        function prevQuestion() { if (reviewMode && wrongIndices.length) { if (reviewIndex>0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex>0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (reviewMode && wrongIndices.length) { if (reviewIndex<wrongIndices.length-1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex<questions.length-1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() { if (currentPage!=='quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const ac = answers.filter(a=>a!==null).length; document.getElementById('answeredCount').textContent = ac; document.getElementById('totalCount').textContent = questions.length; document.getElementById('progressFill').style.width = `${(ac/questions.length)*100}%`; }
+        function updateNavButtons() { const fc = document.getElementById('footerContent'); if (currentPage!=='quiz') return; const tim = getTotalInMode(), cp = getCurrentPosition(), isF = cp<=1, isL = cp>=tim, ad = checkAllAnsweredInMode(); fc.innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${isF?'disabled':''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${isL&&ad?'disabled':''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+
+        function changeFontSize(d) { fontSize = Math.max(14,Math.min(22,fontSize+d)); document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const o = document.getElementById('sheetOverlay'), p = document.getElementById('sheetPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderAnswerSheet(); } }
+        function renderAnswerSheet() { const g = document.getElementById('sheetGrid'); let h = ''; questions.forEach((q,i)=>{ let sc='unanswered',st='未答'; if (answers[i]!==null) { if (isChoiceType(q)) { if (answers[i]===q.answer) { sc='correct';st='正确'; } else { sc='wrong';st='错误'; } } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') { sc='correct';st='较好'; } else if (r.level==='partial') { sc='correct';st='部分'; } else { sc='wrong';st='加强'; } } } if (i===getActualIndex() && !reviewMode) sc+=' current'; if (reviewMode && wrongIndices.includes(i) && wrongIndices[reviewIndex]===i) sc+=' current';
+            if (currentFilter!=='all') { if (currentFilter==='unanswered' && answers[i]!==null) return; if (currentFilter==='correct') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]!==q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level==='weak') return; } } if (currentFilter==='wrong') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]===q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level!=='weak') return; } } }
+            h += `<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i+1}</div><div class="sheet-status">${st}</div></div>`; }); g.innerHTML = h; }
+        function filterQuestions(f,e) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(i) { reviewMode = false; wrongIndices = []; currentIndex = i; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() { const o = document.getElementById('historyOverlay'), p = document.getElementById('historyPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const l = document.getElementById('historyList'), h = getHistory(); if (!h.length) { l.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; } let ht = ''; h.forEach((r,i)=>{ const ds = new Date(r.timestamp).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); ht += `<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`; }); l.innerHTML = ht; }
+        function saveToHistory(cc,ac) { const h = getHistory(); h.unshift({timestamp:Date.now(),totalCount:questions.length,correctCount:cc,accuracy:ac,answers:[...answers]}); if (h.length>50) h.pop(); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); }
+        function getHistory() { try { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; } catch(e) { console.warn('历史记录异常'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+        function reviewHistory(i) { const h = getHistory(); if (i>=0 && i<h.length) { answers = [...h[i].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(i) { if (!confirm('确定删除？')) return; const h = getHistory(); if (i>=0 && i<h.length) { h.splice(i,1); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({currentIndex,answers,reviewMode,wrongIndices,reviewIndex})); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({fontSize})); }
+        function loadAllData() { try { const s = localStorage.getItem(STORAGE_KEY_ANSWERS); if (s) { const d = JSON.parse(s); currentIndex = d.currentIndex||0; answers = d.answers||new Array(questions.length).fill(null); reviewMode = d.reviewMode||false; wrongIndices = d.wrongIndices||[]; reviewIndex = d.reviewIndex||0; } } catch(e) { console.warn('进度异常'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); } try { const ss = localStorage.getItem(STORAGE_KEY_SETTINGS); if (ss) { const st = JSON.parse(ss); fontSize = st.fontSize||16; document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); } } catch(e) { console.warn('设置异常'); localStorage.removeItem(STORAGE_KEY_SETTINGS); } }
+
+        function saveDraft(i,v) { const d = getDrafts(); d[i]=v; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDraft(i) { const d = getDrafts(); return d[i]||null; }
+        function clearDraft(i) { const d = getDrafts(); delete d[i]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDrafts() { try { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; } catch(e) { console.warn('草稿异常'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() { if (confirm('确定重新开始？进度将被清除。')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion();updateNavButtons();renderAnswerSheet(); } }
+        function showHome() { if (confirm('返回主页将丢失进度，确定吗？')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage();renderAnswerSheet(); } }
+        function showToast(msg) { const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    </script>
+</body>
+</html>

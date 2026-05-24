@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>信息系统安全风险刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">信息系统安全风险</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div>
+            <div class="sheet-filters"><button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button><button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button><button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button><button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button></div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"服务器意外断电、设备老化损坏，属于信息系统哪一类安全风险（ ）","options":[{"label":"A","text":"硬件风险"},{"label":"B","text":"软件风险"},{"label":"C","text":"数据风险"},{"label":"D","text":"网络风险"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 硬件风险</strong>。服务器断电、设备老化都是物理硬件层面的问题，属于硬件设备类安全风险。<br><strong>📚 知识点讲解：</strong>硬件风险是指由物理设备自身或外界外力引发的隐患，包括设备老化、意外断电、磕碰损坏等，直接导致系统停止运行。<br><strong>💡 解题思路：</strong>断电、老化与设备物理状态相关，排除软件、数据、网络风险。<br><strong>🧠 记忆口诀：</strong>硬件断电老化坏，物理损伤系统瘫，软件病毒程序错，分清类别记心间。"},{"type":"单选题","difficulty":"基础","stem":"操作系统存在漏洞、电脑感染木马病毒，该隐患属于（ ）","options":[{"label":"A","text":"人为风险"},{"label":"B","text":"软件风险"},{"label":"C","text":"硬件风险"},{"label":"D","text":"数据风险"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 软件风险</strong>。系统漏洞、病毒木马都是软件层面的安全风险。<br><strong>📚 知识点讲解：</strong>软件程序类风险包括系统或应用软件存在漏洞、程序设计缺陷、感染病毒木马等。<br><strong>💡 解题思路：</strong>漏洞和病毒属于软件范畴，不属于硬件或人为风险。<br><strong>🧠 记忆口诀：</strong>软件漏洞病毒侵，程序缺陷是软件，硬件断电数据丢，人为误操恶意分。"}];
+        const APP_ID = 'info_sec_risk_quiz_1';
+    </script>
+    <script>
+        // 覆盖原模板函数并扩展新功能（简答题、综合题、错题回顾、导出等）
+        (function() {
+            // 实际题目数组已在上方定义，此处确保后续逻辑使用正确数据
+            window.questions.length = 0;
+            window.questions.push(...[
+                {"type":"单选题","difficulty":"基础","stem":"服务器意外断电、设备老化损坏，属于信息系统哪一类安全风险（ ）","options":[{"label":"A","text":"硬件风险"},{"label":"B","text":"软件风险"},{"label":"C","text":"数据风险"},{"label":"D","text":"网络风险"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 硬件风险</strong>。服务器断电、设备老化都是物理硬件层面的问题，属于硬件设备类安全风险。<br><strong>📚 知识点讲解：</strong>硬件风险是指由物理设备自身或外界外力引发的隐患，包括设备老化、意外断电、磕碰损坏等，直接导致系统停止运行。<br><strong>💡 解题思路：</strong>断电、老化与设备物理状态相关，排除软件、数据、网络风险。<br><strong>🧠 记忆口诀：</strong>硬件断电老化坏，物理损伤系统瘫，软件病毒程序错，分清类别记心间。"},
+                {"type":"单选题","difficulty":"基础","stem":"操作系统存在漏洞、电脑感染木马病毒，该隐患属于（ ）","options":[{"label":"A","text":"人为风险"},{"label":"B","text":"软件风险"},{"label":"C","text":"硬件风险"},{"label":"D","text":"数据风险"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 软件风险</strong>。系统漏洞、病毒木马都是软件层面的安全风险。<br><strong>📚 知识点讲解：</strong>软件程序类风险包括系统或应用软件存在漏洞、程序设计缺陷、感染病毒木马等。<br><strong>💡 解题思路：</strong>漏洞和病毒属于软件范畴，不属于硬件或人为风险。<br><strong>🧠 记忆口诀：</strong>软件漏洞病毒侵，程序缺陷是软件，硬件断电数据丢，人为误操恶意分。"},
+                {"type":"单选题","difficulty":"基础","stem":"个人账号信息被非法盗取、档案数据被恶意修改，属于（ ）","options":[{"label":"A","text":"网络风险"},{"label":"B","text":"数据风险"},{"label":"C","text":"硬件风险"},{"label":"D","text":"操作风险"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 数据风险</strong>。数据被盗取、修改、丢失都属于数据资源类风险。<br><strong>📚 知识点讲解：</strong>数据风险包括数据丢失、篡改、泄露、非法窃取等问题。<br><strong>💡 解题思路：</strong>“账号信息”“档案数据”指向数据资源，属于数据风险。<br><strong>🧠 记忆口诀：</strong>数据盗改丢失泄，信息泄露是数据，网络传输攻击扰，人为操作误恶意。"},
+                {"type":"单选题","difficulty":"基础","stem":"黑客发动流量攻击导致网站无法访问，这类攻击属于（ ）","options":[{"label":"A","text":"网络风险"},{"label":"B","text":"软件风险"},{"label":"C","text":"硬件风险"},{"label":"D","text":"人为风险"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 网络风险</strong>。流量攻击（如DDoS）是在网络传输层面发起的攻击，属于网络传输类风险。<br><strong>📚 知识点讲解：</strong>网络风险包括钓鱼入侵、流量攻击、虚假地址欺骗等依托网络的攻击。<br><strong>💡 解题思路：</strong>“黑客”“流量攻击”明显是网络攻击。<br><strong>🧠 记忆口诀：</strong>网络攻击钓鱼DDoS，虚假欺骗流量堵，非法入侵边界破，网络传输风险多。"},
+                {"type":"单选题","difficulty":"基础","stem":"工作人员不小心误删系统重要文件，该行为带来的风险是（ ）","options":[{"label":"A","text":"恶意操作风险"},{"label":"B","text":"无意操作风险"},{"label":"C","text":"硬件故障风险"},{"label":"D","text":"网络攻击风险"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 无意操作风险</strong>。误删文件属于无心失误，是无意操作风险。<br><strong>📚 知识点讲解：</strong>人为操作风险分为无意操作（误删、误改设置）和恶意操作（蓄意破坏、窃取）。<br><strong>💡 解题思路：</strong>“不小心”表明无意，非恶意。<br><strong>🧠 记忆口诀：</strong>无意误删误设置，恶意蓄意窃破坏，人为风险两分类，意图不同后果异。"},
+                {"type":"单选题","difficulty":"基础","stem":"下列不属于硬件设备类安全隐患的是（ ）","options":[{"label":"A","text":"设备进水损坏"},{"label":"B","text":"线路接触不良"},{"label":"C","text":"程序出现漏洞"},{"label":"D","text":"监控设备被盗"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 程序出现漏洞</strong>。程序漏洞属于软件风险，不属于硬件设备类隐患。<br><strong>📚 知识点讲解：</strong>硬件风险涉及设备本身物理状态，软件风险涉及程序代码。<br><strong>💡 解题思路：</strong>“程序漏洞”是软件问题。<br><strong>🧠 记忆口诀：</strong>进水线路和被盗，硬件损坏物理伤，程序漏洞属软件，分清软硬不混淆。"},
+                {"type":"单选题","difficulty":"基础","stem":"钓鱼邮件诱导用户泄露密码，主要触发哪一类风险（ ）","options":[{"label":"A","text":"网络与数据风险"},{"label":"B","text":"硬件风险"},{"label":"C","text":"设备老化风险"},{"label":"D","text":"程序缺陷风险"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 网络与数据风险</strong>。钓鱼邮件依托网络传播，最终导致密码等数据泄露，涉及网络和数据两类风险。<br><strong>📚 知识点讲解：</strong>钓鱼攻击是典型的网络风险，同时造成数据泄露。<br><strong>💡 解题思路：</strong>钓鱼既是网络攻击手段，又导致数据泄露。<br><strong>🧠 记忆口诀：</strong>钓鱼邮件网络来，诱导泄露密码去，网络数据双重险，双重危害要警惕。"},
+                {"type":"单选题","difficulty":"基础","stem":"盗版软件携带恶意程序，安装后易引发（ ）","options":[{"label":"A","text":"软件安全风险"},{"label":"B","text":"物理损坏风险"},{"label":"C","text":"线路故障风险"},{"label":"D","text":"断电停运风险"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 软件安全风险</strong>。盗版软件捆绑恶意程序会引发软件层面的安全风险。<br><strong>📚 知识点讲解：</strong>使用盗版或来历不明软件是导致软件风险的重要原因。<br><strong>💡 解题思路：</strong>恶意程序属于软件范畴。<br><strong>🧠 记忆口诀：</strong>盗版软件藏病毒，安装之后软件危，正版授权保安全，未知来源勿安装。"},
+                {"type":"单选题","difficulty":"基础","stem":"信息系统安全风险触发后，不会产生的后果是（ ）","options":[{"label":"A","text":"数据丢失损毁"},{"label":"B","text":"系统正常稳定运行"},{"label":"C","text":"个人隐私泄露"},{"label":"D","text":"业务服务中断"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 系统正常稳定运行</strong>。安全风险触发会导致破坏，不可能让系统正常稳定运行。<br><strong>📚 知识点讲解：</strong>风险触发后果包括数据丢失、隐私泄露、服务中断等。<br><strong>💡 解题思路：</strong>其他选项都是负面后果。<br><strong>🧠 记忆口诀：</strong>风险触发必有害，数据丢失服务停，正常运行不可能，安全防范要先行。"},
+                {"type":"单选题","difficulty":"基础","stem":"内部员工蓄意篡改业务数据，该行为属于（ ）","options":[{"label":"A","text":"无意操作风险"},{"label":"B","text":"恶意人为风险"},{"label":"C","text":"硬件故障风险"},{"label":"D","text":"网络传输风险"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 恶意人为风险</strong>。蓄意篡改数据属于恶意操作风险。<br><strong>📚 知识点讲解：</strong>恶意人为风险包括蓄意破坏系统、越权查看数据、盗取信息等。<br><strong>💡 解题思路：</strong>“蓄意”表示主观恶意。<br><strong>🧠 记忆口诀：</strong>蓄意篡改是恶意，盗取破坏越权行，无意误操缺动机，人为风险分两类。"},
+                {"type":"单选题","difficulty":"中档","stem":"下列风险中，同时包含网络与数据双重隐患的是（ ）","options":[{"label":"A","text":"电脑主板老化卡顿"},{"label":"B","text":"钓鱼网站窃取用户隐私信息"},{"label":"C","text":"键盘按键失灵无法输入"},{"label":"D","text":"系统弹窗界面错乱"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 钓鱼网站窃取用户隐私信息</strong>。钓鱼网站通过网络欺骗用户，窃取信息造成数据泄露，兼具网络和数据风险。<br><strong>📚 知识点讲解：</strong>单一事件可能同时涉及多类风险。<br><strong>💡 解题思路：</strong>其他选项均只涉及单一风险。<br><strong>🧠 记忆口诀：</strong>钓鱼网站双重险，网络骗来数据窃，主板键盘单硬件，弹窗软件单方面。"},
+                {"type":"单选题","difficulty":"中档","stem":"关于信息系统安全风险说法正确的是（ ）","options":[{"label":"A","text":"硬件设备完好就不存在任何安全风险"},{"label":"B","text":"正规软件绝对不会存在程序漏洞"},{"label":"C","text":"人为误操作也会引发严重系统安全问题"},{"label":"D","text":"网络风险只会造成设备物理损坏"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 人为误操作也会引发严重系统安全问题</strong>。误操作如误删文件、错改设置也可能造成严重后果。<br><strong>📚 知识点讲解：</strong>风险无处不在，硬件完好仍有软件、人为等风险；正版软件也可能有漏洞；网络风险不限于物理损坏。<br><strong>💡 解题思路：</strong>A、B、D说法都过于绝对。<br><strong>🧠 记忆口诀：</strong>硬件好也有软人险，正版软件漏洞存，误操作可成大祸，网络攻击不只物理。"},
+                {"type":"单选题","difficulty":"中档","stem":"不属于人为操作类安全风险的是（ ）","options":[{"label":"A","text":"随意公开账户登录密码"},{"label":"B","text":"越权限查看保密数据"},{"label":"C","text":"服务器线路自然老化"},{"label":"D","text":"误修改系统运行参数"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 服务器线路自然老化</strong>。线路老化属于硬件设备风险，不属于人为操作风险。<br><strong>📚 知识点讲解：</strong>人为操作风险包括有意和无意的操作行为导致的隐患。<br><strong>💡 解题思路：</strong>自然老化非人为，其他均为人的行为。<br><strong>🧠 记忆口诀：</strong>老化断电硬件事，人为操作人引起，公开密码误修改，越权查看皆人为。"},
+                {"type":"单选题","difficulty":"中档","stem":"校园管理系统因漏洞被入侵，学生信息批量泄露，依次涉及风险类型是（ ）","options":[{"label":"A","text":"软件风险→数据风险"},{"label":"B","text":"硬件风险→网络风险"},{"label":"C","text":"人为风险→硬件风险"},{"label":"D","text":"数据风险→硬件风险"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 软件风险→数据风险</strong>。系统漏洞属于软件风险，漏洞被利用入侵后导致学生信息泄露属于数据风险。<br><strong>📚 知识点讲解：</strong>风险往往存在链式触发：软件漏洞→入侵→数据泄露。<br><strong>💡 解题思路：</strong>先漏洞（软件），后信息泄露（数据）。<br><strong>🧠 记忆口诀：</strong>漏洞引发入侵来，数据泄露紧随后，软件风险先触发，数据风险跟着走。"},
+                {"type":"单选题","difficulty":"中档","stem":"日常使用中隐性、容易被忽略的安全风险是（ ）","options":[{"label":"A","text":"明显的设备断裂损坏"},{"label":"B","text":"系统微小未修复漏洞"},{"label":"C","text":"直观的网页攻击弹窗"},{"label":"D","text":"刻意的恶意破坏行为"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 系统微小未修复漏洞</strong>。微小漏洞隐蔽性强，日常容易被忽略，但可能被利用造成严重危害。<br><strong>📚 知识点讲解：</strong>隐性风险往往比显性风险更危险。<br><strong>💡 解题思路：</strong>微小漏洞不易察觉，容易被忽略。<br><strong>🧠 记忆口诀：</strong>微小漏洞藏隐患，日常忽略易放过，显性破坏易发现，隐性风险更危险。"},
+                {"type":"判断题","difficulty":"基础","stem":"设备磕碰、断电故障都属于信息系统硬件安全风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。物理损坏、断电都属于硬件设备安全风险范畴。<br><strong>📚 知识点讲解：</strong>硬件风险包括设备老化、磕碰、断电、进水等物理因素导致的故障。<br><strong>💡 解题思路：</strong>符合硬件风险定义。<br><strong>🧠 记忆口诀：</strong>磕碰断电物理伤，硬件风险要提防。"},
+                {"type":"判断题","difficulty":"基础","stem":"程序漏洞、恶意病毒入侵，归属于软件层面安全风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。程序缺陷、恶意程序入侵均归类为软件风险。<br><strong>📚 知识点讲解：</strong>软件风险涵盖系统漏洞、病毒、木马等。<br><strong>💡 解题思路：</strong>属于软件层面。<br><strong>🧠 记忆口诀：</strong>漏洞病毒软件险，程序缺陷也包含。"},
+                {"type":"判断题","difficulty":"基础","stem":"数据泄露、篡改、丢失是数据类风险的主要表现形式。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。泄露、篡改、丢失是数据风险三大主要表现。<br><strong>📚 知识点讲解：</strong>数据风险核心是数据的保密性、完整性、可用性受损。<br><strong>💡 解题思路：</strong>符合数据风险定义。<br><strong>🧠 记忆口诀：</strong>泄露篡改和丢失，数据风险三特征。"},
+                {"type":"判断题","difficulty":"基础","stem":"人为无意误操作不会对信息系统造成任何不良影响。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。无意误操作可能删除重要数据、错改参数，造成严重不良影响。<br><strong>📚 知识点讲解：</strong>无意操作同样能破坏系统运行。<br><strong>💡 解题思路：</strong>误操作后果可大可小。<br><strong>🧠 记忆口诀：</strong>误操作也酿大祸，无意并非无后果。"},
+                {"type":"判断题","difficulty":"基础","stem":"网络钓鱼、流量攻击都属于网络传输类安全风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。钓鱼、流量攻击都是网络传输过程中的常见风险。<br><strong>📚 知识点讲解：</strong>网络风险指在数据传输和网络通信过程中面临的安全威胁。<br><strong>💡 解题思路：</strong>两者均依托网络发起。<br><strong>🧠 记忆口诀：</strong>钓鱼流量网络生，传输风险要防范。"},
+                {"type":"判断题","difficulty":"基础","stem":"正版应用软件不存在任何安全漏洞与运行隐患。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。正版软件也可能存在未被发现的程序漏洞，存在安全隐患。<br><strong>📚 知识点讲解：</strong>没有绝对安全的软件，0day漏洞就是例子。<br><strong>💡 解题思路：</strong>正版不代表无漏洞。<br><strong>🧠 记忆口诀：</strong>正版软件漏洞存，零日攻击防不胜。"},
+                {"type":"判断题","difficulty":"基础","stem":"员工蓄意破坏系统属于恶意人为操作风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。主动恶意破坏系统，属于恶意人为操作风险。<br><strong>📚 知识点讲解：</strong>恶意人为风险带有主观破坏意图。<br><strong>💡 解题思路：</strong>蓄意破坏=恶意。<br><strong>🧠 记忆口诀：</strong>蓄意破坏恶意强，越权窃取同此类。"},
+                {"type":"判断题","difficulty":"中档","stem":"一种信息系统场景中，只会单独存在某一类安全风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。实际场景往往同时存在多种不同类型的安全风险。<br><strong>📚 知识点讲解：</strong>风险通常是复合存在的。<br><strong>💡 解题思路：</strong>现实场景复杂，多风险并存。<br><strong>🧠 记忆口诀：</strong>场景复杂多风险，软硬网数人共存。"},
+                {"type":"判断题","difficulty":"中档","stem":"密码随意外泄，会间接引发数据被盗、账号冒用等连锁风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。密码泄露易引发账号被盗、信息冒用、数据篡改等连锁问题。<br><strong>📚 知识点讲解：</strong>人为疏忽可导致后续严重的数据安全事件。<br><strong>💡 解题思路：</strong>密码泄露是许多风险的源头。<br><strong>🧠 记忆口诀：</strong>密码泄露链式险，账号被盗数据篡。"},
+                {"type":"判断题","difficulty":"中档","stem":"硬件设备完好无损，就能杜绝所有信息系统安全风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。硬件完好依旧存在软件、网络、人为等其他类型安全风险。<br><strong>📚 知识点讲解：</strong>安全是多维度的，硬件只是其中一环。<br><strong>💡 解题思路：</strong>软硬网数人风险并存。<br><strong>🧠 记忆口诀：</strong>硬件完好非万能，软网人数仍风险。"},
+                {"type":"简答题","difficulty":"中档","stem":"简要写出信息系统五大类安全风险的名称。","answer":"信息系统五大安全风险：硬件设备风险、软件程序风险、数据资源风险、网络传输风险、人为操作风险。","keywords":["硬件","软件","数据","网络","人为"],"analysis":"<strong>🎯 答案解析：</strong>五大类风险为：硬件、软件、数据、网络、人为。<br><strong>📚 知识点讲解：</strong>这是信息系统安全的基础分类，必须牢记。<br><strong>💡 解题思路：</strong>按物理到逻辑再到人的顺序记忆。<br><strong>🧠 记忆口诀：</strong>硬软数网人，五大风险记心间，物理程序信息传，人为操作最关键。"},
+                {"type":"简答题","difficulty":"中档","stem":"区分无意操作风险与恶意操作风险，并各举一个生活实例。","answer":"无意操作风险：操作人员无心失误引发隐患，无破坏意图；实例：不小心误删系统表格数据。恶意操作风险：人员故意实施破坏、窃取行为，带有主观不良目的；实例：故意盗取内部保密信息。","keywords":["无意","误操作","恶意","故意","破坏","窃取"],"analysis":"<strong>🎯 答案解析：</strong>区分核心在于主观意图：无意是无心之失，恶意是有意为之。<br><strong>📚 知识点讲解：</strong>两者后果都可能严重，但防范措施不同。<br><strong>💡 解题思路：</strong>从意图和实例说明。<br><strong>🧠 记忆口诀：</strong>无意失手误操作，恶意蓄意破坏窃，意图区分是关键，防范措施各不同。"},
+                {"type":"简答题","difficulty":"提高","stem":"简述软件类安全风险的常见表现，以及风险触发后可能带来的危害。","answer":"常见表现：系统或应用软件存在安全漏洞；安装盗版捆绑恶意程序；病毒、木马入侵程序；程序运行设计缺陷。危害：软件崩溃无法正常使用；恶意程序窃取、篡改系统数据；漏洞被利用引发外部入侵；整体信息系统功能瘫痪。","keywords":["漏洞","病毒","木马","盗版","崩溃","窃取","入侵","瘫痪"],"analysis":"<strong>🎯 答案解析：</strong>软件风险主要源于漏洞和恶意代码，危害涉及系统功能、数据安全等。<br><strong>📚 知识点讲解：</strong>软件安全是整体安全的重要环节。<br><strong>💡 解题思路：</strong>列举表现和危害。<br><strong>🧠 记忆口诀：</strong>软件漏洞病毒多，盗版恶意藏其中，触发崩溃数据窃，入侵瘫痪危害重。"},
+                {"type":"综合应用题","difficulty":"提高","stem":"超市收银信息系统近期出现多处问题：收银主机线路老化偶尔断电；收银软件存在漏洞；顾客消费数据疑似被窃取；收银员误删除交易记录。\n（1）逐一判断上述问题分别对应哪一类安全风险。\n（2）分析多重风险并存，会给超市经营带来哪些负面影响。\n（3）简单说出两类规避该系统安全风险的思路。","tasks":[{"id":1,"stem":"判断问题对应的风险类型。","answer":"线路老化断电→硬件设备风险；软件漏洞→软件程序风险；消费数据窃取→数据资源风险；误删交易记录→人为无意操作风险。","keywords":["硬件","软件","数据","人为"]},{"id":2,"stem":"分析多重风险并存的负面影响。","answer":"交易数据丢失错乱，账目核对出错；收银系统频繁停运，影响顾客结算；经营信息泄露存在财产隐患；系统故障降低门店运营效率。","keywords":["数据丢失","系统停运","信息泄露","运营效率"]},{"id":3,"stem":"提出两类规避风险的思路。","answer":"定期检修更换老化硬件设备；及时修复软件漏洞；规范员工操作流程，减少误操作行为。（任选两点）","keywords":["检修","更换","修复","规范"]}],"answer":"（1）硬件、软件、数据、人为；（2）数据丢失、系统停运、信息泄露、效率降低；（3）检修硬件、修复软件。","keywords":["硬件","软件","数据","人为","丢失","停运","泄露","检修","修复"],"analysis":"<strong>🎯 答案解析：</strong>超市收银系统面临多种风险并存，需从硬件、软件、管理多方面综合防范。<br><strong>📚 知识点讲解：</strong>实际场景中风险复合存在，应对策略也需组合使用。<br><strong>💡 解题思路：</strong>逐问分析，先分类再谈影响最后提对策。<br><strong>🧠 记忆口诀：</strong>线路硬件软件漏洞，数据窃取误删除，多重风险连锁害，检修修复规范行。"},
+                {"type":"综合应用题","difficulty":"提高","stem":"班级线上作业提交系统存在诸多隐患：陌生链接企图入侵后台；部分学生随意分享登录密码；服务器使用年限较长运行不稳；系统程序存在未修复缺陷。\n（1）梳理该系统包含的全部安全风险类型。\n（2）分析学生分享密码的行为，会引发哪些连锁安全问题。\n（3）针对硬件与软件风险，分别提出一条合理防范举措。","tasks":[{"id":1,"stem":"梳理全部安全风险类型。","answer":"包含网络传输风险（陌生链接入侵）、人为操作风险（分享密码）、硬件设备风险（服务器老化）、软件程序风险（系统缺陷）。","keywords":["网络","人为","硬件","软件"]},{"id":2,"stem":"分析分享密码引发的连锁安全问题。","answer":"外人获取密码后可随意查看、修改作业数据；冒用身份提交虚假内容；批量窃取班级学生个人信息，破坏线上学习秩序。","keywords":["查看","修改","冒用","窃取","破坏"]},{"id":3,"stem":"针对硬件与软件风险提出防范举措。","answer":"硬件防范：定期检修服务器设备，老化硬件及时更替。软件防范：定期检测修复系统程序漏洞，拦截恶意入侵程序。","keywords":["检修","更替","检测","修复","拦截"]}],"answer":"（1）网络、人为、硬件、软件四类；（2）密码泄露致数据篡改、身份冒用、信息窃取；（3）硬件定期检修，软件定期修复漏洞。","keywords":["网络","人为","硬件","软件","密码","泄露","检修","修复"],"analysis":"<strong>🎯 答案解析：</strong>班级作业系统面临多种风险，分享密码是典型的人为疏忽，需从技术和制度两方面防范。<br><strong>📚 知识点讲解：</strong>人为风险往往是最容易被忽视的一环。<br><strong>💡 解题思路：</strong>识别风险类型，分析连锁效应，提出针对性措施。<br><strong>🧠 记忆口诀：</strong>链接入侵网络险，分享密码人为疏，服务器老硬件弱，系统缺陷软件忧。"}
+            ]);
+
+            const APP_ID = 'info_sec_risk_quiz_1';
+            const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+            const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+            const STORAGE_KEY_HISTORY = APP_ID + '_history';
+            const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+            let currentIndex = 0;
+            let currentPage = 'learn';
+            let answers = new Array(questions.length).fill(null);
+            let fontSize = 16;
+            let currentFilter = 'all';
+            let reviewMode = false;
+            let wrongIndices = [];
+            let reviewIndex = 0;
+
+            // 覆盖原函数
+            window.renderKnowledgePage = function() {
+                const title = '信息系统安全风险（高中信息科技）';
+                const content = `<h3>📖 核心定义</h3><p>信息系统安全风险，是指信息系统在硬件设备、软件程序、数据资源、网络传输、人员操作等环节中，存在遭受破坏、非法入侵、信息泄露、服务中断的各类潜在隐患，风险一旦触发，会造成数据损毁、财产损失、系统瘫痪等不良后果。</p><h3>🔍 核心要点拆解</h3><p><strong>1. 硬件设备类风险</strong>：设备老化、意外断电、进水磕碰、被盗等。</p><p><strong>2. 软件程序类风险</strong>：系统漏洞、程序设计缺陷、病毒木马感染、盗版软件。</p><p><strong>3. 数据资源类风险</strong>：数据丢失、篡改、泄露、非法窃取。</p><p><strong>4. 网络传输类风险</strong>：钓鱼入侵、DDoS流量攻击、虚假地址欺骗。</p><p><strong>5. 人为操作类风险</strong>：无意操作（误删、误改设置）、恶意操作（蓄意破坏、越权窃取）。</p><h3>📚 教材典型案例</h3><p>校园测温系统多重风险、办公财务系统风险事件。</p><h3>⚠️ 易错点</h3><ul><li>类别混淆（如系统漏洞归为硬件）</li><li>只重视恶意攻击，忽视误操作和硬件老化</li><li>认为数据泄露仅由网络攻击导致</li><li>认为正版软件无风险</li></ul>`;
+                document.getElementById('knowledgeTitle').textContent = title;
+                document.getElementById('knowledgeContent').innerHTML = content;
+            };
+
+            window.switchToKnowledgePage = function() {
+                currentPage = 'learn'; reviewMode = false;
+                document.getElementById('knowledgePage').classList.remove('hidden');
+                document.getElementById('quizContent').style.display = 'none';
+                document.getElementById('questionInfo').style.display = 'none';
+                document.getElementById('pageTitle').style.display = 'block';
+                document.querySelector('.progress-bar').style.display = 'none';
+                document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+            };
+
+            window.startQuiz = function() {
+                currentPage = 'quiz'; reviewMode = false; wrongIndices = [];
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                currentIndex = 0; renderQuestion(); updateNavButtons();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            function getQuestionTypeLabel(q) { return { '单选题':'单选题','判断题':'判断题','简答题':'简答题','综合应用题':'综合应用题' }[q.type] || q.type; }
+            function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+            function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+            function getActualIndex() { return reviewMode && wrongIndices.length ? wrongIndices[reviewIndex] : currentIndex; }
+            function getTotalInMode() { return reviewMode && wrongIndices.length ? wrongIndices.length : questions.length; }
+            function getCurrentPosition() { return reviewMode && wrongIndices.length ? reviewIndex + 1 : currentIndex + 1; }
+
+            window.renderQuestion = function() {
+                const ai = getActualIndex(), q = questions[ai], area = document.getElementById('quizContent');
+                const tim = getTotalInMode(), cp = getCurrentPosition();
+                let h = '';
+                if (reviewMode) h += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${cp}/${tim} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+                h += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty?' · '+q.difficulty:''}</span><div class="question-stem">${q.stem}</div>`;
+                if (q.image) h += `<img src="${q.image}" class="question-image">`;
+                if (isChoiceType(q)) {
+                    h += `<div class="options-container">`;
+                    q.options.forEach((o, i) => {
+                        const sel = answers[ai] === i, cor = q.answer === i;
+                        let cls = ['option-item'];
+                        if (answers[ai] !== null) { if (sel && cor) cls.push('correct'); else if (sel && !cor) cls.push('wrong'); else if (cor) cls.push('correct'); } else if (sel) cls.push('selected');
+                        h += `<div class="${cls.join(' ')}" onclick="selectOption(${i})"><div class="option-label">${o.label}</div><div class="option-text">${o.text}</div></div>`;
+                    });
+                    h += `</div>`;
+                } else if (q.type === '简答题') { h += renderTextAnswerArea(ai, q); }
+                else if (q.type === '综合应用题') { h += renderComprehensiveArea(ai, q); }
+                h += `</div>`;
+                if (answers[ai] !== null) {
+                    if (isChoiceType(q)) {
+                        const cor = answers[ai] === q.answer;
+                        h += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${cor?'correct':'wrong'}">${cor?'✓ 回答正确':'✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;">${q.analysis}</div></div>`;
+                    } else if (isTextType(q)) {
+                        const res = evaluateTextAnswer(ai, q);
+                        h += buildTextResultCard(ai, q, res);
+                    }
+                }
+                const done = checkAllAnsweredInMode();
+                if ((reviewMode && reviewIndex >= wrongIndices.length-1 && done) || (!reviewMode && currentIndex === questions.length-1 && answers.every(a => a !== null))) {
+                    const cc = getCorrectCount(), ac = Math.round(cc/questions.length*100), wc = getWrongCount();
+                    if (!reviewMode) saveToHistory(cc, ac);
+                    h += buildCompletionScreen(cc, ac, wc);
+                }
+                area.innerHTML = h; updateHeader();
+                setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[ai] !== null && typeof answers[ai]==='string') ta.value = answers[ai]; const dr = getDraft(ai); if (ta && answers[ai]===null && dr) ta.value = dr; } }, 50);
+                if (window.MathJax) MathJax.typeset();
+            };
+
+            function renderTextAnswerArea(ai, q) {
+                const saved = answers[ai], draft = getDraft(ai);
+                const dv = (saved !== null && typeof saved === 'string') ? saved : (draft || '');
+                const dis = saved !== null && typeof saved === 'string';
+                let h = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${dis?'disabled':''}>${escapeHtml(dv)}</textarea><div class="text-answer-buttons">`;
+                if (!dis) h += `<button class="btn-draft" onclick="saveDraftOnly(${ai})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${ai})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${ai})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+                else h += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+                return h + `</div></div>`;
+            }
+
+            function renderComprehensiveArea(ai, q) { let h = ''; if (q.tasks && q.tasks.length) { h += `<ul class="tasks-list">`; q.tasks.forEach(t => h += `<li><span class="task-id">${t.id}</span> ${t.stem}</li>`); h += `</ul>`; } return h + renderTextAnswerArea(ai, q); }
+
+            function buildTextResultCard(ai, q, res) {
+                const bc = res.level==='good'?'correct':(res.level==='partial'?'partial':'wrong');
+                const bt = res.level==='good'?'✓ 回答较好':(res.level==='partial'?'△ 部分正确':'✗ 需加强');
+                return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.userAnswer||'（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${res.hitCount}/${res.totalKeywords} 个（${res.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${res.progressClass}" style="width:${res.hitRate}%;"></div></div><span class="score-tag ${res.progressClass}">${res.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${res.hitKeywords.length?res.hitKeywords.map(k=>'<span class="keyword-highlight">'+k+'</span>').join('、'):'无'}</p><p><strong>未命中：</strong>${res.missedKeywords.length?res.missedKeywords.map(k=>'<span class="keyword-missed">'+k+'</span>').join('、'):'无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+            }
+
+            function buildCompletionScreen(cc, ac, wc) {
+                let h = `<div class="completion-screen"><div class="completion-icon">${ac>=80?'🎉':ac>=60?'👍':'💪'}</div><h1 class="completion-title">${reviewMode?'错题回顾完成！':'刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode?'你已经回顾了所有错题':'太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${cc}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${ac}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wc}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+                if (wc>0 && !reviewMode) { h += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+                if (reviewMode && wc>0) h += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+                return h + `</div></div>`;
+            }
+
+            window.selectOption = function(i) { const ai = getActualIndex(); if (answers[ai] !== null || !isChoiceType(questions[ai])) return; answers[ai] = i; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(i===questions[ai].answer?'回答正确！✓':'回答错误 ✗'); };
+            window.submitTextAnswer = function(ai) { if (answers[ai]!==null && typeof answers[ai]==='string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const ua = ta.value.trim(); if (!ua) { showToast('请先输入你的回答'); return; } answers[ai] = ua; clearDraft(ai); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const res = evaluateTextAnswer(ai, questions[ai]); showToast(res.level==='good'?'回答较好！✓':(res.level==='partial'?'部分正确 △':'需加强 ✗')); };
+            window.saveDraftOnly = function(ai) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const v = ta.value.trim(); if (v) { saveDraft(ai, v); showToast('草稿已保存 ✓'); } else { clearDraft(ai); showToast('草稿已清空'); } };
+            window.clearTextInput = function(ai) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(ai); showToast('输入已清空'); };
+
+            function evaluateTextAnswer(ai, q) {
+                const ua = (answers[ai] && typeof answers[ai]==='string') ? answers[ai] : ''; const ak = []; let ra = '';
+                if (q.type==='简答题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; } else if (q.type==='综合应用题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; }
+                const tk = ak.length, hk = [], mk = []; const ul = ua.toLowerCase();
+                ak.forEach(k => { if (ul.includes(k.toLowerCase())) hk.push(k); else mk.push(k); });
+                const hc = hk.length, hr = tk>0 ? Math.round((hc/tk)*100) : 0; let l, ll, pc;
+                if (q.type==='简答题') { if (hr>=60) { l='good'; ll='回答较好'; pc='excellent'; } else if (hr>=30) { l='partial'; ll='部分正确'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+                else { if (hr>=80) { l='good'; ll='优秀'; pc='excellent'; } else if (hr>=60) { l='good'; ll='良好'; pc='good'; } else if (hr>=40) { l='partial'; ll='合格'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+                return { userAnswer:ua, referenceAnswer:ra, totalKeywords:tk, hitCount:hc, hitRate:hr, hitKeywords:hk, missedKeywords:mk, level:l, levelLabel:ll, progressClass:pc };
+            }
+
+            function getCorrectCount() { let c=0; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]===q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') c++; } }); return c; }
+            function getWrongCount() { let c=0; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') c++; } }); return c; }
+            function getWrongIndicesArray() { const a=[]; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) a.push(i); } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') a.push(i); } }); return a; }
+            function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length) return wrongIndices.every(wi=>answers[wi]!==null); return answers.every(a=>a!==null); }
+
+            window.startReviewWrong = function() { wrongIndices = getWrongIndicesArray(); if (!wrongIndices.length) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display='block'; document.getElementById('questionInfo').style.display='block'; document.getElementById('pageTitle').style.display='none'; document.querySelector('.progress-bar').style.display='block'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); };
+            window.exitReviewMode = function() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast('已退出错题回顾模式'); };
+
+            window.exportWrongCSV = function() {
+                const wa = getWrongIndicesArray(); if (!wa.length) { showToast('没有错题可导出'); return; }
+                const mn = '信息系统安全风险', ds = new Date().toISOString().slice(0,10), fn = `错题本_${mn}_${ds}.csv`;
+                const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+                wa.forEach(i => { const q = questions[i], qt = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g,'""'); let ua='',ca='',hr='',res='';
+                    if (isChoiceType(q)) { ua = (answers[i]!==null && answers[i]!==undefined) ? (q.options[answers[i]]?q.options[answers[i]].text:String(answers[i])) : ''; ca = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); res = answers[i]===q.answer?'正确':'错误'; hr = answers[i]===q.answer?'100%':'0%'; }
+                    else { ua = (answers[i]&&typeof answers[i]==='string')?answers[i]:''; ca = q.answer||''; const er = evaluateTextAnswer(i,q); hr = er.hitRate+'%'; res = er.levelLabel; }
+                    const at = q.analysis ? q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""') : '';
+                    rows.push([qt,'"'+stem+'"','"'+ua.replace(/"/g,'""')+'"','"'+ca.replace(/"/g,'""')+'"',hr,res,'"'+at+'"']); });
+                const csv = '\uFEFF' + rows.map(r=>r.join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href=url; link.download=fn; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：'+fn);
+            };
+
+            window.toggleAnalysis = function(h) { const c = h.nextElementSibling; const i = h.querySelector('.toggle-icon'); if (c.style.display==='none') { c.style.display='block'; i.classList.add('expanded'); } else { c.style.display='none'; i.classList.remove('expanded'); } };
+            window.prevQuestion = function() { if (reviewMode && wrongIndices.length) { if (reviewIndex>0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex>0) { currentIndex--; renderQuestion(); updateNavButtons(); } };
+            window.nextQuestion = function() { if (reviewMode && wrongIndices.length) { if (reviewIndex<wrongIndices.length-1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex<questions.length-1) { currentIndex++; renderQuestion(); updateNavButtons(); } };
+
+            window.updateHeader = function() { if (currentPage!=='quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const ac = answers.filter(a=>a!==null).length; document.getElementById('answeredCount').textContent = ac; document.getElementById('totalCount').textContent = questions.length; document.getElementById('progressFill').style.width = `${(ac/questions.length)*100}%`; };
+            window.updateNavButtons = function() { const fc = document.getElementById('footerContent'); if (currentPage!=='quiz') return; const tim = getTotalInMode(), cp = getCurrentPosition(), isF = cp<=1, isL = cp>=tim, ad = checkAllAnsweredInMode(); fc.innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${isF?'disabled':''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${isL&&ad?'disabled':''}>下一题 <i class="fas fa-chevron-right"></i></button>`; };
+
+            window.changeFontSize = function(d) { fontSize = Math.max(14,Math.min(22,fontSize+d)); document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); saveSettings(); };
+            window.toggleSheet = function() { const o = document.getElementById('sheetOverlay'), p = document.getElementById('sheetPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderAnswerSheet(); } };
+            window.renderAnswerSheet = function() { const g = document.getElementById('sheetGrid'); let h = ''; questions.forEach((q,i)=>{ let sc='unanswered',st='未答'; if (answers[i]!==null) { if (isChoiceType(q)) { if (answers[i]===q.answer) { sc='correct';st='正确'; } else { sc='wrong';st='错误'; } } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') { sc='correct';st='较好'; } else if (r.level==='partial') { sc='correct';st='部分'; } else { sc='wrong';st='加强'; } } } if (i===getActualIndex() && !reviewMode) sc+=' current'; if (reviewMode && wrongIndices.includes(i) && wrongIndices[reviewIndex]===i) sc+=' current';
+                if (currentFilter!=='all') { if (currentFilter==='unanswered' && answers[i]!==null) return; if (currentFilter==='correct') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]!==q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level==='weak') return; } } if (currentFilter==='wrong') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]===q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level!=='weak') return; } } }
+                h += `<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i+1}</div><div class="sheet-status">${st}</div></div>`; }); g.innerHTML = h; };
+            window.filterQuestions = function(f,e) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); };
+            window.jumpToQuestion = function(i) { reviewMode = false; wrongIndices = []; currentIndex = i; renderQuestion(); updateNavButtons(); toggleSheet(); };
+
+            window.toggleHistory = function() { const o = document.getElementById('historyOverlay'), p = document.getElementById('historyPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderHistory(); } };
+            window.renderHistory = function() { const l = document.getElementById('historyList'), h = getHistory(); if (!h.length) { l.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; } let ht = ''; h.forEach((r,i)=>{ const ds = new Date(r.timestamp).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); ht += `<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`; }); l.innerHTML = ht; };
+            window.saveToHistory = function(cc,ac) { const h = getHistory(); h.unshift({timestamp:Date.now(),totalCount:questions.length,correctCount:cc,accuracy:ac,answers:[...answers]}); if (h.length>50) h.pop(); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); };
+            function getHistory() { try { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; } catch(e) { localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+            window.reviewHistory = function(i) { const h = getHistory(); if (i>=0 && i<h.length) { answers = [...h[i].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } };
+            window.deleteHistory = function(i) { if (!confirm('确定删除？')) return; const h = getHistory(); if (i>=0 && i<h.length) { h.splice(i,1); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); renderHistory(); showToast('记录已删除'); } };
+            window.clearAllHistory = function() { if (!confirm('确定清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); };
+
+            window.saveAnswers = function() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({currentIndex,answers,reviewMode,wrongIndices,reviewIndex})); };
+            function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({fontSize})); }
+            window.loadAllData = function() { try { const s = localStorage.getItem(STORAGE_KEY_ANSWERS); if (s) { const d = JSON.parse(s); currentIndex = d.currentIndex||0; answers = d.answers||new Array(questions.length).fill(null); reviewMode = d.reviewMode||false; wrongIndices = d.wrongIndices||[]; reviewIndex = d.reviewIndex||0; } } catch(e) { localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); } try { const ss = localStorage.getItem(STORAGE_KEY_SETTINGS); if (ss) { const st = JSON.parse(ss); fontSize = st.fontSize||16; document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); } } catch(e) { localStorage.removeItem(STORAGE_KEY_SETTINGS); } };
+
+            function saveDraft(i,v) { const d = getDrafts(); d[i]=v; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+            function getDraft(i) { const d = getDrafts(); return d[i]||null; }
+            function clearDraft(i) { const d = getDrafts(); delete d[i]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+            function getDrafts() { try { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; } catch(e) { localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+            window.restartQuiz = function() { if (confirm('确定重新开始？进度将被清除。')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion();updateNavButtons();renderAnswerSheet(); } };
+            window.showHome = function() { if (confirm('返回主页将丢失进度，确定吗？')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage();renderAnswerSheet(); } };
+            function showToast(msg) { const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
+            function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+            // 初始化页面
+            window.renderKnowledgePage();
+            window.switchToKnowledgePage();
+            window.renderQuestion();
+            window.renderAnswerSheet();
+            window.renderHistory();
+            window.updateNavButtons();
+        })();
+    </script>
+</body>
+</html>

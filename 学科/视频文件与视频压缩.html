@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>视频文件与视频压缩刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">视频文件与视频压缩</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"组成视频的基本单位是（ ）","options":[{"label":"A","text":"像素"},{"label":"B","text":"帧"},{"label":"C","text":"秒"},{"label":"D","text":"字节"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 帧</strong>。视频是由一系列连续的帧组成的，帧是视频的基本单位。<br><strong>📚 知识点讲解：</strong>每一帧都是一张静态图像，当连续播放时，利用人眼的视觉暂留效应形成动态视频。<br><strong>💡 解题思路：</strong>像素是图像的基本单位，秒是时间单位，字节是存储单位。<br><strong>🧠 记忆口诀：</strong>视频由帧组成，一张一张播不停，视觉暂留显动态，帧率控制流畅度。"}];
+        
+        const APP_ID = 'video_compression_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '视频文件与视频压缩（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>视频</strong>是由一系列连续的静态图像（帧）按一定速率播放，利用视觉暂留效应形成的动态图像。<strong>视频文件</strong>是存储视频数据的多媒体容器，包含压缩后的视频流、音频流等。<strong>视频压缩</strong>通过去除冗余信息，在不明显影响画质的前提下大幅减小文件大小，是视频存储和传输的基础。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. 视频基本参数与原始大小计算</strong></p>
+                <ul>
+                    <li><strong>帧</strong>：组成视频的单张图像</li>
+                    <li><strong>帧率（FPS）</strong>：每秒播放帧数，影响流畅度</li>
+                    <li><strong>分辨率</strong>：每帧像素数量，影响清晰度</li>
+                    <li><strong>码率</strong>：每秒数据量，决定压缩视频的质量和大小</li>
+                    <li><strong>色彩深度</strong>：每个像素的位数，常见24位真彩色</li>
+                </ul>
+                <p>未压缩视频大小公式：<span class="highlight">文件大小（字节）= 分辨率 × 色彩深度 × 帧率 × 时间 ÷ 8</span></p>
+                <p><strong>2. 容器格式 vs 编码格式</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>类型</th><th>作用</th><th>例子</th></tr>
+                    <tr><td>容器格式（封装）</td><td>打包视频流、音频流，决定扩展名</td><td>MP4、MKV、AVI</td></tr>
+                    <tr><td>编码格式（压缩算法）</td><td>压缩/解压缩视频数据，决定质量和大小</td><td>H.264、H.265、AV1</td></tr>
+                </table>
+                <p><strong>3. 视频压缩四大冗余</strong></p>
+                <ul>
+                    <li><strong>空间冗余</strong>：帧内相邻像素相似 → 帧内压缩</li>
+                    <li><strong>时间冗余</strong>：相邻帧内容相似 → 帧间压缩（最重要）</li>
+                    <li><strong>视觉冗余</strong>：人眼对部分细节不敏感 → 丢弃不敏感信息</li>
+                    <li><strong>编码冗余</strong>：数据表示效率低 → 熵编码（哈夫曼等）</li>
+                </ul>
+                <p><strong>4. 帧类型</strong>：I帧（关键帧，独立解码）、P帧（参考前帧）、B帧（参考前后帧）</p>
+                <p><strong>5. 主流编码对比</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>编码</th><th>推出</th><th>压缩率</th><th>兼容性</th><th>适用</th></tr>
+                    <tr><td>H.264</td><td>2003</td><td>基准</td><td>极好</td><td>1080p及以下</td></tr>
+                    <tr><td>H.265</td><td>2013</td><td>比H.264高约50%</td><td>较好</td><td>4K/8K</td></tr>
+                    <tr><td>AV1</td><td>2018</td><td>比H.265更高</td><td>发展中</td><td>未来趋势</td></tr>
+                </table>
+                <h3>📚 教材典型案例</h3>
+                <p><strong>手机拍摄的MP4视频</strong>、<strong>在线视频平台自适应码率</strong>、<strong>蓝光原盘与网络电影对比</strong></p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul>
+                    <li>❌ 混淆容器与编码（MP4是容器，不是编码）</li>
+                    <li>❌ 认为分辨率高就一定清晰（还取决于码率）</li>
+                    <li>❌ 认为压缩一定降低质量（有无损压缩）</li>
+                    <li>❌ 混淆帧率和分辨率的作用</li>
+                </ul>
+                <h3>🎓 学段区分说明</h3>
+                <p><strong>初中阶段：</strong>了解视频基本概念和常见格式，知道压缩的作用。</p>
+                <p><strong>高中阶段：</strong>掌握参数计算，理解冗余原理和容器/编码区别，了解主流编码标准。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const contentArea = document.getElementById('quizContent');
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[currentIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) { classes.push('selected'); }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+            if (answers[currentIndex] !== null) {
+                const isCorrect = answers[currentIndex] === q.answer;
+                html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+            }
+            if (currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                html += `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">刷题完成！</h1><p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p><div class="stats"><div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button></div></div>`;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === questions.length - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { 
+            try { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; } 
+            catch(e) { console.warn('历史记录数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } 
+        }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            try {
+                const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+                if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            } catch(e) { console.warn('答题进度数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); }
+            try {
+                const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            } catch(e) { console.warn('设置数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

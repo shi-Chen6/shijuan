@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>温度传感器刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* 新增题型及扩展样式 */
+        .question-type.diff-basic {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        .question-type.diff-mid {
+            background: #fffbe6;
+            color: #d48806;
+        }
+        .question-type.diff-high {
+            background: #fff2f0;
+            color: #cf1322;
+        }
+        .textarea-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        .textarea-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .task-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .submit-btn,
+        .draft-btn,
+        .clear-input-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .draft-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .clear-input-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .submit-btn:active,
+        .draft-btn:active,
+        .clear-input-btn:active {
+            transform: scale(0.97);
+        }
+        .hit-rate-bar {
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .hit-rate-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .hit-rate-fill.excellent {
+            background: var(--success-color);
+        }
+        .hit-rate-fill.good {
+            background: #73d13d;
+        }
+        .hit-rate-fill.ok {
+            background: var(--warning-color);
+        }
+        .hit-rate-fill.weak {
+            background: var(--error-color);
+        }
+        .tag-excellent,
+        .tag-good,
+        .tag-ok,
+        .tag-weak {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-excellent {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .tag-good {
+            background: #d4edda;
+            color: #389e0d;
+        }
+        .tag-ok {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .tag-weak {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .sheet-item.partial {
+            border-color: var(--warning-color);
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-btn {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffd591;
+        }
+        .analysis-content .highlight-hit {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #155724;
+            font-weight: 600;
+        }
+        .analysis-content .highlight-miss {
+            background: #f8d7da;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #721c24;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">温度传感器</div>
+                        <div class="progress-text">高中信息科技 · 感知层核心元件</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "温度传感器的作用是（ ）",
+            "options": [{ "label": "A", "text": "将电信号转换为温度" }, { "label": "B", "text": "将温度转换为电信号" }, { "label": "C", "text": "将温度转换为光信号" }, { "label": "D", "text": "将光信号转换为温度" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。温度传感器的核心作用是将温度这个物理量转换为可被计算机识别的电信号。<br><strong>📚 知识点讲解：</strong>传感器本质上是将非电物理量（温度、湿度、光照等）转换成电信号的装置，以便后续电路处理。<br><strong>💡 解题思路：</strong>传感器是物理量→电信号的转换器，排除反方向或无关选项。<br><strong>🧠 记忆口诀：</strong>温度传感器，温变电信号。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "NTC热敏电阻的特性是（ ）",
+            "options": [{ "label": "A", "text": "电阻值随温度升高而增大" }, { "label": "B", "text": "电阻值随温度升高而减小" }, { "label": "C", "text": "电阻值不随温度变化" }, { "label": "D", "text": "电压随温度升高而增大" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。NTC是负温度系数热敏电阻，电阻值随温度升高而减小。<br><strong>📚 知识点讲解：</strong>NTC（Negative Temperature Coefficient）与PTC相反，温度越高电阻越低，常用于测温电路。<br><strong>💡 解题思路：</strong>NTC中的N代表负，记住\u201C负\u201D即电阻减小。<br><strong>🧠 记忆口诀：</strong>NTC负温度，高温电阻小。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "DS18B20采用的通信协议是（ ）",
+            "options": [{ "label": "A", "text": "I2C" }, { "label": "B", "text": "SPI" }, { "label": "C", "text": "单总线" }, { "label": "D", "text": "UART" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。DS18B20采用独特的单总线（1-Wire）通信协议，仅需一根数据线即可实现双向通信。<br><strong>📚 知识点讲解：</strong>单总线协议允许多个器件共用一条数据线，每个器件有唯一地址，节省微控制器引脚。<br><strong>💡 解题思路：</strong>DS18B20最突出的特点就是单总线，选C。<br><strong>🧠 记忆口诀：</strong>DS18B20单总线，一线通信真简便。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "DS18B20的数据引脚需要接一个多大的上拉电阻？（ ）",
+            "options": [{ "label": "A", "text": "1kΩ" }, { "label": "B", "text": "4.7kΩ" }, { "label": "C", "text": "10kΩ" }, { "label": "D", "text": "100kΩ" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。DS18B20的数据引脚需要接一个4.7kΩ的上拉电阻，以保证通信的稳定性。<br><strong>📚 知识点讲解：</strong>上拉电阻确保总线在空闲时保持高电平，没有它通信会失败。这是硬件连接的关键点。<br><strong>💡 解题思路：</strong>4.7kΩ是DS18B20数据手册中的标准推荐值。<br><strong>🧠 记忆口诀：</strong>上拉电阻四点七，通信稳定必接好。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "DS18B20的默认测量精度是（ ）",
+            "options": [{ "label": "A", "text": "0.1℃" }, { "label": "B", "text": "0.5℃" }, { "label": "C", "text": "1℃" }, { "label": "D", "text": "2℃" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。DS18B20在-10℃~+85℃范围内的精度为±0.5℃。<br><strong>📚 知识点讲解：</strong>精度指测量值与真实值的偏差范围，不同于分辨率（可配置为0.5℃~0.0625℃）。<br><strong>💡 解题思路：</strong>精度±0.5℃是DS18B20的标称指标。<br><strong>🧠 记忆口诀：</strong>DS18B20精度好，零点五度不偏离。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于模拟温度传感器的是（ ）",
+            "options": [{ "label": "A", "text": "DS18B20" }, { "label": "B", "text": "NTC热敏电阻" }, { "label": "C", "text": "LM75" }, { "label": "D", "text": "BME280" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。NTC热敏电阻输出连续变化的模拟电压信号，属于模拟温度传感器。A、C、D都是数字温度传感器。<br><strong>📚 知识点讲解：</strong>模拟传感器需要A/D转换才能被单片机读取，数字传感器内部集成了A/D转换器。<br><strong>💡 解题思路：</strong>热敏电阻是最典型的模拟温度传感器。<br><strong>🧠 记忆口诀：</strong>NTC模拟需转换，数字内部已集成。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于数字温度传感器的是（ ）",
+            "options": [{ "label": "A", "text": "铂电阻" }, { "label": "B", "text": "热电偶" }, { "label": "C", "text": "DS18B20" }, { "label": "D", "text": "NTC热敏电阻" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。DS18B20内部集成了A/D转换器，直接输出数字温度信号。<br><strong>📚 知识点讲解：</strong>数字传感器使用方便，无需外部A/D电路，精度较高。<br><strong>💡 解题思路：</strong>DS18B20是数字传感器的典型代表。<br><strong>🧠 记忆口诀：</strong>DS18B20数字出，省去转换精度高。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "NTC热敏电阻与单片机连接时，需要使用单片机的哪个功能？（ ）",
+            "options": [{ "label": "A", "text": "数字I/O" }, { "label": "B", "text": "A/D转换" }, { "label": "C", "text": "PWM输出" }, { "label": "D", "text": "串口通信" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。NTC热敏电阻输出模拟电压，必须通过单片机的A/D转换引脚转换为数字信号才能被处理。<br><strong>📚 知识点讲解：</strong>单片机只能识别数字信号，模拟传感器必须经过模数转换。<br><strong>💡 解题思路：</strong>模拟传感器→A/D转换→单片机。<br><strong>🧠 记忆口诀：</strong>模拟需转数字，A/D转换来帮忙。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "DS18B20与单片机连接时，最少需要几根线？（ ）",
+            "options": [{ "label": "A", "text": "1根" }, { "label": "B", "text": "2根" }, { "label": "C", "text": "3根" }, { "label": "D", "text": "4根" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。DS18B20在寄生电源模式下最少需要2根线（数据和地），但常用3根线（VCC、GND、DQ）以获得稳定工作。<br><strong>📚 知识点讲解：</strong>题目中\u201C最少\u201D指理论最低要求，2根线即可工作。<br><strong>💡 解题思路：</strong>数据线加地线，共2根。<br><strong>🧠 记忆口诀：</strong>最少两根线，数据和地连。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "DS18B20的12位分辨率对应的温度分辨率是（ ）",
+            "options": [{ "label": "A", "text": "0.5℃" }, { "label": "B", "text": "0.25℃" }, { "label": "C", "text": "0.125℃" }, { "label": "D", "text": "0.0625℃" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。12位分辨率对应0.0625℃（2^-4）。<br><strong>📚 知识点讲解：</strong>分辨率=1/2^4=0.0625℃，9位0.5℃，10位0.25℃，11位0.125℃。<br><strong>💡 解题思路：</strong>记住12位最精细，0.0625℃。<br><strong>🧠 记忆口诀：</strong>十二位分辨率，零点零六二五。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "某DS18B20输出的温度数据为0x0190（12位分辨率），对应的温度值是（ ）",
+            "options": [{ "label": "A", "text": "25℃" }, { "label": "B", "text": "50℃" }, { "label": "C", "text": "100℃" }, { "label": "D", "text": "125℃" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。0x0190=400，400×0.0625℃=25℃。<br><strong>📚 知识点讲解：</strong>正温度数据直接乘以0.0625得到温度值。<br><strong>💡 解题思路：</strong>十六进制转十进制后乘分辨率。<br><strong>🧠 记忆口诀：</strong>十六进制转十乘零点零六二五。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于DS18B20的说法，错误的是（ ）",
+            "options": [{ "label": "A", "text": "可以多个传感器并联在同一根总线上" }, { "label": "B", "text": "输出数字信号，无需A/D转换" }, { "label": "C", "text": "测量范围是-55℃~+125℃" }, { "label": "D", "text": "只能测量正温度" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。DS18B20可以测量-55℃~+125℃的温度，包括负温度。<br><strong>📚 知识点讲解：</strong>DS18B20的测量范围涵盖负温区，输出数据用补码表示负值。<br><strong>💡 解题思路：</strong>\u201C只能\u201D是绝对化错误，DS18B20支持正负温度。<br><strong>🧠 记忆口诀：</strong>DS18B20正负全，零下温度也能测。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "NTC热敏电阻分压电路中，固定电阻的作用是（ ）",
+            "options": [{ "label": "A", "text": "提高测量精度" }, { "label": "B", "text": "将电阻变化转换为电压变化" }, { "label": "C", "text": "保护NTC热敏电阻" }, { "label": "D", "text": "增加响应速度" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。NTC与固定电阻串联构成分压电路，将电阻的变化转换为电压的变化，以便单片机A/D读取。<br><strong>📚 知识点讲解：</strong>分压原理：Vout = VCC * R_fixed / (R_ntc + R_fixed)，温度变化导致R_ntc变化，从而Vout变化。<br><strong>💡 解题思路：</strong>电阻→电压转换是分压电路的核心功能。<br><strong>🧠 记忆口诀：</strong>分压电路转电压，电阻变化看得见。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "当温度升高时，NTC热敏电阻的电阻值会（ ）",
+            "options": [{ "label": "A", "text": "增大" }, { "label": "B", "text": "减小" }, { "label": "C", "text": "不变" }, { "label": "D", "text": "先增大后减小" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。NTC热敏电阻的电阻值随温度升高而减小，这是负温度系数的基本特性。<br><strong>📚 知识点讲解：</strong>NTC材料在温度升高时载流子浓度增加，导电性增强，电阻下降。<br><strong>💡 解题思路：</strong>NTC=负温度系数，温度↑电阻↓。<br><strong>🧠 记忆口诀：</strong>温度升高电阻降，NTC特征记心上。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于温度传感器的说法，正确的是（ ）",
+            "options": [{ "label": "A", "text": "所有温度传感器都输出数字信号" }, { "label": "B", "text": "数字温度传感器比模拟温度传感器精度高" }, { "label": "C", "text": "DS18B20不需要电源即可工作" }, { "label": "D", "text": "热敏电阻的输出是线性的" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。数字温度传感器内部集成了信号调理和A/D转换，通常比模拟传感器精度高且使用方便。<br><strong>📚 知识点讲解：</strong>模拟传感器如NTC输出非线性，需要校准；数字传感器如DS18B20输出线性数字值。<br><strong>💡 解题思路：</strong>数字传感器集成度高，性能更优。<br><strong>🧠 记忆口诀：</strong>数字传感器精度高，集成转换误差小。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "温度传感器是将温度转换为电信号的装置。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确。这是温度传感器的基本定义。<br><strong>📚 知识点讲解：</strong>传感器是将非电物理量转换为电信号的装置。<br><strong>💡 解题思路：</strong>符合传感器定义。<br><strong>🧠 记忆口诀：</strong>温度转电信号，传感器之本能。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "NTC热敏电阻的电阻值随温度升高而增大。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误。NTC电阻值随温度升高而减小，PTC才随温度升高而增大。<br><strong>📚 知识点讲解：</strong>NTC是负温度系数，PTC是正温度系数。<br><strong>💡 解题思路：</strong>NTC负温度，电阻随温降。<br><strong>🧠 记忆口诀：</strong>NTC负，电阻降；PTC正，电阻涨。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "DS18B20是数字温度传感器。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确。DS18B20直接输出数字信号，属于数字温度传感器。<br><strong>📚 知识点讲解：</strong>内部集成A/D，无需外接转换电路。<br><strong>💡 解题思路：</strong>常识性正确。<br><strong>🧠 记忆口诀：</strong>DS18B20数字型，单总线传温度。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "DS18B20的DQ引脚需要接上拉电阻。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确。上拉电阻是单总线通信的必要条件，通常为4.7kΩ。<br><strong>📚 知识点讲解：</strong>没有上拉电阻，总线电平不确定，通信失败。<br><strong>💡 解题思路：</strong>正确。<br><strong>🧠 记忆口诀：</strong>上拉电阻很重要，4.7kΩ要接牢。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "模拟温度传感器需要A/D转换才能被单片机读取。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确。模拟信号无法直接被数字单片机处理，必须经过模数转换。<br><strong>📚 知识点讲解：</strong>A/D转换将连续的模拟电压转换为离散的数字量。<br><strong>💡 解题思路：</strong>正确。<br><strong>🧠 记忆口诀：</strong>模拟需转数字，A/D桥梁不可少。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "DS18B20只能连接一个传感器到单片机。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误。多个DS18B20可以并联在同一单总线上，通过唯一64位地址区分。<br><strong>📚 知识点讲解：</strong>单总线支持多点连接，理论上可挂接数十个传感器。<br><strong>💡 解题思路：</strong>\u201C只能\u201D过于绝对，错误。<br><strong>🧠 记忆口诀：</strong>单总线可多点挂，地址唯一不冲突。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "温度传感器的精度越高越好。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误。精度越高成本越高，应根据实际需求选择合适精度。<br><strong>📚 知识点讲解：</strong>在不需要高精度的场合，使用高精度传感器是浪费。<br><strong>💡 解题思路：</strong>够用就好，不是越高越好。<br><strong>🧠 记忆口诀：</strong>精度按需选，够用不浪费。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "DS18B20输出的12位数据中，前5位是温度值。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误。前5位是符号位，后11位才是温度值。<br><strong>📚 知识点讲解：</strong>12位数据中高5位为符号扩展位，低11位为温度数据。<br><strong>💡 解题思路：</strong>前5位符号，后11位数值。<br><strong>🧠 记忆口诀：</strong>前五符号后十一，温度数值要分清。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "负温度的转换需要进行补码运算。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确。DS18B20的负温度以补码形式存储，需取反加1得到原码再计算。<br><strong>📚 知识点讲解：</strong>补码是计算机表示负数的常用方法。<br><strong>💡 解题思路：</strong>正确。<br><strong>🧠 记忆口诀：</strong>负温补码存，取反加一再算。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "热电偶适合测量低温。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>错误。热电偶适合测量高温（可达上千摄氏度），热敏电阻适合测量中低温。<br><strong>📚 知识点讲解：</strong>热电偶利用塞贝克效应，测温范围宽，常用于工业高温测量。<br><strong>💡 解题思路：</strong>热电偶高温，热敏电阻低温。<br><strong>🧠 记忆口诀：</strong>热电偶测高温，热敏电阻中低温。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请比较NTC热敏电阻和DS18B20的优缺点。",
+            "answer": "NTC热敏电阻优点：价格低廉、体积小、响应速度快。缺点：输出非线性，需要温度校准和A/D转换。DS18B20优点：数字信号输出，无需A/D转换；精度高（±0.5℃）；可多个并联使用。缺点：价格略高。",
+            "keywords": ["NTC", "热敏电阻", "DS18B20", "模拟", "数字", "A/D转换", "精度", "价格", "非线性", "单总线"],
+            "analysis": "<strong>🎯 答案解析：</strong>NTC为模拟输出，需A/D转换，价格低；DS18B20为数字输出，精度高，支持多点连接。<br><strong>📚 知识点讲解：</strong>根据应用场景选择合适的传感器：简单低成本场合用NTC，需要高精度、多点测量用DS18B20。<br><strong>💡 解题思路：</strong>从输出类型、精度、接口、成本等方面对比。<br><strong>🧠 记忆口诀：</strong>NTC便宜但需转换，DS18B20数字精度高。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述DS18B20与Arduino的连接步骤。",
+            "answer": "（1）VCC接Arduino 5V或3.3V；（2）GND接GND；（3）DQ接任意数字I/O引脚（如2号引脚）；（4）DQ与VCC之间接4.7kΩ上拉电阻；（5）安装OneWire和DallasTemperature库；（6）编写程序初始化并读取温度。",
+            "keywords": ["VCC", "GND", "DQ", "上拉电阻", "4.7kΩ", "OneWire", "DallasTemperature"],
+            "analysis": "<strong>🎯 答案解析：</strong>硬件连接三步（电源、地、数据），加上拉电阻，软件方面需安装特定库。<br><strong>📚 知识点讲解：</strong>这是高中物联网实验的标准操作，必须掌握上拉电阻的作用和接法。<br><strong>💡 解题思路：</strong>按硬件连接和软件配置顺序回答。<br><strong>🧠 记忆口诀：</strong>电源地线数据线，上拉电阻中间连。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "某DS18B20输出的12位温度数据为0xFC90，请问对应的温度值是多少？请写出计算过程。",
+            "answer": "0xFC90二进制1111 1100 1001 0000，前5位为1表示负温。对后11位取反加1得000 0011 0111 0001，十进制881。温度= -881 × 0.0625℃ = -55.0625℃。",
+            "keywords": ["0xFC90", "负温度", "补码", "取反加一", "0.0625", "计算"],
+            "analysis": "<strong>🎯 答案解析：</strong>负温度需要将数据取反加一，再乘以分辨率0.0625，结果为-55.0625℃。<br><strong>📚 知识点讲解：</strong>DS18B20负温以补码形式存储，转换时需先判断符号位，再进行补码运算。<br><strong>💡 解题思路：</strong>先判断正负，负温取反加一，最后乘0.0625。<br><strong>🧠 记忆口诀：</strong>负温补码存，取反加一再乘分辨。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某同学想要设计一个简易的室内温度监测系统，使用Arduino和DS18B20传感器，要求：实时测量室内温度，串口显示温度值（保留一位小数），温度>30℃亮红灯，<20℃亮蓝灯，20~30℃亮绿灯。请回答以下问题：",
+            "tasks": ["（1）画出系统的硬件连接图", "（2）写出实现上述功能的Arduino代码", "（3）如果系统无法读取温度数据，可能的原因有哪些？"],
+            "answer": "（1）DS18B20 VCC接5V，GND接GND，DQ接引脚2，DQ与VCC间接4.7kΩ上拉电阻；红、绿、蓝LED正极分别接引脚3、4、5，负极串220Ω电阻到GND。（2）代码：使用OneWire和DallasTemperature库，在loop中读取温度，根据阈值控制LED。（3）原因：接线错误、上拉电阻未接或阻值错误、传感器损坏、引脚定义错误、库未安装。",
+            "keywords": [
+                ["DS18B20", "上拉电阻", "LED", "Arduino", "连接"],
+                ["OneWire", "DallasTemperature", "传感器", "读取", "温度"],
+                ["接线", "上拉电阻", "引脚", "库", "损坏"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）标准单总线接法加LED电路；（2）使用库简化编程；（3）故障排查从硬件到软件逐一分析。<br><strong>📚 知识点讲解：</strong>综合考察DS18B20的硬件连接、库使用和调试能力，是高中信息科技典型实验。<br><strong>💡 解题思路：</strong>逐题回答，硬件图描述关键连接，代码给出框架，故障列举常见问题。<br><strong>🧠 记忆口诀：</strong>测温系统三步走，连接编码排故障。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某农业大棚需要监测土壤温度，使用NTC热敏电阻作为温度传感器。已知该NTC在25℃时电阻为10kΩ，B值为3950。请回答：（1）画出NTC与Arduino的连接电路图；（2）写出将A/D值转换为温度值的公式；（3）若A/D值为512（10位A/D，参考电压5V），计算对应温度值。",
+            "tasks": ["（1）电路图设计", "（2）公式推导", "（3）具体计算"],
+            "answer": "（1）NTC一端接5V，另一端接模拟引脚A0和10kΩ固定电阻，固定电阻另一端接GND。（2）R = 10kΩ * (1023 / ADC - 1)；T = 1 / (1/298.15 + ln(R/10000)/3950) - 273.15。（3）R≈9.98kΩ，T≈25.05℃。",
+            "keywords": [
+                ["NTC", "分压电路", "A/D转换", "10kΩ"],
+                ["B值", "3950", "公式", "温度计算"],
+                ["计算", "9.98kΩ", "25.05℃"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）标准分压电路；（2）先求NTC电阻，再用B参数公式求温度；（3）代入数值计算，结果约为25.05℃。<br><strong>📚 知识点讲解：</strong>NTC测温需要掌握电阻-温度转换，B参数公式是核心。<br><strong>💡 解题思路：</strong>分压求电阻，再代入B公式计算温度。<br><strong>🧠 记忆口诀：</strong>分压求阻值，B公式算温度。"
+        }];
+
+        const APP_ID = 'temp_sensor_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextInputType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getAnswerStatus(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return 'unanswered';
+            if (isChoiceType(q)) return a === q.answer ? 'correct' : 'wrong';
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return 'unanswered';
+                const hr = a.hitRate || 0;
+                if (hr >= 0.8) return 'correct';
+                if (hr >= 0.4) return 'partial';
+                return 'wrong';
+            }
+            return 'unanswered';
+        }
+
+        function isAnswerCorrect(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(q)) return a === q.answer;
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return false;
+                const hr = a.hitRate || 0;
+                if (q.type === '简答题') return hr >= 0.6;
+                if (q.type === '综合应用题') return hr >= 0.7;
+                return hr >= 0.6;
+            }
+            return false;
+        }
+
+        function isAnswered(index) {
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(questions[index])) return typeof a === 'number';
+            if (isTextInputType(questions[index])) return a && a.submitted === true;
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '温度传感器的实现与数据转换';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>温度传感器是<strong>物联网感知层最基础、应用最广泛的传感器之一</strong>，将温度转换为电信号。</p>
+                <h3>🔑 核心要点</h3>
+                <p><strong>1. NTC热敏电阻（模拟型）</strong></p>
+                <ul><li>负温度系数，电阻随温度升高而减小</li><li>价格低廉，需要A/D转换和校准</li></ul>
+                <p><strong>2. DS18B20（数字型）</strong></p>
+                <ul><li>单总线通信，仅需一根数据线</li><li>精度±0.5℃，分辨率可配置，支持多点连接</li><li>必须接4.7kΩ上拉电阻</li></ul>
+                <p><strong>3. 温度数据转换</strong></p>
+                <ul><li>DS18B20输出12位数据，前5位符号，后11位数值</li><li>温度值 = 数值 × 0.0625℃</li><li>负温度以补码形式存储，需取反加一</li></ul>
+                <h3>⚠️ 易错提醒</h3>
+                <ul><li>NTC与PTC不要混淆；上拉电阻必须接；负温需补码运算。</li></ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveIndex() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices[Math.min(currentIndex, reviewIndices.length - 1)];
+            return currentIndex;
+        }
+
+        function getEffectiveTotal() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            const contentArea = document.getElementById('quizContent');
+            const aVal = answers[effIndex];
+            let diffClass = '';
+            if (q.difficulty === '基础') diffClass = 'diff-basic';
+            else if (q.difficulty === '中档') diffClass = 'diff-mid';
+            else if (q.difficulty === '提高') diffClass = 'diff-high';
+
+            let html = `<div class="question-card"><span class="question-type ${diffClass}">${q.type} · ${q.difficulty || ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.tableData) html += q.tableData;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = (aVal !== null && aVal !== undefined && typeof aVal === 'number') && aVal === idx;
+                    const isCorrectAns = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (aVal !== null && aVal !== undefined && typeof aVal === 'number') {
+                        if (isSelected && isCorrectAns) classes.push('correct');
+                        else if (isSelected && !isCorrectAns) classes.push('wrong');
+                        else if (isCorrectAns) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (isTextInputType(q)) {
+                const isSubmitted = aVal && aVal.submitted;
+                const userInput = (aVal && aVal.userInput) ? aVal.userInput : '';
+                if (q.tasks && q.tasks.length > 0) {
+                    html += `<ol class="task-list">`;
+                    q.tasks.forEach(t => { html += `<li>${t}</li>`; });
+                    html += `</ol>`;
+                }
+                html += `<textarea class="textarea-input" id="textAnswerInput" placeholder="请在此输入你的回答..." ${isSubmitted ? 'disabled' : ''}>${userInput}</textarea>`;
+                if (!isSubmitted) {
+                    html += `<div class="submit-row">
+                        <button class="draft-btn" onclick="saveDraft(${effIndex})"><i class="fas fa-save"></i> 保存草稿</button>
+                        <button class="clear-input-btn" onclick="clearInput(${effIndex})"><i class="fas fa-eraser"></i> 清空输入</button>
+                        <button class="submit-btn" onclick="submitTextAnswer(${effIndex})"><i class="fas fa-check-circle"></i> 提交作答</button>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+
+            if (isAnswered(effIndex)) {
+                const status = getAnswerStatus(effIndex);
+                let badgeHtml = '';
+                if (status === 'correct') badgeHtml = '<span class="result-badge correct">✓ 回答正确</span>';
+                else if (status === 'partial') badgeHtml = '<span class="result-badge partial">△ 部分正确</span>';
+                else badgeHtml = '<span class="result-badge wrong">✗ 回答错误</span>';
+
+                if (isTextInputType(q) && aVal && aVal.submitted) {
+                    const hr = aVal.hitRate || 0;
+                    const hrPercent = Math.round(hr * 100);
+                    let hrClass = 'weak', tagHtml = '<span class="tag-weak">需加强</span>';
+                    if (q.type === '简答题') {
+                        if (hr >= 0.6) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">回答较好</span>'; }
+                        else if (hr >= 0.3) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">部分正确</span>'; }
+                    } else if (q.type === '综合应用题') {
+                        if (hr >= 0.85) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">优秀</span>'; }
+                        else if (hr >= 0.7) { hrClass = 'good'; tagHtml = '<span class="tag-good">良好</span>'; }
+                        else if (hr >= 0.5) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">合格</span>'; }
+                    }
+                    html += `<div class="analysis-card" style="padding:16px; margin-top:16px;">
+                        <p><strong>📝 你的回答：</strong></p>
+                        <div style="background:#fafafa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre-wrap;">${escapeHtml(aVal.userInput || '')}</div>
+                        <p><strong>关键词命中率：</strong>${tagHtml} <span style="font-weight:700;">${hrPercent}%</span></p>
+                        <div class="hit-rate-bar"><div class="hit-rate-fill ${hrClass}" style="width:${hrPercent}%"></div></div>
+                        ${aVal.hitKeywords && aVal.hitKeywords.length > 0 ? `<p><strong>✅ 命中关键词：</strong>${aVal.hitKeywords.map(k => '<span class="highlight-hit">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        ${aVal.missedKeywords && aVal.missedKeywords.length > 0 ? `<p><strong>❌ 未命中关键词：</strong>${aVal.missedKeywords.map(k => '<span class="highlight-miss">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        <p style="margin-top:10px;"><strong>📋 标准答案：</strong>${q.answer}</p>
+                    </div>`;
+                }
+
+                html += `<div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 答案分析 ${badgeHtml}</div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                </div>`;
+            }
+
+            const allAnsweredInScope = reviewMode ? reviewIndices.every(i => isAnswered(i)) : questions.every((_, i) => isAnswered(i));
+            const lastInScope = (currentIndex >= getEffectiveTotal() - 1);
+
+            if (lastInScope && allAnsweredInScope && !reviewMode) {
+                let totalQ = questions.length, correctCount = 0;
+                questions.forEach((_, i) => { if (isAnswerCorrect(i)) correctCount++; });
+                const accuracy = Math.round(correctCount / totalQ * 100);
+                saveToHistory(correctCount, accuracy);
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">🎉</div>
+                    <h1 class="completion-title">刷题完成！</h1>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${totalQ}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()"><i class="fas fa-redo"></i> 重新开始</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-exclamation-triangle"></i> 回看错题</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            if (lastInScope && allAnsweredInScope && reviewMode) {
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">📋</div>
+                    <h1 class="completion-title">错题回顾完成！</h1>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="exitReviewMode()"><i class="fas fa-arrow-left"></i> 返回刷题</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-redo"></i> 再次回看</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effIndex = getEffectiveIndex();
+            if (!isChoiceType(questions[effIndex])) return;
+            if (answers[effIndex] !== null && typeof answers[effIndex] === 'number') return;
+            answers[effIndex] = idx;
+            saveAnswers();
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            showToast(idx === questions[effIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const userInput = textarea.value.trim();
+            if (!userInput) { showToast('请输入你的回答后再提交'); return; }
+            const q = questions[effIndex];
+            let allKeywords = [];
+            if (q.type === '简答题') allKeywords = q.keywords || [];
+            else if (q.type === '综合应用题' && q.keywords && Array.isArray(q.keywords)) {
+                q.keywords.forEach(kArr => { if (Array.isArray(kArr)) allKeywords = allKeywords.concat(kArr); });
+            }
+            const hitKeywords = [], missedKeywords = [];
+            const inputLower = userInput.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (inputLower.includes(kw.toLowerCase())) hitKeywords.push(kw);
+                else missedKeywords.push(kw);
+            });
+            const hitRate = allKeywords.length > 0 ? hitKeywords.length / allKeywords.length : 0;
+            answers[effIndex] = { userInput, submitted: true, hitRate, hitKeywords, missedKeywords, totalKeywords: allKeywords.length };
+            saveAnswers();
+            clearDraft(effIndex);
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            const hrPercent = Math.round(hitRate * 100);
+            if (q.type === '简答题') {
+                if (hitRate >= 0.6) showToast(`回答较好！命中率 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.3) showToast(`部分正确，命中率 ${hrPercent}%`);
+                else showToast(`需加强，命中率 ${hrPercent}%`);
+            } else {
+                if (hitRate >= 0.85) showToast(`优秀！完成度 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.7) showToast(`良好！完成度 ${hrPercent}%`);
+                else if (hitRate >= 0.5) showToast(`合格，完成度 ${hrPercent}%`);
+                else showToast(`需加强，完成度 ${hrPercent}%`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveDraft(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const drafts = getDrafts(); drafts[effIndex] = textarea.value;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+            showToast('草稿已保存 ✓');
+        }
+
+        function clearInput(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            if (textarea.value.trim() && !confirm('确定要清空输入内容吗？')) return;
+            textarea.value = '';
+            clearDraft(effIndex);
+            showToast('输入已清空');
+        }
+
+        function getDrafts() { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; }
+        function clearDraft(effIndex) { const drafts = getDrafts(); delete drafts[effIndex]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('恭喜！没有错题需要回顾 🎉'); return; }
+            reviewMode = true; reviewIndices = wrongIndices; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; reviewIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast('已返回正常刷题模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('没有错题可导出'); return; }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题号,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongIndices.forEach(i => {
+                const q = questions[i]; const aVal = answers[i];
+                let userAnswerStr = '', correctAnswerStr = '', hitRateStr = '', resultStr = '';
+                if (isChoiceType(q)) {
+                    const selectedLabel = (typeof aVal === 'number' && aVal >= 0 && q.options[aVal]) ? q.options[aVal].label : '未作答';
+                    const correctLabel = q.options[q.answer] ? q.options[q.answer].label : '';
+                    userAnswerStr = selectedLabel; correctAnswerStr = correctLabel;
+                    hitRateStr = (typeof aVal === 'number' && aVal === q.answer) ? '100%' : '0%';
+                    resultStr = (typeof aVal === 'number' && aVal === q.answer) ? '正确' : '错误';
+                } else if (isTextInputType(q)) {
+                    userAnswerStr = (aVal && aVal.userInput) ? aVal.userInput.replace(/\n/g, ' ').replace(/"/g, '""') : '未作答';
+                    correctAnswerStr = q.answer ? q.answer.replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                    hitRateStr = (aVal && aVal.submitted) ? Math.round((aVal.hitRate || 0) * 100) + '%' : '未提交';
+                    const hr = (aVal && aVal.submitted) ? (aVal.hitRate || 0) : 0;
+                    if (q.type === '简答题') resultStr = hr >= 0.6 ? '回答较好' : (hr >= 0.3 ? '部分正确' : '需加强');
+                    else resultStr = hr >= 0.85 ? '优秀' : (hr >= 0.7 ? '良好' : (hr >= 0.5 ? '合格' : '需加强'));
+                }
+                const analysisPlain = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                csvContent += `"${q.type}","${i+1}","${q.stem.replace(/"/g,'""')}","${userAnswerStr}","${correctAnswerStr}","${hitRateStr}","${resultStr}","${analysisPlain}"\n`;
+            });
+            const dateStr = new Date().toISOString().slice(0,10);
+            const filename = `错题本_温度传感器_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); link.href = url; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast(`错题已导出：${filename}`);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling, icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < getEffectiveTotal() - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            let answeredCount = 0;
+            const scope = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            scope.forEach(i => { if (isAnswered(i)) answeredCount++; });
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = effectiveTotal;
+            document.getElementById('progressFill').style.width = effectiveTotal > 0 ? `${(answeredCount / effectiveTotal) * 100}%` : '0%';
+            if (reviewMode) document.getElementById('questionInfo').querySelector('.progress-text').textContent = `错题回顾 · ${answeredCount}/${effectiveTotal} 已答`;
+        }
+
+        function updateNavButtons() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('footerContent').innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${currentIndex >= effectiveTotal - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay'), panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid'); let html = '';
+            questions.forEach((q, index) => {
+                const status = getAnswerStatus(index);
+                let statusClass = 'unanswered', statusText = '未答';
+                if (status === 'correct') { statusClass = 'correct'; statusText = '正确'; }
+                else if (status === 'wrong') { statusClass = 'wrong'; statusText = '错误'; }
+                else if (status === 'partial') { statusClass = 'partial'; statusText = '部分'; }
+                if (index === getEffectiveIndex() && !reviewMode) statusClass += ' current';
+                if (reviewMode && reviewIndices.includes(index) && reviewIndices.indexOf(index) === currentIndex) statusClass += ' current';
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && status !== 'unanswered') return;
+                    if (currentFilter === 'correct' && status !== 'correct') return;
+                    if (currentFilter === 'wrong' && status !== 'wrong' && status !== 'partial') return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index+1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) { const pos = reviewIndices.indexOf(index); if (pos >= 0) currentIndex = pos; else { reviewMode = false; reviewIndices = []; currentIndex = index; } }
+            else currentIndex = index;
+            renderQuestion(); updateNavButtons(); toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay'), panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList'), history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            history.unshift({ timestamp: Date.now(), totalCount: questions.length, correctCount, accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = record.answers.map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    return a;
+                });
+                currentIndex = 0; reviewMode = false; reviewIndices = [];
+                saveAnswers();
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion(); updateNavButtons(); toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() {
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers: serializableAnswers, reviewMode, reviewIndices }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0; reviewMode = data.reviewMode || false; reviewIndices = data.reviewIndices || [];
+                answers = (data.answers || new Array(questions.length).fill(null)).map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    if (isChoiceType(questions[i]) && typeof a === 'number') return a;
+                    return null;
+                });
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            const drafts = getDrafts();
+            if (Object.keys(drafts).length > 0) {
+                Object.keys(drafts).forEach(idx => {
+                    const i = parseInt(idx);
+                    if (i >= 0 && i < questions.length && isTextInputType(questions[i]) && !isAnswered(i)) {
+                        if (!answers[i] || !answers[i].submitted) { if (!answers[i]) answers[i] = { userInput: drafts[idx], submitted: false, hitRate: 0, hitKeywords: [], missedKeywords: [], totalKeywords: 0 }; else if (!answers[i].submitted) answers[i].userInput = drafts[idx]; }
+                    }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm('确定要重新开始吗？当前进度将被清除。')) return;
+            currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+            localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message;
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div'); div.textContent = str; return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

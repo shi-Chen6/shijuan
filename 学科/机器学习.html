@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>机器学习刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-type.diff-basic {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        .question-type.diff-mid {
+            background: #fffbe6;
+            color: #d48806;
+        }
+        .question-type.diff-high {
+            background: #fff2f0;
+            color: #cf1322;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 2000px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .analysis-content .highlight-hit {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #155724;
+            font-weight: 600;
+        }
+        .analysis-content .highlight-miss {
+            background: #f8d7da;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #721c24;
+            font-weight: 600;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.partial {
+            border-color: var(--warning-color);
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-btn {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffd591;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .textarea-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        .textarea-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .task-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .submit-btn,
+        .draft-btn,
+        .clear-input-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .draft-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .clear-input-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .submit-btn:active,
+        .draft-btn:active,
+        .clear-input-btn:active {
+            transform: scale(0.97);
+        }
+        .hit-rate-bar {
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .hit-rate-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .hit-rate-fill.excellent {
+            background: var(--success-color);
+        }
+        .hit-rate-fill.good {
+            background: #73d13d;
+        }
+        .hit-rate-fill.ok {
+            background: var(--warning-color);
+        }
+        .hit-rate-fill.weak {
+            background: var(--error-color);
+        }
+        .tag-excellent {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .tag-good {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #d4edda;
+            color: #389e0d;
+        }
+        .tag-ok {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .tag-weak {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">机器学习（高中信息科技）</div>
+                        <div class="progress-text">人工智能核心 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列关于机器学习的说法，正确的是（ ）",
+            "options": [{ "label": "A", "text": "机器学习就是人工智能的全部" }, { "label": "B",
+                "text": "机器学习需要人工编写所有规则" }, { "label": "C", "text": "机器学习让计算机能够从数据中学习规律" }, { "label": "D",
+                "text": "机器学习只能处理图像数据" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。机器学习让计算机能够从数据中自动学习规律，这是机器学习的核心特征。<br><strong>📚 知识点讲解：</strong>机器学习是人工智能的一个重要分支，但不是全部（A错）；传统程序需要人工编写明确规则，而机器学习是从数据中学习（B错）；机器学习可处理图像、文本、声音等多种数据（D错）。<br><strong>💡 解题思路：</strong>抓住关键词\u201C从数据中学习\u201D，排除绝对化表述如\u201C全部\u201D\u201C只能\u201D。监督学习需要标签数据，这是区分监督与无监督的关键。<br><strong>🧠 记忆口诀：</strong>机器学习从数来，非全非写非只图。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "机器学习的核心是（ ）",
+            "options": [{ "label": "A", "text": "编写复杂的程序代码" }, { "label": "B", "text": "从数据中学习规律" },
+            { "label": "C", "text": "提高计算机的运算速度" }, { "label": "D", "text": "设计美观的用户界面" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。机器学习的核心是让计算机从数据中自动学习规律和模式。<br><strong>📚 知识点讲解：</strong>机器学习与传统编程的本质区别在于：传统编程是人工编写规则处理数据，而机器学习是从数据中自动归纳规则。运算速度和界面设计都不是机器学习的核心目标。<br><strong>💡 解题思路：</strong>直接定位\u201C从数据中学习\u201D这一核心概念，其他选项均属于干扰项，与机器学习本质无关。<br><strong>🧠 记忆口诀：</strong>核心在学不在写，数据之中找规律。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列不属于机器学习基本流程的是（ ）",
+            "options": [{ "label": "A", "text": "数据收集与预处理" }, { "label": "B", "text": "特征工程" }, { "label": "C",
+                "text": "模型训练与评估" }, { "label": "D", "text": "编写操作系统" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。编写操作系统属于系统软件开发，不属于机器学习的基本流程。<br><strong>📚 知识点讲解：</strong>机器学习五大流程：数据收集与预处理→特征工程→模型选择与训练→模型评估与优化→模型部署与应用。特征工程是将原始数据转换为适合算法处理的关键步骤。<br><strong>💡 解题思路：</strong>熟记五步流程，编写操作系统显然与机器学习无关，属于\u201C凑选项\u201D的干扰项。<br><strong>🧠 记忆口诀：</strong>数特模评部，五步流程记心间。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "使用有标签数据进行训练的机器学习类型是（ ）",
+            "options": [{ "label": "A", "text": "监督学习" }, { "label": "B", "text": "无监督学习" }, { "label": "C",
+                "text": "强化学习" }, { "label": "D", "text": "自主学习" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。监督学习的核心特征就是使用有标签数据（即已知输入和对应输出）进行训练。<br><strong>📚 知识点讲解：</strong>三大学习类型的区分依据：监督学习有标签、无监督学习无标签、强化学习通过环境交互获得奖励信号。\u201C自主学习\u201D不是标准的机器学习类型划分。<br><strong>💡 解题思路：</strong>抓住\u201C有标签\u201D这个关键条件，直接对应监督学习。标签=监督，无标签=无监督，奖励=强化。<br><strong>🧠 记忆口诀：</strong>有标监督无标无，奖励信号是强化。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于监督学习任务的是（ ）",
+            "options": [{ "label": "A", "text": "将客户按照消费习惯分群" }, { "label": "B", "text": "识别垃圾邮件" }, { "label": "C",
+                "text": "发现数据中的异常值" }, { "label": "D", "text": "将高维数据可视化" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。识别垃圾邮件是典型的监督学习分类任务，需要已标注的邮件数据（垃圾/正常）来训练模型。<br><strong>📚 知识点讲解：</strong>客户分群属于无监督学习聚类；异常值检测通常属于无监督学习；高维数据可视化属于无监督学习降维。监督学习的常见任务包括分类和回归。<br><strong>💡 解题思路：</strong>判断是否需要标签数据：垃圾邮件识别需要事先标注哪些是垃圾邮件，因此是监督学习；其他三项均无需标签。<br><strong>🧠 记忆口诀：</strong>分类回归有监督，聚类降维无监督。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于无监督学习任务的是（ ）",
+            "options": [{ "label": "A", "text": "手写数字识别" }, { "label": "B", "text": "房价预测" }, { "label": "C",
+                "text": "客户分群" }, { "label": "D", "text": "语音识别" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。客户分群是无监督学习的聚类任务，算法自动将相似客户归为一类，无需预先标签。<br><strong>📚 知识点讲解：</strong>手写数字识别（分类）、房价预测（回归）、语音识别（分类）都需要有标签数据进行训练，属于监督学习。聚类和降维是无监督学习的两大主要任务。<br><strong>💡 解题思路：</strong>逐一分析是否需要标签：分群不需要知道客户属于哪个群体，算法自动发现；其他三项都需要标注数据。<br><strong>🧠 记忆口诀：</strong>无监督看聚类，客户分群是典型。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "分类任务的输出是（ ）",
+            "options": [{ "label": "A", "text": "连续的数值" }, { "label": "B", "text": "离散的类别标签" }, { "label": "C",
+                "text": "图像" }, { "label": "D", "text": "声音" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。分类任务输出离散的类别标签，如\u201C猫\u201D或\u201C狗\u201D、\u201C是\u201D或\u201C否\u201D。<br><strong>📚 知识点讲解：</strong>分类与回归的核心区别：分类输出离散类别，回归输出连续数值。这是监督学习的两大子任务，判断标准就是输出是离散还是连续。<br><strong>💡 解题思路：</strong>联想生活实例：判断邮件类型（离散标签）=分类，预测气温（连续数值）=回归。图像和声音是数据类型而非输出形式。<br><strong>🧠 记忆口诀：</strong>分类离散回归连，输出类型是关键。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "回归任务的输出是（ ）",
+            "options": [{ "label": "A", "text": "连续的数值" }, { "label": "B", "text": "离散的类别标签" }, { "label": "C",
+                "text": "图像" }, { "label": "D", "text": "声音" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。回归任务预测连续的数值结果，如温度、价格、降雨量等。<br><strong>📚 知识点讲解：</strong>回归任务广泛应用于经济预测、气象预报等领域。与分类任务形成对比：分类回答\u201C是哪个\u201D，回归回答\u201C是多少\u201D。<br><strong>💡 解题思路：</strong>记住回归的典型应用：房价预测、股票预测、气温预测，输出的都是数字，且数字之间可以比较大小、计算差值。<br><strong>🧠 记忆口诀：</strong>回归输出连续数，分类输出类别标。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于分类任务的是（ ）",
+            "options": [{ "label": "A", "text": "预测明天的气温" }, { "label": "B", "text": "判断邮件是否为垃圾邮件" },
+            { "label": "C", "text": "预测股票价格" }, { "label": "D", "text": "预测房屋的销售价格" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。判断邮件是否为垃圾邮件输出的是离散类别（\u201C是\u201D或\u201C否\u201D），属于分类任务。<br><strong>📚 知识点讲解：</strong>A、C、D的输出都是连续的数值（温度、价格），属于回归任务。分类任务的输出是有限的几个类别之一。<br><strong>💡 解题思路：</strong>快速判断法：问自己\u201C输出能不能用数字尺子量\u201D——能量的是回归，只能选类别的是分类。<br><strong>🧠 记忆口诀：</strong>是否判断属分类，数值预测属回归。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于回归任务的是（ ）",
+            "options": [{ "label": "A", "text": "识别手写数字" }, { "label": "B", "text": "判断水果的种类" }, { "label": "C",
+                "text": "预测未来一周的降雨量" }, { "label": "D", "text": "检测图片中的人脸" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。预测降雨量输出的是连续数值（毫米），属于回归任务。<br><strong>📚 知识点讲解：</strong>识别手写数字（0-9中的某一个）和判断水果种类都是分类任务；人脸检测通常也是分类任务（有人脸/无人脸）。只有降雨量预测是回归。<br><strong>💡 解题思路：</strong>降雨量是连续变化的数值，可以精确到小数，这是回归任务的典型特征。手写数字虽然多但仍是离散类别。<br><strong>🧠 记忆口诀：</strong>降雨量可量，回归任务当。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于监督学习和无监督学习的区别，说法正确的是（ ）",
+            "options": [{ "label": "A", "text": "监督学习处理的数据量更大" }, { "label": "B",
+                "text": "无监督学习的准确率更高" }, { "label": "C", "text": "监督学习使用有标签数据，无监督学习使用无标签数据" }, { "label": "D",
+                "text": "监督学习只能处理分类任务，无监督学习只能处理聚类任务" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。监督学习与无监督学习的本质区别在于训练数据是否带有标签。<br><strong>📚 知识点讲解：</strong>数据量大小和准确率高低不是两者的本质区别（A、B错）；监督学习可处理分类和回归，无监督学习可处理聚类和降维（D错）。标签的有无是唯一可靠的区分标准。<br><strong>💡 解题思路：</strong>排除绝对化表述\u201C只能\u201D，回归本质区别\u201C是否有标签\u201D。这是高频考点，务必牢记。<br><strong>🧠 记忆口诀：</strong>有标无标分两类，标签有无是根本。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "某电商平台根据用户的浏览历史和购买记录，向用户推荐可能感兴趣的商品。这主要使用了（ ）",
+            "options": [{ "label": "A", "text": "监督学习" }, { "label": "B", "text": "无监督学习" }, { "label": "C",
+                "text": "强化学习" }, { "label": "D", "text": "规则学习" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。推荐系统通常使用监督学习技术，利用用户的历史行为数据（有标签：点击/购买/未购买）来预测用户偏好。<br><strong>📚 知识点讲解：</strong>推荐系统是监督学习的典型应用，训练数据包含用户特征和对应的行为标签。协同过滤、矩阵分解等推荐算法大多属于监督学习范畴。<br><strong>💡 解题思路：</strong>推荐系统需要\u201C历史数据中的标签\u201D（买了/没买、看了/没看），因此是监督学习。强化学习用于游戏AI等序贯决策场景。<br><strong>🧠 记忆口诀：</strong>推荐系统监督学，历史标签来帮忙。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列应用中，使用了强化学习技术的是（ ）",
+            "options": [{ "label": "A", "text": "人脸识别解锁手机" }, { "label": "B", "text": "AlphaGo下围棋" }, { "label": "C",
+                "text": "语音转文字" }, { "label": "D", "text": "垃圾邮件过滤" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。AlphaGo通过与环境（棋盘）交互，根据赢棋或输棋的奖励信号不断优化策略，是强化学习的经典应用。<br><strong>📚 知识点讲解：</strong>强化学习的核心要素：智能体、环境、奖励信号。AlphaGo的每一次落子都会影响最终胜负（奖励），通过大量自我对弈学习最优策略。A、C、D都属于监督学习。<br><strong>💡 解题思路：</strong>强化学习的标志性特征是\u201C与环境交互获得奖励\u201D，围棋对弈完美符合这一特征：每步棋都是与棋盘环境的交互，最终胜负是奖励信号。<br><strong>🧠 记忆口诀：</strong>AlphaGo下围棋，强化学习最典型。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "在机器学习中，将原始数据转换为对解决问题有帮助的表示形式的过程称为（ ）",
+            "options": [{ "label": "A", "text": "数据清洗" }, { "label": "B", "text": "特征工程" }, { "label": "C",
+                "text": "模型训练" }, { "label": "D", "text": "模型评估" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。特征工程是将原始数据转换为更适合机器学习算法处理的特征表示的过程。<br><strong>📚 知识点讲解：</strong>特征工程是机器学习流程中的关键步骤，包括特征提取、特征选择和特征转换。好的特征工程能显著提升模型性能。数据清洗是处理缺失值和噪声，模型训练是调整参数，模型评估是测试性能。<br><strong>💡 解题思路：</strong>抓住\u201C转换表示形式\u201D这一描述，正是特征工程的核心含义。数据清洗是\u201C去除脏数据\u201D，不是\u201C转换形式\u201D。<br><strong>🧠 记忆口诀：</strong>特征工程转形式，数据清洗去脏污。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于机器学习伦理问题的说法，错误的是（ ）",
+            "options": [{ "label": "A", "text": "机器学习模型可能会因为训练数据的偏差而产生歧视" }, { "label": "B",
+                "text": "机器学习应用需要保护用户的个人隐私" }, { "label": "C", "text": "机器学习模型的决策过程应该是透明的、可解释的" }, { "label": "D",
+                "text": "机器学习技术的发展不会带来任何社会问题" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。\u201C不会带来任何社会问题\u201D是明显错误的绝对化表述。机器学习技术确实带来了隐私、偏见、就业结构变化等社会问题。<br><strong>📚 知识点讲解：</strong>机器学习伦理三大关注点：算法偏见（训练数据偏差导致歧视）、数据隐私（个人信息保护）、可解释性（决策过程透明度）。这些是新课标明确要求高中生了解的内容。<br><strong>💡 解题思路：</strong>看到\u201C任何\u201D\u201C绝对\u201D\u201C永远\u201D等词汇要提高警惕，在伦理问题上几乎没有绝对正确的极端表述。<br><strong>🧠 记忆口诀：</strong>偏见隐私可解释，伦理问题要重视。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "机器学习是人工智能的一个重要分支。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。机器学习是人工智能的核心分支，是实现人工智能的重要技术途径。<br><strong>📚 知识点讲解：</strong>人工智能是宏大的学科领域，机器学习是其子集，深度学习又是机器学习的子集。三者是包含关系：AI ⊃ ML ⊃ DL。<br><strong>💡 解题思路：</strong>这是基础概念题，记住人工智能、机器学习、深度学习的包含关系即可正确判断。<br><strong>🧠 记忆口诀：</strong>AI大框ML中，深度学习最里层。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "传统程序和机器学习一样，都是从数据中学习规律。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。传统程序需要人工编写明确的规则，而机器学习是让计算机从数据中自动学习规律。<br><strong>📚 知识点讲解：</strong>这是机器学习与传统编程最本质的区别。传统编程：数据+规则→输出；机器学习：数据+输出→规则。两者路径完全不同。<br><strong>💡 解题思路：</strong>传统程序依赖人工规则，机器学习依赖数据驱动。说两者\u201C一样\u201D显然是错误的。<br><strong>🧠 记忆口诀：</strong>传统靠人写规则，机器学习数据找。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "数据预处理是机器学习流程中非常重要的一步。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。原始数据通常存在噪声、缺失值、异常值等问题，数据预处理能提高数据质量，从而提升模型性能。<br><strong>📚 知识点讲解：</strong>数据预处理包括数据清洗（去噪、补全缺失值）、数据归一化、数据增强等。业界有\u201C数据和特征决定了机器学习的上限\u201D的说法。<br><strong>💡 解题思路：</strong>垃圾进垃圾出——数据质量直接影响模型质量，预处理的重要性不言而喻。<br><strong>🧠 记忆口诀：</strong>数据预处理，模型地基牢。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "监督学习的训练数据中包含输入和对应的输出标签。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。监督学习的训练数据由输入特征和对应的输出标签组成，这是监督学习的定义性特征。<br><strong>📚 知识点讲解：</strong>例如在手写数字识别中，输入是手写数字图片，输出标签是对应的数字（0-9）。算法通过学习输入到输出的映射关系来进行预测。<br><strong>💡 解题思路：</strong>这是监督学习的基本定义，记住\u201C有标签=监督\u201D即可正确判断。<br><strong>🧠 记忆口诀：</strong>监督学习有标签，输入输出配对学。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "无监督学习可以自动发现数据中隐藏的结构。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。无监督学习的核心能力就是在没有标签的情况下自动发现数据中隐藏的结构和规律。<br><strong>📚 知识点讲解：</strong>例如聚类算法可以自动将相似的数据样本归为一类，无需人工预先定义类别。这就像在杂乱的书架中自动将同类书籍归到一起。<br><strong>💡 解题思路：</strong>\u201C自动发现隐藏结构\u201D正是无监督学习的核心价值所在。<br><strong>🧠 记忆口诀：</strong>无监督自动找，隐藏结构跑不了。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "分类任务和回归任务都属于监督学习。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。分类和回归都需要使用有标签数据进行训练，因此都属于监督学习的范畴。<br><strong>📚 知识点讲解：</strong>监督学习的两大子任务：分类（输出离散类别）和回归（输出连续数值）。两者共享\u201C需要标签数据\u201D这一前提条件。<br><strong>💡 解题思路：</strong>分类和回归都需要标签数据来训练，自然都属于监督学习。<br><strong>🧠 记忆口诀：</strong>分类回归两兄弟，同属监督大家庭。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "聚类任务属于无监督学习。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。聚类任务不需要标签数据，算法自动将相似样本归为一类，属于无监督学习。<br><strong>📚 知识点讲解：</strong>聚类的典型应用包括客户分群、图像分割、文档聚类等。与分类不同，聚类不需要预先知道有哪些类别。<br><strong>💡 解题思路：</strong>聚类=无监督，分类=监督。这是需要牢记的对应关系。<br><strong>🧠 记忆口诀：</strong>聚类无监督，分类有监督。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "模型在训练数据上的准确率越高，在测试数据上的准确率也一定越高。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。训练准确率过高可能是过拟合的表现，模型在训练数据上表现很好但在测试数据上表现很差。<br><strong>📚 知识点讲解：</strong>过拟合是指模型过度\u201C记忆\u201D了训练数据的细节和噪声，导致泛化能力下降。好的模型应在训练集和测试集上都有良好表现。<br><strong>💡 解题思路：</strong>看到\u201C一定\u201D要提高警惕。过拟合是机器学习中的常见问题，训练好≠测试好。<br><strong>🧠 记忆口诀：</strong>训练过高恐过拟合，泛化能力要关注。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "强化学习中，智能体通过与环境交互获得奖励信号来学习。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。智能体通过与环境的交互获得奖励或惩罚信号，并据此调整行为策略，这是强化学习的核心机制。<br><strong>📚 知识点讲解：</strong>强化学习三要素：智能体（Agent）、环境（Environment）、奖励信号（Reward）。智能体的目标是最大化长期累积奖励。<br><strong>💡 解题思路：</strong>这是强化学习的基本定义，\u201C交互-奖励-学习\u201D是强化学习的标志性循环。<br><strong>🧠 记忆口诀：</strong>交互获奖励，强化学习核心机。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "机器学习技术的应用不会产生任何伦理问题。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。机器学习应用可能带来数据隐私泄露、算法歧视、就业结构变化、责任归属不清等一系列伦理和社会问题。<br><strong>📚 知识点讲解：</strong>新课标明确要求高中生了解机器学习的伦理问题，包括算法偏见、数据隐私、可解释性等。技术从来不是价值中立的。<br><strong>💡 解题思路：</strong>看到\u201C任何\u201D立即警惕。任何技术都可能带来负面问题，机器学习也不例外。<br><strong>🧠 记忆口诀：</strong>技术非中立，伦理要关注。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述机器学习的基本流程。",
+            "answer": "机器学习的基本流程包括五个步骤：（1）数据收集与预处理：获取原始数据并进行清洗、去噪、缺失值处理、归一化等操作；（2）特征工程：从原始数据中提取对解决问题有帮助的关键特征；（3）模型选择与训练：选择合适的算法，使用训练数据调整模型参数；（4）模型评估与优化：使用测试数据评估模型性能，调整参数或更换算法；（5）模型部署与应用：将训练好的模型应用于实际问题。",
+            "keywords": ["数据收集", "预处理", "特征工程", "模型训练", "模型评估", "部署", "清洗", "归一化", "特征提取", "参数调整", "测试数据", "优化"],
+            "analysis": "<strong>🎯 答案解析：</strong>机器学习的基本流程包含五个核心步骤：数据收集与预处理→特征工程→模型选择与训练→模型评估与优化→模型部署与应用。<br><strong>📚 知识点讲解：</strong>这五个步骤构成了完整的机器学习项目生命周期。数据预处理确保数据质量，特征工程提升数据表达能力，模型训练是核心环节，评估优化保证泛化能力，部署应用实现价值落地。<br><strong>💡 解题思路：</strong>按流程顺序回答，每个步骤简要说明其作用。注意不要遗漏特征工程和模型评估这两个关键环节。<br><strong>🧠 记忆口诀：</strong>数特模评部，五步流程要记熟；数据清洗打基础，特征工程提质量。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请分别说明监督学习和无监督学习的特点，并各举一个生活中的应用实例。",
+            "answer": "监督学习的特点：使用有标签数据进行训练，训练数据中包含输入和对应的输出标签，目标是学习输入到输出的映射关系。应用实例：垃圾邮件识别（根据邮件内容判断是否为垃圾邮件）。无监督学习的特点：使用无标签数据进行训练，训练数据中只有输入没有输出标签，目标是发现数据中隐藏的结构和规律。应用实例：客户分群（根据消费习惯将客户分为不同群体）。",
+            "keywords": ["有标签", "无标签", "映射关系", "隐藏结构", "垃圾邮件", "客户分群", "分类", "聚类", "监督", "无监督", "标签数据", "自动发现"],
+            "analysis": "<strong>🎯 答案解析：</strong>监督学习有标签、学映射；无监督学习无标签、找结构。分别对应垃圾邮件识别和客户分群两个典型应用。<br><strong>📚 知识点讲解：</strong>两者的本质区别在于训练数据是否包含标签。监督学习像\u201C有答案的学习\u201D，无监督学习像\u201C自己找规律的学习\u201D。分类和回归属于监督学习，聚类和降维属于无监督学习。<br><strong>💡 解题思路：</strong>分别从\u201C数据特点\u201D和\u201C学习目标\u201D两个维度回答，并确保所举实例能准确对应各自类型。<br><strong>🧠 记忆口诀：</strong>有标监督学映射，无标无监找结构；垃圾邮件监督例，客户分群无监用。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "某银行想要开发一个机器学习模型来判断贷款申请人是否会违约。请问这属于什么类型的机器学习任务？为什么？在开发这个模型的过程中，可能会遇到哪些伦理问题？",
+            "answer": "这属于监督学习中的分类任务。因为银行有历史贷款申请人的数据，包含申请人的各种信息（输入）和对应的是否违约的结果（标签），目标是训练模型预测新申请人是否会违约（输出离散类别标签：违约/不违约）。可能遇到的伦理问题：（1）算法偏见：如果训练数据中存在对特定群体的歧视性数据，模型可能会学习到这些偏见，导致不公平对待；（2）数据隐私：申请人的收入、职业、信用记录等敏感信息需要严格保护；（3）可解释性：如果模型决策过程不透明，银行无法向申请人解释拒绝贷款的原因。",
+            "keywords": ["监督学习", "分类", "标签", "违约", "离散类别", "算法偏见", "数据隐私", "可解释性", "歧视", "敏感信息", "透明", "不公平"],
+            "analysis": "<strong>🎯 答案解析：</strong>这是监督学习中的分类任务，因为使用了历史标签数据来预测离散的违约结果。伦理问题主要涉及算法偏见、数据隐私和可解释性三个方面。<br><strong>📚 知识点讲解：</strong>金融风控是机器学习分类任务的典型应用场景。分类任务的特征是输出离散类别（违约/不违约），区别于回归任务输出连续数值。伦理问题是新课标重点内容。<br><strong>💡 解题思路：</strong>先判断任务类型（有标签→监督学习，离散输出→分类），再结合金融场景分析伦理风险。注意从多个角度（公平性、隐私、透明度）展开。<br><strong>🧠 记忆口诀：</strong>银行风控属分类，偏见隐私可解释，伦理三问要牢记。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "下表是某数据集的部分样本，每个样本包含3个特征（身高、体重、性别）和1个标签（是否喜欢打篮球）。请回答以下问题：",
+            "tasks": ["（1）这个数据集适合用于训练哪种类型的机器学习模型？为什么？",
+                "（2）这个任务属于分类任务还是回归任务？为什么？",
+                "（3）如果我们想要用这个数据集训练一个模型来预测一个人是否喜欢打篮球，应该选择哪些特征？为什么？"
+            ],
+            "tableData": "<table class='knowledge-table'><tr><th>样本编号</th><th>身高(cm)</th><th>体重(kg)</th><th>性别</th><th>是否喜欢打篮球</th></tr><tr><td>1</td><td>180</td><td>75</td><td>男</td><td>是</td></tr><tr><td>2</td><td>165</td><td>55</td><td>女</td><td>否</td></tr><tr><td>3</td><td>175</td><td>70</td><td>男</td><td>是</td></tr><tr><td>4</td><td>155</td><td>45</td><td>女</td><td>否</td></tr><tr><td>5</td><td>190</td><td>85</td><td>男</td><td>是</td></tr><tr><td>6</td><td>170</td><td>60</td><td>女</td><td>否</td></tr></table>",
+            "answer": "（1）适合训练监督学习模型。因为数据集中的每个样本都有明确的标签（是否喜欢打篮球），可以使用有标签数据训练模型学习输入特征到输出标签的映射关系。（2）属于分类任务。因为目标是预测离散的类别标签（\u201C是\u201D或\u201C否\u201D），而不是连续的数值。（3）可以选择身高、体重和性别三个特征。从数据中可以看出，身高较高、体重较重的男性通常喜欢打篮球，这三个特征与目标标签有较强的相关性。",
+            "keywords": [
+                ["监督学习", "有标签", "标签数据", "映射关系"],
+                ["分类任务", "离散", "类别标签", "是或否"],
+                ["身高", "体重", "性别", "相关性", "特征选择"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）监督学习，因为数据有标签；（2）分类任务，因为输出是离散的是/否；（3）选择身高、体重、性别三个特征，它们与目标变量有显著相关性。<br><strong>📚 知识点讲解：</strong>本题综合考察了机器学习类型判断、任务类型区分和特征选择三个知识点。从数据表中可以看出明显的模式：身高较高、体重较重的男性喜欢打篮球，这体现了特征与标签之间的关联性。<br><strong>💡 解题思路：</strong>逐题分析：先看有无标签判断学习类型，再看输出是离散还是连续判断任务类型，最后分析哪些特征与目标相关进行特征选择。<br><strong>🧠 记忆口诀：</strong>有标监督分类判，特征选择看相关；身高体重加性别，三个特征定喜好。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某超市想要根据顾客的购买记录，将顾客分为不同的群体，以便针对不同群体制定不同的营销策略。请回答以下问题：",
+            "tasks": ["（1）这个问题适合使用哪种类型的机器学习方法来解决？为什么？",
+                "（2）请简述解决这个问题的基本步骤。",
+                "（3）这种方法在应用过程中可能会遇到哪些挑战？"
+            ],
+            "answer": "（1）适合使用无监督学习中的聚类方法。因为没有关于顾客群体的预先标签，目标是自动将相似顾客归为一类，发现数据中隐藏的群体结构。（2）基本步骤：①数据收集：收集顾客购买记录（商品种类、时间、金额等）；②数据预处理：清洗、转换数据，提取反映购买行为的特征；③选择聚类算法：如K-Means算法；④执行聚类：将顾客分为不同群体；⑤结果分析：分析每个群体的特征和需求；⑥制定营销策略：针对不同群体制定差异化策略。（3）可能遇到的挑战：特征选择困难、聚类数目难以确定、结果解释困难、数据动态变化需要持续更新模型。",
+            "keywords": [
+                ["无监督学习", "聚类", "无标签", "自动发现", "群体结构"],
+                ["数据收集", "预处理", "特征提取", "聚类算法", "K-Means", "结果分析", "营销策略"],
+                ["特征选择", "聚类数目", "结果解释", "数据更新", "动态变化"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）无监督学习聚类方法，因为无预先标签；（2）六步流程从数据收集到策略制定；（3）挑战包括特征选择、聚类数目确定、结果解释和数据动态更新。<br><strong>📚 知识点讲解：</strong>客户分群是聚类分析的经典商业应用，属于无监督学习。K-Means是最常用的聚类算法之一。实际应用中，从数据到洞察再到策略的完整链路体现了机器学习的商业价值。<br><strong>💡 解题思路：</strong>无标签→无监督→聚类，这是判断逻辑链。步骤按机器学习通用流程展开，挑战从技术（特征、算法）和业务（解释、更新）两个维度思考。<br><strong>🧠 记忆口诀：</strong>无标聚类分客群，六步流程到策略；挑战特征与数目，解释更新不能忘。"
+        }];
+
+        const APP_ID = 'ml_highschool_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        function isChoiceType(q) {
+            return q.type === '单选题' || q.type === '判断题';
+        }
+
+        function isTextInputType(q) {
+            return q.type === '简答题' || q.type === '综合应用题';
+        }
+
+        function getAnswerStatus(index) {
+            const q = questions[index];
+            const a = answers[index];
+            if (a === null || a === undefined) return 'unanswered';
+            if (isChoiceType(q)) {
+                return a === q.answer ? 'correct' : 'wrong';
+            }
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return 'unanswered';
+                const hr = a.hitRate || 0;
+                if (hr >= 0.8) return 'correct';
+                if (hr >= 0.4) return 'partial';
+                return 'wrong';
+            }
+            return 'unanswered';
+        }
+
+        function isAnswerCorrect(index) {
+            const q = questions[index];
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(q)) return a === q.answer;
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return false;
+                const hr = a.hitRate || 0;
+                if (q.type === '简答题') return hr >= 0.6;
+                if (q.type === '综合应用题') return hr >= 0.7;
+                return hr >= 0.6;
+            }
+            return false;
+        }
+
+        function isAnswered(index) {
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(questions[index])) return typeof a === 'number';
+            if (isTextInputType(questions[index])) return a && a.submitted === true;
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '机器学习核心概念与三大学习类型';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>机器学习是人工智能的核心分支，是指计算机系统通过从大量数据中<span class="highlight">自动学习规律</span>、提取特征，不断优化自身性能，从而能够对未知数据做出预测、分类或决策的技术。与传统程序需要人工编写明确规则不同，机器学习让计算机能够<strong>\u201C从经验中学习\u201D</strong>，自主发现数据中的模式。</p>
+                <h3>🔑 核心要点拆解</h3>
+                <p><strong>1. 机器学习的基本流程</strong></p>
+                <ul>
+                    <li><strong>数据收集与预处理：</strong>获取原始数据并进行清洗、去噪、归一化等处理</li>
+                    <li><strong>特征工程：</strong>从原始数据中提取对解决问题有帮助的关键特征</li>
+                    <li><strong>模型选择与训练：</strong>选择合适的算法，用训练数据调整模型参数</li>
+                    <li><strong>模型评估与优化：</strong>用测试数据评估模型性能，调整参数或更换算法</li>
+                    <li><strong>模型部署与应用：</strong>将训练好的模型应用于实际问题</li>
+                </ul>
+                <p><strong>2. 机器学习的三大主要类型</strong></p>
+                <ul>
+                    <li><strong>监督学习：</strong>使用<span class="highlight">有标签数据</span>进行训练，学习输入到输出的映射关系</li>
+                    <li><strong>无监督学习：</strong>使用<span class="highlight">无标签数据</span>进行训练，发现数据中隐藏的结构和规律</li>
+                    <li><strong>强化学习：</strong>智能体通过与环境交互，根据<span class="highlight">奖励信号</span>调整行为策略</li>
+                </ul>
+                <p><strong>3. 监督学习的常见任务</strong></p>
+                <ul>
+                    <li><strong>分类任务：</strong>预测离散的类别标签，如垃圾邮件识别、手写数字识别</li>
+                    <li><strong>回归任务：</strong>预测连续的数值结果，如房价预测、股票价格预测</li>
+                </ul>
+                <p><strong>4. 无监督学习的常见任务</strong></p>
+                <ul>
+                    <li><strong>聚类任务：</strong>将相似的数据样本归为一类，如客户分群、图像分割</li>
+                    <li><strong>降维任务：</strong>将高维数据转换为低维表示，如数据可视化</li>
+                </ul>
+                <p><strong>5. 机器学习的伦理与安全问题</strong></p>
+                <ul>
+                    <li><strong>数据隐私保护：</strong>防止个人敏感信息泄露</li>
+                    <li><strong>算法偏见：</strong>避免因训练数据偏差导致的不公平结果</li>
+                    <li><strong>可解释性：</strong>提高模型决策过程的透明度</li>
+                </ul>
+                <h3>📋 教材典型案例</h3>
+                <p><strong>手写数字识别（MNIST数据集）：</strong>包含60000张训练图片和10000张测试图片，每张是28×28像素的手写数字。通过监督学习训练模型，准确率可达99%以上。</p>
+                <p><strong>鸢尾花分类：</strong>包含150个样本，3个品种，4个特征。通过监督学习算法根据花萼和花瓣的尺寸判断鸢尾花品种。</p>
+                <h3>⚠️ 教学重点/易错点</h3>
+                <ul>
+                    <li><strong>教学重点：</strong>机器学习基本流程；三大学习类型的定义和区别；监督与无监督学习的常见任务</li>
+                    <li><strong>易错点①：</strong>混淆监督学习和无监督学习——判断依据是<strong>训练数据是否有标签</strong></li>
+                    <li><strong>易错点②：</strong>混淆分类和回归——分类输出<strong>离散类别</strong>，回归输出<strong>连续数值</strong></li>
+                    <li><strong>易错点③：</strong>认为机器学习就是AI的全部——它只是AI的一个重要分支</li>
+                    <li><strong>易错点④：</strong>认为准确率越高越好——需综合考虑泛化能力、计算成本和可解释性</li>
+                </ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveIndex() {
+            if (reviewMode && reviewIndices.length > 0) {
+                return reviewIndices[Math.min(currentIndex, reviewIndices.length - 1)];
+            }
+            return currentIndex;
+        }
+
+        function getEffectiveTotal() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const effectiveTotal = getEffectiveTotal();
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            const contentArea = document.getElementById('quizContent');
+            const aVal = answers[effIndex];
+            let diffClass = '';
+            if (q.difficulty === '基础') diffClass = 'diff-basic';
+            else if (q.difficulty === '中档') diffClass = 'diff-mid';
+            else if (q.difficulty === '提高') diffClass = 'diff-high';
+
+            let html = `<div class="question-card"><span class="question-type ${diffClass}">${q.type} · ${q.difficulty || ''}</span><div class="question-stem">${q.stem}</div>`;
+
+            if (q.tableData) {
+                html += q.tableData;
+            }
+            if (q.image) {
+                html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            }
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = (aVal !== null && aVal !== undefined && typeof aVal === 'number') && aVal ===
+                        idx;
+                    const isCorrectAns = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (aVal !== null && aVal !== undefined && typeof aVal === 'number') {
+                        if (isSelected && isCorrectAns) classes.push('correct');
+                        else if (isSelected && !isCorrectAns) classes.push('wrong');
+                        else if (isCorrectAns) classes.push('correct');
+                    } else if (isSelected) {
+                        classes.push('selected');
+                    }
+                    html +=
+                        `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (isTextInputType(q)) {
+                const isSubmitted = aVal && aVal.submitted;
+                const userInput = (aVal && aVal.userInput) ? aVal.userInput : '';
+                if (q.tasks && q.tasks.length > 0) {
+                    html += `<ol class="task-list">`;
+                    q.tasks.forEach(t => { html += `<li>${t}</li>`; });
+                    html += `</ol>`;
+                }
+                html +=
+                    `<textarea class="textarea-input" id="textAnswerInput" placeholder="请在此输入你的回答..." ${isSubmitted ? 'disabled' : ''}>${userInput}</textarea>`;
+                if (!isSubmitted) {
+                    html += `<div class="submit-row">
+                        <button class="draft-btn" onclick="saveDraft(${effIndex})"><i class="fas fa-save"></i> 保存草稿</button>
+                        <button class="clear-input-btn" onclick="clearInput(${effIndex})"><i class="fas fa-eraser"></i> 清空输入</button>
+                        <button class="submit-btn" onclick="submitTextAnswer(${effIndex})"><i class="fas fa-check-circle"></i> 提交作答</button>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+
+            if (isAnswered(effIndex)) {
+                const status = getAnswerStatus(effIndex);
+                let badgeHtml = '';
+                if (status === 'correct') badgeHtml =
+                '<span class="result-badge correct">✓ 回答正确</span>';
+                else if (status === 'partial') badgeHtml =
+                    '<span class="result-badge partial">△ 部分正确</span>';
+                else badgeHtml = '<span class="result-badge wrong">✗ 回答错误</span>';
+
+                if (isTextInputType(q) && aVal && aVal.submitted) {
+                    const hr = aVal.hitRate || 0;
+                    const hrPercent = Math.round(hr * 100);
+                    let hrClass = 'weak';
+                    let tagHtml = '<span class="tag-weak">需加强</span>';
+                    if (q.type === '简答题') {
+                        if (hr >= 0.6) { hrClass = 'excellent';
+                            tagHtml = '<span class="tag-excellent">回答较好</span>'; } else if (hr >= 0.3) { hrClass =
+                                'ok';
+                            tagHtml = '<span class="tag-ok">部分正确</span>'; }
+                    } else if (q.type === '综合应用题') {
+                        if (hr >= 0.85) { hrClass = 'excellent';
+                            tagHtml = '<span class="tag-excellent">优秀</span>'; } else if (hr >= 0.7) { hrClass =
+                            'good';
+                            tagHtml = '<span class="tag-good">良好</span>'; } else if (hr >= 0.5) { hrClass = 'ok';
+                            tagHtml = '<span class="tag-ok">合格</span>'; }
+                    }
+                    html += `
+                        <div class="analysis-card" style="padding:16px; margin-top:16px;">
+                            <p><strong>📝 你的回答：</strong></p>
+                            <div style="background:#fafafa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre-wrap;">${escapeHtml(aVal.userInput || '')}</div>
+                            <p><strong>关键词命中率：</strong>${tagHtml} <span style="font-weight:700;color:var(--text-primary);">${hrPercent}%</span></p>
+                            <div class="hit-rate-bar"><div class="hit-rate-fill ${hrClass}" style="width:${hrPercent}%"></div></div>
+                            ${aVal.hitKeywords && aVal.hitKeywords.length > 0 ? `<p><strong>✅ 命中关键词：</strong>${aVal.hitKeywords.map(k => '<span class="highlight-hit">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                            ${aVal.missedKeywords && aVal.missedKeywords.length > 0 ? `<p><strong>❌ 未命中关键词：</strong>${aVal.missedKeywords.map(k => '<span class="highlight-miss">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                            <p style="margin-top:10px;"><strong>📋 标准答案：</strong>${q.answer}</p>
+                        </div>`;
+                }
+
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 ${badgeHtml}</div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnsweredInScope = reviewMode ?
+                reviewIndices.every(i => isAnswered(i)) :
+                questions.every((_, i) => isAnswered(i));
+            const lastInScope = (currentIndex >= effectiveTotal - 1);
+
+            if (lastInScope && allAnsweredInScope && !reviewMode) {
+                let totalQ = questions.length;
+                let correctCount = 0;
+                questions.forEach((_, i) => { if (isAnswerCorrect(i)) correctCount++; });
+                const accuracy = Math.round(correctCount / totalQ * 100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${totalQ}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()"><i class="fas fa-redo"></i> 重新开始</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-exclamation-triangle"></i> 回看错题</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                            <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                        </div>
+                    </div>
+                `;
+            }
+            if (lastInScope && allAnsweredInScope && reviewMode) {
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">📋</div>
+                        <h1 class="completion-title">错题回顾完成！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了所有错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()"><i class="fas fa-arrow-left"></i> 返回刷题</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-redo"></i> 再次回看</button>
+                            <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            if (!isChoiceType(q)) return;
+            if (answers[effIndex] !== null && answers[effIndex] !== undefined && typeof answers[effIndex] === 'number')
+                return;
+            answers[effIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === q.answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const userInput = textarea.value.trim();
+            if (!userInput) { showToast('请输入你的回答后再提交'); return; }
+            const q = questions[effIndex];
+            let allKeywords = [];
+            if (q.type === '简答题') {
+                allKeywords = q.keywords || [];
+            } else if (q.type === '综合应用题') {
+                if (q.keywords && Array.isArray(q.keywords)) {
+                    q.keywords.forEach(kArr => { if (Array.isArray(kArr)) allKeywords = allKeywords.concat(kArr); });
+                }
+            }
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const inputLower = userInput.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (inputLower.includes(kw.toLowerCase())) {
+                    hitKeywords.push(kw);
+                } else {
+                    missedKeywords.push(kw);
+                }
+            });
+            const hitRate = allKeywords.length > 0 ? hitKeywords.length / allKeywords.length : 0;
+            answers[effIndex] = {
+                userInput: userInput,
+                submitted: true,
+                hitRate: hitRate,
+                hitKeywords: hitKeywords,
+                missedKeywords: missedKeywords,
+                totalKeywords: allKeywords.length
+            };
+            saveAnswers();
+            clearDraft(effIndex);
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const hrPercent = Math.round(hitRate * 100);
+            if (q.type === '简答题') {
+                if (hitRate >= 0.6) showToast(`回答较好！命中率 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.3) showToast(`部分正确，命中率 ${hrPercent}%`);
+                else showToast(`需加强，命中率 ${hrPercent}%`);
+            } else {
+                if (hitRate >= 0.85) showToast(`优秀！完成度 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.7) showToast(`良好！完成度 ${hrPercent}%`);
+                else if (hitRate >= 0.5) showToast(`合格，完成度 ${hrPercent}%`);
+                else showToast(`需加强，完成度 ${hrPercent}%`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveDraft(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const draftText = textarea.value;
+            const drafts = getDrafts();
+            drafts[effIndex] = draftText;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+            showToast('草稿已保存 ✓');
+        }
+
+        function clearInput(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            if (textarea.value.trim() && !confirm('确定要清空输入内容吗？')) return;
+            textarea.value = '';
+            clearDraft(effIndex);
+            showToast('输入已清空');
+        }
+
+        function getDrafts() {
+            const saved = localStorage.getItem(STORAGE_KEY_DRAFTS);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function clearDraft(effIndex) {
+            const drafts = getDrafts();
+            delete drafts[effIndex];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => {
+                if (isAnswered(i) && !isAnswerCorrect(i)) {
+                    wrongIndices.push(i);
+                }
+            });
+            if (wrongIndices.length === 0) {
+                showToast('恭喜！没有错题需要回顾 🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewIndices = wrongIndices;
+            currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            reviewIndices = [];
+            currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已返回正常刷题模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => {
+                if (isAnswered(i) && !isAnswerCorrect(i)) {
+                    wrongIndices.push(i);
+                }
+            });
+            if (wrongIndices.length === 0) {
+                showToast('没有错题可导出');
+                return;
+            }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题号,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongIndices.forEach(i => {
+                const q = questions[i];
+                const aVal = answers[i];
+                let userAnswerStr = '';
+                let correctAnswerStr = '';
+                let hitRateStr = '';
+                let resultStr = '';
+                if (isChoiceType(q)) {
+                    const selectedLabel = (typeof aVal === 'number' && aVal >= 0 && q.options[aVal]) ? q.options[
+                        aVal].label : '未作答';
+                    const correctLabel = q.options[q.answer] ? q.options[q.answer].label : '';
+                    userAnswerStr = selectedLabel;
+                    correctAnswerStr = correctLabel;
+                    hitRateStr = (typeof aVal === 'number' && aVal === q.answer) ? '100%' : '0%';
+                    resultStr = (typeof aVal === 'number' && aVal === q.answer) ? '正确' : '错误';
+                } else if (isTextInputType(q)) {
+                    userAnswerStr = (aVal && aVal.userInput) ? aVal.userInput.replace(/\n/g, ' ').replace(/"/g, '""') :
+                        '未作答';
+                    correctAnswerStr = q.answer ? q.answer.replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                    hitRateStr = (aVal && aVal.submitted) ? Math.round((aVal.hitRate || 0) * 100) + '%' : '未提交';
+                    const hr = (aVal && aVal.submitted) ? (aVal.hitRate || 0) : 0;
+                    if (q.type === '简答题') {
+                        resultStr = hr >= 0.6 ? '回答较好' : (hr >= 0.3 ? '部分正确' : '需加强');
+                    } else {
+                        resultStr = hr >= 0.85 ? '优秀' : (hr >= 0.7 ? '良好' : (hr >= 0.5 ? '合格' : '需加强'));
+                    }
+                }
+                const analysisPlain = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(
+                    /"/g, '""') : '';
+                csvContent +=
+                    `"${q.type}","${i+1}","${q.stem.replace(/"/g,'""')}","${userAnswerStr}","${correctAnswerStr}","${hitRateStr}","${resultStr}","${analysisPlain}"\n`;
+            });
+            const now = new Date();
+            const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate())
+                .padStart(2, '0');
+            const filename = `错题本_机器学习_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`错题已导出：${filename}`);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            const effectiveTotal = getEffectiveTotal();
+            if (currentIndex < effectiveTotal - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            const effIndex = getEffectiveIndex();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            let answeredCount = 0;
+            const scopeIndices = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            scopeIndices.forEach(i => { if (isAnswered(i)) answeredCount++; });
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = effectiveTotal;
+            document.getElementById('progressFill').style.width = effectiveTotal > 0 ? `${(answeredCount / effectiveTotal) * 100}%` :
+                '0%';
+            if (reviewMode) {
+                document.getElementById('questionInfo').querySelector('.progress-text').textContent =
+                    `错题回顾 · ${answeredCount}/${effectiveTotal} 已答`;
+            }
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex >= effectiveTotal - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+            `;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                const status = getAnswerStatus(index);
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (status === 'correct') { statusClass = 'correct';
+                    statusText = '正确'; } else if (status === 'wrong') { statusClass = 'wrong';
+                    statusText = '错误'; } else if (status === 'partial') { statusClass = 'partial';
+                    statusText = '部分'; }
+                if (index === getEffectiveIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && reviewIndices.includes(index) && reviewIndices.indexOf(index) === currentIndex) {
+                    statusClass += ' current';
+                }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && status !== 'unanswered') return;
+                    if (currentFilter === 'correct' && status !== 'correct') return;
+                    if (currentFilter === 'wrong' && status !== 'wrong' && status !== 'partial') return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = reviewIndices.indexOf(index);
+                if (pos >= 0) { currentIndex = pos; } else {
+                    reviewMode = false;
+                    reviewIndices = [];
+                    currentIndex = index;
+                }
+            } else {
+                currentIndex = index;
+            }
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`
+                    ; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) {
+                    return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a
+                            .hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a
+                            .totalKeywords };
+                }
+                return a;
+            });
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = record.answers.map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) {
+                        return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0,
+                            hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [],
+                            totalKeywords: a.totalKeywords || 0 };
+                    }
+                    return a;
+                });
+                currentIndex = 0;
+                reviewMode = false;
+                reviewIndices = [];
+                saveAnswers();
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        function saveAnswers() {
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) {
+                    return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a
+                            .hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a
+                        .totalKeywords };
+                }
+                return a;
+            });
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers: serializableAnswers,
+                reviewMode, reviewIndices }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                reviewMode = data.reviewMode || false;
+                reviewIndices = data.reviewIndices || [];
+                answers = (data.answers || new Array(questions.length).fill(null)).map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) {
+                        return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0,
+                            hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [],
+                            totalKeywords: a.totalKeywords || 0 };
+                    }
+                    if (isChoiceType(questions[i]) && typeof a === 'number') return a;
+                    if (a === null || a === undefined) return null;
+                    if (typeof a === 'number') return a;
+                    if (a && a.submitted) {
+                        return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0,
+                            hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [],
+                            totalKeywords: a.totalKeywords || 0 };
+                    }
+                    return null;
+                });
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+            const drafts = getDrafts();
+            if (Object.keys(drafts).length > 0) {
+                Object.keys(drafts).forEach(idx => {
+                    const i = parseInt(idx);
+                    if (i >= 0 && i < questions.length && isTextInputType(questions[i]) && !isAnswered(i)) {
+                        if (!answers[i] || !answers[i].submitted) {
+                            if (!answers[i]) answers[i] = { userInput: drafts[idx], submitted: false,
+                                hitRate: 0, hitKeywords: [], missedKeywords: [], totalKeywords: 0 };
+                            else if (!answers[i].submitted) answers[i].userInput = drafts[idx];
+                        }
+                    }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm('确定要重新开始吗？当前进度将被清除。')) return;
+            currentIndex = 0;
+            answers = new Array(questions.length).fill(null);
+            reviewMode = false;
+            reviewIndices = [];
+            localStorage.removeItem(STORAGE_KEY_ANSWERS);
+            localStorage.removeItem(STORAGE_KEY_DRAFTS);
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

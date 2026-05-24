@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物联网功能需求刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* 新增题型扩展样式 */
+        .question-type.diff-basic {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        .question-type.diff-mid {
+            background: #fffbe6;
+            color: #d48806;
+        }
+        .question-type.diff-high {
+            background: #fff2f0;
+            color: #cf1322;
+        }
+        .textarea-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        .textarea-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .task-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .submit-btn,
+        .draft-btn,
+        .clear-input-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .draft-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .clear-input-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .submit-btn:active,
+        .draft-btn:active,
+        .clear-input-btn:active {
+            transform: scale(0.97);
+        }
+        .hit-rate-bar {
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .hit-rate-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .hit-rate-fill.excellent {
+            background: var(--success-color);
+        }
+        .hit-rate-fill.good {
+            background: #73d13d;
+        }
+        .hit-rate-fill.ok {
+            background: var(--warning-color);
+        }
+        .hit-rate-fill.weak {
+            background: var(--error-color);
+        }
+        .tag-excellent,
+        .tag-good,
+        .tag-ok,
+        .tag-weak {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-excellent {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .tag-good {
+            background: #d4edda;
+            color: #389e0d;
+        }
+        .tag-ok {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .tag-weak {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .sheet-item.partial {
+            border-color: var(--warning-color);
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-btn {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffd591;
+        }
+        .analysis-content .highlight-hit {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #155724;
+            font-weight: 600;
+        }
+        .analysis-content .highlight-miss {
+            background: #f8d7da;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #721c24;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">物联网功能需求与模块划分</div>
+                        <div class="progress-text">高中信息科技 · 系统设计高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "描述物联网系统\u201C能做什么\u201D的需求是（ ）",
+            "options": [{ "label": "A", "text": "功能需求" }, { "label": "B", "text": "非功能需求" }, { "label": "C", "text": "性能需求" }, { "label": "D", "text": "安全需求" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。功能需求描述系统\u201C能做什么\u201D，是系统必须实现的具体功能。<br><strong>📚 知识点讲解：</strong>功能需求回答\u201C系统应该做什么\u201D，例如采集数据、控制设备等。非功能需求回答\u201C系统做得好不好\u201D，如性能、安全等。<br><strong>💡 解题思路：</strong>抓住关键词\u201C能做什么\u201D直接对应功能需求。其他选项都是描述系统质量的非功能需求。<br><strong>🧠 记忆口诀：</strong>功能讲能做，非功讲品质。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "描述物联网系统\u201C做得怎么样\u201D的需求是（ ）",
+            "options": [{ "label": "A", "text": "功能需求" }, { "label": "B", "text": "非功能需求" }, { "label": "C", "text": "业务需求" }, { "label": "D", "text": "用户需求" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。非功能需求描述系统\u201C做得怎么样\u201D，是系统的质量属性，如性能、可靠性、安全性等。<br><strong>📚 知识点讲解：</strong>非功能需求通常包括性能、可靠性、安全性、可扩展性、易用性等，影响用户体验和系统运行质量。<br><strong>💡 解题思路：</strong>\u201C做得怎么样\u201D是质量评价，对应非功能需求。<br><strong>🧠 记忆口诀：</strong>非功衡量好不好，快稳安全记心间。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于功能需求的是（ ）",
+            "options": [{ "label": "A", "text": "系统响应时间不超过1秒" }, { "label": "B", "text": "系统能够采集温度数据" }, { "label": "C", "text": "系统平均无故障时间不低于1000小时" }, { "label": "D", "text": "系统支持1000个设备同时连接" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。\u201C系统能够采集温度数据\u201D描述的是系统的功能，属于功能需求。A、C、D都属于非功能需求。<br><strong>📚 知识点讲解：</strong>采集数据是系统必须实现的业务能力，是功能需求；响应时间、无故障时间、连接数都是质量指标，是非功能需求。<br><strong>💡 解题思路：</strong>\u201C能够采集\u201D是做什么，其余选项是做得怎么样。<br><strong>🧠 记忆口诀：</strong>能够做什么功能需，多快好省非功求。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于非功能需求的是（ ）",
+            "options": [{ "label": "A", "text": "系统能够远程控制灯光" }, { "label": "B", "text": "系统能够生成数据报表" }, { "label": "C", "text": "系统数据传输采用AES加密" }, { "label": "D", "text": "系统能够进行用户注册和登录" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。\u201C系统数据传输采用AES加密\u201D描述的是系统的安全性，属于非功能需求。A、B、D都属于功能需求。<br><strong>📚 知识点讲解：</strong>加密是保障数据安全的手段，属于系统质量属性。远程控制、生成报表、用户管理都是系统功能。<br><strong>💡 解题思路：</strong>加密是安全措施，不是业务功能，所以是非功能需求。<br><strong>🧠 记忆口诀：</strong>加密安全非功需，远程报表属功能。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "物联网模块划分应遵循的基本原则是（ ）",
+            "options": [{ "label": "A", "text": "高内聚、高耦合" }, { "label": "B", "text": "低内聚、低耦合" }, { "label": "C", "text": "高内聚、低耦合" }, { "label": "D", "text": "低内聚、高耦合" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。模块划分应遵循\u201C高内聚、低耦合\u201D的原则，即模块内部功能高度相关，模块之间依赖尽可能少。<br><strong>📚 知识点讲解：</strong>高内聚提高模块的可维护性，低耦合降低修改一个模块对其他模块的影响。<br><strong>💡 解题思路：</strong>记住经典设计原则，高内聚低耦合。<br><strong>🧠 记忆口诀：</strong>内聚要高，耦合要低，模块划分才合理。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责采集物理世界信息的模块是（ ）",
+            "options": [{ "label": "A", "text": "感知采集模块" }, { "label": "B", "text": "通信传输模块" }, { "label": "C", "text": "数据处理模块" }, { "label": "D", "text": "设备控制模块" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。感知采集模块是物联网的\u201C五官\u201D，负责采集物理世界的信息和识别物体。<br><strong>📚 知识点讲解：</strong>感知采集模块包含传感器、RFID等设备，是数据来源。<br><strong>💡 解题思路：</strong>采集信息对应感知采集模块。<br><strong>🧠 记忆口诀：</strong>感知采集数据源，传感器来当五官。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责数据传输和通信的模块是（ ）",
+            "options": [{ "label": "A", "text": "感知采集模块" }, { "label": "B", "text": "通信传输模块" }, { "label": "C", "text": "数据处理模块" }, { "label": "D", "text": "设备控制模块" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。通信传输模块是物联网的\u201C神经系统\u201D，负责数据的传输和通信。<br><strong>📚 知识点讲解：</strong>它连接感知层与平台层，使用WiFi、NB-IoT等技术。<br><strong>💡 解题思路：</strong>传输数据对应通信模块。<br><strong>🧠 记忆口诀：</strong>通信传输连上下，数据通路全靠它。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责数据存储、分析和计算的模块是（ ）",
+            "options": [{ "label": "A", "text": "感知采集模块" }, { "label": "B", "text": "通信传输模块" }, { "label": "C", "text": "数据处理模块" }, { "label": "D", "text": "设备控制模块" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。数据处理模块是物联网的\u201C大脑\u201D，负责数据的存储、分析和计算。<br><strong>📚 知识点讲解：</strong>利用云计算、大数据技术进行数据清洗、挖掘和可视化。<br><strong>💡 解题思路：</strong>存储、分析、计算都是数据处理范畴。<br><strong>🧠 记忆口诀：</strong>数据处理云大脑，存算分析显智慧。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责对执行器进行远程控制的模块是（ ）",
+            "options": [{ "label": "A", "text": "感知采集模块" }, { "label": "B", "text": "通信传输模块" }, { "label": "C", "text": "数据处理模块" }, { "label": "D", "text": "设备控制模块" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。设备控制模块是物联网的\u201C手脚\u201D，负责对执行器进行远程控制。<br><strong>📚 知识点讲解：</strong>控制指令下发到开关、电机、阀门等，实现物理世界的改变。<br><strong>💡 解题思路：</strong>控制执行器属于设备控制模块。<br><strong>🧠 记忆口诀：</strong>设备控制手脚灵，远程操控执行器。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责用户与系统之间交互的模块是（ ）",
+            "options": [{ "label": "A", "text": "人机交互模块" }, { "label": "B", "text": "安全管理模块" }, { "label": "C", "text": "数据处理模块" }, { "label": "D", "text": "设备控制模块" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。人机交互模块是用户与系统之间的桥梁，负责用户与系统之间的交互。<br><strong>📚 知识点讲解：</strong>提供界面、APP、语音等方式，让用户查看数据和发送指令。<br><strong>💡 解题思路：</strong>用户交互对应人机交互模块。<br><strong>🧠 记忆口诀：</strong>人机交互界面桥，用户系统两相通。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于功能需求和非功能需求的说法，错误的是（ ）",
+            "options": [{ "label": "A", "text": "功能需求是系统必须实现的具体功能" }, { "label": "B", "text": "非功能需求是系统的质量属性" }, { "label": "C", "text": "功能需求比非功能需求更重要" }, { "label": "D", "text": "非功能需求会影响系统的用户体验" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。功能需求和非功能需求同样重要，缺一不可。非功能需求直接影响系统的性能、可靠性和用户体验。<br><strong>📚 知识点讲解：</strong>只满足功能而忽视性能、安全等非功能需求，系统将无法真正应用。<br><strong>💡 解题思路：</strong>\u201C更重要\u201D的表述错误，两者同等重要。<br><strong>🧠 记忆口诀：</strong>功能非功两手抓，缺一不可同重要。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于模块划分的说法，正确的是（ ）",
+            "options": [{ "label": "A", "text": "模块划分得越细越好" }, { "label": "B", "text": "一个模块可以负责多个不相关的功能" }, { "label": "C", "text": "模块之间的依赖关系越多越好" }, { "label": "D", "text": "模块划分应遵循高内聚、低耦合的原则" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。模块划分应遵循高内聚、低耦合的原则。不是越细越好，过度划分会增加复杂性。<br><strong>📚 知识点讲解：</strong>每个模块应职责单一，模块间接口清晰。<br><strong>💡 解题思路：</strong>A、B、C都是错误的划分方式。<br><strong>🧠 记忆口诀：</strong>内聚高耦合低，职责单一最相宜。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "\u201C系统能够在-20℃到60℃的温度范围内正常工作\u201D属于（ ）",
+            "options": [{ "label": "A", "text": "功能需求" }, { "label": "B", "text": "性能需求" }, { "label": "C", "text": "可靠性需求" }, { "label": "D", "text": "环境适应性需求" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。描述系统对温度的适应能力，属于环境适应性需求，是非功能需求的一种。<br><strong>📚 知识点讲解：</strong>环境适应性包括温度、湿度、防水防尘等。<br><strong>💡 解题思路：</strong>温度范围是环境适应能力，不是功能。<br><strong>🧠 记忆口诀：</strong>环境适应非功需，温湿防护全包含。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列不属于安全管理模块功能的是（ ）",
+            "options": [{ "label": "A", "text": "用户身份认证" }, { "label": "B", "text": "数据加密传输" }, { "label": "C", "text": "设备状态监控" }, { "label": "D", "text": "访问控制" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。设备状态监控属于设备管理模块的功能，不属于安全管理模块。<br><strong>📚 知识点讲解：</strong>安全管理关注认证、加密、授权等，设备监控属于运维范畴。<br><strong>💡 解题思路：</strong>监控设备是设备管理功能。<br><strong>🧠 记忆口诀：</strong>安全管认证加密，设备监控归管理。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "需求分析的第一步是（ ）",
+            "options": [{ "label": "A", "text": "需求调研" }, { "label": "B", "text": "需求分析" }, { "label": "C", "text": "需求定义" }, { "label": "D", "text": "需求评审" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。需求分析的第一步是需求调研，通过与用户沟通了解业务需求和期望。<br><strong>📚 知识点讲解：</strong>需求调研是收集信息的基础，后续才能进行分析、定义和评审。<br><strong>💡 解题思路：</strong>先调研，再分析，顺序不能乱。<br><strong>🧠 记忆口诀：</strong>需求调研第一步，了解业务定方向。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "功能需求分析是物联网系统开发的第一步。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。功能需求分析是系统开发的第一步，直接决定系统架构和质量。<br><strong>📚 知识点讲解：</strong>明确需求后才能进行设计、开发和测试。<br><strong>💡 解题思路：</strong>符合软件工程常识。<br><strong>🧠 记忆口诀：</strong>需求分析第一步，架构质量它定夺。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "非功能需求不重要，可以在系统开发完成后再考虑。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。非功能需求和功能需求同样重要，必须在系统设计阶段就充分考虑。<br><strong>📚 知识点讲解：</strong>后期修改非功能需求代价极高，甚至导致系统重构。<br><strong>💡 解题思路：</strong>\u201C不重要\u201D明显错误。<br><strong>🧠 记忆口诀：</strong>非功需求早考虑，事后补课成本高。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "模块划分的目的是降低系统复杂度，提高可维护性。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。通过模块化分解，将复杂系统简化为可管理的单元。<br><strong>📚 知识点讲解：</strong>模块化是软件工程的核心思想。<br><strong>💡 解题思路：</strong>正确。<br><strong>🧠 记忆口诀：</strong>模块划分降复杂，可维护性大提升。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "一个模块应该只负责一个相对独立的功能。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。这是单一职责原则，每个模块只有一个引起它变化的原因。<br><strong>📚 知识点讲解：</strong>职责单一使得模块更容易理解和维护。<br><strong>💡 解题思路：</strong>符合设计原则。<br><strong>🧠 记忆口诀：</strong>单一职责模块清，只做一事好维护。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "感知采集模块负责控制执行器的运行。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。感知采集模块负责采集数据，设备控制模块负责控制执行器。<br><strong>📚 知识点讲解：</strong>采集与控制是不同的功能，分属不同模块。<br><strong>💡 解题思路：</strong>感知模块输出数据，控制模块接收指令。<br><strong>🧠 记忆口诀：</strong>感知采集不控制，控制模块管执行。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "通信传输模块负责数据的存储和分析。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。通信传输模块负责数据的传输，数据处理模块负责存储和分析。<br><strong>📚 知识点讲解：</strong>各模块分工明确。<br><strong>💡 解题思路：</strong>传输与存储分析分离。<br><strong>🧠 记忆口诀：</strong>通信管传输，处理管存储。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "人机交互模块是用户与系统之间的桥梁。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。人机交互模块负责展示信息给用户，并接收用户的操作指令。<br><strong>📚 知识点讲解：</strong>它是系统的门面，直接影响用户体验。<br><strong>💡 解题思路：</strong>正确。<br><strong>🧠 记忆口诀：</strong>人机交互是桥梁，输入输出它担当。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "模块之间的接口不需要明确的定义。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。模块之间的接口必须有明确、清晰的定义，输入输出参数完整。<br><strong>📚 知识点讲解：</strong>模糊的接口会导致模块无法协作，增加集成难度。<br><strong>💡 解题思路：</strong>接口需要规范。<br><strong>🧠 记忆口诀：</strong>接口定义要清晰，参数完整可验证。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "需求一旦确定，就不能再变更。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。需求可能变更，但必须建立严格的变更管理流程。<br><strong>📚 知识点讲解：</strong>变更控制是为了评估影响，避免无序修改。<br><strong>💡 解题思路：</strong>需求可变，流程要管。<br><strong>🧠 记忆口诀：</strong>需求可变流程控，随意修改不可取。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "所有物联网系统的模块划分都是完全相同的。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。不同物联网系统功能需求不同，模块划分会有差异，六大通用模块是典型参考。<br><strong>📚 知识点讲解：</strong>划分应基于具体场景。<br><strong>💡 解题思路：</strong>\u201C完全相同\u201D太绝对。<br><strong>🧠 记忆口诀：</strong>模块划分看需求，通用模块作参考。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述功能需求和非功能需求的区别，并各举两个例子。",
+            "answer": "功能需求描述系统\u201C能做什么\u201D，是系统必须实现的具体功能；非功能需求描述系统\u201C做得怎么样\u201D，是系统的质量属性。功能需求例子：系统能够采集温湿度数据、系统能够远程控制智能灯泡。非功能需求例子：系统响应时间不超过1秒、系统数据传输采用加密方式。",
+            "keywords": ["功能需求", "非功能需求", "能做什么", "做得怎么样", "采集", "控制", "响应时间", "加密"],
+            "analysis": "<strong>🎯 答案解析：</strong>功能需求侧重于系统能力，非功能需求侧重于系统质量。分别给出两个例子说明。<br><strong>📚 知识点讲解：</strong>功能需求是系统边界，非功能需求是约束条件，两者共同构成完整需求规格。<br><strong>💡 解题思路：</strong>先解释区别，再分别举例，例子要典型且区分明显。<br><strong>🧠 记忆口诀：</strong>功能求能做，非功求品质，例子要分明。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述物联网系统的六大通用模块及其核心功能。",
+            "answer": "六大通用模块及核心功能：（1）感知采集模块：采集物理世界信息。（2）通信传输模块：传输数据和通信。（3）数据处理模块：数据存储、分析和计算。（4）设备控制模块：远程控制执行器。（5）人机交互模块：用户与系统交互。（6）安全管理模块：系统安全保障。",
+            "keywords": ["感知采集", "通信传输", "数据处理", "设备控制", "人机交互", "安全管理", "采集", "传输", "存储", "控制", "交互", "安全"],
+            "analysis": "<strong>🎯 答案解析：</strong>六大模块各司其职，从数据采集到安全防护形成完整体系。<br><strong>📚 知识点讲解：</strong>这是物联网系统设计的通用模板，可根据实际需求裁剪或扩充。<br><strong>💡 解题思路：</strong>按顺序列出模块并简要说明其核心职责。<br><strong>🧠 记忆口诀：</strong>感传数控人安，六模构建物联网。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "请简述确定物联网功能需求的基本步骤。",
+            "answer": "基本步骤：（1）需求调研：与用户沟通了解业务场景和期望。（2）需求分析：整理提炼信息，区分核心和次要需求。（3）需求定义：用清晰可验证的语言描述需求，形成文档。（4）需求评审：组织相关人员评审需求的完整性和可行性。（5）需求变更管理：建立变更流程，严格控制变更。",
+            "keywords": ["需求调研", "需求分析", "需求定义", "需求评审", "需求变更", "用户沟通", "文档", "评审", "变更控制"],
+            "analysis": "<strong>🎯 答案解析：</strong>需求分析五步法：调研→分析→定义→评审→变更管理。<br><strong>📚 知识点讲解：</strong>规范的需求流程能有效降低项目风险，确保系统满足用户真实需要。<br><strong>💡 解题思路：</strong>按顺序描述，每一步强调关键活动。<br><strong>🧠 记忆口诀：</strong>调分定评变，五步需求管。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某小区想要建设一个智能停车场系统，实现车辆自动识别抬杆、车位实时检测、自动计时计费、扫码支付和后台管理等功能。请回答以下问题：",
+            "tasks": ["（1）列出系统的主要功能需求和非功能需求。", "（2）对系统进行模块功能划分，说明每个模块的核心功能。", "（3）设计两个模块之间的接口。"],
+            "answer": "（1）功能需求：车辆进出自动识别和抬杆；车位实时检测和显示；自动计时计费；扫码支付；后台管理（查看车位和收费记录）。非功能需求：车辆识别准确率≥99%，抬杆响应≤1秒；系统无故障时间≥5000小时；支付数据加密传输；支持车位数量扩展；界面简单直观。（2）感知采集模块：车牌识别摄像头、地磁车位检测器；通信传输模块：以太网、WiFi、网关；数据处理模块：计费系统、数据库；设备控制模块：道闸控制器；人机交互模块：扫码支付终端、后台管理系统、信息显示屏；安全管理模块：用户认证、支付加密。（3）感知采集模块→数据处理模块接口：上传车辆识别信息（输入车牌号、时间、出入口；输出处理结果）；数据处理模块→设备控制模块接口：控制道闸抬杆（输入道闸编号、时长；输出控制结果）。",
+            "keywords": [
+                ["功能需求", "识别", "抬杆", "检测", "计费", "支付", "管理"],
+                ["非功能需求", "准确率", "响应时间", "无故障", "加密", "扩展", "易用"],
+                ["感知采集", "摄像头", "地磁", "通信传输", "以太网", "WiFi", "数据处理", "计费", "数据库", "设备控制", "道闸", "人机交互", "扫码", "显示屏", "安全管理", "认证", "加密"],
+                ["接口", "上传", "控制", "输入参数", "输出结果"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）功能与非功能需求需覆盖业务和质量两方面；（2）模块划分遵循六大通用模块，并填充具体设备；（3）接口定义包含输入输出和功能描述。<br><strong>📚 知识点讲解：</strong>智能停车系统是物联网典型应用，综合考察需求分析和模块设计能力。<br><strong>💡 解题思路：</strong>从用户视角提取功能，从技术指标提取非功能需求，然后映射到标准模块，最后设计关键接口。<br><strong>🧠 记忆口诀：</strong>停车场需求两分类，六模划分定接口。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某学校想要建设一个智能教室系统，实现环境数据采集、设备自动控制、远程操控、能耗记录和紧急报警等功能。请结合物联网的四层架构和模块划分原则，设计总体方案。",
+            "tasks": ["（1）明确系统的功能需求和非功能需求。", "（2）进行模块功能划分，说明每个模块的组成和功能。", "（3）说明模块之间的通信方式和接口。"],
+            "answer": "（1）功能需求：采集温湿度、光照、二氧化碳浓度；根据环境参数自动调节空调、灯光、窗帘；讲台触摸屏和手机APP远程控制；记录设备运行状态和能耗数据；火灾自动开灯开门窗并报警。非功能需求：采集频率≥1次/分钟，指令响应≤2秒；无故障时间≥8000小时；授权用户可控制，数据加密；界面简单；自动节能。（2）感知采集模块：温湿度、光照、二氧化碳、人体红外、烟雾传感器；通信传输模块：ZigBee（传感器与控制器）、WiFi（云平台与APP）、网关；数据处理模块：本地控制器、云平台、数据库；设备控制模块：空调、灯光、窗帘控制器、报警器；人机交互模块：讲台触摸屏、手机APP、Web管理；安全管理模块：用户认证、数据加密、权限管理。（3）感知采集模块与本地控制器：ZigBee/串口；本地控制器与云平台：WiFi/HTTP；云平台与手机APP：4G/WiFi/RESTful API；本地控制器与设备控制模块：ZigBee/串口。",
+            "keywords": [
+                ["功能需求", "采集", "自动调节", "远程控制", "能耗记录", "报警"],
+                ["非功能需求", "频率", "响应时间", "无故障", "授权", "加密", "节能"],
+                ["感知采集", "传感器", "通信传输", "ZigBee", "WiFi", "网关", "数据处理", "本地控制器", "云平台", "设备控制", "控制器", "人机交互", "触摸屏", "APP", "安全管理", "认证"],
+                ["接口", "串口", "HTTP", "RESTful", "通信方式"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）功能需求围绕教室环境管控，非功能需求强调实时性、可靠性和安全；（2）模块划分结合四层架构，传感器对应感知，网络使用ZigBee+WiFi，数据处理在本地和云端协同；（3）接口设计需明确各层之间的通信协议。<br><strong>📚 知识点讲解：</strong>智能教室是物联网系统集成的综合案例，体现了从需求到架构的完整思维过程。<br><strong>💡 解题思路：</strong>先分析教室场景需要什么功能，再转化为系统模块，最后定义模块间的通信管道。<br><strong>🧠 记忆口诀：</strong>教室需求看管控，模块通信 ZigBee 与 WiFi。"
+        }];
+
+        const APP_ID = 'iot_func_req_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextInputType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getAnswerStatus(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return 'unanswered';
+            if (isChoiceType(q)) return a === q.answer ? 'correct' : 'wrong';
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return 'unanswered';
+                const hr = a.hitRate || 0;
+                if (hr >= 0.8) return 'correct';
+                if (hr >= 0.4) return 'partial';
+                return 'wrong';
+            }
+            return 'unanswered';
+        }
+
+        function isAnswerCorrect(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(q)) return a === q.answer;
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return false;
+                const hr = a.hitRate || 0;
+                if (q.type === '简答题') return hr >= 0.6;
+                if (q.type === '综合应用题') return hr >= 0.7;
+                return hr >= 0.6;
+            }
+            return false;
+        }
+
+        function isAnswered(index) {
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(questions[index])) return typeof a === 'number';
+            if (isTextInputType(questions[index])) return a && a.submitted === true;
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '物联网功能需求与模块功能划分';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>物联网功能需求</strong>是指物联网系统必须具备的、能够满足用户实际业务需求的功能和特性。<strong>模块功能划分</strong>是将复杂系统按\u201C高内聚、低耦合\u201D原则分解为若干独立模块，明确职责和接口。</p>
+                <h3>🔑 核心要点</h3>
+                <p><strong>1. 功能需求与非功能需求</strong></p>
+                <ul>
+                    <li><strong>功能需求：</strong>\u201C能做什么\u201D，如数据采集、设备控制</li>
+                    <li><strong>非功能需求：</strong>\u201C做得怎么样\u201D，如性能、可靠性、安全</li>
+                </ul>
+                <p><strong>2. 确定需求的基本步骤</strong></p>
+                <ul><li>需求调研 → 需求分析 → 需求定义 → 需求评审 → 需求变更管理</li></ul>
+                <p><strong>3. 六大通用模块</strong></p>
+                <ul>
+                    <li>感知采集模块 | 通信传输模块 | 数据处理模块</li>
+                    <li>设备控制模块 | 人机交互模块 | 安全管理模块</li>
+                </ul>
+                <h3>⚠️ 易错提醒</h3>
+                <ul><li>功能与非功能需求不可混淆；模块划分遵循高内聚低耦合；接口定义必须清晰。</li></ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveIndex() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices[Math.min(currentIndex, reviewIndices.length - 1)];
+            return currentIndex;
+        }
+
+        function getEffectiveTotal() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            const contentArea = document.getElementById('quizContent');
+            const aVal = answers[effIndex];
+            let diffClass = '';
+            if (q.difficulty === '基础') diffClass = 'diff-basic';
+            else if (q.difficulty === '中档') diffClass = 'diff-mid';
+            else if (q.difficulty === '提高') diffClass = 'diff-high';
+
+            let html = `<div class="question-card"><span class="question-type ${diffClass}">${q.type} · ${q.difficulty || ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.tableData) html += q.tableData;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = (aVal !== null && aVal !== undefined && typeof aVal === 'number') && aVal === idx;
+                    const isCorrectAns = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (aVal !== null && aVal !== undefined && typeof aVal === 'number') {
+                        if (isSelected && isCorrectAns) classes.push('correct');
+                        else if (isSelected && !isCorrectAns) classes.push('wrong');
+                        else if (isCorrectAns) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (isTextInputType(q)) {
+                const isSubmitted = aVal && aVal.submitted;
+                const userInput = (aVal && aVal.userInput) ? aVal.userInput : '';
+                if (q.tasks && q.tasks.length > 0) {
+                    html += `<ol class="task-list">`;
+                    q.tasks.forEach(t => { html += `<li>${t}</li>`; });
+                    html += `</ol>`;
+                }
+                html += `<textarea class="textarea-input" id="textAnswerInput" placeholder="请在此输入你的回答..." ${isSubmitted ? 'disabled' : ''}>${userInput}</textarea>`;
+                if (!isSubmitted) {
+                    html += `<div class="submit-row">
+                        <button class="draft-btn" onclick="saveDraft(${effIndex})"><i class="fas fa-save"></i> 保存草稿</button>
+                        <button class="clear-input-btn" onclick="clearInput(${effIndex})"><i class="fas fa-eraser"></i> 清空输入</button>
+                        <button class="submit-btn" onclick="submitTextAnswer(${effIndex})"><i class="fas fa-check-circle"></i> 提交作答</button>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+
+            if (isAnswered(effIndex)) {
+                const status = getAnswerStatus(effIndex);
+                let badgeHtml = '';
+                if (status === 'correct') badgeHtml = '<span class="result-badge correct">✓ 回答正确</span>';
+                else if (status === 'partial') badgeHtml = '<span class="result-badge partial">△ 部分正确</span>';
+                else badgeHtml = '<span class="result-badge wrong">✗ 回答错误</span>';
+
+                if (isTextInputType(q) && aVal && aVal.submitted) {
+                    const hr = aVal.hitRate || 0;
+                    const hrPercent = Math.round(hr * 100);
+                    let hrClass = 'weak', tagHtml = '<span class="tag-weak">需加强</span>';
+                    if (q.type === '简答题') {
+                        if (hr >= 0.6) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">回答较好</span>'; }
+                        else if (hr >= 0.3) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">部分正确</span>'; }
+                    } else if (q.type === '综合应用题') {
+                        if (hr >= 0.85) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">优秀</span>'; }
+                        else if (hr >= 0.7) { hrClass = 'good'; tagHtml = '<span class="tag-good">良好</span>'; }
+                        else if (hr >= 0.5) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">合格</span>'; }
+                    }
+                    html += `<div class="analysis-card" style="padding:16px; margin-top:16px;">
+                        <p><strong>📝 你的回答：</strong></p>
+                        <div style="background:#fafafa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre-wrap;">${escapeHtml(aVal.userInput || '')}</div>
+                        <p><strong>关键词命中率：</strong>${tagHtml} <span style="font-weight:700;">${hrPercent}%</span></p>
+                        <div class="hit-rate-bar"><div class="hit-rate-fill ${hrClass}" style="width:${hrPercent}%"></div></div>
+                        ${aVal.hitKeywords && aVal.hitKeywords.length > 0 ? `<p><strong>✅ 命中关键词：</strong>${aVal.hitKeywords.map(k => '<span class="highlight-hit">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        ${aVal.missedKeywords && aVal.missedKeywords.length > 0 ? `<p><strong>❌ 未命中关键词：</strong>${aVal.missedKeywords.map(k => '<span class="highlight-miss">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        <p style="margin-top:10px;"><strong>📋 标准答案：</strong>${q.answer}</p>
+                    </div>`;
+                }
+
+                html += `<div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 答案分析 ${badgeHtml}</div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                </div>`;
+            }
+
+            const allAnsweredInScope = reviewMode ? reviewIndices.every(i => isAnswered(i)) : questions.every((_, i) => isAnswered(i));
+            const lastInScope = (currentIndex >= getEffectiveTotal() - 1);
+
+            if (lastInScope && allAnsweredInScope && !reviewMode) {
+                let totalQ = questions.length, correctCount = 0;
+                questions.forEach((_, i) => { if (isAnswerCorrect(i)) correctCount++; });
+                const accuracy = Math.round(correctCount / totalQ * 100);
+                saveToHistory(correctCount, accuracy);
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">🎉</div>
+                    <h1 class="completion-title">刷题完成！</h1>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${totalQ}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()"><i class="fas fa-redo"></i> 重新开始</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-exclamation-triangle"></i> 回看错题</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            if (lastInScope && allAnsweredInScope && reviewMode) {
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">📋</div>
+                    <h1 class="completion-title">错题回顾完成！</h1>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="exitReviewMode()"><i class="fas fa-arrow-left"></i> 返回刷题</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-redo"></i> 再次回看</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effIndex = getEffectiveIndex();
+            if (!isChoiceType(questions[effIndex])) return;
+            if (answers[effIndex] !== null && typeof answers[effIndex] === 'number') return;
+            answers[effIndex] = idx;
+            saveAnswers();
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            showToast(idx === questions[effIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const userInput = textarea.value.trim();
+            if (!userInput) { showToast('请输入你的回答后再提交'); return; }
+            const q = questions[effIndex];
+            let allKeywords = [];
+            if (q.type === '简答题') allKeywords = q.keywords || [];
+            else if (q.type === '综合应用题' && q.keywords && Array.isArray(q.keywords)) {
+                q.keywords.forEach(kArr => { if (Array.isArray(kArr)) allKeywords = allKeywords.concat(kArr); });
+            }
+            const hitKeywords = [], missedKeywords = [];
+            const inputLower = userInput.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (inputLower.includes(kw.toLowerCase())) hitKeywords.push(kw);
+                else missedKeywords.push(kw);
+            });
+            const hitRate = allKeywords.length > 0 ? hitKeywords.length / allKeywords.length : 0;
+            answers[effIndex] = { userInput, submitted: true, hitRate, hitKeywords, missedKeywords, totalKeywords: allKeywords.length };
+            saveAnswers();
+            clearDraft(effIndex);
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            const hrPercent = Math.round(hitRate * 100);
+            if (q.type === '简答题') {
+                if (hitRate >= 0.6) showToast(`回答较好！命中率 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.3) showToast(`部分正确，命中率 ${hrPercent}%`);
+                else showToast(`需加强，命中率 ${hrPercent}%`);
+            } else {
+                if (hitRate >= 0.85) showToast(`优秀！完成度 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.7) showToast(`良好！完成度 ${hrPercent}%`);
+                else if (hitRate >= 0.5) showToast(`合格，完成度 ${hrPercent}%`);
+                else showToast(`需加强，完成度 ${hrPercent}%`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveDraft(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const drafts = getDrafts(); drafts[effIndex] = textarea.value;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+            showToast('草稿已保存 ✓');
+        }
+
+        function clearInput(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            if (textarea.value.trim() && !confirm('确定要清空输入内容吗？')) return;
+            textarea.value = '';
+            clearDraft(effIndex);
+            showToast('输入已清空');
+        }
+
+        function getDrafts() { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; }
+        function clearDraft(effIndex) { const drafts = getDrafts(); delete drafts[effIndex]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('恭喜！没有错题需要回顾 🎉'); return; }
+            reviewMode = true; reviewIndices = wrongIndices; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; reviewIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast('已返回正常刷题模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('没有错题可导出'); return; }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题号,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongIndices.forEach(i => {
+                const q = questions[i]; const aVal = answers[i];
+                let userAnswerStr = '', correctAnswerStr = '', hitRateStr = '', resultStr = '';
+                if (isChoiceType(q)) {
+                    const selectedLabel = (typeof aVal === 'number' && aVal >= 0 && q.options[aVal]) ? q.options[aVal].label : '未作答';
+                    const correctLabel = q.options[q.answer] ? q.options[q.answer].label : '';
+                    userAnswerStr = selectedLabel; correctAnswerStr = correctLabel;
+                    hitRateStr = (typeof aVal === 'number' && aVal === q.answer) ? '100%' : '0%';
+                    resultStr = (typeof aVal === 'number' && aVal === q.answer) ? '正确' : '错误';
+                } else if (isTextInputType(q)) {
+                    userAnswerStr = (aVal && aVal.userInput) ? aVal.userInput.replace(/\n/g, ' ').replace(/"/g, '""') : '未作答';
+                    correctAnswerStr = q.answer ? q.answer.replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                    hitRateStr = (aVal && aVal.submitted) ? Math.round((aVal.hitRate || 0) * 100) + '%' : '未提交';
+                    const hr = (aVal && aVal.submitted) ? (aVal.hitRate || 0) : 0;
+                    if (q.type === '简答题') resultStr = hr >= 0.6 ? '回答较好' : (hr >= 0.3 ? '部分正确' : '需加强');
+                    else resultStr = hr >= 0.85 ? '优秀' : (hr >= 0.7 ? '良好' : (hr >= 0.5 ? '合格' : '需加强'));
+                }
+                const analysisPlain = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                csvContent += `"${q.type}","${i+1}","${q.stem.replace(/"/g,'""')}","${userAnswerStr}","${correctAnswerStr}","${hitRateStr}","${resultStr}","${analysisPlain}"\n`;
+            });
+            const dateStr = new Date().toISOString().slice(0,10);
+            const filename = `错题本_物联网功能需求_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); link.href = url; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast(`错题已导出：${filename}`);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling, icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < getEffectiveTotal() - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            let answeredCount = 0;
+            const scope = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            scope.forEach(i => { if (isAnswered(i)) answeredCount++; });
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = effectiveTotal;
+            document.getElementById('progressFill').style.width = effectiveTotal > 0 ? `${(answeredCount / effectiveTotal) * 100}%` : '0%';
+            if (reviewMode) document.getElementById('questionInfo').querySelector('.progress-text').textContent = `错题回顾 · ${answeredCount}/${effectiveTotal} 已答`;
+        }
+
+        function updateNavButtons() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('footerContent').innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${currentIndex >= effectiveTotal - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay'), panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid'); let html = '';
+            questions.forEach((q, index) => {
+                const status = getAnswerStatus(index);
+                let statusClass = 'unanswered', statusText = '未答';
+                if (status === 'correct') { statusClass = 'correct'; statusText = '正确'; }
+                else if (status === 'wrong') { statusClass = 'wrong'; statusText = '错误'; }
+                else if (status === 'partial') { statusClass = 'partial'; statusText = '部分'; }
+                if (index === getEffectiveIndex() && !reviewMode) statusClass += ' current';
+                if (reviewMode && reviewIndices.includes(index) && reviewIndices.indexOf(index) === currentIndex) statusClass += ' current';
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && status !== 'unanswered') return;
+                    if (currentFilter === 'correct' && status !== 'correct') return;
+                    if (currentFilter === 'wrong' && status !== 'wrong' && status !== 'partial') return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index+1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) { const pos = reviewIndices.indexOf(index); if (pos >= 0) currentIndex = pos; else { reviewMode = false; reviewIndices = []; currentIndex = index; } }
+            else currentIndex = index;
+            renderQuestion(); updateNavButtons(); toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay'), panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList'), history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            history.unshift({ timestamp: Date.now(), totalCount: questions.length, correctCount, accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = record.answers.map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    return a;
+                });
+                currentIndex = 0; reviewMode = false; reviewIndices = [];
+                saveAnswers();
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion(); updateNavButtons(); toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() {
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers: serializableAnswers, reviewMode, reviewIndices }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0; reviewMode = data.reviewMode || false; reviewIndices = data.reviewIndices || [];
+                answers = (data.answers || new Array(questions.length).fill(null)).map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    if (isChoiceType(questions[i]) && typeof a === 'number') return a;
+                    return null;
+                });
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            const drafts = getDrafts();
+            if (Object.keys(drafts).length > 0) {
+                Object.keys(drafts).forEach(idx => {
+                    const i = parseInt(idx);
+                    if (i >= 0 && i < questions.length && isTextInputType(questions[i]) && !isAnswered(i)) {
+                        if (!answers[i] || !answers[i].submitted) { if (!answers[i]) answers[i] = { userInput: drafts[idx], submitted: false, hitRate: 0, hitKeywords: [], missedKeywords: [], totalKeywords: 0 }; else if (!answers[i].submitted) answers[i].userInput = drafts[idx]; }
+                    }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm('确定要重新开始吗？当前进度将被清除。')) return;
+            currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+            localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message;
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div'); div.textContent = str; return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

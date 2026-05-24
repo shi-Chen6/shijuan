@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>人脸识别刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        /* 追加新题型与增强功能样式 */
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-match-result { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.7; }
+        .keyword-match-result.good { background: var(--success-light); border: 1px solid #b7eb8f; color: #135200; }
+        .keyword-match-result.partial { background: var(--warning-light); border: 1px solid #ffe58f; color: #7c5200; }
+        .keyword-match-result.weak { background: var(--error-light); border: 1px solid #ffa39e; color: #820014; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">人脸识别</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"人脸识别技术属于人工智能的哪个分支？（ ）","options":[{"label":"A","text":"自然语言处理"},{"label":"B","text":"计算机视觉"},{"label":"C","text":"专家系统"},{"label":"D","text":"机器人技术"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 计算机视觉</strong>。人脸识别是计算机视觉技术的重要应用，计算机视觉是让计算机“看懂”图像和视频的技术。<br><strong>📚 知识点讲解：</strong>人工智能包含多个分支，如自然语言处理、计算机视觉、语音识别等。人脸识别通过分析人脸图像来识别身份，属于计算机视觉领域。<br><strong>💡 解题思路：</strong>自然语言处理处理文本，专家系统基于规则推理，机器人技术涉及机械控制。只有计算机视觉专门处理图像和视频。<br><strong>🧠 记忆口诀：</strong>人脸识别靠视觉，计算机视觉是老家，图像分析定身份，AI分支记心间。"},{"type":"单选题","difficulty":"基础","stem":"人脸识别的第一步是（ ）","options":[{"label":"A","text":"特征提取"},{"label":"B","text":"人脸检测"},{"label":"C","text":"图像预处理"},{"label":"D","text":"比对识别"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 人脸检测</strong>。人脸识别的第一步是从图像中找到人脸的位置和大小，只有先检测到人脸，才能进行后续处理。<br><strong>📚 知识点讲解：</strong>完整流程为：图像采集→人脸检测→图像预处理→特征提取→比对识别。人脸检测是基础，若找不到人脸则无法继续。<br><strong>💡 解题思路：</strong>特征提取、预处理和比对都在检测之后。顺序不能颠倒。<br><strong>🧠 记忆口诀：</strong>采集后先检测，人脸位置定下来，预处理再提特征，最后比对出结果。"},{"type":"单选题","difficulty":"基础","stem":"手机人脸识别解锁属于哪种比对模式？（ ）","options":[{"label":"A","text":"1:1人脸验证"},{"label":"B","text":"1:N人脸识别"},{"label":"C","text":"M:N人脸识别"},{"label":"D","text":"以上都不是"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 1:1人脸验证</strong>。手机解锁将当前人脸与用户预先注册的唯一人脸模板比对，验证身份是否一致。<br><strong>📚 知识点讲解：</strong>1:1验证回答“你是不是你声称的那个人”，只需比对1个模板，准确率高、速度快。<br><strong>💡 解题思路：</strong>手机解锁需要用户声明身份（注册时已声明），且只与1个模板比对，符合1:1特征。<br><strong>🧠 记忆口诀：</strong>手机解锁1对1，一个模板来比对，验证身份是否真，速度快来准确高。"},{"type":"单选题","difficulty":"基础","stem":"校园人脸识别考勤系统属于哪种比对模式？（ ）","options":[{"label":"A","text":"1:1人脸验证"},{"label":"B","text":"1:N人脸识别"},{"label":"C","text":"M:N人脸识别"},{"label":"D","text":"以上都不是"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 1:N人脸识别</strong>。校园考勤将当前人脸与数据库中所有师生人脸模板比对，找出对应身份，属于1:N识别。<br><strong>📚 知识点讲解：</strong>1:N识别回答“你是谁”，无需声明身份，从N个模板中寻找最相似者。<br><strong>💡 解题思路：</strong>学生进出时未声明身份，系统需自动从全校人员中查找，正是1:N场景。<br><strong>🧠 记忆口诀：</strong>校园考勤1对N，数据库里搜一遍，自动找出你是谁，不需声明也认人。"},{"type":"单选题","difficulty":"基础","stem":"火车站人证核验系统属于哪种比对模式？（ ）","options":[{"label":"A","text":"1:1人脸验证"},{"label":"B","text":"1:N人脸识别"},{"label":"C","text":"M:N人脸识别"},{"label":"D","text":"以上都不是"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 1:1人脸验证</strong>。人证核验将现场人脸与身份证中的人脸照片比对，验证是否为同一人，属于1:1验证。<br><strong>📚 知识点讲解：</strong>身份证提供了“声称的身份”，系统只需比对这张特定照片，是典型的1:1验证。<br><strong>💡 解题思路：</strong>旅客出示身份证即声明了身份，比对目标明确，符合1:1验证。<br><strong>🧠 记忆口诀：</strong>人证核验1对1，身份证照来比对，验证旅客是本人，严防冒用保安全。"},{"type":"单选题","difficulty":"基础","stem":"用于防止用照片、视频欺骗人脸识别系统的技术是（ ）","options":[{"label":"A","text":"人脸检测"},{"label":"B","text":"特征提取"},{"label":"C","text":"活体检测"},{"label":"D","text":"图像预处理"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 活体检测</strong>。活体检测技术用于判断摄像头前的是否是真人，能有效防止照片、视频等欺骗手段。<br><strong>📚 知识点讲解：</strong>活体检测可通过眨眼、摇头等动作配合，或分析皮肤纹理、反光等被动方式实现，是保障安全的关键技术。<br><strong>💡 解题思路：</strong>人脸检测只是找人脸，特征提取是获取特征，预处理是优化图像。只有活体检测专门用于防欺骗。<br><strong>🧠 记忆口诀：</strong>活体检测防欺骗，照片视频难过关，眨眼摇头或纹理，真人才可把门开。"},{"type":"单选题","difficulty":"基础","stem":"下列不属于人脸识别应用的是（ ）","options":[{"label":"A","text":"刷脸支付"},{"label":"B","text":"语音转文字"},{"label":"C","text":"门禁系统"},{"label":"D","text":"公安追逃"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 语音转文字</strong>。语音转文字属于自然语言处理/语音识别技术，与人脸识别无关。<br><strong>📚 知识点讲解：</strong>人脸识别主要应用于安全验证、考勤、支付等需要身份识别的场景。<br><strong>💡 解题思路：</strong>A、C、D都涉及人脸分析识别身份，B处理的是音频信号。<br><strong>🧠 记忆口诀：</strong>语音转文字属语音，人脸识别看脸庞，分类清晰不混淆，应用场景要分明。"},{"type":"单选题","difficulty":"基础","stem":"人脸识别系统中，用于存储人脸特征模板的是（ ）","options":[{"label":"A","text":"摄像头"},{"label":"B","text":"数据库"},{"label":"C","text":"推理机"},{"label":"D","text":"显示器"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 数据库</strong>。数据库用于存储已注册用户的人脸特征模板，供比对时调用。<br><strong>📚 知识点讲解：</strong>人脸特征模板是数学向量，保存在数据库中。摄像头采集图像，显示器呈现结果，推理机是专家系统概念。<br><strong>💡 解题思路：</strong>存储数据需要数据库，摄像头是输入设备，显示器是输出设备。<br><strong>🧠 记忆口诀：</strong>特征模板存数据库，摄像头来采集图，比对检索靠数据库，识别结果屏上出。"},{"type":"单选题","difficulty":"基础","stem":"下列哪个因素不会影响人脸识别的准确率？（ ）","options":[{"label":"A","text":"光照条件"},{"label":"B","text":"拍摄角度"},{"label":"C","text":"人脸表情"},{"label":"D","text":"手机品牌"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 手机品牌</strong>。光照、角度、表情、遮挡等都会影响识别效果，而手机品牌本身不直接影响识别算法。<br><strong>📚 知识点讲解：</strong>人脸识别算法容易受环境因素和面部变化影响，不同品牌手机可能采用不同算法，但品牌不是影响因素。<br><strong>💡 解题思路：</strong>A、B、C都是公认的影响因素，D属于设备品牌，不直接影响识别率。<br><strong>🧠 记忆口诀：</strong>光照角度和表情，口罩眼镜也影响，手机品牌无直接，算法才是关键点。"},{"type":"单选题","difficulty":"基础","stem":"人脸数据属于（ ）","options":[{"label":"A","text":"普通个人信息"},{"label":"B","text":"敏感个人信息"},{"label":"C","text":"公开信息"},{"label":"D","text":"无关信息"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 敏感个人信息</strong>。人脸数据属于生物特征信息，是敏感个人信息，一旦泄露可能导致严重后果。<br><strong>📚 知识点讲解：</strong>《个人信息保护法》将生物特征信息列为敏感个人信息，需要严格保护。<br><strong>💡 解题思路：</strong>人脸具有唯一性和不可更改性，因此比普通信息更敏感。<br><strong>🧠 记忆口诀：</strong>人脸数据敏感级，生物特征要保密，法律保护严把关，随意采集不可取。"},{"type":"单选题","difficulty":"中档","stem":"下列关于1:1人脸验证和1:N人脸识别的区别，说法错误的是（ ）","options":[{"label":"A","text":"1:1验证需要用户声明身份，1:N识别不需要"},{"label":"B","text":"1:1验证比对的是1个模板，1:N识别比对的是N个模板"},{"label":"C","text":"1:1验证的准确率更高，1:N识别的技术难度更大"},{"label":"D","text":"1:1验证适合用于公安追逃，1:N识别适合用于刷脸支付"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D</strong>。1:1验证适合刷脸支付，1:N识别适合公安追逃。选项D将两者颠倒了。<br><strong>📚 知识点讲解：</strong>1:1验证安全性高，适合支付等场景；1:N识别可在大规模库中搜索，适合追逃。<br><strong>💡 解题思路：</strong>A、B、C均正确描述了区别。D的应用场景反了，公安追逃需要从大量在逃人员库中搜索（1:N），刷脸支付只需比对注册的1个模板（1:1）。<br><strong>🧠 记忆口诀：</strong>支付解锁1对1，追逃考勤1对N，场景相反要记清，别把应用搞错位。"},{"type":"单选题","difficulty":"中档","stem":"某商场安装了人脸识别系统，当顾客进入商场时，系统能够自动识别出会员身份，并推送个性化的优惠信息。这属于哪种比对模式？（ ）","options":[{"label":"A","text":"1:1人脸验证"},{"label":"B","text":"1:N人脸识别"},{"label":"C","text":"M:N人脸识别"},{"label":"D","text":"以上都不是"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 1:N人脸识别</strong>。系统需将顾客人脸与数据库中所有会员人脸比对，找出匹配的会员身份。<br><strong>📚 知识点讲解：</strong>顾客未声明身份，系统自动在会员库中搜索，属于1:N识别典型应用。<br><strong>💡 解题思路：</strong>无需用户主动提供身份，系统从N个会员中检索，是1:N识别。<br><strong>🧠 记忆口诀：</strong>商场会员1对N，自动识别认会员，不需声明身份来，个性化推送跟上来。"},{"type":"单选题","difficulty":"中档","stem":"下列关于人脸识别技术局限性的说法，错误的是（ ）","options":[{"label":"A","text":"受光照、角度、遮挡等因素影响较大"},{"label":"B","text":"无法区分同卵双胞胎"},{"label":"C","text":"对所有人群的识别准确率都一样"},{"label":"D","text":"容易被深度伪造技术欺骗"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。由于训练数据偏差，人脸识别对不同肤色、年龄、性别的人群准确率可能存在差异，并非都一样。<br><strong>📚 知识点讲解：</strong>算法偏见是重要伦理问题，源于训练数据不均衡，导致部分群体识别率偏低。<br><strong>💡 解题思路：</strong>A、B、D都是公认的局限性。C否认了算法偏见的存在，故错误。<br><strong>🧠 记忆口诀：</strong>算法偏见需注意，不同人群有差异，训练数据要多样，公平公正才可靠。"},{"type":"单选题","difficulty":"中档","stem":"下列关于人脸识别伦理问题的说法，错误的是（ ）","options":[{"label":"A","text":"人脸数据泄露可能导致身份被盗用"},{"label":"B","text":"过度使用人脸识别可能侵犯个人隐私"},{"label":"C","text":"算法偏见不会导致任何问题"},{"label":"D","text":"人脸识别可能被用于非法监控"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。算法偏见可能导致对特定群体的歧视，例如人脸识别对某些肤色准确率低，可能引发不公。<br><strong>📚 知识点讲解：</strong>算法偏见是AI伦理的核心问题之一，可能导致歧视、不公等严重后果。<br><strong>💡 解题思路：</strong>A、B、D都是人脸识别的真实伦理风险。C否认了偏见的影响，是错误的。<br><strong>🧠 记忆口诀：</strong>偏见问题不可忽，歧视风险真存在，算法需要常审计，公平公正记心间。"},{"type":"单选题","difficulty":"中档","stem":"为了保护个人隐私，在使用人脸识别技术时，我们应该（ ）","options":[{"label":"A","text":"随意同意任何机构采集人脸数据"},{"label":"B","text":"不了解隐私政策就使用人脸识别服务"},{"label":"C","text":"只在必要的、合法的场景下使用人脸识别"},{"label":"D","text":"将自己的人脸数据分享给他人"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。保护隐私应遵循“最小必要”原则，仅在必要且合法的场景下使用人脸识别。<br><strong>📚 知识点讲解：</strong>个人应提高隐私保护意识，谨慎授权人脸数据采集，了解数据用途和存储方式。<br><strong>💡 解题思路：</strong>A、B、D都是错误的隐私保护做法。C是正确原则。<br><strong>🧠 记忆口诀：</strong>人脸数据要保护，必要合法才使用，不明来源不乱给，隐私意识心中留。"},{"type":"判断题","difficulty":"基础","stem":"人脸识别是通过分析面部特征来识别身份的技术。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。人脸识别就是通过提取和分析面部特征来识别或验证身份的技术。<br><strong>📚 知识点讲解：</strong>这是人脸识别的基本定义，人脸特征包括眼睛、鼻子、嘴巴的形状、距离等。<br><strong>💡 解题思路：</strong>基本概念题，表述准确。<br><strong>🧠 记忆口诀：</strong>人脸识别看特征，眼鼻嘴形和距离，分析比对定身份，基本原理记清楚。"},{"type":"判断题","difficulty":"基础","stem":"人脸识别的核心是特征提取。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。特征提取将人脸图像转化为数学特征向量，其质量直接决定了识别准确率，是核心环节。<br><strong>📚 知识点讲解：</strong>特征提取通常使用深度学习算法，如卷积神经网络，自动学习人脸的关键特征点。<br><strong>💡 解题思路：</strong>检测和预处理都是为特征提取服务，比对依赖特征向量，因此核心是特征提取。<br><strong>🧠 记忆口诀：</strong>特征提取是核心，深度学习来帮忙，人脸特征向量化，比对识别靠它强。"},{"type":"判断题","difficulty":"基础","stem":"1:1人脸验证的准确率比1:N人脸识别高。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。1:1验证只需比对1个模板，1:N识别需比对N个模板，随着N增大，误识率会上升，因此1:1准确率更高。<br><strong>📚 知识点讲解：</strong>1:N识别的难度随数据库规模增大而增加，技术挑战更大。<br><strong>💡 解题思路：</strong>比对模板数量越多，出错概率越大，所以1:1通常更准确。<br><strong>🧠 记忆口诀：</strong>1对1准确率高，1对N难度大，模板越多错率涨，场景不同要区分。"},{"type":"判断题","difficulty":"基础","stem":"刷脸支付属于1:N人脸识别。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。刷脸支付将当前人脸与用户在支付平台注册的唯一人脸模板比对，属于1:1人脸验证。<br><strong>📚 知识点讲解：</strong>支付场景需要高安全性，1:1验证能够提供足够的准确率保障。<br><strong>💡 解题思路：</strong>刷脸支付时用户已通过账号声明身份，系统只需验证是否为该账号的主人。<br><strong>🧠 记忆口诀：</strong>刷脸支付1对1，注册模板来比对，支付安全要保障，验证模式要记清。"},{"type":"判断题","difficulty":"基础","stem":"活体检测可以防止用照片欺骗人脸识别系统。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。活体检测通过检测眨眼、摇头或分析皮肤纹理等方式判断真人，能有效防止照片、视频欺骗。<br><strong>📚 知识点讲解：</strong>活体检测是保障人脸识别安全性的关键技术，防止非活体攻击。<br><strong>💡 解题思路：</strong>照片缺乏立体感和生理反应，活体检测可识别这些差异。<br><strong>🧠 记忆口诀：</strong>活体检测防照片，眨眼摇头验真人，安全防线筑得牢，欺骗手段难成功。"},{"type":"判断题","difficulty":"基础","stem":"人脸识别技术不受任何因素影响，准确率是100%。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。人脸识别受光照、角度、表情、遮挡等多种因素影响，不可能达到100%准确率。<br><strong>📚 知识点讲解：</strong>任何生物识别技术都有一定的错误率，人脸识别也不例外。<br><strong>💡 解题思路：</strong>绝对准确的说法是错误认知。<br><strong>🧠 记忆口诀：</strong>人脸识别有局限，光照角度都影响，百分准确不存在，理性看待是正解。"},{"type":"判断题","difficulty":"基础","stem":"人脸数据属于敏感个人信息，需要受到法律保护。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。我国《个人信息保护法》明确规定生物特征信息属于敏感个人信息，受到严格保护。<br><strong>📚 知识点讲解：</strong>人脸数据具有唯一性和不可更改性，一旦泄露危害极大，因此法律特殊保护。<br><strong>💡 解题思路：</strong>符合法律规定，表述正确。<br><strong>🧠 记忆口诀：</strong>人脸数据受法律，敏感信息保护严，采集使用需授权，违法滥用要追责。"},{"type":"判断题","difficulty":"中档","stem":"1:N人脸识别不需要用户主动配合。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。1:N识别可在用户不知情的情况下进行，如公安监控追逃，不需要用户主动配合。<br><strong>📚 知识点讲解：</strong>1:N识别是非配合式识别，这是其用于公共安全领域的重要特性。<br><strong>💡 解题思路：</strong>1:N识别无需用户声明身份或主动参与，只需摄像头捕捉人脸即可。<br><strong>🧠 记忆口诀：</strong>1对N不需配合，监控追逃悄无声，自动比对找出人，公共安全显神通。"},{"type":"判断题","difficulty":"中档","stem":"人脸识别技术只能用于安全领域。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。人脸识别已广泛应用于金融、教育、商业、医疗等多个领域，如刷脸支付、考勤、会员识别等。<br><strong>📚 知识点讲解：</strong>人脸识别应用范围广泛，安全只是其中之一。<br><strong>💡 解题思路：</strong>多种行业都在使用人脸识别，不局限于安全。<br><strong>🧠 记忆口诀：</strong>人脸识别用途广，安全支付教育忙，商业医疗也能用，领域限制是误解。"},{"type":"判断题","difficulty":"中档","stem":"为了方便，可以在任何场所安装人脸识别系统。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。人脸识别系统的安装必须符合法律法规，禁止在涉及个人隐私的场所（如卫生间、更衣室）安装。<br><strong>📚 知识点讲解：</strong>安装人脸识别系统需要经过合法程序，尊重公民隐私权，不能随意部署。<br><strong>💡 解题思路：</strong>隐私保护法律限制随意监控，并非任何场所都可安装。<br><strong>🧠 记忆口诀：</strong>人脸识别有限制，隐私场所不可装，合法合规是前提，不能随意装监控。"},{"type":"简答题","difficulty":"中档","stem":"请简述人脸识别的完整工作流程。","answer":"人脸识别的完整工作流程包括五个步骤：（1）图像采集：通过摄像头获取包含人脸的图像或视频帧；（2）人脸检测：在图像中定位人脸的位置和大小，框选出人脸区域；（3）图像预处理：对检测到的人脸进行归一化、去噪、光照校正等处理；（4）特征提取：使用深度学习算法提取人脸的关键特征，生成唯一的特征向量；（5）比对识别：将特征向量与数据库中的特征模板进行比对，计算相似度，得出识别结果。","keywords":["图像采集","人脸检测","图像预处理","特征提取","比对识别","深度学习","特征向量","数据库"],"analysis":"<strong>🎯 答案解析：</strong>完整流程为：图像采集→人脸检测→图像预处理→特征提取→比对识别，共五个步骤。<br><strong>📚 知识点讲解：</strong>这是人脸识别的基本工作流程，每个步骤都有其重要作用，缺一不可。特征提取是核心环节。<br><strong>💡 解题思路：</strong>按时间顺序描述，突出关键词：采集、检测、预处理、特征提取、比对。<br><strong>🧠 记忆口诀：</strong>采集检测预处理，特征提取比对方，五步流程记清楚，人脸识别靠这套。"},{"type":"简答题","difficulty":"中档","stem":"请比较1:1人脸验证和1:N人脸识别的区别，并各举两个生活中的应用实例。","answer":"1:1人脸验证：回答“你是不是你声称的那个人”，需要用户声明身份，与1个指定模板比对，准确率高，速度快。应用实例：手机人脸解锁、支付宝刷脸支付。1:N人脸识别：回答“你是谁”，不需要用户声明身份，与数据库中N个模板逐一比对，技术难度更大，误识率随N增大而上升。应用实例：校园人脸识别门禁、公安天网追逃系统。","keywords":["1:1","1:N","声明身份","模板","准确率","手机解锁","刷脸支付","门禁","追逃"],"analysis":"<strong>🎯 答案解析：</strong>1:1验证需声明身份、比1个模板、准确率高，典型应用为手机解锁和刷脸支付；1:N识别无需声明、比N个模板、技术难度大，典型应用为门禁和追逃。<br><strong>📚 知识点讲解：</strong>两者核心区别在于是否需要声明身份和比对模板的数量，应用场景各有侧重。<br><strong>💡 解题思路：</strong>从“是否声明身份”和“比对模板数”两个维度对比，并举例说明。<br><strong>🧠 记忆口诀：</strong>1对1声明身份比一个，支付解锁最常用；1对N不需声明搜全库，门禁追逃显身手。"},{"type":"简答题","difficulty":"提高","stem":"请分析人脸识别技术带来的主要伦理与安全问题，并提出相应的防范措施。","answer":"主要伦理与安全问题：（1）人脸数据泄露风险：人脸数据属于敏感个人信息，泄露可能导致身份被盗用、诈骗等。防范措施：加密存储和传输，遵循“最小必要”原则，建立数据泄露应急预案。（2）隐私侵犯：过度使用人脸识别可能导致全天候监控，侵犯个人隐私。防范措施：明确使用边界，禁止在隐私场所安装，保障公众知情权和选择权。（3）算法偏见：训练数据偏见导致对特定群体识别准确率低，引发歧视。防范措施：使用多样化训练数据，定期公平性评估，建立算法审计制度。（4）深度伪造风险：利用深度伪造技术生成虚假人脸视频进行违法犯罪。防范措施：发展深度伪造检测技术，完善法律法规，加强公众教育。","keywords":["数据泄露","隐私侵犯","算法偏见","深度伪造","加密存储","最小必要","知情权","公平性评估","法律法规"],"analysis":"<strong>🎯 答案解析：</strong>四大问题：数据泄露、隐私侵犯、算法偏见、深度伪造，需从技术、法律、管理多层面防范。<br><strong>📚 知识点讲解：</strong>本题体现新课标对信息社会责任的培养，要求学生全面思考人工智能技术的社会影响。<br><strong>💡 解题思路：</strong>从四个维度分别阐述问题和措施，每个维度都应有具体的技术或制度方案。<br><strong>🧠 记忆口诀：</strong>泄露隐私偏见伪造，四大风险要警惕，加密最小必要防，法律教育齐发力。"},{"type":"综合应用题","difficulty":"提高","stem":"某小区计划安装人脸识别门禁系统，替代传统的刷卡门禁。请回答以下问题：","tasks":[{"id":1,"stem":"这个系统应该采用哪种比对模式？为什么？","answer":"应采用1:N人脸识别模式。因为小区居民进出时不需要声明自己的身份，系统需要自动从数据库中所有居民的人脸模板中找出匹配的身份，这符合1:N人脸识别的特点。","keywords":["1:N","人脸识别","无需声明","数据库","居民"]},{"id":2,"stem":"安装这个系统可能会给小区居民带来哪些好处？","answer":"好处：①方便快捷，不需要携带门禁卡；②安全性高，人脸难以复制盗用；③管理高效，自动记录出入时间；④功能扩展，可集成停车场等系统。","keywords":["方便","安全","管理","记录","扩展"]},{"id":3,"stem":"安装这个系统可能会带来哪些风险和问题？","answer":"风险和问题：①隐私泄露风险，需采集存储大量居民人脸数据；②识别准确率受光照、口罩等影响；③过度监控侵犯居民隐私；④系统故障导致无法进出。","keywords":["隐私泄露","准确率","过度监控","系统故障"]},{"id":4,"stem":"为了降低这些风险，小区物业应该采取哪些措施？","answer":"措施：①保护隐私，采集前获居民同意，加密存储，不泄露给第三方；②提高系统性能，选高性能算法，安装补光设备；③建立监督机制，居民代表参与监督；④制定应急预案，故障时启用其他通行方式。","keywords":["同意","加密","监督","应急预案","补光","性能"]}],"answer":"（1）采用1:N人脸识别模式，因居民无需声明身份；（2）好处包括方便、安全、高效管理、可扩展；（3）风险有隐私泄露、准确率、过度监控、系统故障；（4）措施：获同意、加密数据、提高性能、建立监督、制定预案。","keywords":["1:N","方便","安全","隐私","加密","监督","应急预案"],"analysis":"<strong>🎯 答案解析：</strong>小区门禁应采用1:N识别模式，因为它能自动识别居民身份；好处是方便安全，但需注意隐私保护和系统可靠性。<br><strong>📚 知识点讲解：</strong>人脸识别在实际应用中需平衡便利与安全，隐私保护措施必不可少，体现了技术应用的伦理考量。<br><strong>💡 解题思路：</strong>从比对模式、利弊分析到风险防范，逻辑递进，全面分析实际案例。<br><strong>🧠 记忆口诀：</strong>小区门禁1对N，方便安全又高效，隐私监督要跟上，应急预案不可少。"},{"type":"综合应用题","difficulty":"提高","stem":"随着人脸识别技术的发展，越来越多的学校开始使用人脸识别系统进行考勤、门禁、食堂消费等管理。请结合实际，谈谈你对学校使用人脸识别系统的看法。要求：观点明确，理由充分，不少于200字。","tasks":[{"id":1,"stem":"请阐述你的观点（支持/反对/辩证看待），并给出至少三个理由。","answer":"我认为学校使用人脸识别系统是一把双刃剑，应辩证看待。理由：①积极方面：提高管理效率，方便师生生活，提升校园安全；②消极方面：存在隐私泄露风险，可能导致过度监控，算法偏见影响公平；③建议：遵循“必要、合法、最小”原则，获取家长学生同意，加强数据安全，建立监督机制。","keywords":["双刃剑","效率","便利","安全","隐私","过度监控","偏见","同意","监督"]},{"id":2,"stem":"请结合具体场景（如考勤、食堂消费）说明你的理由。","answer":"考勤场景：自动记录出勤，避免代签到，但可能让学生感觉被时刻监视。食堂消费：方便快捷无需带卡，但人脸数据若泄露可能被用于其他用途。","keywords":["考勤","代签到","监视","食堂","快捷","泄露"]}],"answer":"观点：辩证看待。理由：提高效率与安全，但存在隐私和过度监控风险。建议：合规使用，获同意，强安全，建监督。场景：考勤防作弊但监视感强，食堂方便但数据风险。","keywords":["辩证","效率","安全","隐私","监督","考勤","食堂"],"analysis":"<strong>🎯 答案解析：</strong>这是一道开放性题目，要求辩证分析学校使用人脸识别的利弊，并提出合理建议。<br><strong>📚 知识点讲解：</strong>人脸识别在教育领域的应用需权衡技术优势与伦理风险，培养学生的批判性思维和信息社会责任意识。<br><strong>💡 解题思路：</strong>从正反两方面论述，结合具体场景，最终给出建设性意见。<br><strong>🧠 记忆口诀：</strong>校园人脸双刃剑，效率安全优点显，隐私监控需警惕，合规监督是关键。"}];
+        
+        const APP_ID = 'face_recognition_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '人脸识别（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>人脸识别是<strong>基于计算机视觉和深度学习的生物特征识别技术</strong>，通过摄像头采集人脸图像，自动检测并提取关键特征点，转化为数学特征向量，与数据库中的人脸特征进行比对，实现身份验证或识别。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. 人脸识别的完整工作流程</strong></p>
+                <ul>
+                    <li><strong>图像采集</strong> — 通过摄像头获取包含人脸的图像或视频帧</li>
+                    <li><strong>人脸检测</strong> — 定位人脸位置和大小，框选出人脸区域</li>
+                    <li><strong>图像预处理</strong> — 归一化、去噪、光照校正等</li>
+                    <li><strong>特征提取</strong> — 使用深度学习提取关键特征，生成特征向量</li>
+                    <li><strong>比对识别</strong> — 与数据库模板比对，计算相似度，得出结果</li>
+                </ul>
+                <p><strong>2. 两种核心比对模式（高频考点）</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>比较项目</th><th>1:1人脸验证</th><th>1:N人脸识别</th></tr>
+                    <tr><td>核心问题</td><td>你是不是你声称的那个人？</td><td>你是谁？</td></tr>
+                    <tr><td>比对方式</td><td>与1个指定模板比对</td><td>与N个模板逐一比对</td></tr>
+                    <tr><td>是否需要声明身份</td><td>是</td><td>否</td></tr>
+                    <tr><td>准确率</td><td>高</td><td>随N增大而降低</td></tr>
+                    <tr><td>技术难度</td><td>低</td><td>高</td></tr>
+                    <tr><td>典型应用</td><td>手机解锁、刷脸支付、人证核验</td><td>门禁考勤、公安追逃、会员识别</td></tr>
+                </table>
+                <p><strong>3. 关键技术环节</strong>：人脸检测、特征提取（核心）、活体检测（防欺骗）</p>
+                <p><strong>4. 主要应用场景</strong>：安全验证类、公共服务类、商业应用类、社会治理类</p>
+                <p><strong>5. 技术局限性与伦理安全问题</strong>：受光照角度遮挡影响大、存在算法偏见、同卵双胞胎难区分；人脸数据泄露、隐私侵犯、深度伪造等风险。</p>
+                <h3>📚 教材典型案例</h3>
+                <p><strong>手机人脸解锁（1:1验证）</strong>、<strong>校园人脸门禁（1:N识别）</strong>、<strong>火车站人证核验（1:1验证）</strong>、<strong>公安天网系统（1:N识别）</strong></p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul>
+                    <li>❌ 混淆人脸识别和图像识别</li>
+                    <li>❌ 混淆1:1验证和1:N识别</li>
+                    <li>❌ 认为人脸识别准确率100%</li>
+                    <li>❌ 忽视活体检测的重要性</li>
+                    <li>❌ 认为人脸数据可随意采集使用</li>
+                </ul>
+                <h3>🎓 学段区分说明</h3>
+                <p><strong>初中阶段：</strong>了解基本概念和常见应用，区分1:1和1:N的简单场景，树立隐私保护意识。</p>
+                <p><strong>高中阶段：</strong>理解完整工作流程和核心技术原理，掌握1:1和1:N的本质区别，分析影响因素，深入探讨伦理与社会问题。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) {
+            const t = q.type;
+            if (t === '单选题') return '单选题';
+            if (t === '判断题') return '判断题';
+            if (t === '简答题') return '简答题';
+            if (t === '综合应用题') return '综合应用题';
+            return t;
+        }
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getActualIndex() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices[reviewIndex];
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices.length;
+            return questions.length;
+        }
+
+        function getCurrentPosition() {
+            if (reviewMode && wrongIndices.length > 0) return reviewIndex + 1;
+            return currentIndex + 1;
+        }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex();
+            const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            let html = '';
+            if (reviewMode) {
+                html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            }
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx;
+                    const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) {
+                        if (isSelected && isCorrect) classes.push('correct');
+                        else if (isSelected && !isCorrect) classes.push('wrong');
+                        else if (isCorrect) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') {
+                html += renderTextAnswerArea(actualIdx, q);
+            } else if (q.type === '综合应用题') {
+                html += renderComprehensiveArea(actualIdx, q);
+            }
+            html += '</div>';
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) {
+                    const isCorrect = answers[actualIdx] === q.answer;
+                    html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(actualIdx, q);
+                    html += buildTextResultCard(actualIdx, q, result);
+                }
+            }
+            const allAnsweredInMode = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allAnsweredInMode) ||
+                (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount();
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = getWrongCount();
+                if (!reviewMode) { saveToHistory(correctCount, accuracy); }
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount, allAnsweredInMode);
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            setTimeout(() => {
+                if (isTextType(q)) {
+                    const ta = document.getElementById('textAnswerInput');
+                    if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') {
+                        ta.value = answers[actualIdx];
+                    }
+                    const draft = getDraft(actualIdx);
+                    if (ta && answers[actualIdx] === null && draft) { ta.value = draft; }
+                }
+            }, 50);
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const savedAnswer = answers[actualIdx];
+            const draft = getDraft(actualIdx);
+            const displayVal = (savedAnswer !== null && typeof savedAnswer === 'string') ? savedAnswer : (draft || '');
+            const disabled = savedAnswer !== null && typeof savedAnswer === 'string';
+            let html = `<div class="text-answer-area">`;
+            html += `<textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea>`;
+            html += `<div class="text-answer-buttons">`;
+            if (!disabled) {
+                html += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button>`;
+                html += `<button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button>`;
+                html += `<button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                html += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) {
+            let html = '';
+            if (q.tasks && q.tasks.length > 0) {
+                html += `<ul class="tasks-list">`;
+                q.tasks.forEach(task => { html += `<li><span class="task-id">${task.id}</span> ${task.stem}</li>`; });
+                html += `</ul>`;
+            }
+            html += renderTextAnswerArea(actualIdx, q);
+            return html;
+        }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const badgeClass = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const badgeText = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `<div class="analysis-card">
+                <div class="analysis-header" onclick="toggleAnalysis(this)">
+                    <div class="analysis-title">📝 作答评估 <span class="result-badge ${badgeClass}">${badgeText}</span></div>
+                    <div class="toggle-icon expanded">▼</div>
+                </div>
+                <div class="analysis-content" style="display: block;">
+                    <p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div>
+                    <p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div>
+                    <p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p>
+                    <div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div>
+                    <span class="score-tag ${result.progressClass}">${result.levelLabel}</span>
+                    <p style="margin-top:8px;"><strong>命中关键词：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p>
+                    <p><strong>未命中关键词：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p>
+                    <hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">
+                    ${q.analysis}
+                </div>
+            </div>`;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount, allDone) {
+            let html = `<div class="completion-screen">
+                <div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div>
+                <h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1>
+                <p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p>
+                <div class="stats">
+                    <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                    <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    <div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                    <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wrongCount > 0 && !reviewMode) {
+                html += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button>`;
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            if (reviewMode && wrongCount > 0) {
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function selectOption(idx) {
+            const actualIdx = getActualIndex();
+            if (answers[actualIdx] !== null) return;
+            if (!isChoiceType(questions[actualIdx])) return;
+            answers[actualIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[actualIdx].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(actualIdx) {
+            if (answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') return;
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const userAnswer = ta.value.trim();
+            if (!userAnswer) { showToast('请先输入你的回答'); return; }
+            answers[actualIdx] = userAnswer;
+            clearDraft(actualIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const result = evaluateTextAnswer(actualIdx, questions[actualIdx]);
+            const msg = result.level === 'good' ? '回答较好！✓' : (result.level === 'partial' ? '部分正确 △' : '需加强 ✗');
+            showToast(msg);
+        }
+
+        function saveDraftOnly(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const val = ta.value.trim();
+            if (val) { saveDraft(actualIdx, val); showToast('草稿已保存 ✓'); }
+            else { clearDraft(actualIdx); showToast('草稿已清空'); }
+        }
+
+        function clearTextInput(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (ta) ta.value = '';
+            clearDraft(actualIdx);
+            showToast('输入已清空');
+        }
+
+        function evaluateTextAnswer(actualIdx, q) {
+            const userAnswer = (answers[actualIdx] && typeof answers[actualIdx] === 'string') ? answers[actualIdx] : '';
+            const allKeywords = [];
+            let referenceAnswer = '';
+            if (q.type === '简答题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            else if (q.type === '综合应用题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            const totalKeywords = allKeywords.length;
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const userLower = userAnswer.toLowerCase();
+            allKeywords.forEach(kw => { if (userLower.includes(kw.toLowerCase())) hitKeywords.push(kw); else missedKeywords.push(kw); });
+            const hitCount = hitKeywords.length;
+            const hitRate = totalKeywords > 0 ? Math.round((hitCount / totalKeywords) * 100) : 0;
+            let level, levelLabel, progressClass;
+            if (q.type === '简答题') {
+                if (hitRate >= 60) { level = 'good'; levelLabel = '回答较好'; progressClass = 'excellent'; }
+                else if (hitRate >= 30) { level = 'partial'; levelLabel = '部分正确'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            } else {
+                if (hitRate >= 80) { level = 'good'; levelLabel = '优秀'; progressClass = 'excellent'; }
+                else if (hitRate >= 60) { level = 'good'; levelLabel = '良好'; progressClass = 'good'; }
+                else if (hitRate >= 40) { level = 'partial'; levelLabel = '合格'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            }
+            return { userAnswer, referenceAnswer, totalKeywords, hitCount, hitRate, hitKeywords, missedKeywords, level, levelLabel, progressClass };
+        }
+
+        function getCorrectCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] === q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'good') count++; }
+            });
+            return count;
+        }
+
+        function getWrongCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') count++; }
+            });
+            return count;
+        }
+
+        function getWrongIndicesArray() {
+            const arr = [];
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) arr.push(i); }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') arr.push(i); }
+            });
+            return arr;
+        }
+
+        function checkAllAnsweredInMode() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices.every(wi => answers[wi] !== null);
+            return answers.every(a => a !== null);
+        }
+
+        function startReviewWrong() {
+            wrongIndices = getWrongIndicesArray();
+            if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; }
+            reviewMode = true; reviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; wrongIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已退出错题回顾模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongArr = getWrongIndicesArray();
+            if (wrongArr.length === 0) { showToast('没有错题可导出'); return; }
+            const moduleName = '人脸识别';
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const fileName = `错题本_${moduleName}_${dateStr}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wrongArr.forEach(i => {
+                const q = questions[i];
+                const qType = getQuestionTypeLabel(q);
+                const stem = q.stem.replace(/"/g, '""');
+                let userAns = '', correctAns = '', hitRate = '', result = '';
+                if (isChoiceType(q)) {
+                    userAns = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : '';
+                    correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                    result = answers[i] === q.answer ? '正确' : '错误';
+                    hitRate = answers[i] === q.answer ? '100%' : '0%';
+                } else if (isTextType(q)) {
+                    userAns = (answers[i] && typeof answers[i] === 'string') ? answers[i] : '';
+                    correctAns = q.answer || '';
+                    const evalR = evaluateTextAnswer(i, q);
+                    hitRate = evalR.hitRate + '%';
+                    result = evalR.levelLabel;
+                }
+                const analysisText = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+                rows.push([qType, '"'+stem+'"', '"'+userAns.replace(/"/g, '""')+'"', '"'+correctAns.replace(/"/g, '""')+'"', hitRate, result, '"'+analysisText+'"']);
+            });
+            const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; link.download = fileName;
+            document.body.appendChild(link); link.click();
+            document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast('错题CSV已导出：' + fileName);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            document.getElementById('currentNum').textContent = currentPos;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            const isFirst = currentPos <= 1;
+            const isLast = currentPos >= totalInMode;
+            const allDone = checkAllAnsweredInMode();
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (isChoiceType(q)) {
+                        if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                        else { statusClass = 'wrong'; statusText = '错误'; }
+                    } else if (isTextType(q)) {
+                        const result = evaluateTextAnswer(index, q);
+                        if (result.level === 'good') { statusClass = 'correct'; statusText = '较好'; }
+                        else if (result.level === 'partial') { statusClass = 'correct'; statusText = '部分'; }
+                        else { statusClass = 'wrong'; statusText = '加强'; }
+                    }
+                }
+                if (index === getActualIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && wrongIndices.includes(index) && wrongIndices[reviewIndex] === index) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] !== q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level === 'weak') return; }
+                    }
+                    if (currentFilter === 'wrong') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] === q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level !== 'weak') return; }
+                    }
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter, e) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { reviewMode = false; wrongIndices = []; currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() {
+            try { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+            catch(e) { console.warn('历史记录数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; }
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            try {
+                const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+                if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); reviewMode = data.reviewMode || false; wrongIndices = data.wrongIndices || []; reviewIndex = data.reviewIndex || 0; }
+            } catch(e) { console.warn('答题进度数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); }
+            try {
+                const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            } catch(e) { console.warn('设置数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); }
+        }
+
+        function saveDraft(index, value) { const drafts = getDrafts(); drafts[index] = value; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDraft(index) { const drafts = getDrafts(); return drafts[index] || null; }
+        function clearDraft(index) { const drafts = getDrafts(); delete drafts[index]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDrafts() { try { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; } catch(e) { console.warn('草稿数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion(); updateNavButtons(); renderAnswerSheet();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); renderAnswerSheet();
+            }
+        }
+
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>

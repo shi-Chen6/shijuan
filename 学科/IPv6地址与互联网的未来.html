@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IPv6地址与互联网的未来刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">IPv6地址与互联网的未来</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"IPv6地址的长度是（ ）","options":[{"label":"A","text":"32位"},{"label":"B","text":"64位"},{"label":"C","text":"128位"},{"label":"D","text":"256位"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 128位</strong>。IPv6地址由128位二进制数组成，IPv4是32位。<br><strong>📚 知识点讲解：</strong>128位地址空间可提供约3.4×10³⁸个地址，彻底解决了IPv4地址耗尽问题。<br><strong>💡 解题思路：</strong>IPv4=32位，IPv6=128位，这是最基础的区别。<br><strong>🧠 记忆口诀：</strong>IPv4三十二，IPv6一百二十八，地址长度翻四倍。"},{"type":"单选题","difficulty":"基础","stem":"IPv6地址采用的表示方法是（ ）","options":[{"label":"A","text":"点分十进制"},{"label":"B","text":"冒分十六进制"},{"label":"C","text":"点分十六进制"},{"label":"D","text":"冒分十进制"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 冒分十六进制</strong>。IPv6采用冒分十六进制表示法，IPv4采用点分十进制。<br><strong>📚 知识点讲解：</strong>将128位分成8个16位组，每组转换为4个十六进制数，组间用冒号分隔。<br><strong>💡 解题思路：</strong>IPv4用点分十进制，IPv6用冒分十六进制。<br><strong>🧠 记忆口诀：</strong>IPv4点分十进制，IPv6冒分十六进制，表示方法要分清。"},{"type":"单选题","difficulty":"基础","stem":"下列IPv6地址中，简化正确的是（ ）","options":[{"label":"A","text":"2001:0db8::85a3::0001"},{"label":"B","text":"2001:db8:0:0:8a2e:370:7334"},{"label":"C","text":"::1:0:0:0:1"},{"label":"D","text":"fe80:::1"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B</strong>。A使用了两次双冒号，错误；C中双冒号只能代替连续的全零组；D中连续三个冒号语法错误。<br><strong>📚 知识点讲解：</strong>双冒号::在一个地址中只能使用一次，用于压缩连续的全零组。<br><strong>💡 解题思路：</strong>检查每个选项是否符合简化规则。<br><strong>🧠 记忆口诀：</strong>双冒号只能用一次，前导零可以省，每组至少留一位。"},{"type":"单选题","difficulty":"基础","stem":"IPv6的环回地址是（ ）","options":[{"label":"A","text":"127.0.0.1"},{"label":"B","text":"::1"},{"label":"C","text":"::"},{"label":"D","text":"fe80::1"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. ::1</strong>。::1是IPv6的环回地址，对应IPv4的127.0.0.1；::是未指定地址。<br><strong>📚 知识点讲解：</strong>环回地址用于本机网络软件测试，数据不会发送到网络上。<br><strong>💡 解题思路：</strong>记住::1对应127.0.0.1。<br><strong>🧠 记忆口诀：</strong>IPv4环回127.0.0.1，IPv6环回::1。"},{"type":"单选题","difficulty":"基础","stem":"下列属于链路本地地址前缀的是（ ）","options":[{"label":"A","text":"2000::/3"},{"label":"B","text":"fc00::/7"},{"label":"C","text":"fe80::/10"},{"label":"D","text":"ff00::/8"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. fe80::/10</strong>。fe80::/10是链路本地地址前缀，2000::/3是全球单播，fc00::/7是唯一本地，ff00::/8是组播。<br><strong>📚 知识点讲解：</strong>链路本地地址仅在同一物理链路有效，不可跨路由器转发。<br><strong>💡 解题思路：</strong>fe80开头=链路本地。<br><strong>🧠 记忆口诀：</strong>fe80链路本地，2000全球单播，fc00唯一本地，ff00组播地址。"},{"type":"单选题","difficulty":"基础","stem":"下列属于全球单播地址前缀的是（ ）","options":[{"label":"A","text":"2000::/3"},{"label":"B","text":"fc00::/7"},{"label":"C","text":"fe80::/10"},{"label":"D","text":"ff00::/8"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 2000::/3</strong>。全球单播地址前缀为2000::/3，用于互联网公网通信。<br><strong>📚 知识点讲解：</strong>全球单播地址相当于IPv4的公网IP地址。<br><strong>💡 解题思路：</strong>2000开头=全球单播。<br><strong>🧠 记忆口诀：</strong>2000开头全球通，互联网上独一份。"},{"type":"单选题","difficulty":"基础","stem":"IPv6中没有以下哪种地址类型？（ ）","options":[{"label":"A","text":"单播地址"},{"label":"B","text":"组播地址"},{"label":"C","text":"广播地址"},{"label":"D","text":"任播地址"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 广播地址</strong>。IPv6取消了广播地址，所有广播功能都由组播地址实现。<br><strong>📚 知识点讲解：</strong>这是IPv6与IPv4的重要区别之一，组播比广播更高效、更安全。<br><strong>💡 解题思路：</strong>IPv6有单播、组播、任播，无广播。<br><strong>🧠 记忆口诀：</strong>IPv6无广播，组播来替代，效率高又安全。"},{"type":"单选题","difficulty":"基础","stem":"目前最主流的IPv4到IPv6过渡技术是（ ）","options":[{"label":"A","text":"双栈技术"},{"label":"B","text":"隧道技术"},{"label":"C","text":"NAT64技术"},{"label":"D","text":"代理技术"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 双栈技术</strong>。双栈技术是目前最主流、最成熟的过渡技术，设备同时运行IPv4和IPv6两套协议栈。<br><strong>📚 知识点讲解：</strong>中国采用以双栈为主、隧道为辅、协议转换为补充的过渡策略。<br><strong>💡 解题思路：</strong>双栈是最原生、性能最好的方式。<br><strong>🧠 记忆口诀：</strong>双栈为主最成熟，隧道为辅连孤岛，协议转换做补充。"},{"type":"单选题","difficulty":"基础","stem":"截至2025年9月，中国IPv6活跃用户数位居世界（ ）","options":[{"label":"A","text":"第一位"},{"label":"B","text":"第二位"},{"label":"C","text":"第三位"},{"label":"D","text":"第四位"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 第一位</strong>。截至2025年9月，中国IPv6活跃用户数达8.65亿，位居世界第一。<br><strong>📚 知识点讲解：</strong>中国IPv6地址资源总量占全球已分配地址的14.61%。<br><strong>💡 解题思路：</strong>中国IPv6发展全球领先。<br><strong>🧠 记忆口诀：</strong>中国IPv6用户八亿六，世界第一领先跑。"},{"type":"单选题","difficulty":"基础","stem":"IPv6原生支持的安全协议是（ ）","options":[{"label":"A","text":"SSL"},{"label":"B","text":"TLS"},{"label":"C","text":"IPSec"},{"label":"D","text":"HTTPS"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. IPSec</strong>。IPv6原生支持IPSec协议，实现端到端的数据加密和身份认证。<br><strong>📚 知识点讲解：</strong>IPSec在IPv4中是可选的，在IPv6中是标准配置。<br><strong>💡 解题思路：</strong>IPv6内置IPSec，IPv4需要额外实现。<br><strong>🧠 记忆口诀：</strong>IPv6内置IPSec，安全加密端到端。"},{"type":"单选题","difficulty":"中档","stem":"完整的IPv6地址`2001:0db8:0000:0000:0000:0000:0000:0001`可以简化为（ ）","options":[{"label":"A","text":"2001:db8::1"},{"label":"B","text":"2001:0db8::0001"},{"label":"C","text":"2001:db8:0:0:0:0:0:1"},{"label":"D","text":"以上都正确"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 以上都正确</strong>。A使用了双冒号压缩，B保留了部分前导零，C没有压缩，都是合法的简化形式。<br><strong>📚 知识点讲解：</strong>IPv6地址简化有多种合法方式，双冒号只能使用一次。<br><strong>💡 解题思路：</strong>三种都是正确的简化，只是简化程度不同。<br><strong>🧠 记忆口诀：</strong>简化方式有多种，双冒号压连续零，前导零可省略，合法即正确。"},{"type":"单选题","difficulty":"中档","stem":"唯一本地地址对应IPv4中的（ ）","options":[{"label":"A","text":"公网IP地址"},{"label":"B","text":"私有IP地址"},{"label":"C","text":"环回地址"},{"label":"D","text":"广播地址"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 私有IP地址</strong>。唯一本地地址（fc00::/7）用于内部网络，对应IPv4的私有地址（192.168.x.x等）。<br><strong>📚 知识点讲解：</strong>唯一本地地址不会在互联网上路由，全球重复使用。<br><strong>💡 解题思路：</strong>fc00开头=私有地址。<br><strong>🧠 记忆口诀：</strong>fc00唯一本地，对应IPv4私有地址，内网使用不路由。"},{"type":"单选题","difficulty":"中档","stem":"下列关于IPv6优势的说法，错误的是（ ）","options":[{"label":"A","text":"海量地址空间"},{"label":"B","text":"内置安全机制"},{"label":"C","text":"即插即用"},{"label":"D","text":"需要NAT地址转换"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 需要NAT地址转换</strong>。IPv6地址充足，不需要NAT地址转换，支持端到端通信。<br><strong>📚 知识点讲解：</strong>NAT是IPv4的权宜之计，IPv6从根本上解决了地址不足问题。<br><strong>💡 解题思路：</strong>A、B、C都是IPv6的优势。<br><strong>🧠 记忆口诀：</strong>IPv6地址多，不需NAT来帮忙，端到端通信畅。"},{"type":"单选题","difficulty":"中档","stem":"纯IPv6设备访问IPv4网站需要使用哪种过渡技术？（ ）","options":[{"label":"A","text":"双栈技术"},{"label":"B","text":"隧道技术"},{"label":"C","text":"NAT64+DNS64"},{"label":"D","text":"以上都可以"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. NAT64+DNS64</strong>。NAT64+DNS64技术可以在网络边界进行IPv4和IPv6协议转换，实现纯IPv6设备访问IPv4服务。<br><strong>📚 知识点讲解：</strong>双栈需要设备同时支持IPv4，隧道用于连接IPv6孤岛。<br><strong>💡 解题思路：</strong>纯IPv6访问IPv4需要协议转换。<br><strong>🧠 记忆口诀：</strong>纯六访四需转换，NAT64加DNS64来帮忙。"},{"type":"单选题","difficulty":"中档","stem":"IPv6最适合支撑以下哪种技术的发展？（ ）","options":[{"label":"A","text":"电子邮件"},{"label":"B","text":"万维网"},{"label":"C","text":"物联网"},{"label":"D","text":"文件传输"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 物联网</strong>。物联网需要连接海量设备，IPv6的海量地址空间是唯一能够支撑万亿级设备同时联网的网络协议。<br><strong>📚 知识点讲解：</strong>预计到2030年全球物联网连接数将超过1000亿。<br><strong>💡 解题思路：</strong>物联网设备数量远超IPv4地址容量。<br><strong>🧠 记忆口诀：</strong>物联网需海量地址，IPv6是唯一选择，万物互联靠它撑。"},{"type":"判断题","difficulty":"基础","stem":"IPv6地址总数约为43亿个。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。IPv4地址总数约为43亿个，IPv6地址总数约为3.4×10³⁸个。<br><strong>📚 知识点讲解：</strong>IPv6地址数量是IPv4的约7.9×10²⁸倍。<br><strong>💡 解题思路：</strong>43亿是IPv4的数量，不是IPv6。<br><strong>🧠 记忆口诀：</strong>IPv4四十三亿，IPv6三四十次方，数量差距天壤别。"},{"type":"判断题","difficulty":"基础","stem":"IPv6地址中的双冒号\"::\"可以使用多次。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。双冒号在一个IPv6地址中只能使用一次，否则会产生歧义。<br><strong>📚 知识点讲解：</strong>如果使用多次双冒号，无法确定每处压缩了多少个零组。<br><strong>💡 解题思路：</strong>双冒号只能用一次是基本规则。<br><strong>🧠 记忆口诀：</strong>双冒号仅一次，多次使用生歧义。"},{"type":"判断题","difficulty":"基础","stem":"IPv6没有广播地址，用组播地址代替。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。IPv6取消了广播地址，所有广播功能都由组播地址实现，这是IPv6与IPv4的重要区别。<br><strong>📚 知识点讲解：</strong>组播比广播更高效，只发送给需要的接收者。<br><strong>💡 解题思路：</strong>组播替代广播，更高效安全。<br><strong>🧠 记忆口诀：</strong>IPv6无广播，组播来替代，精准高效又安全。"},{"type":"判断题","difficulty":"基础","stem":"链路本地地址可以在互联网上路由。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。链路本地地址仅在同一物理链路有效，不可跨路由器转发。<br><strong>📚 知识点讲解：</strong>链路本地地址用于邻居发现和自动配置。<br><strong>💡 解题思路：</strong>链路本地=同一链路内有效。<br><strong>🧠 记忆口诀：</strong>fe80链路本地，不出路由器，只在链路内。"},{"type":"判断题","difficulty":"基础","stem":"双栈技术是指设备同时运行IPv4和IPv6两套协议栈。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。双栈技术是设备同时支持IPv4和IPv6，根据目标地址自动选择通信协议。<br><strong>📚 知识点讲解：</strong>双栈是最成熟、最主流的过渡技术。<br><strong>💡 解题思路：</strong>双栈=同时运行两个协议栈。<br><strong>🧠 记忆口诀：</strong>双栈运行两协议，IPv4 IPv6并存，按需选择来通信。"},{"type":"判断题","difficulty":"基础","stem":"IPv6支持无状态地址自动配置，设备可以自动获取IP地址。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。IPv6支持SLAAC（无状态地址自动配置），设备接入网络后可自动生成IP地址。<br><strong>📚 知识点讲解：</strong>这是IPv6即插即用特性的体现，无需DHCP服务器。<br><strong>💡 解题思路：</strong>SLAAC是IPv6的核心优势。<br><strong>🧠 记忆口诀：</strong>IPv6即插即用，自动配置地址，无需人工干预。"},{"type":"判断题","difficulty":"基础","stem":"中国IPv6活跃用户数已经超过8亿。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。截至2025年9月，中国IPv6活跃用户数达8.65亿。<br><strong>📚 知识点讲解：</strong>中国是全球IPv6用户最多的国家。<br><strong>💡 解题思路：</strong>符合实际数据。<br><strong>🧠 记忆口诀：</strong>中国IPv6用户八亿六，全球领先。"},{"type":"判断题","difficulty":"中档","stem":"唯一本地地址是全球唯一的，可以在互联网上路由。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。唯一本地地址是私有地址，不会在互联网上路由，全球重复使用。<br><strong>📚 知识点讲解：</strong>唯一本地地址用于内部网络，类似于IPv4的私有地址。<br><strong>💡 解题思路：</strong>“唯一本地”中的“唯一”指前缀唯一，不是全球唯一。<br><strong>🧠 记忆口诀：</strong>唯一本地非全球，只在内部来使用，互联网上不路由。"},{"type":"判断题","difficulty":"中档","stem":"IPv6的报文头比IPv4更复杂，转发效率更低。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。IPv6简化了报文头，减少了不必要的字段，提高了路由器的转发效率。<br><strong>📚 知识点讲解：</strong>IPv6报文头固定为40字节，比IPv4更简洁。<br><strong>💡 解题思路：</strong>IPv6设计更简洁高效。<br><strong>🧠 记忆口诀：</strong>IPv6报文头简化，固定四十字节，转发效率更高。"},{"type":"判断题","difficulty":"中档","stem":"IPv6是物联网发展的基础网络协议。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。物联网需要海量地址、即插即用和内置安全，IPv6是唯一能够满足这些需求的协议。<br><strong>📚 知识点讲解：</strong>预计2030年全球物联网连接数超1000亿。<br><strong>💡 解题思路：</strong>IPv6的海量地址空间是物联网的基础。<br><strong>🧠 记忆口诀：</strong>物联网靠IPv6，海量地址即插用，安全内置端到端。"},{"type":"简答题","difficulty":"中档","stem":"请简述IPv4和IPv6的主要区别。","answer":"1.地址长度：IPv4 32位，IPv6 128位。2.表示方法：IPv4点分十进制，IPv6冒分十六进制。3.地址数量：IPv4约43亿已耗尽，IPv6约3.4×10³⁸几乎用不完。4.安全性：IPv6原生支持IPSec。5.自动配置：IPv6支持SLAAC即插即用。6.NAT需求：IPv6地址充足不需要NAT。7.广播地址：IPv6取消广播用组播代替。","keywords":["32位","128位","点分十进制","冒分十六进制","IPSec","SLAAC","NAT","组播","广播"],"analysis":"<strong>🎯 答案解析：</strong>IPv4与IPv6最核心的区别是地址长度（32位 vs 128位）和由此衍生的地址数量、表示方法等差异。<br><strong>📚 知识点讲解：</strong>IPv6不仅是地址升级，还在安全性、自动配置、报文结构等方面全面优化。<br><strong>💡 解题思路：</strong>从地址、表示法、安全、配置、NAT等维度对比。<br><strong>🧠 记忆口诀：</strong>四三十二六一二八，点分十进冒十六，安全内置即插用，不需NAT无广播。"},{"type":"简答题","difficulty":"中档","stem":"请写出IPv6地址的两大简化规则，并举例说明。","answer":"规则1：省略前导零。每组的前导零可省略，但每组至少保留一位。如2001:0db8:0000:0001 → 2001:db8:0:1。规则2：连续零组压缩。一个或多个连续的全零组可用双冒号::代替，但整个地址只能使用一次。如2001:0db8:0:0:0:0:0:1 → 2001:db8::1。","keywords":["前导零","省略","双冒号","连续零组","只能一次","::"],"analysis":"<strong>🎯 答案解析：</strong>两大规则：省略前导零（每组可省前导零）和连续零组压缩（双冒号::代替连续零组，仅用一次）。<br><strong>📚 知识点讲解：</strong>简化规则是IPv6地址书写的核心考点，必须掌握双冒号只能用一次。<br><strong>💡 解题思路：</strong>分别说明两条规则并给出示例。<br><strong>🧠 记忆口诀：</strong>前导零可省，双冒号压零组，双冒只能用一次，简化书写更方便。"},{"type":"简答题","difficulty":"提高","stem":"为什么说IPv6是物联网发展的基础？","answer":"1.海量地址空间：物联网需万亿级设备连接，IPv4地址已耗尽，IPv6可为每个设备分配唯一IP。2.即插即用：SLAAC自动配置，设备接入即获取地址，降低部署成本。3.内置安全：原生IPSec加密，保障设备通信安全。4.端到端通信：无需NAT，设备可直接通信，降低延迟。5.服务质量：支持流量分类和优先级，满足不同IoT业务需求。","keywords":["海量地址","即插即用","SLAAC","IPSec","端到端","NAT","服务质量","物联网"],"analysis":"<strong>🎯 答案解析：</strong>IPv6的海量地址空间是物联网的基础，加上即插即用、内置安全和端到端通信等特性，使其成为物联网的唯一选择。<br><strong>📚 知识点讲解：</strong>物联网设备数量远超IPv4容量，IPv6的128位地址是支撑万亿级设备的基础。<br><strong>💡 解题思路：</strong>从地址数量、自动配置、安全性、通信效率等方面阐述。<br><strong>🧠 记忆口诀：</strong>海量地址是基础，即插即用降成本，内置安全保通信，端到端低延迟。"},{"type":"综合应用题","difficulty":"提高","stem":"某同学在自己的手机上查看到以下IPv6地址信息：IPv6地址: 2409:8a10:1234:5678:abcd:ef12:3456:7890；临时IPv6地址: 2409:8a10:1234:5678:1234:5678:9abc:def0；链路本地IPv6地址: fe80::abcd:ef12:3456:7890%wlan0。请回答以下问题：","tasks":[{"id":1,"stem":"以上地址中，哪个是全球单播地址？哪个是链路本地地址？","answer":"2409开头的两个地址是全球单播地址；fe80开头的是链路本地地址。","keywords":["2409","全球单播","fe80","链路本地"]},{"id":2,"stem":"链路本地地址的前缀是什么？它有什么特点？","answer":"前缀是fe80::/10。特点：仅在同一物理链路有效，不可跨路由器转发；由设备自动生成；用于同一链路内邻居发现和地址解析。","keywords":["fe80::/10","同一链路","不可跨路由器","自动生成","邻居发现"]},{"id":3,"stem":"为什么手机会有两个全球单播地址？","answer":"为保护用户隐私。永久地址用于接收连接，临时地址用于发起连接。临时地址定期更换，防止第三方通过IP地址追踪用户的网络活动。","keywords":["隐私保护","永久地址","临时地址","定期更换","追踪"]}],"answer":"（1）2409开头是全球单播，fe80开头是链路本地；（2）前缀fe80::/10，仅同一链路有效；（3）永久地址收连接，临时地址发连接，定期更换保护隐私。","keywords":["全球单播","链路本地","fe80","2409","隐私","临时地址"],"analysis":"<strong>🎯 答案解析：</strong>2409开头属全球单播地址，fe80开头是链路本地地址。手机有两个全球单播地址是为了隐私保护，临时地址定期更换。<br><strong>📚 知识点讲解：</strong>链路本地地址仅在同一链路有效，全球单播地址用于互联网通信。隐私扩展是IPv6的重要特性。<br><strong>💡 解题思路：</strong>根据前缀判断地址类型，从隐私角度解释双地址原因。<br><strong>🧠 记忆口诀：</strong>2409全球通，fe80链路内；永久收临时发，隐私保护靠更换。"},{"type":"综合应用题","difficulty":"提高","stem":"某小区计划建设一个智慧社区系统，需要连接1000个智能路灯、500个智能摄像头、2000户家庭的智能设备。请结合IPv6的知识，回答以下问题：","tasks":[{"id":1,"stem":"这个系统适合使用IPv4还是IPv6？为什么？","answer":"适合IPv6。因为需要连接数千设备，IPv4地址不足；IPv6支持即插即用降低部署成本；内置安全保设备通信；支持端到端通信无需端口映射。","keywords":["IPv6","地址不足","即插即用","安全","端到端"]},{"id":2,"stem":"如果使用IPv6，应该采用哪种过渡技术与现有互联网连接？","answer":"采用双栈技术。双栈最成熟，设备同时支持IPv4和IPv6，既为内部智能设备提供IPv6连接，也与现有IPv4互联网互通。","keywords":["双栈","同时支持","IPv4","IPv6","互通"]},{"id":3,"stem":"IPv6的哪些优势能够提升智慧社区系统的性能和安全性？","answer":"海量地址为每设备分配唯一IP；即插即用加快部署；内置IPSec保障安全；端到端通信降低延迟；层次化地址便于扩展管理。","keywords":["海量地址","IPSec","低延迟","可扩展","端到端"]}],"answer":"（1）选IPv6，因地址充足、即插即用、安全内置；（2）用双栈技术，最成熟主流；（3）海量地址、IPSec安全、端到端低延迟、即插即用快速部署。","keywords":["IPv6","双栈","海量地址","IPSec","端到端","即插即用"],"analysis":"<strong>🎯 答案解析：</strong>智慧社区设备数量大，IPv6是唯一选择；双栈是最佳过渡方案；IPv6在地址、安全、效率方面全面优于IPv4。<br><strong>📚 知识点讲解：</strong>IPv6的海量地址和内置安全是支撑智慧城市的关键技术。<br><strong>💡 解题思路：</strong>从设备数量需求、过渡技术选择、性能安全优势三方面分析。<br><strong>🧠 记忆口诀：</strong>智慧社区IPv6，双栈过渡最成熟，海量地址安全内置，端到端低延迟。"}];
+        
+        const APP_ID = 'ipv6_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = 'IPv6地址与互联网的未来（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>IPv6</strong>是为解决IPv4地址耗尽问题而设计的下一代互联网核心协议，采用<strong>128位二进制地址</strong>，地址总数达2¹²⁸个（约3.4×10³⁸个），可以为地球上每一粒沙子分配唯一的IP地址。截至2025年9月，中国IPv6活跃用户数达8.65亿，位居世界第一。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. IPv6地址结构与表示法</strong></p>
+                <ul><li>128位二进制，采用<strong>冒分十六进制</strong>表示法</li><li>分8个16位组，每组4个十六进制数，组间用冒号":"分隔</li></ul>
+                <p><strong>两大简化规则：</strong></p>
+                <ul><li>①省略前导零：每组前导零可省略</li><li>②连续零组压缩：用"::"代替连续全零组，<strong>只能使用一次</strong></li></ul>
+                <p>示例：2001:0db8:0000:0000:0000:0000:0000:0001 → <span class="highlight">2001:db8::1</span></p>
+                <p><strong>2. 三大核心地址类型</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>地址类型</th><th>前缀</th><th>对应IPv4概念</th></tr>
+                    <tr><td>全球单播地址</td><td>2000::/3</td><td>公网IP</td></tr>
+                    <tr><td>链路本地地址</td><td>fe80::/10</td><td>自动私有地址</td></tr>
+                    <tr><td>唯一本地地址</td><td>fc00::/7</td><td>私有IP(192.168.x.x)</td></tr>
+                    <tr><td>环回地址</td><td>::1/128</td><td>127.0.0.1</td></tr>
+                    <tr><td>组播地址</td><td>ff00::/8</td><td>广播地址</td></tr>
+                </table>
+                <p>IPv6<strong>没有广播地址</strong>，组播替代广播。</p>
+                <p><strong>3. IPv6核心优势</strong>：海量地址、内置IPSec安全、即插即用(SLAAC)、简化报文头、端到端通信无需NAT、更好的QoS</p>
+                <p><strong>4. 过渡技术</strong>：双栈为主、隧道为辅、协议转换为补充</p>
+                <h3>⚠️ 易错点</h3>
+                <ul><li>❌ 双冒号"::"在一个地址中只能使用一次</li><li>❌ IPv6没有广播地址</li><li>❌ 链路本地地址(fe80)不能跨路由器</li><li>❌ 唯一本地地址是私有地址</li></ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0; renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) { const t = q.type; if (t === '单选题') return '单选题'; if (t === '判断题') return '判断题'; if (t === '简答题') return '简答题'; if (t === '综合应用题') return '综合应用题'; return t; }
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+        function getActualIndex() { if (reviewMode && wrongIndices.length > 0) return wrongIndices[reviewIndex]; return currentIndex; }
+        function getTotalInMode() { if (reviewMode && wrongIndices.length > 0) return wrongIndices.length; return questions.length; }
+        function getCurrentPosition() { if (reviewMode && wrongIndices.length > 0) return reviewIndex + 1; return currentIndex + 1; }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex(); const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode(); const currentPos = getCurrentPosition();
+            let html = '';
+            if (reviewMode) html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx; const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) { if (isSelected && isCorrect) classes.push('correct'); else if (isSelected && !isCorrect) classes.push('wrong'); else if (isCorrect) classes.push('correct'); } else if (isSelected) classes.push('selected');
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') { html += renderTextAnswerArea(actualIdx, q); }
+            else if (q.type === '综合应用题') { html += renderComprehensiveArea(actualIdx, q); }
+            html += '</div>';
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) { const isCorrect = answers[actualIdx] === q.answer; html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`; }
+                else if (isTextType(q)) { const result = evaluateTextAnswer(actualIdx, q); html += buildTextResultCard(actualIdx, q, result); }
+            }
+            const allDone = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allDone) || (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount(); const accuracy = Math.round(correctCount / questions.length * 100); const wrongCount = getWrongCount();
+                if (!reviewMode) saveToHistory(correctCount, accuracy);
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount);
+            }
+            contentArea.innerHTML = html; updateHeader();
+            setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') ta.value = answers[actualIdx]; const draft = getDraft(actualIdx); if (ta && answers[actualIdx] === null && draft) ta.value = draft; } }, 50);
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const saved = answers[actualIdx]; const draft = getDraft(actualIdx);
+            const displayVal = (saved !== null && typeof saved === 'string') ? saved : (draft || '');
+            const disabled = saved !== null && typeof saved === 'string';
+            let h = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea><div class="text-answer-buttons">`;
+            if (!disabled) { h += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`; }
+            else h += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            return h + `</div></div>`;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) { let h = ''; if (q.tasks && q.tasks.length > 0) { h += `<ul class="tasks-list">`; q.tasks.forEach(t => { h += `<li><span class="task-id">${t.id}</span> ${t.stem}</li>`; }); h += `</ul>`; } return h + renderTextAnswerArea(actualIdx, q); }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const bc = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const bt = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div><span class="score-tag ${result.progressClass}">${result.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p><p><strong>未命中：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount) {
+            let h = `<div class="completion-screen"><div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div><h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wrongCount > 0 && !reviewMode) { h += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+            if (reviewMode && wrongCount > 0) h += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            return h + `</div></div>`;
+        }
+
+        function selectOption(idx) { const ai = getActualIndex(); if (answers[ai] !== null || !isChoiceType(questions[ai])) return; answers[ai] = idx; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(idx === questions[ai].answer ? '回答正确！✓' : '回答错误 ✗'); }
+        function submitTextAnswer(ai) { if (answers[ai] !== null && typeof answers[ai] === 'string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const ua = ta.value.trim(); if (!ua) { showToast('请先输入你的回答'); return; } answers[ai] = ua; clearDraft(ai); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const r = evaluateTextAnswer(ai, questions[ai]); showToast(r.level === 'good' ? '回答较好！✓' : (r.level === 'partial' ? '部分正确 △' : '需加强 ✗')); }
+        function saveDraftOnly(ai) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const v = ta.value.trim(); if (v) { saveDraft(ai, v); showToast('草稿已保存 ✓'); } else { clearDraft(ai); showToast('草稿已清空'); } }
+        function clearTextInput(ai) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(ai); showToast('输入已清空'); }
+
+        function evaluateTextAnswer(ai, q) {
+            const ua = (answers[ai] && typeof answers[ai] === 'string') ? answers[ai] : ''; const ak = []; let ra = '';
+            if (q.type === '简答题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; } else if (q.type === '综合应用题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; }
+            const tk = ak.length; const hk = []; const mk = []; const ul = ua.toLowerCase();
+            ak.forEach(k => { if (ul.includes(k.toLowerCase())) hk.push(k); else mk.push(k); });
+            const hc = hk.length; const hr = tk > 0 ? Math.round((hc / tk) * 100) : 0; let l, ll, pc;
+            if (q.type === '简答题') { if (hr >= 60) { l = 'good'; ll = '回答较好'; pc = 'excellent'; } else if (hr >= 30) { l = 'partial'; ll = '部分正确'; pc = 'pass'; } else { l = 'weak'; ll = '需加强'; pc = 'fail'; } }
+            else { if (hr >= 80) { l = 'good'; ll = '优秀'; pc = 'excellent'; } else if (hr >= 60) { l = 'good'; ll = '良好'; pc = 'good'; } else if (hr >= 40) { l = 'partial'; ll = '合格'; pc = 'pass'; } else { l = 'weak'; ll = '需加强'; pc = 'fail'; } }
+            return { userAnswer: ua, referenceAnswer: ra, totalKeywords: tk, hitCount: hc, hitRate: hr, hitKeywords: hk, missedKeywords: mk, level: l, levelLabel: ll, progressClass: pc };
+        }
+
+        function getCorrectCount() { let c = 0; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] === q.answer) c++; } else { const r = evaluateTextAnswer(i, q); if (r.level === 'good') c++; } }); return c; }
+        function getWrongCount() { let c = 0; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] !== q.answer) c++; } else { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') c++; } }); return c; }
+        function getWrongIndicesArray() { const a = []; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] !== q.answer) a.push(i); } else { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') a.push(i); } }); return a; }
+        function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length > 0) return wrongIndices.every(wi => answers[wi] !== null); return answers.every(a => a !== null); }
+
+        function startReviewWrong() { wrongIndices = getWrongIndicesArray(); if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display = 'block'; document.getElementById('questionInfo').style.display = 'block'; document.getElementById('pageTitle').style.display = 'none'; document.querySelector('.progress-bar').style.display = 'block'; renderQuestion(); updateNavButtons(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); }
+        function exitReviewMode() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('已退出错题回顾模式'); }
+
+        function exportWrongCSV() {
+            const wa = getWrongIndicesArray(); if (wa.length === 0) { showToast('没有错题可导出'); return; }
+            const mn = 'IPv6地址与互联网的未来'; const ds = new Date().toISOString().slice(0, 10); const fn = `错题本_${mn}_${ds}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wa.forEach(i => { const q = questions[i]; const qt = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g, '""'); let ua = '', ca = '', hr = '', res = '';
+                if (isChoiceType(q)) { ua = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : ''; ca = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); res = answers[i] === q.answer ? '正确' : '错误'; hr = answers[i] === q.answer ? '100%' : '0%'; }
+                else { ua = (answers[i] && typeof answers[i] === 'string') ? answers[i] : ''; ca = q.answer || ''; const er = evaluateTextAnswer(i, q); hr = er.hitRate + '%'; res = er.levelLabel; }
+                const at = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+                rows.push([qt, '"'+stem+'"', '"'+ua.replace(/"/g, '""')+'"', '"'+ca.replace(/"/g, '""')+'"', hr, res, '"'+at+'"']); });
+            const csv = '\uFEFF' + rows.map(r => r.join(',')).join('\n'); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fn; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：' + fn);
+        }
+
+        function toggleAnalysis(h) { const c = h.nextElementSibling; const i = h.querySelector('.toggle-icon'); if (c.style.display === 'none') { c.style.display = 'block'; i.classList.add('expanded'); } else { c.style.display = 'none'; i.classList.remove('expanded'); } }
+        function prevQuestion() { if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() { if (currentPage !== 'quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const ac = answers.filter(a => a !== null).length; document.getElementById('answeredCount').textContent = ac; document.getElementById('totalCount').textContent = questions.length; document.getElementById('progressFill').style.width = `${(ac / questions.length) * 100}%`; }
+        function updateNavButtons() { const fc = document.getElementById('footerContent'); if (currentPage !== 'quiz') return; const tim = getTotalInMode(); const cp = getCurrentPosition(); const isF = cp <= 1; const isL = cp >= tim; const ad = checkAllAnsweredInMode(); fc.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isF ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isL && ad ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+
+        function changeFontSize(d) { fontSize = Math.max(14, Math.min(22, fontSize + d)); document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const o = document.getElementById('sheetOverlay'); const p = document.getElementById('sheetPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderAnswerSheet(); } }
+
+        function renderAnswerSheet() { const g = document.getElementById('sheetGrid'); let h = ''; questions.forEach((q, i) => { let sc = 'unanswered', st = '未答'; if (answers[i] !== null) { if (isChoiceType(q)) { if (answers[i] === q.answer) { sc = 'correct'; st = '正确'; } else { sc = 'wrong'; st = '错误'; } } else { const r = evaluateTextAnswer(i, q); if (r.level === 'good') { sc = 'correct'; st = '较好'; } else if (r.level === 'partial') { sc = 'correct'; st = '部分'; } else { sc = 'wrong'; st = '加强'; } } } if (i === getActualIndex() && !reviewMode) sc += ' current'; if (reviewMode && wrongIndices.includes(i) && wrongIndices[reviewIndex] === i) sc += ' current';
+            if (currentFilter !== 'all') { if (currentFilter === 'unanswered' && answers[i] !== null) return; if (currentFilter === 'correct') { if (answers[i] === null) return; if (isChoiceType(q) && answers[i] !== q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') return; } } if (currentFilter === 'wrong') { if (answers[i] === null) return; if (isChoiceType(q) && answers[i] === q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level !== 'weak') return; } } }
+            h += `<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i + 1}</div><div class="sheet-status">${st}</div></div>`; }); g.innerHTML = h; }
+        function filterQuestions(f, e) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(i) { reviewMode = false; wrongIndices = []; currentIndex = i; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() { const o = document.getElementById('historyOverlay'); const p = document.getElementById('historyPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const l = document.getElementById('historyList'); const h = getHistory(); if (h.length === 0) { l.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; } let ht = ''; h.forEach((r, i) => { const ds = new Date(r.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); ht += `<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`; }); l.innerHTML = ht; }
+        function saveToHistory(cc, ac) { const h = getHistory(); h.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: cc, accuracy: ac, answers: [...answers] }); if (h.length > 50) h.pop(); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(h)); }
+
+        function getHistory() { try { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; } catch(e) { console.warn('历史记录异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+        function reviewHistory(i) { const h = getHistory(); if (i >= 0 && i < h.length) { answers = [...h[i].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(i) { if (!confirm('确定删除？')) return; const h = getHistory(); if (i >= 0 && i < h.length) { h.splice(i, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(h)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() { try { const s = localStorage.getItem(STORAGE_KEY_ANSWERS); if (s) { const d = JSON.parse(s); currentIndex = d.currentIndex || 0; answers = d.answers || new Array(questions.length).fill(null); reviewMode = d.reviewMode || false; wrongIndices = d.wrongIndices || []; reviewIndex = d.reviewIndex || 0; } } catch(e) { console.warn('进度数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); } try { const ss = localStorage.getItem(STORAGE_KEY_SETTINGS); if (ss) { const st = JSON.parse(ss); fontSize = st.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); } } catch(e) { console.warn('设置数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); } }
+
+        function saveDraft(i, v) { const d = getDrafts(); d[i] = v; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDraft(i) { const d = getDrafts(); return d[i] || null; }
+        function clearDraft(i) { const d = getDrafts(); delete d[i]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDrafts() { try { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; } catch(e) { console.warn('草稿异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() { if (confirm('确定重新开始？当前进度将被清除。')) { currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion(); updateNavButtons(); renderAnswerSheet(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage(); renderAnswerSheet(); } }
+        function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 1500); }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>
