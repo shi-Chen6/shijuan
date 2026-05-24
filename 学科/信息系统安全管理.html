@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>信息系统安全管理刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">信息系统安全管理</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div>
+            <div class="sheet-filters"><button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button><button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button><button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button><button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button></div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [];
+    </script>
+    <script>
+        // 增强脚本：覆盖原有函数以支持新题型、错题回顾和导出
+        (function() {
+            window.questions.length = 0;
+            window.questions.push(...[
+                {"type":"单选题","difficulty":"基础","stem":"按照岗位划分访问范围、专人专号管控账号，属于哪类安全管理（ ）","options":[{"label":"A","text":"人员权限管理"},{"label":"B","text":"设备管理"},{"label":"C","text":"数据管理"},{"label":"D","text":"网络管理"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 人员权限管理</strong>。划分岗位访问范围、专人专号管控账号属于人员与账号权限管理范畴。<br><strong>📚 知识点讲解：</strong>安全管理包含人员权限、设备、数据、网络、制度五大板块。<br><strong>💡 解题思路：</strong>“岗位”“专人专号”指向人员权限管理。<br><strong>🧠 记忆口诀：</strong>岗位权限专人号，人员管理第一条，设备数据网络管，制度应急要记牢。"},
+                {"type":"单选题","difficulty":"基础","stem":"定期检修服务器、禁止私自安装不明软件，对应的管理内容是（ ）","options":[{"label":"A","text":"数据安全管控"},{"label":"B","text":"软硬件设备管理"},{"label":"C","text":"应急处置管理"},{"label":"D","text":"人员培训管理"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 软硬件设备管理</strong>。硬件检修和软件安装管控都属于软硬件设备资产管理。<br><strong>📚 知识点讲解：</strong>设备管理包括硬件维护和软件安装规范。<br><strong>💡 解题思路：</strong>“服务器”“软件”指向设备管理。<br><strong>🧠 记忆口诀：</strong>检修硬件管软件，软硬设备管理全，禁止盗版防病毒，设备完好系统安。"},
+                {"type":"单选题","difficulty":"基础","stem":"为防止文件丢失，每周将教学资料保存至离线U盘，该行为属于（ ）","options":[{"label":"A","text":"网络监测"},{"label":"B","text":"数据备份管理"},{"label":"C","text":"账号权限设置"},{"label":"D","text":"设备故障维修"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 数据备份管理</strong>。离线备份是数据安全管理中的重要措施，用于防范数据丢失。<br><strong>📚 知识点讲解：</strong>定期备份是数据安全的核心手段之一。<br><strong>💡 解题思路：</strong>“保存至U盘”是数据备份操作。<br><strong>🧠 记忆口诀：</strong>数据备份防丢失，离线U盘做保障，涉密分级控访问，过期销毁不留痕。"},
+                {"type":"单选题","difficulty":"基础","stem":"制定上机守则、保密制度，用来约束人员操作行为，属于（ ）","options":[{"label":"A","text":"制度规范管理"},{"label":"B","text":"硬件维护管理"},{"label":"C","text":"病毒查杀管理"},{"label":"D","text":"流量监控管理"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 制度规范管理</strong>。制定各类守则制度，规范操作行为，属于制度规范管理。<br><strong>📚 知识点讲解：</strong>制度管理是安全管理的软约束，与技术防护相辅相成。<br><strong>💡 解题思路：</strong>“守则”“制度”直接指向制度管理。<br><strong>🧠 记忆口诀：</strong>制度规范定规矩，上机保密要遵守，约束操作防违规，安全文化靠制度。"},
+                {"type":"单选题","difficulty":"基础","stem":"关闭电脑多余危险端口、监测异常网络访问，属于（ ）","options":[{"label":"A","text":"网络安全运维"},{"label":"B","text":"人员权限分配"},{"label":"C","text":"过期数据销毁"},{"label":"D","text":"账号密码更换"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 网络安全运维</strong>。端口管控和网络流量监测都是网络安全运维的日常工作。<br><strong>📚 知识点讲解：</strong>网络安全管理包括防火墙、端口管控、流量监测、病毒库更新等。<br><strong>💡 解题思路：</strong>“端口”“网络访问”属于网络管理范畴。<br><strong>🧠 记忆口诀：</strong>网络安全运维忙，关闭端口防攻击，监测流量查异常，病毒库常更新。"},
+                {"type":"单选题","difficulty":"基础","stem":"下列做法符合账号安全管理规范的是（ ）","options":[{"label":"A","text":"把登录密码转借同学使用"},{"label":"B","text":"一人一号，定期修改强密码"},{"label":"C","text":"多个人员共用一个账号"},{"label":"D","text":"长期使用初始默认密码"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 一人一号，定期修改强密码</strong>。这符合账号安全管理规范，其他选项都存在安全隐患。<br><strong>📚 知识点讲解：</strong>账号安全管理要求专人专号、不共用、定期更换密码。<br><strong>💡 解题思路：</strong>排除其他不安全的做法。<br><strong>🧠 记忆口诀：</strong>一人一号不转借，强密码定期换，共用默认皆违规，账号安全记心间。"},
+                {"type":"单选题","difficulty":"基础","stem":"涉密办公数据仅限岗位相关人员查阅，体现数据管理的（ ）","options":[{"label":"A","text":"分级管控"},{"label":"B","text":"随意外传"},{"label":"C","text":"公开共享"},{"label":"D","text":"直接销毁"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 分级管控</strong>。按照保密等级限制查阅人员，体现数据分级管控的原则。<br><strong>📚 知识点讲解：</strong>数据安全管理要求根据涉密等级分类管理，严格限制访问范围。<br><strong>💡 解题思路：</strong>“仅限岗位相关人员”是分级管控的体现。<br><strong>🧠 记忆口诀：</strong>涉密数据分级管，岗位授权限定看，随意外传不可取，分级管控保安全。"},
+                {"type":"单选题","difficulty":"基础","stem":"机房发现电脑感染病毒，第一时间隔离设备阻断内网传播，属于（ ）","options":[{"label":"A","text":"日常巡检"},{"label":"B","text":"应急处置"},{"label":"C","text":"数据备份"},{"label":"D","text":"权限调整"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 应急处置</strong>。发现病毒后立即隔离设备阻断传播，属于安全事件应急处置工作。<br><strong>📚 知识点讲解：</strong>应急管理包括编制预案、快速响应、事后复盘等。<br><strong>💡 解题思路：</strong>“发现病毒”“隔离阻断”是应急响应。<br><strong>🧠 记忆口诀：</strong>发现病毒快隔离，阻断传播防扩散，应急预案平时练，事发处置不慌乱。"},
+                {"type":"单选题","difficulty":"基础","stem":"不属于信息系统安全管理范畴的是（ ）","options":[{"label":"A","text":"分配用户操作权限"},{"label":"B","text":"定期检修硬件设备"},{"label":"C","text":"随意删除系统所有文件"},{"label":"D","text":"制定安全应急预案"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 随意删除系统所有文件</strong>。这属于违规操作，不属于正规的安全管理行为。<br><strong>📚 知识点讲解：</strong>安全管理是有计划、有制度的系统工作。<br><strong>💡 解题思路：</strong>A、B、D都是正确的安全管理内容。<br><strong>🧠 记忆口诀：</strong>安全管理有计划，权限检修预案全，随意删除是破坏，不属于管理范畴。"},
+                {"type":"单选题","difficulty":"基础","stem":"老旧故障服务器及时更换，避免系统运行崩溃，属于（ ）","options":[{"label":"A","text":"软硬件资产管理"},{"label":"B","text":"数据保密管理"},{"label":"C","text":"人员培训"},{"label":"D","text":"网络访问管控"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 软硬件资产管理</strong>。更换老化故障硬件是软硬件设备资产管理的重要内容。<br><strong>📚 知识点讲解：</strong>设备资产管理包括登记、检修、更换、报废等环节。<br><strong>💡 解题思路：</strong>“服务器”“更换”是硬件管理。<br><strong>🧠 记忆口诀：</strong>设备资产要管好，登记检修及时换，老化故障早更新，系统运行才稳定。"},
+                {"type":"单选题","difficulty":"中档","stem":"下列关于账号权限管理说法正确的是（ ）","options":[{"label":"A","text":"所有使用者权限完全一致"},{"label":"B","text":"岗位越高，可访问的数据范围合理扩大"},{"label":"C","text":"学生账号可以修改系统核心配置"},{"label":"D","text":"密码无需定期更换"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 岗位越高，可访问的数据范围合理扩大</strong>。权限根据岗位职责合理分配，岗位对应的工作范围决定访问权限。<br><strong>📚 知识点讲解：</strong>分级授权是安全管理的核心原则，权限跟随岗位。<br><strong>💡 解题思路：</strong>A、C、D都违反安全原则。<br><strong>🧠 记忆口诀：</strong>权限跟随岗位定，职责范围定访问，学生无权改配置，密码定期要更换。"},
+                {"type":"单选题","difficulty":"中档","stem":"安全管理和单纯杀毒防护的关系描述正确的是（ ）","options":[{"label":"A","text":"安全管理只依靠杀毒软件即可完成"},{"label":"B","text":"杀毒属于技术防护，安全管理包含技术、制度、人员多方面"},{"label":"C","text":"二者功能完全相同，可以互相替代"},{"label":"D","text":"做好管理就不需要任何杀毒防护工具"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 杀毒属于技术防护，安全管理包含技术、制度、人员多方面</strong>。安全管理是综合性的，病毒查杀只是其中一环。<br><strong>📚 知识点讲解：</strong>安全管理与技术防护相辅相成，不能相互替代。<br><strong>💡 解题思路：</strong>A、C、D都过于片面。<br><strong>🧠 记忆口诀：</strong>杀毒技术一面墙，安全管理多重防，制度人员加设备，综合管控才安全。"},
+                {"type":"单选题","difficulty":"中档","stem":"废弃的涉密纸质档案与电子数据，正确处理方式是（ ）","options":[{"label":"A","text":"随意丢弃回收站"},{"label":"B","text":"按照规范彻底销毁"},{"label":"C","text":"转发至公共网络"},{"label":"D","text":"保留在电脑桌面长期存放"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 按照规范彻底销毁</strong>。涉密数据必须按规范彻底销毁，避免信息残留泄露。<br><strong>📚 知识点讲解：</strong>数据安全管理要求废弃涉密数据彻底销毁。<br><strong>💡 解题思路：</strong>A、C、D都会造成信息泄露风险。<br><strong>🧠 记忆口诀：</strong>涉密废弃要销毁，彻底清除不留痕，随意丢弃转发险，数据安全要严守。"},
+                {"type":"单选题","difficulty":"中档","stem":"企业定期组织员工学习网络安全知识，该举措目的是（ ）","options":[{"label":"A","text":"提升人员安全防范意识"},{"label":"B","text":"扩大设备存储容量"},{"label":"C","text":"提高网络传输速度"},{"label":"D","text":"更改系统访问权限"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 提升人员安全防范意识</strong>。安全培训的核心目的是增强员工的安全意识和防范能力。<br><strong>📚 知识点讲解：</strong>人是安全中最薄弱的环节，培训能有效降低人为风险。<br><strong>💡 解题思路：</strong>其他选项与培训目的无关。<br><strong>🧠 记忆口诀：</strong>安全培训提意识，识别风险防诈骗，人是最薄一环，培训强化是关键。"},
+                {"type":"单选题","difficulty":"中档","stem":"某系统限制外来网络接入内部办公网，该管控手段属于（ ）","options":[{"label":"A","text":"数据备份管理"},{"label":"B","text":"网络安全运维管理"},{"label":"C","text":"人员权限管理"},{"label":"D","text":"设备检修管理"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 网络安全运维管理</strong>。管控内外网接入边界属于网络安全运维管理。<br><strong>📚 知识点讲解：</strong>网络管理包括控制访问边界、阻止非法外联等。<br><strong>💡 解题思路：</strong>“网络接入”是网络管理范畴。<br><strong>🧠 记忆口诀：</strong>内外网络要隔离，非法接入要阻挡，网络边界严管控，安全运维保畅通。"},
+                {"type":"判断题","difficulty":"基础","stem":"信息系统安全管理包含人员、设备、数据、网络、制度多个维度。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。安全管理是覆盖人员、设备、数据、网络、制度五大要素的综合工作。<br><strong>📚 知识点讲解：</strong>安全管理是多维度、全方位的系统工作。<br><strong>💡 解题思路：</strong>符合安全管理的定义。<br><strong>🧠 记忆口诀：</strong>五大维度保安全，人设数网制度全。"},
+                {"type":"判断题","difficulty":"基础","stem":"为方便使用，多人可以共用一个系统登录账号。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。共用账号无法界定操作责任，易引发安全问题，必须一人一号。<br><strong>📚 知识点讲解：</strong>账号安全管理要求专人专号，禁止共用。<br><strong>💡 解题思路：</strong>共用账号是安全大忌。<br><strong>🧠 记忆口诀：</strong>一人一号不共用，责任明确可追溯。"},
+                {"type":"判断题","difficulty":"基础","stem":"定期备份重要数据，能够有效应对数据丢失、损坏类安全问题。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。备份是数据安全的基础措施，可在数据损坏后恢复。<br><strong>📚 知识点讲解：</strong>定期备份是数据安全管理的基本要求。<br><strong>💡 解题思路：</strong>备份是数据安全最后一道防线。<br><strong>🧠 记忆口诀：</strong>数据备份是防线，丢失损坏可恢复。"},
+                {"type":"判断题","difficulty":"基础","stem":"私自安装来历不明的软件，属于违反设备安全管理规定的行为。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。未知软件可能携带病毒，私自安装违反设备管理规定。<br><strong>📚 知识点讲解：</strong>软件安装应遵循规范流程，禁止安装来路不明的程序。<br><strong>💡 解题思路：</strong>私自安装未知软件是违规行为。<br><strong>🧠 记忆口诀：</strong>未知软件莫私装，病毒木马藏其中。"},
+                {"type":"判断题","difficulty":"基础","stem":"安全应急预案仅书面存档即可，不需要实际演练使用。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。应急预案需要定期演练，才能在事故发生时高效处置。<br><strong>📚 知识点讲解：</strong>应急管理包括预案编制、演练和优化。<br><strong>💡 解题思路：</strong>不演练的预案是纸上谈兵。<br><strong>🧠 记忆口诀：</strong>应急预案要演练，纸上谈兵误大事。"},
+                {"type":"判断题","difficulty":"基础","stem":"涉密数据不能随意拷贝、转发给无关人员查看。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。涉密数据仅限授权人员查看，严禁随意外传拷贝。<br><strong>📚 知识点讲解：</strong>数据分级管控，涉密数据严格限制访问和传输。<br><strong>💡 解题思路：</strong>涉密数据保护是基本要求。<br><strong>🧠 记忆口诀：</strong>涉密数据不外传，拷贝转发都禁止。"},
+                {"type":"判断题","difficulty":"基础","stem":"日常监测网络异常流量，能够提前察觉网络攻击隐患。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。流量监测可及时发现攻击、异常访问等安全隐患。<br><strong>📚 知识点讲解：</strong>网络监控是安全运维的重要部分。<br><strong>💡 解题思路：</strong>监测流量有助于及早发现攻击。<br><strong>🧠 记忆口诀：</strong>流量监测察异常，网络攻击早发现。"},
+                {"type":"判断题","difficulty":"中档","stem":"分级分配操作权限，能够有效减少越权操作带来的安全风险。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。权限分级约束了操作范围，避免越权篡改、盗取数据。<br><strong>📚 知识点讲解：</strong>分级授权是访问控制的核心。<br><strong>💡 解题思路：</strong>权限分级是减少越权风险的重要手段。<br><strong>🧠 记忆口诀：</strong>权限分级约束强，越权操作被阻挡。"},
+                {"type":"判断题","difficulty":"中档","stem":"只要硬件设备完好，就不需要制定操作管理制度约束人员。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。硬件完好也需要制度约束，人为误操作、违规行为依然会引发安全问题。<br><strong>📚 知识点讲解：</strong>安全是多维度的，硬件只是其中一环。<br><strong>💡 解题思路：</strong>制度约束不可或缺。<br><strong>🧠 记忆口诀：</strong>硬件好也要制度，人为疏忽风险存。"},
+                {"type":"判断题","difficulty":"中档","stem":"安全管理不仅处理已发生故障，也包含日常风险排查与预防工作。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。安全管理兼顾事前预防、事中处置和事后复盘。<br><strong>📚 知识点讲解：</strong>安全管理是全过程的管理。<br><strong>💡 解题思路：</strong>安全管理包含预防和处置。<br><strong>🧠 记忆口诀：</strong>事前预防事中处，事后复盘全过程。"},
+                {"type":"简答题","difficulty":"中档","stem":"简要说出信息系统安全管理包含的五大核心管理内容。","answer":"五大核心内容：人员与账号权限管理、软硬件设备资产管理、数据安全管控、网络安全运维管理、制度规范与应急管理。","keywords":["人员","权限","设备","资产","数据","网络","制度","应急"],"analysis":"<strong>🎯 答案解析：</strong>安全管理五大板块：人员权限、软硬设备、数据安全、网络运维、制度应急。<br><strong>📚 知识点讲解：</strong>这五个方面构成了信息系统安全管理的完整体系。<br><strong>💡 解题思路：</strong>从人、物、数据、网络、制度五个维度概括。<br><strong>🧠 记忆口诀：</strong>人设数网制，五大管理记，权限设备数据，网络制度应急。"},
+                {"type":"简答题","difficulty":"中档","stem":"简述账号权限分级管理的作用，并写出一条合规使用账号的要求。","answer":"作用：划分操作范围，防止越权操作；界定操作责任，出现问题可追溯；减少无关人员对核心设置的改动。合规要求：一人一号独立使用，不转借、不共用账号；定期更换登录密码。","keywords":["分级","越权","责任","追溯","一人一号","定期更换"],"analysis":"<strong>🎯 答案解析：</strong>分级授权可防越权、定责任、保核心安全。合规要求一人一号、定期改密码。<br><strong>📚 知识点讲解：</strong>账号权限管理是安全管理的第一道防线。<br><strong>💡 解题思路：</strong>从防越权、定责任两方面说明作用，给出一条具体要求。<br><strong>🧠 记忆口诀：</strong>分级授权防越权，一人一号责任清，密码定期更新换，账号安全第一关。"},
+                {"type":"简答题","difficulty":"提高","stem":"对比说明信息系统安全管理与单纯病毒查杀防护的区别。","answer":"①范围不同：病毒查杀属于单一技术防护，仅针对恶意程序；安全管理是综合性工作，包含人员、设备、数据、网络、制度全方位管控。②作用不同：病毒查杀主要清除已有病毒威胁；安全管理兼顾事前预防、事中处置、事后整改。③实施主体不同：病毒查杀依靠防护软件自动执行；安全管理需要人员按制度统筹操作、巡检、培训。","keywords":["单一技术","综合","事前预防","事后","软件","人员","制度"],"analysis":"<strong>🎯 答案解析：</strong>安全管理是综合性的，病毒查杀只是技术手段之一。<br><strong>📚 知识点讲解：</strong>安全管理与技术防护相辅相成，不能相互替代。<br><strong>💡 解题思路：</strong>从范围、作用、实施主体三方面对比。<br><strong>🧠 记忆口诀：</strong>杀毒单一技术防，管理综合多方控，杀毒治已病，管理治未病。"},
+                {"type":"综合应用题","difficulty":"提高","stem":"学校机房日常开展各项管理工作：划分师生不同操作权限、每月检修电脑硬件、定期备份教学成绩、监测内网异常访问、制定机房上机制度。\n（1）请对应写出每项工作分别属于哪一类安全管理内容。\n（2）分析给学生账号设置较低操作权限的好处。\n（3）结合机房场景，说出两项能够规避安全风险的管理举措。","tasks":[{"id":1,"stem":"对应写出每项工作属于哪类安全管理。","answer":"划分权限→人员权限管理；检修硬件→软硬件设备管理；备份成绩→数据安全管理；监测访问→网络运维管理；制定制度→制度规范管理。","keywords":["权限","硬件","数据","网络","制度"]},{"id":2,"stem":"分析给学生账号设置较低操作权限的好处。","answer":"限制学生操作权限，避免误删系统文件、篡改配置；防止越权查看涉密成绩数据；减少违规操作引发的故障与病毒风险。","keywords":["误删","篡改","越权","违规"]},{"id":3,"stem":"说出两项规避安全风险的管理举措。","answer":"定期统一查杀机房电脑病毒；外来U盘使用前强制检测管控；每月开展机房安全隐患排查。","keywords":["查杀","U盘","排查"]}],"answer":"（1）权限、硬件、数据、网络、制度；（2）防误删、防越权、减风险；（3）病毒查杀、U盘管控。","keywords":["权限","硬件","数据","网络","制度","误删","U盘"],"analysis":"<strong>🎯 答案解析：</strong>机房管理涉及五大安全管理内容，学生低权限可有效降低风险。<br><strong>📚 知识点讲解：</strong>综合运用各项安全管理措施，才能保障机房安全。<br><strong>💡 解题思路：</strong>分类匹配，分析好处，提出具体措施。<br><strong>🧠 记忆口诀：</strong>权限硬件数据网，制度五大管理全，学生低权限防风险，查杀管控保安全。"},
+                {"type":"综合应用题","difficulty":"提高","stem":"单位办公信息系统存在账号混用、涉密文件随意外传、系统长期不打补丁等问题，请结合安全管理知识作答：\n（1）分别指出上述问题对应的安全管理漏洞。\n（2）针对账号混用问题，制定对应的规范管理要求。\n（3）从数据和网络两个角度，分别提出一条整改管理措施。","tasks":[{"id":1,"stem":"指出问题对应的安全管理漏洞。","answer":"账号混用→人员权限管理漏洞；涉密文件外传→数据安全管理漏洞；长期不打补丁→软硬件设备与网络管理漏洞。","keywords":["权限","数据","补丁"]},{"id":2,"stem":"针对账号混用制定规范管理要求。","answer":"实行一人一号专人专用制度，禁止转借、共用账号；根据岗位分配对应操作权限；定期强制修改登录密码，留存操作日志便于追溯。","keywords":["一人一号","禁止共用","定期修改","操作日志"]},{"id":3,"stem":"从数据和网络角度分别提出整改措施。","answer":"数据角度：涉密文件分级加密，限制转发拷贝权限，定期备份重要办公数据；网络角度：及时安装系统安全补丁，关闭闲置危险端口，拦截陌生外网非法接入。","keywords":["加密","备份","补丁","端口","拦截"]}],"answer":"（1）权限、数据、补丁管理漏洞；（2）一人一号、定期改密、操作日志；（3）数据加密备份，网络安全补丁端口管控。","keywords":["权限","数据","补丁","一人一号","加密","备份"],"analysis":"<strong>🎯 答案解析：</strong>账号混用、文件外传、不打补丁分别属于权限、数据、设备网络管理漏洞。<br><strong>📚 知识点讲解：</strong>针对不同漏洞需采取对应的管理措施。<br><strong>💡 解题思路：</strong>先分类漏洞，再制定要求，最后分角度提措施。<br><strong>🧠 记忆口诀：</strong>混用权限乱，外传数据险，不打补丁患，一人一号管，加密备份安。"}
+            ]);
+
+            const APP_ID = 'info_sec_mgmt_quiz_1';
+            const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+            const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+            const STORAGE_KEY_HISTORY = APP_ID + '_history';
+            const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+            let currentIndex = 0;
+            let currentPage = 'learn';
+            let answers = new Array(window.questions.length).fill(null);
+            let fontSize = 16;
+            let currentFilter = 'all';
+            let reviewMode = false;
+            let wrongIndices = [];
+            let reviewIndex = 0;
+
+            function renderKnowledgePage() {
+                document.getElementById('knowledgeTitle').textContent = '信息系统安全管理（高中信息科技）';
+                document.getElementById('knowledgeContent').innerHTML = `<h3>📖 核心定义</h3><p>信息系统安全管理，是围绕系统硬件设备、软件程序、数据资源、网络环境、操作人员五大要素，通过建立管理制度、分配操作权限、日常运维巡检、风险排查、应急处置等系列统筹管控行为，降低各类安全风险，保障信息系统平稳运行、数据完整保密、服务持续可用的综合性管理工作。</p><h3>🔍 核心要点拆解</h3><p><strong>1. 人员与账号权限管理</strong>：分级授权、专人专号、强密码、定期更换、限制越权。</p><p><strong>2. 软硬件设备资产管理</strong>：登记建档、定期检修、规范软件安装、管控外接设备。</p><p><strong>3. 数据安全管控</strong>：分类分级、备份、规范传输、彻底销毁废弃数据。</p><p><strong>4. 网络安全运维管理</strong>：防火墙、端口管控、流量监测、病毒库更新、隔离中毒设备。</p><p><strong>5. 制度规范与应急管理</strong>：制定制度、安全培训、编制预案、定期演练、事后复盘。</p><h3>📚 教材典型案例</h3><p>校园计算机机房安全管理、政务办公信息系统管理。</p><h3>⚠️ 易错点</h3><ul><li>❌ 将安全管理等同于安装杀毒软件</li><li>❌ 认为所有人都应该有全部权限</li><li>❌ 只重视设备维修，忽视制度培训</li><li>❌ 随意丢弃涉密文件</li></ul>`;
+            }
+
+            function switchToKnowledgePage() {
+                currentPage = 'learn'; reviewMode = false;
+                document.getElementById('knowledgePage').classList.remove('hidden');
+                document.getElementById('quizContent').style.display = 'none';
+                document.getElementById('questionInfo').style.display = 'none';
+                document.getElementById('pageTitle').style.display = 'block';
+                document.querySelector('.progress-bar').style.display = 'none';
+                document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+            }
+
+            function startQuiz() {
+                currentPage = 'quiz'; reviewMode = false; wrongIndices = [];
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                currentIndex = 0; renderQuestion(); updateNavButtons();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function getQuestionTypeLabel(q) { return { '单选题':'单选题','判断题':'判断题','简答题':'简答题','综合应用题':'综合应用题' }[q.type] || q.type; }
+            function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+            function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+            function getActualIndex() { return reviewMode && wrongIndices.length ? wrongIndices[reviewIndex] : currentIndex; }
+            function getTotalInMode() { return reviewMode && wrongIndices.length ? wrongIndices.length : window.questions.length; }
+            function getCurrentPosition() { return reviewMode && wrongIndices.length ? reviewIndex + 1 : currentIndex + 1; }
+
+            function renderQuestion() {
+                const ai = getActualIndex(), q = window.questions[ai], area = document.getElementById('quizContent');
+                const tim = getTotalInMode(), cp = getCurrentPosition();
+                let h = '';
+                if (reviewMode) h += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${cp}/${tim} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+                h += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty?' · '+q.difficulty:''}</span><div class="question-stem">${q.stem}</div>`;
+                if (q.image) h += `<img src="${q.image}" class="question-image">`;
+                if (isChoiceType(q)) {
+                    h += `<div class="options-container">`;
+                    q.options.forEach((o, i) => {
+                        const sel = answers[ai] === i, cor = q.answer === i;
+                        let cls = ['option-item'];
+                        if (answers[ai] !== null) { if (sel && cor) cls.push('correct'); else if (sel && !cor) cls.push('wrong'); else if (cor) cls.push('correct'); } else if (sel) cls.push('selected');
+                        h += `<div class="${cls.join(' ')}" onclick="selectOption(${i})"><div class="option-label">${o.label}</div><div class="option-text">${o.text}</div></div>`;
+                    });
+                    h += `</div>`;
+                } else if (q.type === '简答题') { h += renderTextAnswerArea(ai, q); }
+                else if (q.type === '综合应用题') { h += renderComprehensiveArea(ai, q); }
+                h += `</div>`;
+                if (answers[ai] !== null) {
+                    if (isChoiceType(q)) {
+                        const cor = answers[ai] === q.answer;
+                        h += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${cor?'correct':'wrong'}">${cor?'✓ 回答正确':'✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;">${q.analysis}</div></div>`;
+                    } else if (isTextType(q)) {
+                        const res = evaluateTextAnswer(ai, q);
+                        h += buildTextResultCard(ai, q, res);
+                    }
+                }
+                const done = checkAllAnsweredInMode();
+                if ((reviewMode && reviewIndex >= wrongIndices.length-1 && done) || (!reviewMode && currentIndex === window.questions.length-1 && answers.every(a => a !== null))) {
+                    const cc = getCorrectCount(), ac = Math.round(cc/window.questions.length*100), wc = getWrongCount();
+                    if (!reviewMode) saveToHistory(cc, ac);
+                    h += buildCompletionScreen(cc, ac, wc);
+                }
+                area.innerHTML = h; updateHeader();
+                setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[ai] !== null && typeof answers[ai]==='string') ta.value = answers[ai]; const dr = getDraft(ai); if (ta && answers[ai]===null && dr) ta.value = dr; } }, 50);
+                if (window.MathJax) MathJax.typeset();
+            }
+
+            function renderTextAnswerArea(ai, q) {
+                const saved = answers[ai], draft = getDraft(ai);
+                const dv = (saved !== null && typeof saved === 'string') ? saved : (draft || '');
+                const dis = saved !== null && typeof saved === 'string';
+                let h = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${dis?'disabled':''}>${escapeHtml(dv)}</textarea><div class="text-answer-buttons">`;
+                if (!dis) h += `<button class="btn-draft" onclick="saveDraftOnly(${ai})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${ai})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${ai})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+                else h += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+                return h + `</div></div>`;
+            }
+
+            function renderComprehensiveArea(ai, q) { let h = ''; if (q.tasks && q.tasks.length) { h += `<ul class="tasks-list">`; q.tasks.forEach(t => h += `<li><span class="task-id">${t.id}</span> ${t.stem}</li>`); h += `</ul>`; } return h + renderTextAnswerArea(ai, q); }
+
+            function buildTextResultCard(ai, q, res) {
+                const bc = res.level==='good'?'correct':(res.level==='partial'?'partial':'wrong');
+                const bt = res.level==='good'?'✓ 回答较好':(res.level==='partial'?'△ 部分正确':'✗ 需加强');
+                return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.userAnswer||'（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${res.hitCount}/${res.totalKeywords} 个（${res.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${res.progressClass}" style="width:${res.hitRate}%;"></div></div><span class="score-tag ${res.progressClass}">${res.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${res.hitKeywords.length?res.hitKeywords.map(k=>'<span class="keyword-highlight">'+k+'</span>').join('、'):'无'}</p><p><strong>未命中：</strong>${res.missedKeywords.length?res.missedKeywords.map(k=>'<span class="keyword-missed">'+k+'</span>').join('、'):'无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+            }
+
+            function buildCompletionScreen(cc, ac, wc) {
+                let h = `<div class="completion-screen"><div class="completion-icon">${ac>=80?'🎉':ac>=60?'👍':'💪'}</div><h1 class="completion-title">${reviewMode?'错题回顾完成！':'刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode?'你已经回顾了所有错题':'太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${cc}/${window.questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${ac}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wc}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+                if (wc>0 && !reviewMode) { h += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+                if (reviewMode && wc>0) h += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+                return h + `</div></div>`;
+            }
+
+            function selectOption(i) { const ai = getActualIndex(); if (answers[ai] !== null || !isChoiceType(window.questions[ai])) return; answers[ai] = i; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(i===window.questions[ai].answer?'回答正确！✓':'回答错误 ✗'); }
+            function submitTextAnswer(ai) { if (answers[ai]!==null && typeof answers[ai]==='string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const ua = ta.value.trim(); if (!ua) { showToast('请先输入你的回答'); return; } answers[ai] = ua; clearDraft(ai); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const res = evaluateTextAnswer(ai, window.questions[ai]); showToast(res.level==='good'?'回答较好！✓':(res.level==='partial'?'部分正确 △':'需加强 ✗')); }
+            function saveDraftOnly(ai) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const v = ta.value.trim(); if (v) { saveDraft(ai, v); showToast('草稿已保存 ✓'); } else { clearDraft(ai); showToast('草稿已清空'); } }
+            function clearTextInput(ai) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(ai); showToast('输入已清空'); }
+
+            function evaluateTextAnswer(ai, q) {
+                const ua = (answers[ai] && typeof answers[ai]==='string') ? answers[ai] : ''; const ak = []; let ra = '';
+                if (q.type==='简答题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; } else if (q.type==='综合应用题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; }
+                const tk = ak.length, hk = [], mk = []; const ul = ua.toLowerCase();
+                ak.forEach(k => { if (ul.includes(k.toLowerCase())) hk.push(k); else mk.push(k); });
+                const hc = hk.length, hr = tk>0 ? Math.round((hc/tk)*100) : 0; let l, ll, pc;
+                if (q.type==='简答题') { if (hr>=60) { l='good'; ll='回答较好'; pc='excellent'; } else if (hr>=30) { l='partial'; ll='部分正确'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+                else { if (hr>=80) { l='good'; ll='优秀'; pc='excellent'; } else if (hr>=60) { l='good'; ll='良好'; pc='good'; } else if (hr>=40) { l='partial'; ll='合格'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+                return { userAnswer:ua, referenceAnswer:ra, totalKeywords:tk, hitCount:hc, hitRate:hr, hitKeywords:hk, missedKeywords:mk, level:l, levelLabel:ll, progressClass:pc };
+            }
+
+            function getCorrectCount() { let c=0; window.questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]===q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') c++; } }); return c; }
+            function getWrongCount() { let c=0; window.questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') c++; } }); return c; }
+            function getWrongIndicesArray() { const a=[]; window.questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) a.push(i); } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') a.push(i); } }); return a; }
+            function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length) return wrongIndices.every(wi=>answers[wi]!==null); return answers.every(a=>a!==null); }
+
+            function startReviewWrong() { wrongIndices = getWrongIndicesArray(); if (!wrongIndices.length) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display='block'; document.getElementById('questionInfo').style.display='block'; document.getElementById('pageTitle').style.display='none'; document.querySelector('.progress-bar').style.display='block'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); }
+            function exitReviewMode() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast('已退出错题回顾模式'); }
+
+            function exportWrongCSV() {
+                const wa = getWrongIndicesArray(); if (!wa.length) { showToast('没有错题可导出'); return; }
+                const mn = '信息系统安全管理', ds = new Date().toISOString().slice(0,10), fn = `错题本_${mn}_${ds}.csv`;
+                const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+                wa.forEach(i => { const q = window.questions[i], qt = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g,'""'); let ua='',ca='',hr='',res='';
+                    if (isChoiceType(q)) { ua = (answers[i]!==null && answers[i]!==undefined) ? (q.options[answers[i]]?q.options[answers[i]].text:String(answers[i])) : ''; ca = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); res = answers[i]===q.answer?'正确':'错误'; hr = answers[i]===q.answer?'100%':'0%'; }
+                    else { ua = (answers[i]&&typeof answers[i]==='string')?answers[i]:''; ca = q.answer||''; const er = evaluateTextAnswer(i,q); hr = er.hitRate+'%'; res = er.levelLabel; }
+                    const at = q.analysis ? q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""') : '';
+                    rows.push([qt,'"'+stem+'"','"'+ua.replace(/"/g,'""')+'"','"'+ca.replace(/"/g,'""')+'"',hr,res,'"'+at+'"']); });
+                const csv = '\uFEFF' + rows.map(r=>r.join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href=url; link.download=fn; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：'+fn);
+            }
+
+            function toggleAnalysis(h) { const c = h.nextElementSibling; const i = h.querySelector('.toggle-icon'); if (c.style.display==='none') { c.style.display='block'; i.classList.add('expanded'); } else { c.style.display='none'; i.classList.remove('expanded'); } }
+            function prevQuestion() { if (reviewMode && wrongIndices.length) { if (reviewIndex>0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex>0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+            function nextQuestion() { if (reviewMode && wrongIndices.length) { if (reviewIndex<wrongIndices.length-1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex<window.questions.length-1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+            function updateHeader() { if (currentPage!=='quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const ac = answers.filter(a=>a!==null).length; document.getElementById('answeredCount').textContent = ac; document.getElementById('totalCount').textContent = window.questions.length; document.getElementById('progressFill').style.width = `${(ac/window.questions.length)*100}%`; }
+            function updateNavButtons() { const fc = document.getElementById('footerContent'); if (currentPage!=='quiz') return; const tim = getTotalInMode(), cp = getCurrentPosition(), isF = cp<=1, isL = cp>=tim, ad = checkAllAnsweredInMode(); fc.innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${isF?'disabled':''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${isL&&ad?'disabled':''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+
+            function changeFontSize(d) { fontSize = Math.max(14,Math.min(22,fontSize+d)); document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); saveSettings(); }
+            function toggleSheet() { const o = document.getElementById('sheetOverlay'), p = document.getElementById('sheetPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderAnswerSheet(); } }
+            function renderAnswerSheet() { const g = document.getElementById('sheetGrid'); let h = ''; window.questions.forEach((q,i)=>{ let sc='unanswered',st='未答'; if (answers[i]!==null) { if (isChoiceType(q)) { if (answers[i]===q.answer) { sc='correct';st='正确'; } else { sc='wrong';st='错误'; } } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') { sc='correct';st='较好'; } else if (r.level==='partial') { sc='correct';st='部分'; } else { sc='wrong';st='加强'; } } } if (i===getActualIndex() && !reviewMode) sc+=' current'; if (reviewMode && wrongIndices.includes(i) && wrongIndices[reviewIndex]===i) sc+=' current';
+                if (currentFilter!=='all') { if (currentFilter==='unanswered' && answers[i]!==null) return; if (currentFilter==='correct') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]!==q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level==='weak') return; } } if (currentFilter==='wrong') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]===q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level!=='weak') return; } } }
+                h += `<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i+1}</div><div class="sheet-status">${st}</div></div>`; }); g.innerHTML = h; }
+            function filterQuestions(f,e) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); }
+            function jumpToQuestion(i) { reviewMode = false; wrongIndices = []; currentIndex = i; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+            function toggleHistory() { const o = document.getElementById('historyOverlay'), p = document.getElementById('historyPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderHistory(); } }
+            function renderHistory() { const l = document.getElementById('historyList'), h = getHistory(); if (!h.length) { l.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; } let ht = ''; h.forEach((r,i)=>{ const ds = new Date(r.timestamp).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); ht += `<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`; }); l.innerHTML = ht; }
+            function saveToHistory(cc,ac) { const h = getHistory(); h.unshift({timestamp:Date.now(),totalCount:window.questions.length,correctCount:cc,accuracy:ac,answers:[...answers]}); if (h.length>50) h.pop(); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); }
+            function getHistory() { try { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; } catch(e) { localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+            function reviewHistory(i) { const h = getHistory(); if (i>=0 && i<h.length) { answers = [...h[i].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+            function deleteHistory(i) { if (!confirm('确定删除？')) return; const h = getHistory(); if (i>=0 && i<h.length) { h.splice(i,1); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); renderHistory(); showToast('记录已删除'); } }
+            function clearAllHistory() { if (!confirm('确定清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+            function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({currentIndex,answers,reviewMode,wrongIndices,reviewIndex})); }
+            function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({fontSize})); }
+            function loadAllData() { try { const s = localStorage.getItem(STORAGE_KEY_ANSWERS); if (s) { const d = JSON.parse(s); currentIndex = d.currentIndex||0; answers = d.answers||new Array(window.questions.length).fill(null); reviewMode = d.reviewMode||false; wrongIndices = d.wrongIndices||[]; reviewIndex = d.reviewIndex||0; } } catch(e) { localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(window.questions.length).fill(null); } try { const ss = localStorage.getItem(STORAGE_KEY_SETTINGS); if (ss) { const st = JSON.parse(ss); fontSize = st.fontSize||16; document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); } } catch(e) { localStorage.removeItem(STORAGE_KEY_SETTINGS); } }
+
+            function saveDraft(i,v) { const d = getDrafts(); d[i]=v; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+            function getDraft(i) { const d = getDrafts(); return d[i]||null; }
+            function clearDraft(i) { const d = getDrafts(); delete d[i]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+            function getDrafts() { try { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; } catch(e) { localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+            function restartQuiz() { if (confirm('确定重新开始？进度将被清除。')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(window.questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion();updateNavButtons();renderAnswerSheet(); } }
+            function showHome() { if (confirm('返回主页将丢失进度，确定吗？')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(window.questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage();renderAnswerSheet(); } }
+            function showToast(msg) { const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
+            function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+            // 覆盖全局函数引用
+            window.renderKnowledgePage = renderKnowledgePage;
+            window.switchToKnowledgePage = switchToKnowledgePage;
+            window.startQuiz = startQuiz;
+            window.renderQuestion = renderQuestion;
+            window.selectOption = selectOption;
+            window.submitTextAnswer = submitTextAnswer;
+            window.saveDraftOnly = saveDraftOnly;
+            window.clearTextInput = clearTextInput;
+            window.toggleAnalysis = toggleAnalysis;
+            window.prevQuestion = prevQuestion;
+            window.nextQuestion = nextQuestion;
+            window.updateHeader = updateHeader;
+            window.updateNavButtons = updateNavButtons;
+            window.changeFontSize = changeFontSize;
+            window.toggleSheet = toggleSheet;
+            window.renderAnswerSheet = renderAnswerSheet;
+            window.filterQuestions = filterQuestions;
+            window.jumpToQuestion = jumpToQuestion;
+            window.toggleHistory = toggleHistory;
+            window.renderHistory = renderHistory;
+            window.saveToHistory = saveToHistory;
+            window.reviewHistory = reviewHistory;
+            window.deleteHistory = deleteHistory;
+            window.clearAllHistory = clearAllHistory;
+            window.saveAnswers = saveAnswers;
+            window.loadAllData = loadAllData;
+            window.restartQuiz = restartQuiz;
+            window.showHome = showHome;
+            window.startReviewWrong = startReviewWrong;
+            window.exitReviewMode = exitReviewMode;
+            window.exportWrongCSV = exportWrongCSV;
+
+            // 初始化页面
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        })();
+    </script>
+</body>
+</html>

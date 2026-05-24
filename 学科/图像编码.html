@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>图像编码刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">图像编码</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div>
+            <div class="sheet-filters"><button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button><button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button><button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button><button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button></div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"图像编码的核心目标是（ ）","options":[{"label":"A","text":"增加图像数据量"},{"label":"B","text":"去除冗余信息、降低数据量"},{"label":"C","text":"改变图像颜色"},{"label":"D","text":"提高图像分辨率"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 去除冗余信息、降低数据量</strong>。图像编码的核心是通过压缩技术减小文件大小，便于存储和传输。<br><strong>📚 知识点讲解：</strong>图像编码的本质是去除图像中的空间冗余、视觉冗余等，在保证一定画质的前提下降低数据量。<br><strong>💡 解题思路：</strong>编码不是为了增加数据或单纯改变颜色，而是为了压缩。<br><strong>🧠 记忆口诀：</strong>图像编码为压缩，去除冗余降数据，方便存储与传输，画质体积两平衡。"},{"type":"单选题","difficulty":"基础","stem":"图像数字化的正确流程是（ ）","options":[{"label":"A","text":"编码→采样→量化"},{"label":"B","text":"采样→量化→编码"},{"label":"C","text":"量化→采样→编码"},{"label":"D","text":"采样→编码→量化"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 采样→量化→编码</strong>。图像数字化必须先采样分割像素，再量化转换数字值，最后编码生成文件。<br><strong>📚 知识点讲解：</strong>采样决定分辨率，量化决定色彩深度，编码实现压缩存储。<br><strong>💡 解题思路：</strong>顺序不可颠倒，先有像素再有颜色数据再压缩。<br><strong>🧠 记忆口诀：</strong>采样量化再编码，三步顺序不能乱，像素网格采样出，量化给色编码压。"},{"type":"单选题","difficulty":"基础","stem":"下列属于无损图像编码格式的是（ ）","options":[{"label":"A","text":"JPEG"},{"label":"B","text":"PNG"},{"label":"C","text":"MP4"},{"label":"D","text":"WMV"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. PNG</strong>。PNG采用无损压缩，解压后与原图完全一致；JPEG是有损压缩；MP4和WMV是视频格式。<br><strong>📚 知识点讲解：</strong>无损编码保留所有原始数据，适用于需要精确细节的场景。<br><strong>💡 解题思路：</strong>记住常见无损格式：PNG、GIF、BMP（无损模式）。<br><strong>🧠 记忆口诀：</strong>PNG无损保细节，图标截图首选它，JPEG有损照片用，分清场景选格式。"},{"type":"单选题","difficulty":"基础","stem":"24位真彩色图像中，每个像素占用的字节数是（ ）","options":[{"label":"A","text":"1"},{"label":"B","text":"2"},{"label":"C","text":"3"},{"label":"D","text":"4"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 3</strong>。24位÷8位/字节=3字节，分别存储红、绿、蓝各8位。<br><strong>📚 知识点讲解：</strong>色彩深度与字节数的换算：字节数=位数÷8。<br><strong>💡 解题思路：</strong>24位=3字节，直接换算。<br><strong>🧠 记忆口诀：</strong>24位色彩三字节，红绿蓝各占八位，除以八得字节数，像素存储容量算。"},{"type":"单选题","difficulty":"基础","stem":"手机拍摄的照片通常采用的编码格式是（ ）","options":[{"label":"A","text":"JPEG"},{"label":"B","text":"PNG"},{"label":"C","text":"GIF"},{"label":"D","text":"BMP"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. JPEG</strong>。JPEG有损压缩能在保证较好画质的同时大幅减小文件大小，是手机拍照的默认格式。<br><strong>📚 知识点讲解：</strong>JPEG通过DCT变换丢弃人眼不敏感的高频细节。<br><strong>💡 解题思路：</strong>手机照片需要平衡画质和存储空间。<br><strong>🧠 记忆口诀：</strong>手机拍照JPEG存，有损压缩体积小，画质存储两不误，分享传输更便捷。"},{"type":"单选题","difficulty":"基础","stem":"图像分辨率1920×1080表示图像有（ ）","options":[{"label":"A","text":"1920个颜色"},{"label":"B","text":"1080种亮度"},{"label":"C","text":"约200万像素"},{"label":"D","text":"24位色彩深度"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 约200万像素</strong>。1920×1080=2,073,600像素，即约200万像素。<br><strong>📚 知识点讲解：</strong>分辨率=水平像素数×垂直像素数。<br><strong>💡 解题思路：</strong>分辨率是像素数量，不是颜色或亮度。<br><strong>🧠 记忆口诀：</strong>分辨率是像素量，1920乘1080，约两百万像素点，清晰度由它决定。"},{"type":"单选题","difficulty":"基础","stem":"下列适合用无损编码的场景是（ ）","options":[{"label":"A","text":"风景照片"},{"label":"B","text":"医学CT影像"},{"label":"C","text":"网页背景图"},{"label":"D","text":"视频缩略图"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 医学CT影像</strong>。医学影像需要无损编码以保证诊断准确性，任何细节丢失都可能影响诊断。<br><strong>📚 知识点讲解：</strong>无损编码保留全部原始信息，适用于对精度要求极高的领域。<br><strong>💡 解题思路：</strong>医学影像不能有损，其他场景可接受有损压缩。<br><strong>🧠 记忆口诀：</strong>医学影像需无损，诊断准确不丢失，照片图标可有损，场景决定编码选。"},{"type":"单选题","difficulty":"基础","stem":"量化环节的主要作用是（ ）","options":[{"label":"A","text":"分割图像为像素点"},{"label":"B","text":"将像素颜色转换为数字"},{"label":"C","text":"压缩图像数据"},{"label":"D","text":"显示图像内容"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 将像素颜色转换为数字</strong>。量化将连续的色彩、亮度值转换为离散的数字值，决定色彩深度。<br><strong>📚 知识点讲解：</strong>采样分割像素，量化赋予数值，编码压缩存储。<br><strong>💡 解题思路：</strong>采样分格，量化赋值。<br><strong>🧠 记忆口诀：</strong>采样分像素网格，量化给颜色数字，采样定量化定色，两者功能要分清。"},{"type":"单选题","difficulty":"基础","stem":"GIF格式图像采用的核心压缩算法是（ ）","options":[{"label":"A","text":"行程编码"},{"label":"B","text":"哈夫曼编码"},{"label":"C","text":"LZW编码"},{"label":"D","text":"DCT变换"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. LZW编码</strong>。GIF采用LZW无损压缩算法，通过建立字符序列词典实现压缩。<br><strong>📚 知识点讲解：</strong>LZW是GIF的核心技术，适合颜色较少的图像。<br><strong>💡 解题思路：</strong>GIF=LZW，JPEG=DCT+哈夫曼。<br><strong>🧠 记忆口诀：</strong>GIF压缩LZW，建立词典减冗余，颜色较少压缩好，动画图标常用它。"},{"type":"单选题","difficulty":"基础","stem":"有损编码的特点是（ ）","options":[{"label":"A","text":"解压后与原图完全一致"},{"label":"B","text":"压缩比高，会丢失部分细节"},{"label":"C","text":"只能用于文字图像"},{"label":"D","text":"文件体积通常较大"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 压缩比高，会丢失部分细节</strong>。有损编码通过丢弃人眼不敏感的信息获得高压缩比。<br><strong>📚 知识点讲解：</strong>有损编码解压后与原图有差异，但通常不影响主观观看。<br><strong>💡 解题思路：</strong>有损=牺牲质量换体积。<br><strong>🧠 记忆口诀：</strong>有损压缩丢细节，换来高压缩比，照片视频常用它，细节丢失不易察。"},{"type":"单选题","difficulty":"中档","stem":"计算1024×768像素、24位真彩色图像的未压缩数据量（单位：MB）约为（ ）","options":[{"label":"A","text":"0.75"},{"label":"B","text":"1.5"},{"label":"C","text":"2.25"},{"label":"D","text":"3.0"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 2.25MB</strong>。1024×768×24÷8÷1024÷1024≈2.25MB。<br><strong>📚 知识点讲解：</strong>数据量=分辨率×色彩深度÷8（字节），再换算成MB需除以1024²。<br><strong>💡 解题思路：</strong>代入公式计算，注意单位换算。<br><strong>🧠 记忆口诀：</strong>分辨率乘深度，除以八得字节，再除一零二四，MB大小算出来。"},{"type":"单选题","difficulty":"中档","stem":"下列关于图像编码说法正确的是（ ）","options":[{"label":"A","text":"无损编码完全不压缩数据"},{"label":"B","text":"采样决定图像色彩丰富度"},{"label":"C","text":"量化决定图像清晰度"},{"label":"D","text":"JPEG采用有损压缩技术"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. JPEG采用有损压缩技术</strong>。JPEG通过DCT变换实现有损压缩。<br><strong>📚 知识点讲解：</strong>无损编码也压缩数据，采样决定分辨率（清晰度），量化决定色彩丰富度。<br><strong>💡 解题思路：</strong>A错，无损也压缩；B采样决定分辨率；C量化决定色彩。<br><strong>🧠 记忆口诀：</strong>JPEG有损压照片，采样定量化定色，无损也压缩数据，说法正确要记牢。"},{"type":"单选题","difficulty":"中档","stem":"网页设计中，透明图标应优先选择的格式是（ ）","options":[{"label":"A","text":"JPEG"},{"label":"B","text":"PNG"},{"label":"C","text":"GIF"},{"label":"D","text":"BMP"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. PNG</strong>。PNG支持Alpha透明通道，无损压缩，保留图标细节，是透明图标的最佳选择。<br><strong>📚 知识点讲解：</strong>GIF也支持透明但颜色有限（256色），PNG支持真彩色透明。<br><strong>💡 解题思路：</strong>透明图标首选PNG，GIF适合简单动画。<br><strong>🧠 记忆口诀：</strong>透明图标选PNG，无损真彩透明好，GIF也能透明但色少，网页设计要记牢。"},{"type":"单选题","difficulty":"中档","stem":"哈夫曼编码的核心原理是（ ）","options":[{"label":"A","text":"对连续重复像素用“数值+次数”表示"},{"label":"B","text":"建立字符序列词典实现压缩"},{"label":"C","text":"按像素出现概率分配不等长二进制码"},{"label":"D","text":"将图像从空间域转换到频率域"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 按像素出现概率分配不等长二进制码</strong>。哈夫曼编码是一种变长编码，高频值用短码，低频值用长码，提高压缩效率。<br><strong>📚 知识点讲解：</strong>哈夫曼编码是JPEG有损压缩的重要组成部分。<br><strong>💡 解题思路：</strong>A是行程编码，B是LZW，D是DCT变换。<br><strong>🧠 记忆口诀：</strong>哈夫曼按概率，高频短码低频长，变长编码效率高，JPEG压缩离不了。"},{"type":"单选题","difficulty":"中档","stem":"下列编码方法中属于有损压缩的是（ ）","options":[{"label":"A","text":"行程编码"},{"label":"B","text":"哈夫曼编码"},{"label":"C","text":"DCT变换编码"},{"label":"D","text":"LZW编码"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. DCT变换编码</strong>。DCT变换是JPEG有损压缩的核心，通过丢弃高频细节实现压缩。<br><strong>📚 知识点讲解：</strong>行程编码、哈夫曼编码、LZW编码本身都是无损的，DCT变换是有损的。<br><strong>💡 解题思路：</strong>DCT是有损，其他均可无损。<br><strong>🧠 记忆口诀：</strong>DCT变换是有损，高频细节被丢弃，哈夫曼行程LZW，都是无损压缩法。"},{"type":"判断题","difficulty":"基础","stem":"图像编码是将模拟图像转换为数字数据的过程。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。图像编码是将图像信息转换为二进制数据的过程，是数字化的核心步骤。<br><strong>📚 知识点讲解：</strong>图像编码是连接模拟图像与数字世界的桥梁。<br><strong>💡 解题思路：</strong>符合图像编码的基本定义。<br><strong>🧠 记忆口诀：</strong>图像编码模转数，二进制码来表示，存储传输依赖它，数字化中关键步。"},{"type":"判断题","difficulty":"基础","stem":"无损编码压缩后的数据解压后与原图完全一致。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。无损编码不丢失任何原始信息，解压后可完全还原。<br><strong>📚 知识点讲解：</strong>PNG、GIF都是无损编码格式。<br><strong>💡 解题思路：</strong>无损=完全还原。<br><strong>🧠 记忆口诀：</strong>无损编码不丢失，解压原图一个样，PNG GIF都无损，细节保留百分百。"},{"type":"判断题","difficulty":"基础","stem":"采样环节决定了图像的色彩深度。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。采样决定图像的分辨率（像素数量），量化决定色彩深度。<br><strong>📚 知识点讲解：</strong>采样和量化的作用容易混淆。<br><strong>💡 解题思路：</strong>采样分格，量化上色。<br><strong>🧠 记忆口诀：</strong>采样定分辨率，量化定色彩深，二者功能要分清，莫把采样当量化。"},{"type":"判断题","difficulty":"基础","stem":"JPEG格式采用有损压缩，适合存储照片。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。JPEG有损压缩能在保持较好画质的同时大幅减小文件大小，是照片存储的理想格式。<br><strong>📚 知识点讲解：</strong>JPEG通过DCT变换丢弃高频细节实现压缩。<br><strong>💡 解题思路：</strong>JPEG=有损+照片。<br><strong>🧠 记忆口诀：</strong>JPEG有损压照片，文件小画质可，手机相机都采用，网络分享最常用。"},{"type":"判断题","difficulty":"基础","stem":"量化是将像素的颜色、亮度转换为数字值的过程。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。量化是图像数字化的第二步，将连续物理量转为离散数字值。<br><strong>📚 知识点讲解：</strong>量化决定了图像的色彩深度。<br><strong>💡 解题思路：</strong>符合量化的定义。<br><strong>🧠 记忆口诀：</strong>量化转换颜色值，连续变离散数字，色彩深度由它定，24位真彩三字节。"},{"type":"判断题","difficulty":"基础","stem":"PNG格式支持透明效果，适合用于图标。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。PNG支持Alpha透明通道，是无损压缩，非常适合图标设计。<br><strong>📚 知识点讲解：</strong>PNG-24支持256级透明度，是网页图标的标准格式。<br><strong>💡 解题思路：</strong>PNG=透明+无损。<br><strong>🧠 记忆口诀：</strong>PNG透明又无损，图标设计首选它，Alpha通道透明好，网页显示效果佳。"},{"type":"判断题","difficulty":"基础","stem":"图像数据量越大，画质一定越好。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。画质还取决于编码算法和压缩比，相同数据量下不同编码画质可能差异很大。<br><strong>📚 知识点讲解：</strong>有损压缩高压缩比下画质明显下降，无损压缩数据量与画质正相关。<br><strong>💡 解题思路：</strong>数据量大不等于画质好，还与编码有关。<br><strong>🧠 记忆口诀：</strong>数据量大小不决定，画质还与编码关，有损压缩比过高，文件虽小画质差。"},{"type":"判断题","difficulty":"中档","stem":"1位图像只能表示黑白两种颜色。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。1位图像只有0和1两个值，对应黑白两色。<br><strong>📚 知识点讲解：</strong>1位=2¹=2种颜色。<br><strong>💡 解题思路：</strong>1位=两种状态=黑白。<br><strong>🧠 记忆口诀：</strong>1位图像黑白照，只有纯黑和纯白，色彩深度位越高，颜色数量指数增。"},{"type":"判断题","difficulty":"中档","stem":"有损编码丢失的细节都是人眼无法感知的，不会影响观看效果。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。高压缩比下有损编码会丢失明显细节，出现马赛克、锯齿等可见失真。<br><strong>📚 知识点讲解：</strong>有损压缩的程度可控，过度压缩会导致画质严重下降。<br><strong>💡 解题思路：</strong>高压缩比下失真明显可见。<br><strong>🧠 记忆口诀：</strong>有损压缩可过度，马赛克锯齿明显，压缩需适度控制，画质体积平衡好。"},{"type":"判断题","difficulty":"中档","stem":"图像分辨率越高，需要的存储空间越大。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。分辨率越高像素数量越多，未压缩时数据量越大，存储空间需求越大。<br><strong>📚 知识点讲解：</strong>数据量正比于分辨率。<br><strong>💡 解题思路：</strong>像素多→数据多→存储大。<br><strong>🧠 记忆口诀：</strong>分辨率高像素多，存储空间需更多，高清照片占容量，压缩编码可减小。"},{"type":"简答题","difficulty":"中档","stem":"按顺序写出图像数字化的三个核心步骤，并简要说明每个步骤的作用。","answer":"①采样：将连续图像分割为离散像素点矩阵，决定图像分辨率。②量化：将像素颜色、亮度等物理量转换为数字值，决定色彩深度。③编码：用二进制代码表示量化数据，通过压缩算法减少数据量，生成图像文件。","keywords":["采样","量化","编码","分辨率","色彩深度","压缩"],"analysis":"<strong>🎯 答案解析：</strong>图像数字化三步：采样（分格）、量化（赋值）、编码（压缩）。<br><strong>📚 知识点讲解：</strong>采样决定清晰度，量化决定色彩丰富度，编码决定文件大小。<br><strong>💡 解题思路：</strong>按操作顺序描述，强调每步的产出。<br><strong>🧠 记忆口诀：</strong>采样分格定分辨，量化上色定深浅，编码压缩减体积，三步完成数字化。"},{"type":"简答题","difficulty":"中档","stem":"对比无损编码与有损编码的主要区别，各举一个典型应用场景。","answer":"无损编码：解压后与原图完全一致，无信息丢失，压缩比较低。典型应用：医学CT影像（需精确诊断）、PNG图标（需保留细节和透明）。有损编码：牺牲少量人眼不敏感细节，压缩比高，文件小。典型应用：JPEG风景照片（平衡画质与体积）、WebP网页大图（加快加载）。","keywords":["无损","有损","压缩比","JPEG","PNG","医学影像","照片"],"analysis":"<strong>🎯 答案解析：</strong>无损保留全部信息但体积大，有损牺牲细节换高压缩比。<br><strong>📚 知识点讲解：</strong>选择编码方式需根据应用场景对画质和体积的要求权衡。<br><strong>💡 解题思路：</strong>从信息保真度、压缩比、典型场景三方面对比。<br><strong>🧠 记忆口诀：</strong>无损保真体积大，医学图标需要它，有损压缩比高小，照片网页常用它。"},{"type":"简答题","difficulty":"提高","stem":"简述JPEG图像编码的核心原理，说明其为何适合用于照片存储。","answer":"JPEG核心原理：①将图像分成8×8像素块；②对每个块进行DCT变换，将空间域转为频率域；③量化高频系数（细节）丢弃，保留低频系数（轮廓）；④使用哈夫曼编码对量化后数据进一步压缩。适合照片原因：照片相邻像素相关性高，存在大量空间冗余；人眼对高频细节不敏感，丢弃后不易察觉；可实现10:1以上压缩比，大幅减小文件体积，方便存储与分享。","keywords":["DCT变换","量化","哈夫曼编码","高频","低频","空间冗余","压缩比"],"analysis":"<strong>🎯 答案解析：</strong>JPEG通过DCT变换丢弃高频细节，用哈夫曼编码进一步压缩，适合照片因空间冗余大且人眼对细节不敏感。<br><strong>📚 知识点讲解：</strong>JPEG是有损压缩的典型代表，其核心技术是DCT和哈夫曼编码。<br><strong>💡 解题思路：</strong>分步骤解释编码流程，再结合照片特点说明适用性。<br><strong>🧠 记忆口诀：</strong>JPEG分块DCT转，量化丢高频，哈夫曼再压缩，照片冗余大适用。"},{"type":"综合应用题","difficulty":"提高","stem":"某同学用手机拍摄1200万像素（4000×3000）的24位真彩色照片：（1）计算该照片未压缩时的数据量（单位：MB）；（2）若保存为JPEG格式后文件大小为4MB，计算压缩比；（3）分析JPEG格式如何实现如此高的压缩比，可能带来什么影响。","tasks":[{"id":1,"stem":"计算未压缩数据量。","answer":"未压缩数据量=4000×3000×24÷8÷1024÷1024≈34.33MB。","keywords":["4000","3000","24","34.33MB"]},{"id":2,"stem":"计算压缩比。","answer":"压缩比=34.33MB÷4MB≈8.58:1。","keywords":["34.33","4","8.58"]},{"id":3,"stem":"分析JPEG高压缩比的原因及影响。","answer":"JPEG通过DCT变换丢弃高频细节，用哈夫曼编码压缩低频数据实现高压缩比。可能影响：高压缩比下出现马赛克、边缘模糊等失真。","keywords":["DCT变换","高频","哈夫曼","马赛克","模糊"]}],"answer":"（1）约34.33MB；（2）约8.58:1；（3）JPEG丢弃高频细节实现高压缩比，可能导致马赛克和模糊。","keywords":["34.33MB","8.58","DCT","高频","马赛克"],"analysis":"<strong>🎯 答案解析：</strong>通过公式计算数据量和压缩比，JPEG有损压缩实现高压缩比，但过度压缩会降低画质。<br><strong>📚 知识点讲解：</strong>数据量计算公式和压缩比概念，以及JPEG有损压缩的优缺点。<br><strong>💡 解题思路：</strong>代入公式计算，分析JPEG压缩原理。<br><strong>🧠 记忆口诀：</strong>分辨率乘深度除八，MB换算再除1024，压缩比是未压除以已压，JPEG丢高频获高比。"},{"type":"综合应用题","difficulty":"提高","stem":"学校网站需要上传以下图片：①校园风景照片；②校徽图标（带透明背景）；③运动会宣传GIF动图。（1）分别为每张图片选择最合适的编码格式，并说明理由；（2）解释为什么校徽图标不适合用JPEG格式；（3）分析GIF格式与PNG格式在动画支持上的差异。","tasks":[{"id":1,"stem":"为三种图片选择合适的格式并说明理由。","answer":"①校园风景照片选JPEG：有损压缩，文件小，画质满足浏览需求。②校徽图标选PNG：无损压缩+透明通道，保留细节与透明效果。③GIF动图选GIF：支持简单动画，文件小适合网页加载。","keywords":["JPEG","PNG","GIF","照片","图标","动画"]},{"id":2,"stem":"解释校徽图标不适合用JPEG的原因。","answer":"校徽图标含文字、线条等精细细节，JPEG有损压缩会导致边缘锯齿、文字模糊；且JPEG不支持透明通道，无法呈现校徽透明背景。","keywords":["锯齿","模糊","透明","JPEG"]},{"id":3,"stem":"分析GIF与PNG在动画支持上的差异。","answer":"GIF支持最多256色的简单动画，文件小但色彩表现力差；PNG通常不支持动画（APNG格式除外），但色彩丰富、支持透明，适合高质量静态图像。","keywords":["256色","动画","APNG","色彩"]}],"answer":"（1）照片JPEG，图标PNG，动图GIF；（2）JPEG有损导致锯齿且不支持透明；（3）GIF支持256色动画，PNG色彩好但通常不支持动画。","keywords":["JPEG","PNG","GIF","锯齿","透明","动画"],"analysis":"<strong>🎯 答案解析：</strong>根据图片类型选择最合适的编码格式，理解各格式的特点和局限性。<br><strong>📚 知识点讲解：</strong>JPEG有损适合照片，PNG无损透明适合图标，GIF适合简单动画。<br><strong>💡 解题思路：</strong>从画质要求、透明需求、动画需求分析。<br><strong>🧠 记忆口诀：</strong>照片JPEG图标PNG，动图GIF各不同，透明无损选PNG，动画256色GIF用。"}];
+        
+        const APP_ID = 'image_code_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0, currentPage = 'learn', answers = new Array(questions.length).fill(null), fontSize = 16, currentFilter = 'all', reviewMode = false, wrongIndices = [], reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData(); renderKnowledgePage(); switchToKnowledgePage(); renderQuestion(); renderAnswerSheet(); renderHistory(); updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            document.getElementById('knowledgeTitle').textContent = '图像编码（高中信息科技）';
+            document.getElementById('knowledgeContent').innerHTML = `<h3>📖 核心定义</h3><p>图像编码是将模拟或数字图像转换为二进制数据的过程，核心目标是<strong>去除图像冗余信息、降低数据量</strong>，同时尽量保留关键视觉信息，实现高效存储与快速传输。</p><h3>🔍 核心要点拆解</h3><p><strong>1. 图像数字化三步流程</strong></p><ul><li><strong>采样</strong>：分割为像素点矩阵，决定<strong>分辨率</strong></li><li><strong>量化</strong>：将颜色、亮度转为数字值，决定<strong>色彩深度</strong></li><li><strong>编码</strong>：用二进制表示，可通过压缩算法减小数据量</li></ul><p><strong>2. 编码分类</strong></p><table class="knowledge-table"><tr><th>类型</th><th>特点</th><th>代表格式</th></tr><tr><td>无损编码</td><td>解压后与原图一致，无信息丢失</td><td>PNG、GIF</td></tr><tr><td>有损编码</td><td>牺牲少量细节换取高压缩比</td><td>JPEG、WebP(有损)</td></tr></table><p><strong>3. 常见编码方法与原理</strong></p><ul><li>行程编码：连续重复像素用“数值+次数”表示</li><li>哈夫曼编码：按概率分配不等长码</li><li>LZW编码：建立词典压缩（GIF核心）</li><li>DCT变换编码：空间域转频率域，丢弃高频细节（JPEG核心）</li></ul><p><strong>4. 数据量计算</strong>：未压缩数据量(字节)=分辨率×色彩深度÷8</p><p><strong>5. 主流应用</strong>：照片→JPEG，图标→PNG，动图→GIF，医学影像→无损格式</p><h3>⚠️ 易错点</h3><ul><li>❌ 采样与量化功能颠倒</li><li>❌ 认为压缩比越高越好</li><li>❌ JPEG用于文字截图</li><li>❌ 计算时忘记除以8</li></ul>`;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0; renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) { return { '单选题':'单选题','判断题':'判断题','简答题':'简答题','综合应用题':'综合应用题' }[q.type] || q.type; }
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+        function getActualIndex() { return reviewMode && wrongIndices.length ? wrongIndices[reviewIndex] : currentIndex; }
+        function getTotalInMode() { return reviewMode && wrongIndices.length ? wrongIndices.length : questions.length; }
+        function getCurrentPosition() { return reviewMode && wrongIndices.length ? reviewIndex + 1 : currentIndex + 1; }
+
+        function renderQuestion() {
+            const ai = getActualIndex(), q = questions[ai], area = document.getElementById('quizContent');
+            const tim = getTotalInMode(), cp = getCurrentPosition();
+            let h = '';
+            if (reviewMode) h += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${cp}/${tim} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            h += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty?' · '+q.difficulty:''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) h += `<img src="${q.image}" class="question-image">`;
+            if (isChoiceType(q)) {
+                h += `<div class="options-container">`;
+                q.options.forEach((o, i) => {
+                    const sel = answers[ai] === i, cor = q.answer === i;
+                    let cls = ['option-item'];
+                    if (answers[ai] !== null) { if (sel && cor) cls.push('correct'); else if (sel && !cor) cls.push('wrong'); else if (cor) cls.push('correct'); } else if (sel) cls.push('selected');
+                    h += `<div class="${cls.join(' ')}" onclick="selectOption(${i})"><div class="option-label">${o.label}</div><div class="option-text">${o.text}</div></div>`;
+                });
+                h += `</div>`;
+            } else if (q.type === '简答题') { h += renderTextAnswerArea(ai, q); }
+            else if (q.type === '综合应用题') { h += renderComprehensiveArea(ai, q); }
+            h += `</div>`;
+            if (answers[ai] !== null) {
+                if (isChoiceType(q)) {
+                    const cor = answers[ai] === q.answer;
+                    h += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${cor?'correct':'wrong'}">${cor?'✓ 回答正确':'✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;">${q.analysis}</div></div>`;
+                } else if (isTextType(q)) {
+                    const res = evaluateTextAnswer(ai, q);
+                    h += buildTextResultCard(ai, q, res);
+                }
+            }
+            const done = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length-1 && done) || (!reviewMode && currentIndex === questions.length-1 && answers.every(a => a !== null))) {
+                const cc = getCorrectCount(), ac = Math.round(cc/questions.length*100), wc = getWrongCount();
+                if (!reviewMode) saveToHistory(cc, ac);
+                h += buildCompletionScreen(cc, ac, wc);
+            }
+            area.innerHTML = h; updateHeader();
+            setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[ai] !== null && typeof answers[ai]==='string') ta.value = answers[ai]; const dr = getDraft(ai); if (ta && answers[ai]===null && dr) ta.value = dr; } }, 50);
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderTextAnswerArea(ai, q) {
+            const saved = answers[ai], draft = getDraft(ai);
+            const dv = (saved !== null && typeof saved === 'string') ? saved : (draft || '');
+            const dis = saved !== null && typeof saved === 'string';
+            let h = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${dis?'disabled':''}>${escapeHtml(dv)}</textarea><div class="text-answer-buttons">`;
+            if (!dis) h += `<button class="btn-draft" onclick="saveDraftOnly(${ai})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${ai})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${ai})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            else h += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            return h + `</div></div>`;
+        }
+
+        function renderComprehensiveArea(ai, q) { let h = ''; if (q.tasks && q.tasks.length) { h += `<ul class="tasks-list">`; q.tasks.forEach(t => h += `<li><span class="task-id">${t.id}</span> ${t.stem}</li>`); h += `</ul>`; } return h + renderTextAnswerArea(ai, q); }
+
+        function buildTextResultCard(ai, q, res) {
+            const bc = res.level==='good'?'correct':(res.level==='partial'?'partial':'wrong');
+            const bt = res.level==='good'?'✓ 回答较好':(res.level==='partial'?'△ 部分正确':'✗ 需加强');
+            return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.userAnswer||'（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${res.hitCount}/${res.totalKeywords} 个（${res.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${res.progressClass}" style="width:${res.hitRate}%;"></div></div><span class="score-tag ${res.progressClass}">${res.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${res.hitKeywords.length?res.hitKeywords.map(k=>'<span class="keyword-highlight">'+k+'</span>').join('、'):'无'}</p><p><strong>未命中：</strong>${res.missedKeywords.length?res.missedKeywords.map(k=>'<span class="keyword-missed">'+k+'</span>').join('、'):'无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+        }
+
+        function buildCompletionScreen(cc, ac, wc) {
+            let h = `<div class="completion-screen"><div class="completion-icon">${ac>=80?'🎉':ac>=60?'👍':'💪'}</div><h1 class="completion-title">${reviewMode?'错题回顾完成！':'刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode?'你已经回顾了所有错题':'太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${cc}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${ac}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wc}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wc>0 && !reviewMode) { h += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+            if (reviewMode && wc>0) h += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            return h + `</div></div>`;
+        }
+
+        function selectOption(i) { const ai = getActualIndex(); if (answers[ai] !== null || !isChoiceType(questions[ai])) return; answers[ai] = i; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(i===questions[ai].answer?'回答正确！✓':'回答错误 ✗'); }
+        function submitTextAnswer(ai) { if (answers[ai]!==null && typeof answers[ai]==='string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const ua = ta.value.trim(); if (!ua) { showToast('请先输入你的回答'); return; } answers[ai] = ua; clearDraft(ai); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const res = evaluateTextAnswer(ai, questions[ai]); showToast(res.level==='good'?'回答较好！✓':(res.level==='partial'?'部分正确 △':'需加强 ✗')); }
+        function saveDraftOnly(ai) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const v = ta.value.trim(); if (v) { saveDraft(ai, v); showToast('草稿已保存 ✓'); } else { clearDraft(ai); showToast('草稿已清空'); } }
+        function clearTextInput(ai) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(ai); showToast('输入已清空'); }
+
+        function evaluateTextAnswer(ai, q) {
+            const ua = (answers[ai] && typeof answers[ai]==='string') ? answers[ai] : ''; const ak = []; let ra = '';
+            if (q.type==='简答题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; } else if (q.type==='综合应用题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; }
+            const tk = ak.length, hk = [], mk = []; const ul = ua.toLowerCase();
+            ak.forEach(k => { if (ul.includes(k.toLowerCase())) hk.push(k); else mk.push(k); });
+            const hc = hk.length, hr = tk>0 ? Math.round((hc/tk)*100) : 0; let l, ll, pc;
+            if (q.type==='简答题') { if (hr>=60) { l='good'; ll='回答较好'; pc='excellent'; } else if (hr>=30) { l='partial'; ll='部分正确'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+            else { if (hr>=80) { l='good'; ll='优秀'; pc='excellent'; } else if (hr>=60) { l='good'; ll='良好'; pc='good'; } else if (hr>=40) { l='partial'; ll='合格'; pc='pass'; } else { l='weak'; ll='需加强'; pc='fail'; } }
+            return { userAnswer:ua, referenceAnswer:ra, totalKeywords:tk, hitCount:hc, hitRate:hr, hitKeywords:hk, missedKeywords:mk, level:l, levelLabel:ll, progressClass:pc };
+        }
+
+        function getCorrectCount() { let c=0; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]===q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') c++; } }); return c; }
+        function getWrongCount() { let c=0; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) c++; } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') c++; } }); return c; }
+        function getWrongIndicesArray() { const a=[]; questions.forEach((q,i)=>{ if (answers[i]===null) return; if (isChoiceType(q)) { if (answers[i]!==q.answer) a.push(i); } else { const r = evaluateTextAnswer(i,q); if (r.level==='weak') a.push(i); } }); return a; }
+        function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length) return wrongIndices.every(wi=>answers[wi]!==null); return answers.every(a=>a!==null); }
+
+        function startReviewWrong() { wrongIndices = getWrongIndicesArray(); if (!wrongIndices.length) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display='block'; document.getElementById('questionInfo').style.display='block'; document.getElementById('pageTitle').style.display='none'; document.querySelector('.progress-bar').style.display='block'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); }
+        function exitReviewMode() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({top:0,behavior:'smooth'}); showToast('已退出错题回顾模式'); }
+
+        function exportWrongCSV() {
+            const wa = getWrongIndicesArray(); if (!wa.length) { showToast('没有错题可导出'); return; }
+            const mn = '图像编码', ds = new Date().toISOString().slice(0,10), fn = `错题本_${mn}_${ds}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wa.forEach(i => { const q = questions[i], qt = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g,'""'); let ua='',ca='',hr='',res='';
+                if (isChoiceType(q)) { ua = (answers[i]!==null && answers[i]!==undefined) ? (q.options[answers[i]]?q.options[answers[i]].text:String(answers[i])) : ''; ca = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); res = answers[i]===q.answer?'正确':'错误'; hr = answers[i]===q.answer?'100%':'0%'; }
+                else { ua = (answers[i]&&typeof answers[i]==='string')?answers[i]:''; ca = q.answer||''; const er = evaluateTextAnswer(i,q); hr = er.hitRate+'%'; res = er.levelLabel; }
+                const at = q.analysis ? q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""') : '';
+                rows.push([qt,'"'+stem+'"','"'+ua.replace(/"/g,'""')+'"','"'+ca.replace(/"/g,'""')+'"',hr,res,'"'+at+'"']); });
+            const csv = '\uFEFF' + rows.map(r=>r.join(',')).join('\n'); const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href=url; link.download=fn; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：'+fn);
+        }
+
+        function toggleAnalysis(h) { const c = h.nextElementSibling; const i = h.querySelector('.toggle-icon'); if (c.style.display==='none') { c.style.display='block'; i.classList.add('expanded'); } else { c.style.display='none'; i.classList.remove('expanded'); } }
+        function prevQuestion() { if (reviewMode && wrongIndices.length) { if (reviewIndex>0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex>0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (reviewMode && wrongIndices.length) { if (reviewIndex<wrongIndices.length-1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex<questions.length-1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() { if (currentPage!=='quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const ac = answers.filter(a=>a!==null).length; document.getElementById('answeredCount').textContent = ac; document.getElementById('totalCount').textContent = questions.length; document.getElementById('progressFill').style.width = `${(ac/questions.length)*100}%`; }
+        function updateNavButtons() { const fc = document.getElementById('footerContent'); if (currentPage!=='quiz') return; const tim = getTotalInMode(), cp = getCurrentPosition(), isF = cp<=1, isL = cp>=tim, ad = checkAllAnsweredInMode(); fc.innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${isF?'disabled':''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${isL&&ad?'disabled':''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+
+        function changeFontSize(d) { fontSize = Math.max(14,Math.min(22,fontSize+d)); document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const o = document.getElementById('sheetOverlay'), p = document.getElementById('sheetPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderAnswerSheet(); } }
+        function renderAnswerSheet() { const g = document.getElementById('sheetGrid'); let h = ''; questions.forEach((q,i)=>{ let sc='unanswered',st='未答'; if (answers[i]!==null) { if (isChoiceType(q)) { if (answers[i]===q.answer) { sc='correct';st='正确'; } else { sc='wrong';st='错误'; } } else { const r = evaluateTextAnswer(i,q); if (r.level==='good') { sc='correct';st='较好'; } else if (r.level==='partial') { sc='correct';st='部分'; } else { sc='wrong';st='加强'; } } } if (i===getActualIndex() && !reviewMode) sc+=' current'; if (reviewMode && wrongIndices.includes(i) && wrongIndices[reviewIndex]===i) sc+=' current';
+            if (currentFilter!=='all') { if (currentFilter==='unanswered' && answers[i]!==null) return; if (currentFilter==='correct') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]!==q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level==='weak') return; } } if (currentFilter==='wrong') { if (answers[i]===null) return; if (isChoiceType(q) && answers[i]===q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i,q); if (r.level!=='weak') return; } } }
+            h += `<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i+1}</div><div class="sheet-status">${st}</div></div>`; }); g.innerHTML = h; }
+        function filterQuestions(f,e) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(i) { reviewMode = false; wrongIndices = []; currentIndex = i; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() { const o = document.getElementById('historyOverlay'), p = document.getElementById('historyPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const l = document.getElementById('historyList'), h = getHistory(); if (!h.length) { l.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; } let ht = ''; h.forEach((r,i)=>{ const ds = new Date(r.timestamp).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); ht += `<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`; }); l.innerHTML = ht; }
+        function saveToHistory(cc,ac) { const h = getHistory(); h.unshift({timestamp:Date.now(),totalCount:questions.length,correctCount:cc,accuracy:ac,answers:[...answers]}); if (h.length>50) h.pop(); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); }
+        function getHistory() { try { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; } catch(e) { console.warn('历史记录异常'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+        function reviewHistory(i) { const h = getHistory(); if (i>=0 && i<h.length) { answers = [...h[i].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(i) { if (!confirm('确定删除？')) return; const h = getHistory(); if (i>=0 && i<h.length) { h.splice(i,1); localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({currentIndex,answers,reviewMode,wrongIndices,reviewIndex})); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({fontSize})); }
+        function loadAllData() { try { const s = localStorage.getItem(STORAGE_KEY_ANSWERS); if (s) { const d = JSON.parse(s); currentIndex = d.currentIndex||0; answers = d.answers||new Array(questions.length).fill(null); reviewMode = d.reviewMode||false; wrongIndices = d.wrongIndices||[]; reviewIndex = d.reviewIndex||0; } } catch(e) { console.warn('进度异常'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); } try { const ss = localStorage.getItem(STORAGE_KEY_SETTINGS); if (ss) { const st = JSON.parse(ss); fontSize = st.fontSize||16; document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`); document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`); } } catch(e) { console.warn('设置异常'); localStorage.removeItem(STORAGE_KEY_SETTINGS); } }
+
+        function saveDraft(i,v) { const d = getDrafts(); d[i]=v; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDraft(i) { const d = getDrafts(); return d[i]||null; }
+        function clearDraft(i) { const d = getDrafts(); delete d[i]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDrafts() { try { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; } catch(e) { console.warn('草稿异常'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() { if (confirm('确定重新开始？进度将被清除。')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion();updateNavButtons();renderAnswerSheet(); } }
+        function showHome() { if (confirm('返回主页将丢失进度，确定吗？')) { currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage();renderAnswerSheet(); } }
+        function showToast(msg) { const t = document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知识点导航中心</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .accordion-content.expanded {
+            opacity: 1;
+        }
+        
+        /* 隐藏原生搜索清除按钮，使用自定义按钮 */
+        input[type="search"]::-webkit-search-cancel-button {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        /* Highlight match marker */
+        mark {
+            background-color: #dbeafe; /* border-blue-100 */
+            color: #1d4ed8;            /* border-blue-700 */
+            border-radius: 0.125rem;
+            padding: 0 0.125rem;
+        }
+    </style>
+</head>
+<body class="bg-indigo-50/40 min-h-screen text-gray-800 antialiased font-sans flex flex-col">
+    
+    <!-- 顶部导航 -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
+            <div class="flex items-center text-white">
+                <div class="bg-white/20 p-2 rounded-xl mr-3 shadow-inner backdrop-blur-sm">
+                    <i class="fa-solid fa-book-open text-lg"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-widest">知识点导航</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- 吸顶搜索栏与全局控制 -->
+    <div class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 pt-3 pb-3 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <!-- 触屏适配：套在form里方便触发移动端键盘的“Search/搜索”回车键 -->
+                    <form id="searchForm" onsubmit="event.preventDefault(); document.getElementById('searchInput').blur();">
+                        <input type="search" id="searchInput" placeholder="搜索知识点或分类..." 
+                            class="w-full pl-10 pr-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-[16px] bg-gray-50/50 shadow-inner" 
+                            style="height: 48px;">
+                    </form>
+                    <button id="clearBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 p-1.5 focus:outline-none hover:text-gray-700">
+                        <i class="fa-solid fa-circle-xmark text-lg"></i>
+                    </button>
+                </div>
+                
+                <!-- 桌面端全局控制按钮 -->
+                <div class="hidden sm:flex flex-col gap-1 text-xs text-blue-600 font-medium whitespace-nowrap">
+                    <button class="hover:text-blue-800 expandAllBtn tracking-wider">展开全部</button>
+                    <button class="hover:text-blue-800 collapseAllBtn tracking-wider">收起全部</button>
+                </div>
+            </div>
+            
+            <!-- 搜索下栏信息：结果计数 & 移动端全展开控制 -->
+            <div class="flex items-center justify-between mt-2.5 h-5">
+                <div id="searchStats" class="text-[13px] text-gray-500 hidden transition-opacity">
+                    找到 <span id="resultCount" class="font-bold text-blue-600 px-0.5">0</span> 个结果
+                </div>
+                <div class="flex gap-4 text-[13px] text-blue-600 font-medium sm:hidden ml-auto">
+                    <button class="active:text-blue-800 expandAllBtn active:scale-95 transition-transform"><i class="fa-solid fa-folder-open mr-1"></i>展开全部</button>
+                    <button class="active:text-blue-800 collapseAllBtn active:scale-95 transition-transform"><i class="fa-solid fa-folder-closed mr-1"></i>收起全部</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full relative">
+        <div id="nav-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <!-- 动态注入的数据卡片 -->
+        </div>
+        
+        <!-- 空状态 -->
+        <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 text-gray-400">
+            <div class="bg-gray-100 p-6 rounded-full mb-4">
+                <i class="fa-solid fa-box-open text-4xl text-gray-300"></i>
+            </div>
+            <p class="text-lg font-medium text-gray-500 tracking-wide">未找到相关知识点</p>
+            <p class="text-sm mt-2 text-gray-400">换个关键词试试看，或者清除搜索条件</p>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-6 mt-auto text-center text-gray-400 text-xs sm:text-sm bg-white border-t border-gray-200">
+        <p>© 2026 学科知识导航中心 | 点击前往学习页面</p>
+    </footer>
+
+    <!-- 返回顶部悬浮按钮 -->
+    <button id="scrollToTop" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 focus:outline-none transition-all duration-300 transform translate-y-20 opacity-0 flex justify-center items-center z-50 hover:bg-indigo-700 active:scale-90">
+        <i class="fa-solid fa-arrow-up text-lg"></i>
+    </button>
+
+    <script>
+        const navData = [
+            { category: '人工智能与算法', icon: 'fa-brain', items: ['机器学习.html', '人工神级网络.html', '专家系统.html', '人脸识别练习.html', '人工智能发展与算法.html', '语音识别.html', '知识图谱.html', '智能向善.html'] },
+            { category: '网络与通信', icon: 'fa-network-wired', items: ['计算机网络分类.html', '计算机网络组成.html', 'HTTP协议.html', 'IPv6地址与互联网的未来.html', 'IP地址.html', '网页及其类型.html', '网页编辑练习.html'] },
+            { category: '安全与防范', icon: 'fa-shield-halved', items: ['防火墙.html', '网络安全与防范.html', '网络账户与密码.html', '网络攻击.html', '信息系统安全风险.html', '软硬件安全风险.html', '信息系统安全管理.html', '计算机病毒防护.html', '计算机病毒工作原理.html'] },
+            { category: '数据与信息处理', icon: 'fa-database', items: ['大数据.html', '数据表图化.html', '数据分析的基本方法.html', '数据处理.html', '数据采集的方法.html', '链表.html', '图像编码.html', '音频合成与语音合成.html', '视频文件与视频压缩.html', '视频文件与视频压缩_1.html'] },
+            { category: '信息系统与控制', icon: 'fa-sitemap', items: ['信息社会特征.html', '信息系统组成要素.html', '信息系统的组成要素.html', '信息系统的传递功能.html', '信息系统控制.html'] },
+            { category: '物联网与硬件设备', icon: 'fa-microchip', items: ['传感器.html', '温度传感器.html', '物联网功能需求.html', '物联网含义与四层架构.html', '物联网系统的反馈与控制.html', 'MQTT协议与订阅模型.html', '计算机与终端设备.html'] }
+        ];
+
+        const elements = {
+            container: document.getElementById('nav-container'),
+            searchInput: document.getElementById('searchInput'),
+            clearBtn: document.getElementById('clearBtn'),
+            emptyState: document.getElementById('emptyState'),
+            searchStats: document.getElementById('searchStats'),
+            resultCount: document.getElementById('resultCount'),
+            scrollToTop: document.getElementById('scrollToTop'),
+            expandBtns: document.querySelectorAll('.expandAllBtn'),
+            collapseBtns: document.querySelectorAll('.collapseAllBtn')
+        };
+
+        // Cache state: default false
+        let expandedState = JSON.parse(localStorage.getItem('accordionState')) || {};
+
+        function saveState() {
+            localStorage.setItem('accordionState', JSON.stringify(expandedState));
+        }
+
+        // 高亮包裹
+        function highlightMatch(text, term) {
+            if (!term) return text;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        function renderDOM(data, searchTerm = '') {
+            elements.container.innerHTML = '';
+            let totalItems = 0;
+            let term = searchTerm.trim().toLowerCase();
+            let isSearching = term.length > 0;
+            let hasResults = false;
+
+            data.forEach((group, index) => {
+                const categoryId = 'hub_' + index;
+                if (expandedState[categoryId] === undefined) expandedState[categoryId] = false;
+
+                let matchCategory = isSearching && group.category.toLowerCase().includes(term);
+                let filteredItems = group.items;
+
+                if (isSearching) {
+                    if (!matchCategory) {
+                        filteredItems = group.items.filter(item => item.toLowerCase().includes(term));
+                    }
+                }
+
+                if (filteredItems.length === 0 && !matchCategory && isSearching) return;
+
+                hasResults = true;
+                totalItems += filteredItems.length;
+
+                // 搜索时，只要有结果默认全展开；无搜索时基于 localStorage
+                const isExpanded = isSearching ? true : expandedState[categoryId];
+
+                const groupCategoryHtml = highlightMatch(group.category, term);
+
+                let itemsHtml = filteredItems.map(file => {
+                    const name = file.replace('.html', '');
+                    const displayNameHtml = highlightMatch(name, term);
+                    return `
+                        <!-- Active伪类添加了针对手机触屏的即时反馈效果 -->
+                        <a href="${file}" class="group flex items-center justify-between p-3.5 mb-2.5 rounded-xl bg-white border border-gray-100 active:bg-blue-50/80 hover:bg-blue-50/50 hover:border-blue-200 transition-all duration-200 shadow-sm">
+                            <span class="text-[15px] font-medium text-gray-700 group-hover:text-blue-700 group-active:text-blue-800 break-all pr-3 leading-snug">${displayNameHtml}</span>
+                            <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-active:bg-blue-600 group-hover:bg-blue-500 transition-colors flex-shrink-0">
+                                <i class="fa-solid fa-angle-right text-[12px] text-gray-400 group-active:text-white group-hover:text-white transition-colors"></i>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+
+                const cardBox = document.createElement('div');
+                cardBox.className = 'bg-white rounded-2xl border border-gray-200/80 shadow h-fit overflow-hidden flex flex-col';
+                cardBox.innerHTML = `
+                    <button class="category-header w-full px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-br from-white to-gray-50 focus:outline-none active:bg-gray-100 transition-colors text-left select-none">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mr-3 shadow-inner">
+                                <i class="fa-solid ${group.icon} text-lg"></i>
+                            </div>
+                            <h2 class="text-base font-bold text-gray-800 tracking-wide">${groupCategoryHtml}</h2>
+                        </div>
+                        <div class="flex items-center ml-2">
+                            <!-- 分类内部包含项目数量角标 -->
+                            <span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded-md mr-3 whitespace-nowrap">${group.items.length} 个</span>
+                            <div class="w-6 h-6 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-sm transition-transform duration-300 transform toggle-chevron ${isExpanded ? 'rotate-180 text-blue-500' : ''}"></i>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <div class="accordion-content bg-slate-50/50 ${isExpanded ? 'expanded' : ''}" style="${isExpanded ? 'max-height: none;' : ''}">
+                        <div class="p-4 list-wrapper">
+                            ${itemsHtml}
+                        </div>
+                    </div>
+                `;
+
+                elements.container.appendChild(cardBox);
+
+                // 交互逻辑
+                const headerBtn = cardBox.querySelector('.category-header');
+                const content = cardBox.querySelector('.accordion-content');
+                const wrapper = cardBox.querySelector('.list-wrapper');
+                const chevron = cardBox.querySelector('.toggle-chevron');
+
+                headerBtn.addEventListener('click', (e) => {
+                    const currentlyExpanded = content.classList.contains('expanded');
+
+                    if (currentlyExpanded) {
+                        // Collapse
+                        content.style.maxHeight = wrapper.offsetHeight + 'px';
+                        requestAnimationFrame(() => {
+                            content.style.maxHeight = '0px';
+                            content.classList.remove('expanded');
+                            chevron.classList.remove('rotate-180', 'text-blue-500');
+                        });
+                        if (!isSearching) expandedState[categoryId] = false;
+                    } else {
+                        // Expand
+                        content.classList.add('expanded');
+                        content.style.maxHeight = wrapper.offsetHeight + 'px';
+                        chevron.classList.add('rotate-180', 'text-blue-500');
+                        if (!isSearching) expandedState[categoryId] = true;
+                        
+                        setTimeout(() => {
+                            if (content.classList.contains('expanded')) content.style.maxHeight = 'none';
+                        }, 300);
+                    }
+                    if (!isSearching) saveState();
+                });
+            });
+
+            // 搜索界面调整
+            if (isSearching && !hasResults) {
+                elements.emptyState.classList.remove('hidden');
+                elements.container.classList.add('hidden');
+            } else {
+                elements.emptyState.classList.add('hidden');
+                elements.container.classList.remove('hidden');
+            }
+
+            if (isSearching) {
+                elements.clearBtn.classList.remove('hidden');
+                elements.searchStats.classList.remove('hidden');
+                elements.resultCount.textContent = totalItems;
+            } else {
+                elements.clearBtn.classList.add('hidden');
+                elements.searchStats.classList.add('hidden');
+            }
+        }
+
+        // debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        }
+
+        // 事件监听
+        elements.searchInput.addEventListener('input', debounce((e) => {
+            renderDOM(navData, e.target.value);
+        }, 200));
+
+        elements.clearBtn.addEventListener('click', () => {
+            elements.searchInput.value = '';
+            renderDOM(navData, '');
+            elements.searchInput.focus();
+        });
+
+        // 全局控制器
+        const triggerGlobalExpand = (expand) => {
+            if (elements.searchInput.value.trim().length > 0) return; // 搜查时不覆盖全局
+
+            Object.keys(expandedState).forEach(k => expandedState[key = k] = expand);
+            saveState();
+
+            document.querySelectorAll('.category-header').forEach(btn => {
+                const content = btn.nextElementSibling;
+                const wrapper = content.querySelector('.list-wrapper');
+                const chevron = btn.querySelector('.toggle-chevron');
+                
+                const isCurrentlyExpanded = content.classList.contains('expanded');
+
+                if (expand && !isCurrentlyExpanded) {
+                    content.classList.add('expanded');
+                    content.style.maxHeight = wrapper.offsetHeight + 'px';
+                    chevron.classList.add('rotate-180', 'text-blue-500');
+                    setTimeout(() => { if (content.classList.contains('expanded')) content.style.maxHeight = 'none'; }, 300);
+                } else if (!expand && isCurrentlyExpanded) {
+                    content.style.maxHeight = wrapper.offsetHeight + 'px';
+                    requestAnimationFrame(() => {
+                        content.style.maxHeight = '0px';
+                        content.classList.remove('expanded');
+                        chevron.classList.remove('rotate-180', 'text-blue-500');
+                    });
+                }
+            });
+        };
+
+        elements.expandBtns.forEach(btn => btn.addEventListener('click', () => triggerGlobalExpand(true)));
+        elements.collapseBtns.forEach(btn => btn.addEventListener('click', () => triggerGlobalExpand(false)));
+
+        // 返回顶部逻辑
+        window.addEventListener('scroll', debounce(() => {
+            if (window.scrollY > window.innerHeight * 0.8) {
+                elements.scrollToTop.classList.remove('translate-y-20', 'opacity-0');
+            } else {
+                elements.scrollToTop.classList.add('translate-y-20', 'opacity-0');
+            }
+        }, 150));
+
+        elements.scrollToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Resize 自动修正 flex 列表高度
+        window.addEventListener('resize', debounce(() => {
+            document.querySelectorAll('.accordion-content.expanded').forEach(content => {
+                content.style.maxHeight = 'none';
+            });
+        }, 200));
+
+        // 初始渲染
+        renderDOM(navData);
+    </script>
+</body>
+</html>

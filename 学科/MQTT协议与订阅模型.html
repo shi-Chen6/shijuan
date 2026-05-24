@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MQTT协议与订阅模型刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        /* 新增题型及增强功能样式 */
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-match-result { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.7; }
+        .keyword-match-result.good { background: var(--success-light); border: 1px solid #b7eb8f; color: #135200; }
+        .keyword-match-result.partial { background: var(--warning-light); border: 1px solid #ffe58f; color: #7c5200; }
+        .keyword-match-result.weak { background: var(--error-light); border: 1px solid #ffa39e; color: #820014; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">MQTT协议与订阅模型</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"MQTT协议采用的核心通信模式是（ ）","options":[{"label":"A","text":"客户端-服务器模式"},{"label":"B","text":"点对点模式"},{"label":"C","text":"发布/订阅模式"},{"label":"D","text":"广播模式"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 发布/订阅模式</strong>。MQTT协议的核心就是发布/订阅模式，这是它与传统客户端-服务器模式最本质的区别。<br><strong>📚 知识点讲解：</strong>发布/订阅模式实现了时间、空间和同步的三重解耦，发布者和订阅者不需要知道对方的存在，也不需要同时在线。<br><strong>💡 解题思路：</strong>A是HTTP等传统协议的模式，B是P2P模式，D不准确。MQTT是基于发布/订阅的。<br><strong>🧠 记忆口诀：</strong>MQTT发布订阅，三重解耦是关键，不需知道对方在，时间空间同步分。"},{"type":"单选题","difficulty":"基础","stem":"MQTT通信中的核心中转节点是（ ）","options":[{"label":"A","text":"发布者"},{"label":"B","text":"订阅者"},{"label":"C","text":"代理服务器"},{"label":"D","text":"主题"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 代理服务器（Broker）</strong>。代理服务器是MQTT通信的核心中转节点，负责接收所有发布者的消息并转发给订阅者。<br><strong>📚 知识点讲解：</strong>Broker管理客户端连接、会话和消息路由，是发布者和订阅者之间的桥梁。<br><strong>💡 解题思路：</strong>发布者和订阅者是客户端，主题是消息分类标签。只有Broker是中心节点。<br><strong>🧠 记忆口诀：</strong>代理服务器是中心，接收消息转订阅，不生产也不消费，消息中转全靠它。"},{"type":"单选题","difficulty":"基础","stem":"下列关于MQTT客户端的说法，正确的是（ ）","options":[{"label":"A","text":"一个客户端只能是发布者"},{"label":"B","text":"一个客户端只能是订阅者"},{"label":"C","text":"一个客户端可以同时是发布者和订阅者"},{"label":"D","text":"客户端不需要连接代理服务器就能通信"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。一个MQTT客户端可以同时扮演发布者和订阅者两种角色。<br><strong>📚 知识点讲解：</strong>例如智能灯泡可以订阅控制主题（作为订阅者），同时发布自己的状态主题（作为发布者）。<br><strong>💡 解题思路：</strong>A、B过于绝对，D错误，所有客户端必须连接Broker。<br><strong>🧠 记忆口诀：</strong>客户端多角色，发布订阅可兼任，控制状态同时做，灵活角色不固定。"},{"type":"单选题","difficulty":"基础","stem":"MQTT中用于分类消息的是（ ）","options":[{"label":"A","text":"发布者"},{"label":"B","text":"订阅者"},{"label":"C","text":"代理服务器"},{"label":"D","text":"主题"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 主题（Topic）</strong>。主题是消息的分类标签，发布者将消息发布到主题，订阅者通过订阅主题接收消息。<br><strong>📚 知识点讲解：</strong>主题采用层次化字符串结构，如“home/room1/temperature”，是发布者和订阅者之间的桥梁。<br><strong>💡 解题思路：</strong>发布者/订阅者是角色，Broker是中转节点，主题才是消息的分类标识。<br><strong>🧠 记忆口诀：</strong>主题分类标签串，层次斜杠分隔开，发布订阅靠它连，消息路由依据它。"},{"type":"单选题","difficulty":"基础","stem":"QoS 0的含义是（ ）","options":[{"label":"A","text":"最多一次传递"},{"label":"B","text":"至少一次传递"},{"label":"C","text":"恰好一次传递"},{"label":"D","text":"不传递"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 最多一次传递</strong>。QoS 0是最低级别的服务质量，消息仅发送一次，没有确认和重传机制，可能会丢失。<br><strong>📚 知识点讲解：</strong>QoS 0传输速度最快，开销最小，适用于对消息丢失不敏感的高频数据。<br><strong>💡 解题思路：</strong>0次不可用，至少一次是QoS 1，恰好一次是QoS 2。<br><strong>🧠 记忆口诀：</strong>QoS0最多一次，发了不管丢不丢，速度最快开销小，传感器数据常用它。"},{"type":"单选题","difficulty":"基础","stem":"QoS 1的含义是（ ）","options":[{"label":"A","text":"最多一次传递"},{"label":"B","text":"至少一次传递"},{"label":"C","text":"恰好一次传递"},{"label":"D","text":"不传递"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 至少一次传递</strong>。QoS 1保证消息至少到达一次，但可能会重复。<br><strong>📚 知识点讲解：</strong>发送方存储消息并等待确认（PUBACK），未收到确认则重传。<br><strong>💡 解题思路：</strong>QoS 1有确认重传，保证到达，但不保证不重复。<br><strong>🧠 记忆口诀：</strong>QoS1至少一次，确认重传保到达，重复消息有可能，普通业务常用它。"},{"type":"单选题","difficulty":"基础","stem":"QoS 2的含义是（ ）","options":[{"label":"A","text":"最多一次传递"},{"label":"B","text":"至少一次传递"},{"label":"C","text":"恰好一次传递"},{"label":"D","text":"不传递"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 恰好一次传递</strong>。QoS 2通过四次握手确保消息既不丢失也不重复，可靠性最高。<br><strong>📚 知识点讲解：</strong>四次握手：PUBLISH→PUBREC→PUBREL→PUBCOMP。<br><strong>💡 解题思路：</strong>QoS 2是最高的服务质量，适用于金融交易等关键业务。<br><strong>🧠 记忆口诀：</strong>QoS2恰好一次，四次握手保可靠，不丢不重最安全，金融医疗不可少。"},{"type":"单选题","difficulty":"基础","stem":"下列哪种QoS等级的传输速度最快？（ ）","options":[{"label":"A","text":"QoS 0"},{"label":"B","text":"QoS 1"},{"label":"C","text":"QoS 2"},{"label":"D","text":"一样快"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. QoS 0</strong>。QoS 0没有确认和重传机制，传输速度最快，开销最小。<br><strong>📚 知识点讲解：</strong>QoS等级越高，握手次数越多，延迟越大。<br><strong>💡 解题思路：</strong>QoS 0无需等待确认，速度自然最快。<br><strong>🧠 记忆口诀：</strong>QoS0最快传，不用确认直接发；1等确认2四次，等级越高越慢行。"},{"type":"单选题","difficulty":"基础","stem":"下列哪种QoS等级的可靠性最高？（ ）","options":[{"label":"A","text":"QoS 0"},{"label":"B","text":"QoS 1"},{"label":"C","text":"QoS 2"},{"label":"D","text":"一样高"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. QoS 2</strong>。QoS 2通过四次握手确保消息恰好一次传递，可靠性最高。<br><strong>📚 知识点讲解：</strong>QoS 2保证消息既不丢失也不重复。<br><strong>💡 解题思路：</strong>QoS 0可能丢失，QoS 1可能重复，QoS 2最可靠。<br><strong>🧠 记忆口诀：</strong>QoS2最可靠，既不丢失不重复，四次握手严把关，关键业务首选它。"},{"type":"单选题","difficulty":"基础","stem":"环境传感器数据采集适合使用哪种QoS等级？（ ）","options":[{"label":"A","text":"QoS 0"},{"label":"B","text":"QoS 1"},{"label":"C","text":"QoS 2"},{"label":"D","text":"都可以"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. QoS 0</strong>。环境传感器数据采集频率高，偶尔丢失几个数据对整体分析影响不大，适合使用QoS 0以减少带宽和功耗。<br><strong>📚 知识点讲解：</strong>传感器通常资源受限，QoS 0开销最小，最省电。<br><strong>💡 解题思路：</strong>高频非关键数据首选QoS 0。<br><strong>🧠 记忆口诀：</strong>传感器数据频高，丢了几个没关系，QoS0省带宽，低功耗来长续航。"},{"type":"单选题","difficulty":"中档","stem":"金融交易指令适合使用哪种QoS等级？（ ）","options":[{"label":"A","text":"QoS 0"},{"label":"B","text":"QoS 1"},{"label":"C","text":"QoS 2"},{"label":"D","text":"都可以"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. QoS 2</strong>。金融交易指令对数据一致性要求极高，必须保证消息既不丢失也不重复。<br><strong>📚 知识点讲解：</strong>重复的交易指令可能导致严重后果，因此需要QoS 2保证恰好一次传递。<br><strong>💡 解题思路：</strong>金融交易不能丢也不能重复，只有QoS 2满足。<br><strong>🧠 记忆口诀：</strong>金融交易要求严，不丢不重是关键，QoS2四次握手，保证指令准确传。"},{"type":"单选题","difficulty":"中档","stem":"下列关于发布/订阅模式的说法，错误的是（ ）","options":[{"label":"A","text":"发布者和订阅者不需要知道对方的存在"},{"label":"B","text":"发布者和订阅者不需要同时在线"},{"label":"C","text":"一个主题只能有一个发布者"},{"label":"D","text":"一个主题可以有多个订阅者"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。一个主题可以有多个发布者，多个发布者可以向同一个主题发布消息。<br><strong>📚 知识点讲解：</strong>发布/订阅模式支持多对多通信，发布者和订阅者数量不受限制。<br><strong>💡 解题思路：</strong>A、B、D都是正确的。C错误，主题可以有多个发布者。<br><strong>🧠 记忆口诀：</strong>主题可以多发多收，发布订阅不限数，多对多通信灵活，松耦合来扩展强。"},{"type":"单选题","difficulty":"中档","stem":"下列主题中，能够匹配“home/room1/light”的是（ ）","options":[{"label":"A","text":"“home/+/light”"},{"label":"B","text":"“home/#”"},{"label":"C","text":"“+/room1/light”"},{"label":"D","text":"以上都可以"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D</strong>。“+”匹配单层，“#”匹配多层，A、B、C三种通配符方式都能匹配该主题。<br><strong>📚 知识点讲解：</strong>“+”是单层通配符，“#”是多层通配符，必须放在主题最后。<br><strong>💡 解题思路：</strong>逐一验证：A匹配第二层为任意，B匹配home开头所有，C匹配第一层为任意。<br><strong>🧠 记忆口诀：</strong>加号单层井号多，通配灵活匹配广，加号可放任一层，井号只能末尾放。"},{"type":"单选题","difficulty":"中档","stem":"MQTT协议头最小只有多少字节？（ ）","options":[{"label":"A","text":"1字节"},{"label":"B","text":"2字节"},{"label":"C","text":"4字节"},{"label":"D","text":"8字节"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 2字节</strong>。MQTT协议头最小只有2字节，非常节省网络带宽，这是它轻量级的重要体现。<br><strong>📚 知识点讲解：</strong>轻量级设计使MQTT适合资源受限的单片机和传感器。<br><strong>💡 解题思路：</strong>记住2字节这个最小协议头，体现轻量级特点。<br><strong>🧠 记忆口诀：</strong>MQTT头最小2字节，轻量设计省带宽，物联网里显身手，受限设备也能跑。"},{"type":"单选题","difficulty":"中档","stem":"下列关于MQTT和HTTP协议的说法，正确的是（ ）","options":[{"label":"A","text":"MQTT和HTTP都是基于发布/订阅模式"},{"label":"B","text":"MQTT比HTTP更适合资源受限的设备"},{"label":"C","text":"HTTP比MQTT更适合物联网应用"},{"label":"D","text":"MQTT和HTTP的开销差不多"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B</strong>。MQTT协议头小、开销低、功耗小，比HTTP更适合资源受限的物联网设备。<br><strong>📚 知识点讲解：</strong>HTTP基于请求-响应模式，协议头较大，不适合低带宽环境。<br><strong>💡 解题思路：</strong>MQTT是物联网协议，HTTP是Web协议，MQTT更轻量。<br><strong>🧠 记忆口诀：</strong>MQTT轻量物联强，HTTP Web请求忙，协议头小功耗低，受限设备MQTT当。"},{"type":"判断题","difficulty":"基础","stem":"MQTT是专为物联网设计的轻量级通信协议。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。MQTT专为资源受限的设备和低带宽、不稳定的网络设计，是物联网领域的事实标准。<br><strong>📚 知识点讲解：</strong>MQTT由IBM开发，现已成为OASIS和ISO国际标准。<br><strong>💡 解题思路：</strong>这是MQTT的基本定位。<br><strong>🧠 记忆口诀：</strong>MQTT物联网协议，轻量设计专为此，受限设备低带宽，事实标准广应用。"},{"type":"判断题","difficulty":"基础","stem":"发布者需要知道订阅者的地址才能发送消息。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。发布者不需要知道订阅者的地址，只需要将消息发布到主题，由代理服务器负责转发。<br><strong>📚 知识点讲解：</strong>这是发布/订阅模式与点对点模式的根本区别。<br><strong>💡 解题思路：</strong>发布者只与Broker交互，不知道订阅者。<br><strong>🧠 记忆口诀：</strong>发布者不知订阅谁，消息发到主题上，代理转发全搞定，空间解耦是特色。"},{"type":"判断题","difficulty":"基础","stem":"代理服务器负责接收和转发消息。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。代理服务器是MQTT的核心中转节点，负责接收发布者的消息并转发给所有订阅了对应主题的客户端。<br><strong>📚 知识点讲解：</strong>Broker还负责管理客户端连接和会话。<br><strong>💡 解题思路：</strong>这是Broker的基本功能。<br><strong>🧠 记忆口诀：</strong>代理服务器中转站，接收消息转订阅，不生产也不消费，消息路由全靠它。"},{"type":"判断题","difficulty":"基础","stem":"一个主题只能有一个订阅者。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。一个主题可以有多个订阅者，代理服务器会将消息转发给所有订阅了该主题的客户端。<br><strong>📚 知识点讲解：</strong>MQTT支持一对多通信，一个消息可以同时到达多个订阅者。<br><strong>💡 解题思路：</strong>发布/订阅模式支持多订阅者。<br><strong>🧠 记忆口诀：</strong>一个主题多订阅，消息群发到所有，一对多通信方便，广播消息效率高。"},{"type":"判断题","difficulty":"基础","stem":"QoS 0保证消息至少到达一次。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。QoS 0不保证消息到达，消息可能丢失；QoS 1才保证消息至少到达一次。<br><strong>📚 知识点讲解：</strong>QoS 0最多一次，QoS 1至少一次，QoS 2恰好一次。<br><strong>💡 解题思路：</strong>三个等级的定义要记清。<br><strong>🧠 记忆口诀：</strong>QoS0最多一次丢，1保证至少到一次，2恰好一次最可靠，三级递进要记牢。"},{"type":"判断题","difficulty":"基础","stem":"QoS 2通过四次握手确保消息恰好一次传递。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。QoS 2通过PUBLISH→PUBREC→PUBREL→PUBCOMP四次握手，确保消息既不丢失也不重复。<br><strong>📚 知识点讲解：</strong>这是QoS 2的核心机制。<br><strong>💡 解题思路：</strong>四次握手保证了精确一次传递。<br><strong>🧠 记忆口诀：</strong>QoS2四次握手，PUBREC REL COMP，精确一次不丢失，最严质量保可靠。"},{"type":"判断题","difficulty":"基础","stem":"主题通配符“+”可以匹配任意多个层级。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。“+”是单层通配符，只能匹配一个层级；“#”是多层通配符，可以匹配任意多个层级。<br><strong>📚 知识点讲解：</strong>“+”只能匹配一层，“#”匹配多层，且“#”只能放在主题最后。<br><strong>💡 解题思路：</strong>区分单层和多层通配符。<br><strong>🧠 记忆口诀：</strong>加号单层井号多，单层只替一层级，多层任意均可配，井号末尾才可用。"},{"type":"判断题","difficulty":"中档","stem":"发布者和订阅者必须同时在线才能通信。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。发布者和订阅者不需要同时在线。如果订阅者离线，代理服务器可以存储消息（持久会话），当订阅者重新连接时再转发。<br><strong>📚 知识点讲解：</strong>这是MQTT时间解耦的体现。<br><strong>💡 解题思路：</strong>异步通信允许离线。<br><strong>🧠 记忆口诀：</strong>发布订阅异步通，不需同时在线等，离线消息可存储，重连之后再推送。"},{"type":"判断题","difficulty":"中档","stem":"MQTT协议只能运行在TCP协议之上。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。MQTT通常运行在TCP之上，但也可以运行在WebSocket等其他协议之上。<br><strong>📚 知识点讲解：</strong>MQTT over WebSocket常用于浏览器端实时通信。<br><strong>💡 解题思路：</strong>MQTT不限于TCP，也可用WebSocket。<br><strong>🧠 记忆口诀：</strong>MQTT通常用TCP，也可跑在WebSocket，浏览器端实时通，协议灵活不局限。"},{"type":"判断题","difficulty":"中档","stem":"一个客户端只能订阅一个主题。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。一个客户端可以同时订阅多个主题，也可以向多个主题发布消息。<br><strong>📚 知识点讲解：</strong>客户端可以使用通配符一次订阅多个主题。<br><strong>💡 解题思路：</strong>MQTT支持多主题订阅。<br><strong>🧠 记忆口诀：</strong>客户端多主题订，通配一次可多个，发布也可多渠道，灵活订阅不受限。"},{"type":"简答题","difficulty":"中档","stem":"请简述MQTT发布/订阅模型的工作原理，并说明它与传统客户端-服务器模式的区别。","answer":"MQTT发布/订阅模型工作原理：1.订阅者向代理服务器发送订阅请求，指定感兴趣的主题。2.发布者向代理服务器发布消息，消息包含主题和内容。3.代理服务器接收消息后，将其转发给所有订阅了该主题的订阅者。与传统C/S模式的区别：发布/订阅模式是多对多、异步、松耦合的；C/S模式是一对一、同步、紧耦合的。发布/订阅模式扩展性好，适合大规模设备连接；C/S模式服务器容易成为瓶颈。","keywords":["发布/订阅","代理服务器","主题","多对多","异步","松耦合","C/S模式","一对一","同步","紧耦合"],"analysis":"<strong>🎯 答案解析：</strong>MQTT基于发布/订阅模型，发布者和订阅者通过代理服务器进行主题消息转发，实现了空间、时间、同步三重解耦。<br><strong>📚 知识点讲解：</strong>传统C/S模式是请求-响应，客户端必须知道服务器地址，同步通信。MQTT是消息驱动，异步通信。<br><strong>💡 解题思路：</strong>从工作原理和耦合度、同步性、扩展性等方面对比。<br><strong>🧠 记忆口诀：</strong>发布订阅靠Broker，主题匹配转消息；C/S紧耦合同步，MQTT松耦合异步扩。"},{"type":"简答题","difficulty":"中档","stem":"请比较MQTT三个QoS等级的工作机制、优缺点和适用场景。","answer":"QoS 0：最多一次传递，无确认和重传。优点：速度最快，开销最小。缺点：消息可能丢失。适用场景：高频非关键数据，如环境传感器数据。QoS 1：至少一次传递，发送方等待确认，未收到则重传。优点：保证消息至少到达一次。缺点：可能收到重复消息。适用场景：普通业务，如远程控制指令。QoS 2：恰好一次传递，通过四次握手确保不丢不重。优点：可靠性最高。缺点：延迟最高，开销最大。适用场景：关键业务，如金融交易、远程医疗。","keywords":["QoS 0","最多一次","速度快","传感器","QoS 1","至少一次","确认重传","控制指令","QoS 2","恰好一次","四次握手","金融交易"],"analysis":"<strong>🎯 答案解析：</strong>三个QoS等级各有侧重：QoS 0追求速度，QoS 1保证到达，QoS 2保证精确。<br><strong>📚 知识点讲解：</strong>根据应用场景对可靠性和实时性的要求选择合适的QoS等级。<br><strong>💡 解题思路：</strong>从工作机制、优缺点、适用场景三个维度对三个等级进行对比。<br><strong>🧠 记忆口诀：</strong>0快1稳2精准，传感器0控制1，金融医疗用2级，场景匹配是关键。"},{"type":"简答题","difficulty":"提高","stem":"请分析MQTT协议为什么成为物联网领域的事实标准。","answer":"MQTT成为物联网事实标准的原因：1.轻量级设计：协议头最小仅2字节，节省带宽和资源，适合资源受限的单片机和传感器。2.低功耗：支持长连接和心跳机制，有效降低设备功耗，适合电池供电设备。3.可靠的消息传输：提供三个QoS等级，满足不同场景对消息可靠性的需求。4.发布/订阅模式：天然支持大规模设备连接，系统扩展性强，能够处理百万级并发。5.跨平台兼容：支持几乎所有操作系统和编程语言，兼容各种硬件平台。6.开放标准：由OASIS和ISO标准化组织维护，得到众多厂商支持。","keywords":["轻量级","2字节","低功耗","心跳","QoS","发布/订阅","大规模","跨平台","开放标准","OASIS","ISO"],"analysis":"<strong>🎯 答案解析：</strong>MQTT因其轻量、低功耗、可靠、易扩展、开放等特点，成为物联网通信的首选协议。<br><strong>📚 知识点讲解：</strong>这些特点使得MQTT在工业物联网、智能家居、车联网等领域广泛应用。<br><strong>💡 解题思路：</strong>从技术特性和生态两个角度阐述其优势。<br><strong>🧠 记忆口诀：</strong>轻量低耗又可靠，发布订阅扩展好，跨平台开放标准，物联网中称事实。"},{"type":"综合应用题","difficulty":"提高","stem":"某公司想要构建一个智能办公室系统，实现以下功能：（1）每个房间的温湿度传感器实时采集数据并上传；（2）员工可以通过手机APP远程控制办公室的灯光和空调；（3）当室内温度超过30℃时，自动打开空调；（4）监控中心可以实时查看所有办公室的环境数据和设备状态。请回答以下问题：","tasks":[{"id":1,"stem":"请为这个系统设计合理的主题结构。","answer":"主题结构：环境数据：“office/[房间号]/sensor/[传感器类型]”，如“office/101/sensor/temperature”。设备控制：“office/[房间号]/control/[设备类型]”，如“office/101/control/light”。设备状态：“office/[房间号]/status/[设备类型]”。报警主题：“office/alarm/[报警类型]”，如“office/alarm/temperature_high”。","keywords":["office","房间号","sensor","control","status","alarm","temperature","light","aircon"]},{"id":2,"stem":"不同功能应该分别使用哪种QoS等级？为什么？","answer":"环境数据采集：QoS 0，因为数据频率高，偶尔丢失影响小，可省带宽功耗。设备控制指令：QoS 1，保证指令至少到达一次，重复执行影响不大。设备状态更新：QoS 1，保证监控中心能收到最新状态。报警信息：QoS 2，报警信息非常重要，必须既不丢失也不重复。","keywords":["QoS 0","环境数据","QoS 1","控制指令","设备状态","QoS 2","报警"]},{"id":3,"stem":"说明系统中各个设备分别扮演什么角色（发布者/订阅者）。","answer":"温湿度传感器：发布者，发布环境数据。灯光/空调：既是订阅者（订阅控制指令）也是发布者（发布状态）。手机APP：既是发布者（发布控制指令）也是订阅者（订阅环境数据和设备状态）。监控中心：订阅者，订阅环境数据、设备状态和报警信息。自动控制模块：订阅者（订阅温度数据）和发布者（发布开空调指令）。","keywords":["传感器","发布者","灯光","空调","订阅者","手机APP","监控中心","自动控制"]}],"answer":"（1）主题层次：office/房间号/sensor|control|status；（2）传感器QoS 0，控制QoS 1，报警QoS 2；（3）传感器发布，设备双角色，APP双角色，监控中心订阅。","keywords":["office","QoS 0","QoS 1","QoS 2","发布者","订阅者","传感器","灯光","空调","APP","监控中心"],"analysis":"<strong>🎯 答案解析：</strong>通过合理设计主题结构和QoS等级，可实现智能办公室的高效通信和可靠控制。<br><strong>📚 知识点讲解：</strong>根据数据类型和重要性选择QoS，区分设备角色，体现MQTT在实际场景中的设计思路。<br><strong>💡 解题思路：</strong>从主题设计、QoS匹配、角色分配三个维度进行系统设计。<br><strong>🧠 记忆口诀：</strong>主题分层按功能，QoS匹配看重要，传感器发设备双，APP双角监控订。"},{"type":"综合应用题","difficulty":"提高","stem":"某农业园区想要部署一个物联网监测系统，用于监测10个大棚的温度、湿度、光照和土壤湿度。每个大棚部署4个传感器，数据每5分钟上传一次。园区监控中心需要实时接收所有数据，并在数据异常时发出报警。请回答以下问题：","tasks":[{"id":1,"stem":"这个系统适合使用MQTT协议吗？为什么？","answer":"非常适合。原因：农业大棚网络条件差、带宽有限，MQTT轻量级设计适合；传感器是资源受限设备，MQTT对硬件要求低；大量传感器需同时连接，MQTT的发布/订阅模式扩展性好；需要实时传输和报警，MQTT低延迟满足实时性要求。","keywords":["MQTT","轻量级","资源受限","发布/订阅","实时","扩展性"]},{"id":2,"stem":"传感器上传数据应该使用哪种QoS等级？为什么？","answer":"使用QoS 1。农业监测数据比较重要，需要保证至少到达一次；即使收到重复数据，监控中心可通过时间戳去重；QoS 1开销比QoS 2小，适合传感器设备。","keywords":["QoS 1","农业监测","至少一次","时间戳","开销"]},{"id":3,"stem":"报警信息应该使用哪种QoS等级？为什么？","answer":"使用QoS 2。报警信息关系农作物安全，必须保证既不丢失也不重复；丢失可能导致农作物受损，重复报警可能引起恐慌和资源浪费。","keywords":["QoS 2","报警","既不丢失","不重复","农作物安全"]},{"id":4,"stem":"如果某个大棚的网络暂时中断，当网络恢复后，如何确保监控中心能够收到中断期间的数据？","answer":"措施：传感器本地缓存最近一段时间的数据，网络恢复后重新上传；使用持久会话（cleanSession=false），代理存储离线消息，重连后转发；使用QoS 1或QoS 2的消息重传机制保障送达。","keywords":["本地缓存","持久会话","cleanSession","离线消息","重传","QoS 1","QoS 2"]}],"answer":"（1）适合，因为MQTT轻量、扩展性好、实时性强；（2）传感器数据用QoS 1，保证到达；（3）报警用QoS 2，确保精确；（4）本地缓存、持久会话、QoS重传保障。","keywords":["MQTT","QoS 1","QoS 2","本地缓存","持久会话","cleanSession","报警"],"analysis":"<strong>🎯 答案解析：</strong>农业物联网场景下，MQTT凭借轻量级和发布/订阅模式成为理想选择，QoS选择需匹配数据重要性和设备资源。<br><strong>📚 知识点讲解：</strong>本题综合考查MQTT协议适配性、QoS选择策略和网络中断恢复方案。<br><strong>💡 解题思路：</strong>从协议适配、QoS匹配、数据保障三个层面给出解决方案。<br><strong>🧠 记忆口诀：</strong>农业物联MQTT宜，传感QoS1报警2，断网缓存持久化，恢复重传不丢数。"}];
+        
+        const APP_ID = 'mqtt_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = 'MQTT协议与订阅模型（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>MQTT（Message Queuing Telemetry Transport）是<strong>基于发布/订阅模式的轻量级物联网通信协议</strong>，专为资源受限的设备和低带宽、高延迟、不稳定的网络设计，已成为物联网领域的事实标准。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. MQTT三大核心角色</strong></p>
+                <ul>
+                    <li><strong>客户端（Client）</strong> — 可同时担任<strong>发布者（Publisher）</strong>和<strong>订阅者（Subscriber）</strong></li>
+                    <li><strong>代理服务器（Broker）</strong> — 核心中转节点，负责接收消息并按主题转发给订阅者</li>
+                    <li><strong>主题（Topic）</strong> — 消息的分类标签，采用层次化字符串如“home/room1/temperature”</li>
+                </ul>
+                <p><strong>2. 发布/订阅模型工作原理</strong></p>
+                <p>发布者将消息发布到主题，代理服务器接收后转发给所有订阅了该主题的订阅者。发布者和订阅者不需要知道对方的存在，实现了<strong>时间、空间和同步的三重解耦</strong>。</p>
+                <p><strong>3. 服务质量等级（QoS，必考）</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>QoS等级</th><th>含义</th><th>机制</th><th>优点</th><th>缺点</th><th>适用场景</th></tr>
+                    <tr><td>QoS 0</td><td>最多一次</td><td>无确认无重传</td><td>最快、开销最小</td><td>消息可能丢失</td><td>高频传感器数据</td></tr>
+                    <tr><td>QoS 1</td><td>至少一次</td><td>确认+重传</td><td>保证到达</td><td>可能重复</td><td>普通控制指令</td></tr>
+                    <tr><td>QoS 2</td><td>恰好一次</td><td>四次握手</td><td>不丢不重</td><td>延迟高、开销大</td><td>金融交易、医疗</td></tr>
+                </table>
+                <p><strong>4. 主题通配符</strong>：“+”匹配<strong>单层</strong>，“#”匹配<strong>多层</strong>（只能放在末尾）。</p>
+                <p><strong>5. MQTT主要特点</strong>：轻量级（头仅2字节）、低功耗、可靠、易扩展、跨平台。</p>
+                <h3>📚 教材典型案例</h3>
+                <p><strong>智能家居温湿度监测</strong>、<strong>智能灯光远程控制</strong>、<strong>农业物联网大棚监测</strong></p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul>
+                    <li>❌ 混淆发布者和订阅者角色</li>
+                    <li>❌ 搞不清QoS等级区别</li>
+                    <li>❌ 认为MQTT只能用于物联网</li>
+                    <li>❌ 错误使用主题通配符</li>
+                </ul>
+                <h3>🎓 学段区分说明</h3>
+                <p><strong>初中阶段：</strong>了解MQTT基本概念和发布订阅模型，体验简单的MQTT通信。</p>
+                <p><strong>高中阶段：</strong>理解发布/订阅模型与传统C/S模型的区别，掌握三个QoS等级，了解主题层次和通配符，能设计简单MQTT通信方案。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) {
+            const t = q.type;
+            if (t === '单选题') return '单选题';
+            if (t === '判断题') return '判断题';
+            if (t === '简答题') return '简答题';
+            if (t === '综合应用题') return '综合应用题';
+            return t;
+        }
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getActualIndex() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices[reviewIndex];
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices.length;
+            return questions.length;
+        }
+
+        function getCurrentPosition() {
+            if (reviewMode && wrongIndices.length > 0) return reviewIndex + 1;
+            return currentIndex + 1;
+        }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex();
+            const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            let html = '';
+            if (reviewMode) {
+                html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            }
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx;
+                    const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) {
+                        if (isSelected && isCorrect) classes.push('correct');
+                        else if (isSelected && !isCorrect) classes.push('wrong');
+                        else if (isCorrect) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') {
+                html += renderTextAnswerArea(actualIdx, q);
+            } else if (q.type === '综合应用题') {
+                html += renderComprehensiveArea(actualIdx, q);
+            }
+            html += '</div>';
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) {
+                    const isCorrect = answers[actualIdx] === q.answer;
+                    html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(actualIdx, q);
+                    html += buildTextResultCard(actualIdx, q, result);
+                }
+            }
+            const allAnsweredInMode = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allAnsweredInMode) ||
+                (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount();
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = getWrongCount();
+                if (!reviewMode) { saveToHistory(correctCount, accuracy); }
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount, allAnsweredInMode);
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            setTimeout(() => {
+                if (isTextType(q)) {
+                    const ta = document.getElementById('textAnswerInput');
+                    if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') {
+                        ta.value = answers[actualIdx];
+                    }
+                    const draft = getDraft(actualIdx);
+                    if (ta && answers[actualIdx] === null && draft) { ta.value = draft; }
+                }
+            }, 50);
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const savedAnswer = answers[actualIdx];
+            const draft = getDraft(actualIdx);
+            const displayVal = (savedAnswer !== null && typeof savedAnswer === 'string') ? savedAnswer : (draft || '');
+            const disabled = savedAnswer !== null && typeof savedAnswer === 'string';
+            let html = `<div class="text-answer-area">`;
+            html += `<textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea>`;
+            html += `<div class="text-answer-buttons">`;
+            if (!disabled) {
+                html += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button>`;
+                html += `<button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button>`;
+                html += `<button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                html += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) {
+            let html = '';
+            if (q.tasks && q.tasks.length > 0) {
+                html += `<ul class="tasks-list">`;
+                q.tasks.forEach(task => { html += `<li><span class="task-id">${task.id}</span> ${task.stem}</li>`; });
+                html += `</ul>`;
+            }
+            html += renderTextAnswerArea(actualIdx, q);
+            return html;
+        }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const badgeClass = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const badgeText = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `<div class="analysis-card">
+                <div class="analysis-header" onclick="toggleAnalysis(this)">
+                    <div class="analysis-title">📝 作答评估 <span class="result-badge ${badgeClass}">${badgeText}</span></div>
+                    <div class="toggle-icon expanded">▼</div>
+                </div>
+                <div class="analysis-content" style="display: block;">
+                    <p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div>
+                    <p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div>
+                    <p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p>
+                    <div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div>
+                    <span class="score-tag ${result.progressClass}">${result.levelLabel}</span>
+                    <p style="margin-top:8px;"><strong>命中关键词：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p>
+                    <p><strong>未命中关键词：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p>
+                    <hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">
+                    ${q.analysis}
+                </div>
+            </div>`;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount, allDone) {
+            let html = `<div class="completion-screen">
+                <div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div>
+                <h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1>
+                <p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p>
+                <div class="stats">
+                    <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                    <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    <div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                    <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wrongCount > 0 && !reviewMode) {
+                html += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button>`;
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            if (reviewMode && wrongCount > 0) {
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function selectOption(idx) {
+            const actualIdx = getActualIndex();
+            if (answers[actualIdx] !== null) return;
+            if (!isChoiceType(questions[actualIdx])) return;
+            answers[actualIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[actualIdx].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(actualIdx) {
+            if (answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') return;
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const userAnswer = ta.value.trim();
+            if (!userAnswer) { showToast('请先输入你的回答'); return; }
+            answers[actualIdx] = userAnswer;
+            clearDraft(actualIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const result = evaluateTextAnswer(actualIdx, questions[actualIdx]);
+            const msg = result.level === 'good' ? '回答较好！✓' : (result.level === 'partial' ? '部分正确 △' : '需加强 ✗');
+            showToast(msg);
+        }
+
+        function saveDraftOnly(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const val = ta.value.trim();
+            if (val) { saveDraft(actualIdx, val); showToast('草稿已保存 ✓'); }
+            else { clearDraft(actualIdx); showToast('草稿已清空'); }
+        }
+
+        function clearTextInput(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (ta) ta.value = '';
+            clearDraft(actualIdx);
+            showToast('输入已清空');
+        }
+
+        function evaluateTextAnswer(actualIdx, q) {
+            const userAnswer = (answers[actualIdx] && typeof answers[actualIdx] === 'string') ? answers[actualIdx] : '';
+            const allKeywords = [];
+            let referenceAnswer = '';
+            if (q.type === '简答题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            else if (q.type === '综合应用题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            const totalKeywords = allKeywords.length;
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const userLower = userAnswer.toLowerCase();
+            allKeywords.forEach(kw => { if (userLower.includes(kw.toLowerCase())) hitKeywords.push(kw); else missedKeywords.push(kw); });
+            const hitCount = hitKeywords.length;
+            const hitRate = totalKeywords > 0 ? Math.round((hitCount / totalKeywords) * 100) : 0;
+            let level, levelLabel, progressClass;
+            if (q.type === '简答题') {
+                if (hitRate >= 60) { level = 'good'; levelLabel = '回答较好'; progressClass = 'excellent'; }
+                else if (hitRate >= 30) { level = 'partial'; levelLabel = '部分正确'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            } else {
+                if (hitRate >= 80) { level = 'good'; levelLabel = '优秀'; progressClass = 'excellent'; }
+                else if (hitRate >= 60) { level = 'good'; levelLabel = '良好'; progressClass = 'good'; }
+                else if (hitRate >= 40) { level = 'partial'; levelLabel = '合格'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            }
+            return { userAnswer, referenceAnswer, totalKeywords, hitCount, hitRate, hitKeywords, missedKeywords, level, levelLabel, progressClass };
+        }
+
+        function getCorrectCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] === q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'good') count++; }
+            });
+            return count;
+        }
+
+        function getWrongCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') count++; }
+            });
+            return count;
+        }
+
+        function getWrongIndicesArray() {
+            const arr = [];
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) arr.push(i); }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') arr.push(i); }
+            });
+            return arr;
+        }
+
+        function checkAllAnsweredInMode() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices.every(wi => answers[wi] !== null);
+            return answers.every(a => a !== null);
+        }
+
+        function startReviewWrong() {
+            wrongIndices = getWrongIndicesArray();
+            if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; }
+            reviewMode = true; reviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; wrongIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已退出错题回顾模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongArr = getWrongIndicesArray();
+            if (wrongArr.length === 0) { showToast('没有错题可导出'); return; }
+            const moduleName = 'MQTT协议与订阅模型';
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const fileName = `错题本_${moduleName}_${dateStr}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wrongArr.forEach(i => {
+                const q = questions[i];
+                const qType = getQuestionTypeLabel(q);
+                const stem = q.stem.replace(/"/g, '""');
+                let userAns = '', correctAns = '', hitRate = '', result = '';
+                if (isChoiceType(q)) {
+                    userAns = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : '';
+                    correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                    result = answers[i] === q.answer ? '正确' : '错误';
+                    hitRate = answers[i] === q.answer ? '100%' : '0%';
+                } else if (isTextType(q)) {
+                    userAns = (answers[i] && typeof answers[i] === 'string') ? answers[i] : '';
+                    correctAns = q.answer || '';
+                    const evalR = evaluateTextAnswer(i, q);
+                    hitRate = evalR.hitRate + '%';
+                    result = evalR.levelLabel;
+                }
+                const analysisText = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+                rows.push([qType, '"'+stem+'"', '"'+userAns.replace(/"/g, '""')+'"', '"'+correctAns.replace(/"/g, '""')+'"', hitRate, result, '"'+analysisText+'"']);
+            });
+            const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; link.download = fileName;
+            document.body.appendChild(link); link.click();
+            document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast('错题CSV已导出：' + fileName);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            document.getElementById('currentNum').textContent = currentPos;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            const isFirst = currentPos <= 1;
+            const isLast = currentPos >= totalInMode;
+            const allDone = checkAllAnsweredInMode();
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (isChoiceType(q)) {
+                        if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                        else { statusClass = 'wrong'; statusText = '错误'; }
+                    } else if (isTextType(q)) {
+                        const result = evaluateTextAnswer(index, q);
+                        if (result.level === 'good') { statusClass = 'correct'; statusText = '较好'; }
+                        else if (result.level === 'partial') { statusClass = 'correct'; statusText = '部分'; }
+                        else { statusClass = 'wrong'; statusText = '加强'; }
+                    }
+                }
+                if (index === getActualIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && wrongIndices.includes(index) && wrongIndices[reviewIndex] === index) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] !== q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level === 'weak') return; }
+                    }
+                    if (currentFilter === 'wrong') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] === q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level !== 'weak') return; }
+                    }
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter, e) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { reviewMode = false; wrongIndices = []; currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() {
+            try { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+            catch(e) { console.warn('历史记录数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; }
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            try {
+                const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+                if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); reviewMode = data.reviewMode || false; wrongIndices = data.wrongIndices || []; reviewIndex = data.reviewIndex || 0; }
+            } catch(e) { console.warn('答题进度数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); }
+            try {
+                const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            } catch(e) { console.warn('设置数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); }
+        }
+
+        function saveDraft(index, value) { const drafts = getDrafts(); drafts[index] = value; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDraft(index) { const drafts = getDrafts(); return drafts[index] || null; }
+        function clearDraft(index) { const drafts = getDrafts(); delete drafts[index]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDrafts() { try { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; } catch(e) { console.warn('草稿数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion(); updateNavButtons(); renderAnswerSheet();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); renderAnswerSheet();
+            }
+        }
+
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>专家系统刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-type.diff-basic {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        .question-type.diff-mid {
+            background: #fffbe6;
+            color: #d48806;
+        }
+        .question-type.diff-high {
+            background: #fff2f0;
+            color: #cf1322;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 2000px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .analysis-content .highlight-hit {
+            background: #d4edda;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #155724;
+            font-weight: 600;
+        }
+        .analysis-content .highlight-miss {
+            background: #f8d7da;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #721c24;
+            font-weight: 600;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.partial {
+            border-color: var(--warning-color);
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-btn {
+            background: #fff7e6;
+            color: #d48806;
+            border: 1px solid #ffd591;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .textarea-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        .textarea-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .task-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .submit-btn,
+        .draft-btn,
+        .clear-input-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .draft-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .clear-input-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .submit-btn:active,
+        .draft-btn:active,
+        .clear-input-btn:active {
+            transform: scale(0.97);
+        }
+        .hit-rate-bar {
+            height: 8px;
+            background: #e8e8e8;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .hit-rate-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .hit-rate-fill.excellent {
+            background: var(--success-color);
+        }
+        .hit-rate-fill.good {
+            background: #73d13d;
+        }
+        .hit-rate-fill.ok {
+            background: var(--warning-color);
+        }
+        .hit-rate-fill.weak {
+            background: var(--error-color);
+        }
+        .tag-excellent {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .tag-good {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #d4edda;
+            color: #389e0d;
+        }
+        .tag-ok {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .tag-weak {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">专家系统（高中信息科技）</div>
+                        <div class="progress-text">人工智能核心 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专家系统属于人工智能的哪个发展阶段？（ ）",
+            "options": [{ "label": "A", "text": "符号主义阶段" }, { "label": "B", "text": "连接主义阶段" }, { "label": "C",
+                "text": "行为主义阶段" }, { "label": "D", "text": "深度学习阶段" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。专家系统是符号主义人工智能的典型代表，基于知识表示和逻辑推理来解决问题。<br><strong>📚 知识点讲解：</strong>人工智能发展经历了符号主义（基于规则和知识推理）、连接主义（基于神经网络）和行为主义（基于感知-动作）等阶段。专家系统属于符号主义阶段的代表性成果。<br><strong>💡 解题思路：</strong>专家系统的核心是知识库和推理机，依赖人工编写的产生式规则进行逻辑推理，这正是符号主义AI的特征。深度学习属于连接主义，与专家系统有本质区别。<br><strong>🧠 记忆口诀：</strong>专家系统符号派，知识规则推理来。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专家系统的核心基础是（ ）",
+            "options": [{ "label": "A", "text": "推理机" }, { "label": "B", "text": "知识库" }, { "label": "C", "text": "解释器" },
+            { "label": "D", "text": "人机接口" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。知识库存储了领域专家的知识和经验，是专家系统能够解决问题的基础。<br><strong>📚 知识点讲解：</strong>知识库是专家系统的核心基础，存储着领域专家的知识和经验，通常以产生式规则（\u201C如果...那么...\u201D）的形式表示。没有知识库，推理机就无法进行推理。<br><strong>💡 解题思路：</strong>抓住\u201C核心基础\u201D这一关键词。知识库提供知识，推理机使用知识，解释器说明过程。没有知识库，其他组件都无米之炊。<br><strong>🧠 记忆口诀：</strong>知识库是基础，存规则储经验。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专家系统中负责进行推理的部分是（ ）",
+            "options": [{ "label": "A", "text": "推理机" }, { "label": "B", "text": "知识库" }, { "label": "C", "text": "解释器" },
+            { "label": "D", "text": "知识获取模块" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。推理机是专家系统的\u201C大脑\u201D，负责根据知识库中的规则和用户提供的事实进行推理。<br><strong>📚 知识点讲解：</strong>推理机是专家系统的核心执行组件，它通过匹配知识库中的规则与用户提供的事实，推导出结论。知识库存储知识，推理机运用知识。<br><strong>💡 解题思路：</strong>从名称上直接对应：\u201C推理\u201D机当然负责\u201C推理\u201D。知识库负责存储，解释器负责解释，知识获取模块负责获取和更新。<br><strong>🧠 记忆口诀：</strong>推理机是大脑，匹配规则出结论。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专家系统中能够向用户解释推理过程的部分是（ ）",
+            "options": [{ "label": "A", "text": "推理机" }, { "label": "B", "text": "知识库" }, { "label": "C", "text": "解释器" },
+            { "label": "D", "text": "人机接口" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。解释器能够向用户解释推理过程和结论的依据，回答\u201C为什么\u201D和\u201C怎么样\u201D的问题。<br><strong>📚 知识点讲解：</strong>解释器是专家系统透明性的体现，它让用户了解系统是如何得出结论的。这也是专家系统区别于机器学习\u201C黑箱\u201D的重要特征。<br><strong>💡 解题思路：</strong>从名称直接判断：\u201C解释\u201D器就是用来\u201C解释\u201D的。人机接口负责交互，推理机负责推理，知识库负责存储。<br><strong>🧠 记忆口诀：</strong>解释器说清过程，透明可信是优势。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "MYCIN专家系统主要应用于哪个领域？（ ）",
+            "options": [{ "label": "A", "text": "地质勘探" }, { "label": "B", "text": "医疗诊断" }, { "label": "C",
+                "text": "金融分析" }, { "label": "D", "text": "法律事务" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。MYCIN是一个用于诊断血液感染性疾病的医疗专家系统，由斯坦福大学于1974年开发。<br><strong>📚 知识点讲解：</strong>MYCIN包含约600条医学规则，能够诊断脑膜炎、败血症等血液感染性疾病，并推荐合适的抗生素治疗方案，诊断准确率达到人类专家水平。<br><strong>💡 解题思路：</strong>MYCIN是教材中最经典的医疗专家系统案例。PROSPECTOR才是地质勘探专家系统，注意区分这两个经典案例。<br><strong>🧠 记忆口诀：</strong>MYCIN医疗诊血液，PROSPECTOR地质探矿藏。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "PROSPECTOR专家系统主要应用于哪个领域？（ ）",
+            "options": [{ "label": "A", "text": "地质勘探" }, { "label": "B", "text": "医疗诊断" }, { "label": "C",
+                "text": "金融分析" }, { "label": "D", "text": "法律事务" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。PROSPECTOR是一个用于矿产资源勘探的地质专家系统，由斯坦福研究所开发。<br><strong>📚 知识点讲解：</strong>PROSPECTOR最著名的成就是成功预测了美国华盛顿州一处价值约1亿美元的钼矿，这是专家系统在商业领域取得的重大突破，充分展示了专家系统的实用价值。<br><strong>💡 解题思路：</strong>PROSPECTOR意为\u201C探矿者\u201D，名称本身就暗示了其应用领域是地质勘探。MYCIN是医疗诊断，两者不可混淆。<br><strong>🧠 记忆口诀：</strong>PROSPECTOR探矿者，地质勘探找矿藏。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列关于专家系统的说法，正确的是（ ）",
+            "options": [{ "label": "A", "text": "专家系统可以解决所有领域的问题" }, { "label": "B",
+                "text": "专家系统的知识是从数据中自动学习得到的" }, { "label": "C", "text": "专家系统能够解释自己的推理过程" }, { "label": "D",
+                "text": "专家系统的性能一定会超过人类专家" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。专家系统只能解决特定领域的问题（A错）；专家系统的知识是人工编写的（B错）；专家系统的性能可以达到但不一定超过人类专家（D错）。<br><strong>📚 知识点讲解：</strong>专家系统的三大特点：启发性、透明性、专业性。透明性即能够解释自己的推理过程，让用户理解结论的由来。<br><strong>💡 解题思路：</strong>排除绝对化表述\u201C所有\u201D\u201C一定\u201D，抓住专家系统的核心特征——透明可解释。知识来源是人工编写而非自动学习，这是与机器学习的关键区别。<br><strong>🧠 记忆口诀：</strong>专家系统可解释，专业领域不万能。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "从已知事实出发，逐步推导出结论的推理方式称为（ ）",
+            "options": [{ "label": "A", "text": "正向推理" }, { "label": "B", "text": "反向推理" }, { "label": "C",
+                "text": "混合推理" }, { "label": "D", "text": "模糊推理" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。正向推理是数据驱动的推理方式，从已知事实出发推导出结论。<br><strong>📚 知识点讲解：</strong>正向推理（Forward Chaining）从已知事实出发，逐步匹配知识库中的规则，由条件推出结论。就像从症状推导出疾病。反向推理则是从假设结论出发寻找证据。<br><strong>💡 解题思路：</strong>\u201C从事实到结论\u201D=正向推理，\u201C从结论到证据\u201D=反向推理。正向是\u201C向前走\u201D，反向是\u201C往回找\u201D。<br><strong>🧠 记忆口诀：</strong>正向事实推结论，数据驱动向前进。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "从假设的结论出发，反向寻找支持证据的推理方式称为（ ）",
+            "options": [{ "label": "A", "text": "正向推理" }, { "label": "B", "text": "反向推理" }, { "label": "C",
+                "text": "混合推理" }, { "label": "D", "text": "模糊推理" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。反向推理是目标驱动的推理方式，从假设的结论出发寻找支持证据。<br><strong>📚 知识点讲解：</strong>反向推理（Backward Chaining）先假设一个结论成立，然后反向寻找支持该结论的证据。就像先猜测\u201C汽车无法启动可能是因为没油\u201D，然后去验证这个假设。<br><strong>💡 解题思路：</strong>\u201C从结论到证据\u201D=反向推理。反向推理更高效，因为它只搜索与假设相关的规则，缩小了搜索空间。<br><strong>🧠 记忆口诀：</strong>反向假设找证据，目标驱动效率高。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专家系统的知识主要以什么形式表示？（ ）",
+            "options": [{ "label": "A", "text": "自然语言" }, { "label": "B", "text": "产生式规则" }, { "label": "C",
+                "text": "图像" }, { "label": "D", "text": "声音" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。专家系统的知识通常以产生式规则（\u201C如果...那么...\u201D）的形式表示。<br><strong>📚 知识点讲解：</strong>产生式规则是\u201CIF-THEN\u201D形式的条件语句，如\u201C如果植物是木本植物且常绿且针形叶，那么是松树\u201D。这种表示方式简洁、直观、易于理解和维护。<br><strong>💡 解题思路：</strong>产生式规则是专家系统最核心的知识表示方式。自然语言太模糊，图像和声音是数据类型而非知识表示形式。<br><strong>🧠 记忆口诀：</strong>知识表示产生式，如果那么规则清。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于专家系统和机器学习的区别，说法正确的是（ ）",
+            "options": [{ "label": "A", "text": "专家系统的知识是人工编写的，机器学习的知识是自动学习的" }, { "label": "B",
+                "text": "专家系统的性能一定比机器学习好" }, { "label": "C", "text": "专家系统只能处理分类问题，机器学习只能处理回归问题" },
+            { "label": "D", "text": "专家系统需要大量数据，机器学习不需要数据" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。这是专家系统和机器学习最本质的区别——知识来源不同。<br><strong>📚 知识点讲解：</strong>专家系统的知识由人类专家人工编写，机器学习从大量数据中自动学习规律。两者各有优势：专家系统可解释性强，机器学习适应性强。性能优劣取决于具体应用场景。<br><strong>💡 解题思路：</strong>排除绝对化表述\u201C一定\u201D\u201C只能\u201D。知识来源（人工vs自动）是两者最核心的区别，也是新课标明确要求掌握的考点。<br><strong>🧠 记忆口诀：</strong>专家人工编规则，机器学习数据找。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "某汽车维修专家系统，当用户输入\u201C汽车无法启动\u201D的故障现象后，系统会询问\u201C是否有油\u201D\u201C电池是否有电\u201D等问题。这种推理方式属于（ ）",
+            "options": [{ "label": "A", "text": "正向推理" }, { "label": "B", "text": "反向推理" }, { "label": "C",
+                "text": "混合推理" }, { "label": "D", "text": "模糊推理" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。系统从\u201C汽车无法启动\u201D这个假设的故障结论出发，反向询问相关问题来验证假设，属于反向推理。<br><strong>📚 知识点讲解：</strong>反向推理在故障诊断中非常高效：先假设可能的故障原因，然后通过询问来逐一验证或排除。这种方式缩小了搜索范围，提高了诊断效率。<br><strong>💡 解题思路：</strong>关键判断点：系统是\u201C先知道结论（无法启动）再找原因\u201D，而不是\u201C从各种症状推导出结论\u201D。前者是反向推理，后者是正向推理。<br><strong>🧠 记忆口诀：</strong>故障诊断反向推，假设验证效率高。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "某农业专家系统，当用户输入\u201C叶片发黄\u201D\u201C有斑点\u201D等症状后，系统会根据知识库中的规则判断植物可能患了什么病。这种推理方式属于（ ）",
+            "options": [{ "label": "A", "text": "正向推理" }, { "label": "B", "text": "反向推理" }, { "label": "C",
+                "text": "混合推理" }, { "label": "D", "text": "模糊推理" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。系统从\u201C叶片发黄\u201D\u201C有斑点\u201D这些已知事实出发，逐步推导出植物所患的疾病，属于正向推理。<br><strong>📚 知识点讲解：</strong>正向推理适用于症状→疾病的诊断场景。用户提供一系列症状（事实），系统将这些事实与知识库中的规则匹配，逐步缩小可能的疾病范围，最终得出结论。<br><strong>💡 解题思路：</strong>关键判断点：用户输入的是\u201C事实/症状\u201D，系统据此推导出\u201C结论/疾病\u201D。事实→结论，这是正向推理的典型模式。<br><strong>🧠 记忆口诀：</strong>症状推导出疾病，正向推理数据驱。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "专家系统中，知识获取模块的主要作用是（ ）",
+            "options": [{ "label": "A", "text": "进行推理" }, { "label": "B", "text": "存储知识" }, { "label": "C",
+                "text": "解释推理过程" }, { "label": "D", "text": "获取和更新知识库中的知识" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。知识获取模块负责将人类专家的知识转化为计算机能够处理的形式，并更新和维护知识库。<br><strong>📚 知识点讲解：</strong>知识获取是专家系统开发中最困难的环节，被称为\u201C知识获取瓶颈\u201D。它需要知识工程师与领域专家密切合作，将专家的隐性知识转化为显性的产生式规则。<br><strong>💡 解题思路：</strong>从名称直接对应：\u201C知识获取\u201D模块就是用来\u201C获取知识\u201D的。进行推理是推理机的工作，存储知识是知识库的功能，解释过程是解释器的职责。<br><strong>🧠 记忆口诀：</strong>知识获取最困难，转化更新靠它办。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列哪个不是专家系统的特点？（ ）",
+            "options": [{ "label": "A", "text": "启发性" }, { "label": "B", "text": "透明性" }, { "label": "C", "text": "通用性" },
+            { "label": "D", "text": "专业性" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。专家系统的特点是专业性强，只擅长解决特定领域的问题，不具有通用性。<br><strong>📚 知识点讲解：</strong>专家系统的三大特点：启发性（运用专家经验进行启发式推理）、透明性（能解释推理过程）、专业性（只擅长特定领域）。通用性恰恰是专家系统不具备的。<br><strong>💡 解题思路：</strong>专家系统是\u201C专家\u201D而非\u201C通才\u201D。它只在特定领域表现出色，不能解决所有问题。通用性是机器学习的追求目标。<br><strong>🧠 记忆口诀：</strong>启发透明加专业，通用不是它特点。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "专家系统是一种模拟人类专家解决问题的计算机程序。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。这是专家系统的基本定义。<br><strong>📚 知识点讲解：</strong>专家系统是早期人工智能的重要分支，它将某一领域人类专家的知识和经验存储在计算机中，通过推理机模拟专家的思维过程，能够像人类专家一样对特定问题做出判断和决策。<br><strong>💡 解题思路：</strong>这是专家系统的核心定义，是判断一个系统是否为专家系统的基本标准。<br><strong>🧠 记忆口诀：</strong>模拟专家解问题，知识推理是核心。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "知识库和推理机是专家系统的两个核心组成部分。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。知识库存储知识，推理机进行推理，两者是专家系统最核心的组成部分。<br><strong>📚 知识点讲解：</strong>知识库相当于专家系统的\u201C知识储备\u201D，推理机相当于\u201C思维引擎\u201D。两者缺一不可：没有知识库，推理机无米之炊；没有推理机，知识库只是静态的知识仓库。<br><strong>💡 解题思路：</strong>虽然专家系统有五大组成部分，但知识库和推理机是最核心的两个。解释器、知识获取模块和人机接口是辅助功能。<br><strong>🧠 记忆口诀：</strong>知识库加推理机，专家系统两核心。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "专家系统的知识是从大量数据中自动学习得到的。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。专家系统的知识是由人类专家提供并人工编写的，机器学习的知识才是从数据中自动学习得到的。<br><strong>📚 知识点讲解：</strong>这是专家系统与机器学习最本质的区别。专家系统依赖人工知识工程，机器学习依赖数据驱动学习。两者是人工智能两种不同的技术路线。<br><strong>💡 解题思路：</strong>\u201C自动学习\u201D是机器学习的关键词，而非专家系统的特征。专家系统的知识需要人工编写产生式规则。<br><strong>🧠 记忆口诀：</strong>专家知识人工编，机器学习自动学。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "正向推理是从已知事实出发推导出结论。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。这是正向推理的基本原理。<br><strong>📚 知识点讲解：</strong>正向推理（Forward Chaining）从已知事实出发，逐步匹配知识库中的规则，由条件推出结论。它是数据驱动的推理方式。<br><strong>💡 解题思路：</strong>\u201C从事实到结论\u201D是正向推理的标志性特征，与反向推理\u201C从结论到证据\u201D形成对比。<br><strong>🧠 记忆口诀：</strong>正向事实推结论，反向假设找证据。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "反向推理是从假设的结论出发寻找证据。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。这是反向推理的基本原理。<br><strong>📚 知识点讲解：</strong>反向推理（Backward Chaining）先假设一个结论成立，然后反向寻找支持该结论的证据。它是目标驱动的推理方式，在故障诊断中应用广泛。<br><strong>💡 解题思路：</strong>\u201C从结论到证据\u201D是反向推理的标志性特征，与正向推理\u201C从事实到结论\u201D形成对比。<br><strong>🧠 记忆口诀：</strong>反向假设找证据，目标驱动效率高。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "专家系统能够解释自己的推理过程。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。透明性是专家系统的重要特点之一，能够解释自己的推理过程。<br><strong>📚 知识点讲解：</strong>解释器是专家系统区别于机器学习\u201C黑箱\u201D的重要特征。它能够回答\u201C为什么得出这个结论\u201D和\u201C怎么得出这个结论\u201D的问题，增强了用户对系统的信任。<br><strong>💡 解题思路：</strong>透明可解释是专家系统的核心优势，这也是它区别于深度学习等黑箱模型的重要特征。<br><strong>🧠 记忆口诀：</strong>专家系统可解释，推理过程透明化。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "MYCIN是一个用于地质勘探的专家系统。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。MYCIN是医疗诊断专家系统，用于诊断血液感染性疾病。PROSPECTOR才是地质勘探专家系统。<br><strong>📚 知识点讲解：</strong>MYCIN和PROSPECTOR是教材中最经典的两个专家系统案例。MYCIN应用于医疗领域，PROSPECTOR应用于地质勘探领域。两者不可混淆。<br><strong>💡 解题思路：</strong>MYCIN（霉素）的名称暗示了其医学背景——抗生素类药物。PROSPECTOR（探矿者）的名称暗示了其地质勘探背景。<br><strong>🧠 记忆口诀：</strong>MYCIN医疗PROSPECTOR矿，名称暗示其领域。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "专家系统可以解决任何领域的问题。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。专家系统只能解决特定领域的专家级问题，不能解决所有领域的问题。<br><strong>📚 知识点讲解：</strong>专家系统的专业性是其核心特征之一。每个专家系统只擅长某一特定领域，如医疗诊断、地质勘探等。这是专家系统的局限性之一。<br><strong>💡 解题思路：</strong>看到\u201C任何\u201D立即警惕。专家系统是\u201C专家\u201D而非\u201C通才\u201D，它的知识库只覆盖特定领域。<br><strong>🧠 记忆口诀：</strong>专家系统专业性，只擅特定非万能。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "专家系统的性能永远不会超过人类专家。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。在某些特定领域，专家系统的性能可以达到甚至超过人类专家的水平。<br><strong>📚 知识点讲解：</strong>PROSPECTOR在地质勘探方面的表现就是超越人类专家的经典案例，成功预测了价值约1亿美元的钼矿。专家系统不受情绪、疲劳等因素影响，在某些方面优于人类。<br><strong>💡 解题思路：</strong>看到\u201C永远\u201D\u201C绝对\u201D要警惕。专家系统在特定任务上确实可能超越人类，这正是其价值所在。<br><strong>🧠 记忆口诀：</strong>特定领域可超越，PROSPECTOR是例证。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "专家系统的开发不需要人类专家的参与。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。专家系统的开发需要领域专家和知识工程师的密切合作，人类专家提供知识是必不可少的。<br><strong>📚 知识点讲解：</strong>知识获取是专家系统开发中最关键的环节，需要人类专家将隐性知识转化为显性规则。没有人类专家的参与，知识库就无法构建。<br><strong>💡 解题思路：</strong>专家系统的\u201C专家\u201D二字就暗示了需要人类专家的知识和经验。知识获取模块的工作就是获取人类专家的知识。<br><strong>🧠 记忆口诀：</strong>专家系统靠专家，知识获取离不开。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述专家系统的五大核心组成部分及各部分的主要作用。",
+            "answer": "专家系统的五大核心组成部分及作用：（1）知识库：存储领域专家的知识和经验，是专家系统的基础。（2）推理机：根据知识库中的规则和用户提供的事实进行推理，得出结论。（3）解释器：向用户解释推理过程和结论的依据，回答\u201C为什么\u201D和\u201C怎么样\u201D的问题。（4）知识获取模块：将人类专家的知识转化为计算机能够处理的形式，更新和维护知识库。（5）人机接口：实现用户与专家系统之间的交互，接收用户输入并输出结果。",
+            "keywords": ["知识库", "推理机", "解释器", "知识获取模块", "人机接口", "存储", "推理", "解释", "获取", "交互", "规则", "事实", "更新", "维护"],
+            "analysis": "<strong>🎯 答案解析：</strong>专家系统的五大核心组成部分为：知识库、推理机、解释器、知识获取模块和人机接口，它们分别负责存储知识、进行推理、解释过程、获取更新知识和实现交互。<br><strong>📚 知识点讲解：</strong>知识库和推理机是两大核心，知识库存储产生式规则，推理机匹配规则进行推理。解释器体现透明性，知识获取模块解决知识工程问题，人机接口负责交互。<br><strong>💡 解题思路：</strong>按重要性顺序回答，先核心后辅助。每个部分名称要准确，作用要用简洁语言概括。注意不要遗漏知识获取模块。<br><strong>🧠 记忆口诀：</strong>知库推理加解释，获取接口五部分；存储推理释获取，交互协作成系统。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请分别说明正向推理和反向推理的基本原理，并各举一个应用实例。",
+            "answer": "（1）正向推理：从已知事实出发，逐步匹配知识库中的规则，最终推导出结论（数据驱动）。应用实例：医疗诊断专家系统根据患者的症状和检查结果，逐步推导出患者所患的疾病。（2）反向推理：从假设的结论出发，反向寻找支持该结论的证据（目标驱动）。应用实例：汽车维修专家系统从\u201C汽车无法启动\u201D这个假设的故障出发，询问用户相关问题来验证假设。",
+            "keywords": ["正向推理", "反向推理", "数据驱动", "目标驱动", "事实", "结论", "假设", "证据", "症状", "故障", "推导", "验证"],
+            "analysis": "<strong>🎯 答案解析：</strong>正向推理从事实到结论（数据驱动），如症状→疾病；反向推理从结论到证据（目标驱动），如故障→原因验证。<br><strong>📚 知识点讲解：</strong>正向推理适合症状明确的诊断场景，反向推理适合故障排查场景。两者各有优势：正向推理全面但效率低，反向推理高效但依赖假设。<br><strong>💡 解题思路：</strong>分别说明原理并举例，注意例子的准确对应。正向推理例子的关键词是\u201C症状→疾病\u201D，反向推理例子的关键词是\u201C故障→验证\u201D。<br><strong>🧠 记忆口诀：</strong>正向事实推导论，反向假设验证因；医疗诊断正向例，汽车维修反向用。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "请比较专家系统和机器学习的异同点。",
+            "answer": "相同点：（1）都属于人工智能的分支，都能够模拟人类的智能行为解决问题。（2）都需要知识来支持决策。不同点：（1）知识来源不同：专家系统的知识由人类专家人工编写；机器学习的知识自动从大量数据中学习得到。（2）适用场景不同：专家系统适合知识明确、规则清晰的领域；机器学习适合数据丰富、规则难以人工编写的领域。（3）可解释性不同：专家系统的推理过程透明，可解释性强；机器学习（特别是深度学习）的推理过程通常是\u201C黑箱\u201D，可解释性差。（4）更新方式不同：专家系统需要人工更新知识库；机器学习可以通过新数据自动更新模型。",
+            "keywords": ["人工智能", "知识来源", "人工编写", "自动学习", "可解释性", "透明", "黑箱", "适用场景", "更新方式", "规则", "数据", "人类专家"],
+            "analysis": "<strong>🎯 答案解析：</strong>专家系统与机器学习都属AI分支，但知识来源（人工vs自动）、可解释性（透明vs黑箱）、适用场景和更新方式有本质不同。<br><strong>📚 知识点讲解：</strong>这是新课标高频考点。专家系统基于符号主义AI，机器学习基于连接主义AI。两者各有优势，现代AI系统常结合两者优势。<br><strong>💡 解题思路：</strong>从\u201C同\u201D和\u201C异\u201D两个维度回答，\u201C异\u201D从知识来源、可解释性、适用场景、更新方式四个角度展开。每个角度都要对比说明。<br><strong>🧠 记忆口诀：</strong>同属AI模拟智，异在来源与透明；专家人工可解释，机器学习黑箱行。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某学校生物兴趣小组想要开发一个简单的植物分类专家系统，用于识别校园中常见的植物。已知校园中常见的植物有松树、杨树、柳树、月季、菊花五种，它们的特征如下：<ul style='margin:10px 0;padding-left:20px;'><li>松树：木本植物，常绿，针形叶</li><li>杨树：木本植物，落叶，掌形叶</li><li>柳树：木本植物，落叶，披针形叶</li><li>月季：草本植物，有刺，花红色</li><li>菊花：草本植物，无刺，花黄色</li></ul>请回答以下问题：",
+            "tasks": ["（1）请为这个专家系统设计至少5条产生式规则。",
+                "（2）这个专家系统适合采用哪种推理方式？为什么？",
+                "（3）如果要让这个专家系统能够识别更多种类的植物，应该如何改进？"
+            ],
+            "answer": "（1）产生式规则设计：①如果植物是木本植物且常绿且针形叶，那么是松树。②如果植物是木本植物且落叶且掌形叶，那么是杨树。③如果植物是木本植物且落叶且披针形叶，那么是柳树。④如果植物是草本植物且有刺且花红色，那么是月季。⑤如果植物是草本植物且无刺且花黄色，那么是菊花。（2）适合采用反向推理。因为植物分类问题通常是先有一个假设的植物种类，然后通过观察植物的特征来验证这个假设是否正确。反向推理可以更高效地缩小搜索范围，快速得出结论。（3）改进方法：①邀请植物学专家提供更多植物种类的知识，扩充知识库中的规则。②增加更多的植物特征，如树干特征、果实特征、生长环境等。③加入图片识别功能，让用户上传植物图片，系统自动提取特征进行识别。④增加用户反馈功能，当系统识别错误时，用户可以纠正，系统根据反馈更新知识库。",
+            "keywords": [
+                ["产生式规则", "如果", "那么", "知识表示", "规则", "条件", "结论", "木本", "草本", "常绿", "落叶", "针形叶", "掌形叶"],
+                ["反向推理", "目标驱动", "假设", "验证", "高效", "缩小范围", "分类"],
+                ["扩充知识库", "增加特征", "专家知识", "图片识别", "反馈", "更新", "改进"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）设计5条产生式规则，每条规则对应一种植物；（2）适合反向推理，因为植物分类通常先假设再验证；（3）改进方向包括扩充知识库、增加特征、引入图像识别和用户反馈机制。<br><strong>📚 知识点讲解：</strong>本题综合考察知识表示（产生式规则）、推理方式选择（反向推理）和系统改进（知识获取与更新）三个核心知识点。产生式规则是专家系统知识表示的核心形式。<br><strong>💡 解题思路：</strong>逐题分析：先根据植物特征设计IF-THEN规则，再分析分类场景特点选择推理方式，最后从知识获取和系统扩展角度提出改进方案。<br><strong>🧠 记忆口诀：</strong>产生式规则IF-THEN，反向推理先假设；扩充知识加特征，反馈更新提性能。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某工厂想要开发一个设备故障诊断专家系统，用于诊断生产线上机器的常见故障。请回答以下问题：",
+            "tasks": ["（1）请简述开发这个专家系统的基本步骤。",
+                "（2）这个专家系统应该包含哪些核心功能模块？",
+                "（3）在开发和使用这个专家系统的过程中，可能会遇到哪些问题？"
+            ],
+            "answer": "（1）开发基本步骤：①需求分析：明确专家系统需要解决的故障类型和功能要求。②知识获取：与工厂的设备维修专家合作，收集和整理设备故障诊断的知识和经验。③知识表示：将获取的知识转化为产生式规则等计算机能够处理的形式，构建知识库。④系统设计：设计推理机、解释器、人机接口等模块的结构和功能。⑤系统实现：使用合适的工具和语言编写代码，实现专家系统的各个模块。⑥系统测试与评估：使用历史故障数据测试系统的性能，评估其准确率和可靠性。⑦系统部署与维护：将系统部署到生产环境中，并根据实际使用情况进行维护和更新。（2）核心功能模块：①故障录入模块：允许用户输入设备的故障现象和相关信息。②故障诊断模块：根据用户输入的信息和知识库中的规则进行推理，得出故障原因和解决方案。③解释模块：向用户解释诊断过程和结论的依据。④知识库管理模块：允许管理员添加、修改和删除知识库中的规则。⑤历史记录模块：记录所有的诊断案例，便于查询和统计分析。（3）可能遇到的问题：①知识获取困难：设备维修专家的知识和经验往往是隐性的，难以转化为明确的规则。②知识库更新不及时：当设备升级或出现新的故障类型时，知识库需要及时更新。③系统可解释性问题：如果系统的推理过程过于复杂，用户可能无法理解诊断结果。④用户信任问题：维修工人可能不信任计算机系统的诊断结果，不愿意使用。",
+            "keywords": [
+                ["需求分析", "知识获取", "知识表示", "系统设计", "系统实现", "测试", "部署", "维护", "步骤"],
+                ["故障录入", "故障诊断", "推理机", "解释模块", "知识库管理", "历史记录", "功能模块"],
+                ["知识获取困难", "知识库更新", "可解释性", "用户信任", "隐性知识", "规则转化", "问题"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）开发步骤遵循需求分析→知识获取→知识表示→系统设计→实现→测试→部署维护的完整流程；（2）核心模块包括故障录入、诊断、解释、知识库管理和历史记录；（3）主要问题涉及知识获取瓶颈、更新维护、可解释性和用户信任。<br><strong>📚 知识点讲解：</strong>本题综合考察专家系统的开发流程、功能模块设计和实际应用中的挑战。知识获取是专家系统开发中最关键的瓶颈问题。<br><strong>💡 解题思路：</strong>（1）按软件开发流程+专家系统特点回答；（2）从用户需求角度设计功能模块；（3）从技术（知识获取、更新）和用户（信任、理解）两个维度分析问题。<br><strong>🧠 记忆口诀：</strong>七步开发从需到维，五模功能诊解管记；知识获取是瓶颈，信任更新两难题。"
+        }];
+
+        const APP_ID = 'expert_system_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        function isChoiceType(q) {
+            return q.type === '单选题' || q.type === '判断题';
+        }
+
+        function isTextInputType(q) {
+            return q.type === '简答题' || q.type === '综合应用题';
+        }
+
+        function getAnswerStatus(index) {
+            const q = questions[index];
+            const a = answers[index];
+            if (a === null || a === undefined) return 'unanswered';
+            if (isChoiceType(q)) {
+                return a === q.answer ? 'correct' : 'wrong';
+            }
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return 'unanswered';
+                const hr = a.hitRate || 0;
+                if (hr >= 0.8) return 'correct';
+                if (hr >= 0.4) return 'partial';
+                return 'wrong';
+            }
+            return 'unanswered';
+        }
+
+        function isAnswerCorrect(index) {
+            const q = questions[index];
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(q)) return a === q.answer;
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return false;
+                const hr = a.hitRate || 0;
+                if (q.type === '简答题') return hr >= 0.6;
+                if (q.type === '综合应用题') return hr >= 0.7;
+                return hr >= 0.6;
+            }
+            return false;
+        }
+
+        function isAnswered(index) {
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(questions[index])) return typeof a === 'number';
+            if (isTextInputType(questions[index])) return a && a.submitted === true;
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '专家系统核心概念与五大组成部分';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>专家系统是早期人工智能的重要分支，是一种<strong>模拟人类专家解决特定领域复杂问题</strong>的计算机程序系统。它将某一领域人类专家的知识和经验以特定形式存储在计算机中，通过推理机模拟专家的思维过程，能够像人类专家一样对特定问题做出判断和决策，其解决问题的能力可以达到甚至超过人类专家的水平。</p>
+                <h3>🔑 核心要点拆解</h3>
+                <p><strong>1. 专家系统的五大核心组成部分</strong></p>
+                <ul>
+                    <li><strong>知识库：</strong>存储领域专家的知识和经验，是专家系统的<span class="highlight">核心基础</span>，通常以产生式规则（\u201C如果...那么...\u201D）的形式表示</li>
+                    <li><strong>推理机：</strong>专家系统的\u201C大脑\u201D，负责根据知识库中的规则和用户提供的事实进行推理，得出结论</li>
+                    <li><strong>解释器：</strong>能够向用户解释推理过程和结论的依据，回答\u201C为什么\u201D和\u201C怎么样\u201D的问题</li>
+                    <li><strong>知识获取模块：</strong>负责将人类专家的知识转化为计算机能够处理的形式，更新和维护知识库</li>
+                    <li><strong>人机接口：</strong>实现用户与专家系统之间的交互，接收用户输入并输出结果</li>
+                </ul>
+                <p><strong>2. 两种基本推理方式</strong></p>
+                <ul>
+                    <li><strong>正向推理：</strong>从已知事实出发，逐步匹配知识库中的规则，最终推导出结论（<span class="highlight">数据驱动</span>）</li>
+                    <li><strong>反向推理：</strong>从假设的结论出发，反向寻找支持该结论的证据（<span class="highlight">目标驱动</span>）</li>
+                </ul>
+                <p><strong>3. 专家系统的基本工作过程</strong></p>
+                <ul>
+                    <li>用户通过人机接口输入问题相关的事实</li>
+                    <li>推理机将事实与知识库中的规则进行匹配</li>
+                    <li>根据匹配结果进行推理，得出初步结论</li>
+                    <li>解释器向用户解释推理过程和结论</li>
+                    <li>如果需要，用户可以提供更多事实，系统继续推理</li>
+                </ul>
+                <p><strong>4. 专家系统的主要特点</strong></p>
+                <ul>
+                    <li><strong>启发性：</strong>能够运用专家的知识和经验进行启发式推理</li>
+                    <li><strong>透明性：</strong>能够解释自己的推理过程，让用户理解结论的由来</li>
+                    <li><strong>专业性：</strong>只擅长解决特定领域的问题，不能解决所有领域的问题</li>
+                    <li><strong>稳定性：</strong>不受时间、环境、情绪等因素的影响，能够稳定地工作</li>
+                </ul>
+                <p><strong>5. 专家系统与机器学习的本质区别</strong></p>
+                <ul>
+                    <li>专家系统的知识是<strong>人工编写</strong>的，由人类专家明确提供</li>
+                    <li>机器学习的知识是<strong>自动从数据中学习</strong>得到的，不需要人工编写所有规则</li>
+                </ul>
+                <h3>📋 教材典型案例</h3>
+                <p><strong>MYCIN医疗诊断专家系统：</strong>由斯坦福大学于1974年开发，能够诊断血液感染性疾病（如脑膜炎、败血症），并推荐合适的抗生素治疗方案。包含约600条医学规则，诊断准确率达到人类专家水平。</p>
+                <p><strong>PROSPECTOR地质勘探专家系统：</strong>由斯坦福研究所开发，用于矿产资源勘探。最著名的成就是成功预测了美国华盛顿州一处价值约1亿美元的钼矿。</p>
+                <p><strong>PC产品顾问专家系统：</strong>用户通过回答关于电脑使用需求的问题，系统根据知识库中的规则为用户推荐合适的电脑配置方案。</p>
+                <h3>⚠️ 教学重点/易错点</h3>
+                <ul>
+                    <li><strong>教学重点：</strong>专家系统的五大核心组成部分及各部分作用；正向推理和反向推理的基本原理；专家系统的基本工作过程</li>
+                    <li><strong>易错点①：</strong>混淆专家系统和机器学习——判断依据是<strong>知识来源</strong>（人工编写vs自动学习）</li>
+                    <li><strong>易错点②：</strong>混淆正向推理和反向推理——正向推理从<strong>事实到结论</strong>，反向推理从<strong>结论到证据</strong></li>
+                    <li><strong>易错点③：</strong>混淆知识库和数据库——知识库存储<strong>规则和知识</strong>，数据库存储<strong>事实数据</strong></li>
+                    <li><strong>易错点④：</strong>认为专家系统可以解决所有问题——专家系统只能解决<strong>特定领域</strong>的专家级问题</li>
+                </ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveIndex() {
+            if (reviewMode && reviewIndices.length > 0) {
+                return reviewIndices[Math.min(currentIndex, reviewIndices.length - 1)];
+            }
+            return currentIndex;
+        }
+
+        function getEffectiveTotal() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const effectiveTotal = getEffectiveTotal();
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            const contentArea = document.getElementById('quizContent');
+            const aVal = answers[effIndex];
+            let diffClass = '';
+            if (q.difficulty === '基础') diffClass = 'diff-basic';
+            else if (q.difficulty === '中档') diffClass = 'diff-mid';
+            else if (q.difficulty === '提高') diffClass = 'diff-high';
+
+            let html =
+                `<div class="question-card"><span class="question-type ${diffClass}">${q.type} · ${q.difficulty || ''}</span><div class="question-stem">${q.stem}</div>`;
+
+            if (q.tableData) {
+                html += q.tableData;
+            }
+            if (q.image) {
+                html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            }
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = (aVal !== null && aVal !== undefined && typeof aVal === 'number') &&
+                        aVal === idx;
+                    const isCorrectAns = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (aVal !== null && aVal !== undefined && typeof aVal === 'number') {
+                        if (isSelected && isCorrectAns) classes.push('correct');
+                        else if (isSelected && !isCorrectAns) classes.push('wrong');
+                        else if (isCorrectAns) classes.push('correct');
+                    } else if (isSelected) {
+                        classes.push('selected');
+                    }
+                    html +=
+                        `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (isTextInputType(q)) {
+                const isSubmitted = aVal && aVal.submitted;
+                const userInput = (aVal && aVal.userInput) ? aVal.userInput : '';
+                if (q.tasks && q.tasks.length > 0) {
+                    html += `<ol class="task-list">`;
+                    q.tasks.forEach(t => { html += `<li>${t}</li>`; });
+                    html += `</ol>`;
+                }
+                html +=
+                    `<textarea class="textarea-input" id="textAnswerInput" placeholder="请在此输入你的回答..." ${isSubmitted ? 'disabled' : ''}>${userInput}</textarea>`;
+                if (!isSubmitted) {
+                    html += `<div class="submit-row">
+                        <button class="draft-btn" onclick="saveDraft(${effIndex})"><i class="fas fa-save"></i> 保存草稿</button>
+                        <button class="clear-input-btn" onclick="clearInput(${effIndex})"><i class="fas fa-eraser"></i> 清空输入</button>
+                        <button class="submit-btn" onclick="submitTextAnswer(${effIndex})"><i class="fas fa-check-circle"></i> 提交作答</button>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+
+            if (isAnswered(effIndex)) {
+                const status = getAnswerStatus(effIndex);
+                let badgeHtml = '';
+                if (status === 'correct') badgeHtml = '<span class="result-badge correct">✓ 回答正确</span>';
+                else if (status === 'partial') badgeHtml = '<span class="result-badge partial">△ 部分正确</span>';
+                else badgeHtml = '<span class="result-badge wrong">✗ 回答错误</span>';
+
+                if (isTextInputType(q) && aVal && aVal.submitted) {
+                    const hr = aVal.hitRate || 0;
+                    const hrPercent = Math.round(hr * 100);
+                    let hrClass = 'weak';
+                    let tagHtml = '<span class="tag-weak">需加强</span>';
+                    if (q.type === '简答题') {
+                        if (hr >= 0.6) { hrClass = 'excellent';
+                            tagHtml = '<span class="tag-excellent">回答较好</span>'; } else if (hr >= 0.3) { hrClass =
+                                'ok';
+                            tagHtml = '<span class="tag-ok">部分正确</span>'; }
+                    } else if (q.type === '综合应用题') {
+                        if (hr >= 0.85) { hrClass = 'excellent';
+                            tagHtml = '<span class="tag-excellent">优秀</span>'; } else if (hr >= 0.7) { hrClass =
+                            'good';
+                            tagHtml = '<span class="tag-good">良好</span>'; } else if (hr >= 0.5) { hrClass = 'ok';
+                            tagHtml = '<span class="tag-ok">合格</span>'; }
+                    }
+                    html += `
+                        <div class="analysis-card" style="padding:16px; margin-top:16px;">
+                            <p><strong>📝 你的回答：</strong></p>
+                            <div style="background:#fafafa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre-wrap;">${escapeHtml(aVal.userInput || '')}</div>
+                            <p><strong>关键词命中率：</strong>${tagHtml} <span style="font-weight:700;color:var(--text-primary);">${hrPercent}%</span></p>
+                            <div class="hit-rate-bar"><div class="hit-rate-fill ${hrClass}" style="width:${hrPercent}%"></div></div>
+                            ${aVal.hitKeywords && aVal.hitKeywords.length > 0 ? `<p><strong>✅ 命中关键词：</strong>${aVal.hitKeywords.map(k => '<span class="highlight-hit">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                            ${aVal.missedKeywords && aVal.missedKeywords.length > 0 ? `<p><strong>❌ 未命中关键词：</strong>${aVal.missedKeywords.map(k => '<span class="highlight-miss">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                            <p style="margin-top:10px;"><strong>📋 标准答案：</strong>${q.answer}</p>
+                        </div>`;
+                }
+
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 ${badgeHtml}</div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnsweredInScope = reviewMode ?
+                reviewIndices.every(i => isAnswered(i)) :
+                questions.every((_, i) => isAnswered(i));
+            const lastInScope = (currentIndex >= effectiveTotal - 1);
+
+            if (lastInScope && allAnsweredInScope && !reviewMode) {
+                let totalQ = questions.length;
+                let correctCount = 0;
+                questions.forEach((_, i) => { if (isAnswerCorrect(i)) correctCount++; });
+                const accuracy = Math.round(correctCount / totalQ * 100);
+                saveToHistory(correctCount, accuracy);
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${totalQ}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()"><i class="fas fa-redo"></i> 重新开始</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-exclamation-triangle"></i> 回看错题</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                            <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                        </div>
+                    </div>
+                `;
+            }
+            if (lastInScope && allAnsweredInScope && reviewMode) {
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">📋</div>
+                        <h1 class="completion-title">错题回顾完成！</h1>
+                        <p style="color: var(--text-secondary);">你已回顾了所有错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitReviewMode()"><i class="fas fa-arrow-left"></i> 返回刷题</button>
+                            <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-redo"></i> 再次回看</button>
+                            <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            if (!isChoiceType(q)) return;
+            if (answers[effIndex] !== null && answers[effIndex] !== undefined && typeof answers[effIndex] === 'number')
+                return;
+            answers[effIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === q.answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const userInput = textarea.value.trim();
+            if (!userInput) { showToast('请输入你的回答后再提交'); return; }
+            const q = questions[effIndex];
+            let allKeywords = [];
+            if (q.type === '简答题') {
+                allKeywords = q.keywords || [];
+            } else if (q.type === '综合应用题') {
+                if (q.keywords && Array.isArray(q.keywords)) {
+                    q.keywords.forEach(kArr => { if (Array.isArray(kArr)) allKeywords = allKeywords.concat(
+                            kArr); });
+                }
+            }
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const inputLower = userInput.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (inputLower.includes(kw.toLowerCase())) {
+                    hitKeywords.push(kw);
+                } else {
+                    missedKeywords.push(kw);
+                }
+            });
+            const hitRate = allKeywords.length > 0 ? hitKeywords.length / allKeywords.length : 0;
+            answers[effIndex] = {
+                userInput: userInput,
+                submitted: true,
+                hitRate: hitRate,
+                hitKeywords: hitKeywords,
+                missedKeywords: missedKeywords,
+                totalKeywords: allKeywords.length
+            };
+            saveAnswers();
+            clearDraft(effIndex);
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const hrPercent = Math.round(hitRate * 100);
+            if (q.type === '简答题') {
+                if (hitRate >= 0.6) showToast(`回答较好！命中率 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.3) showToast(`部分正确，命中率 ${hrPercent}%`);
+                else showToast(`需加强，命中率 ${hrPercent}%`);
+            } else {
+                if (hitRate >= 0.85) showToast(`优秀！完成度 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.7) showToast(`良好！完成度 ${hrPercent}%`);
+                else if (hitRate >= 0.5) showToast(`合格，完成度 ${hrPercent}%`);
+                else showToast(`需加强，完成度 ${hrPercent}%`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveDraft(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const draftText = textarea.value;
+            const drafts = getDrafts();
+            drafts[effIndex] = draftText;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+            showToast('草稿已保存 ✓');
+        }
+
+        function clearInput(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            if (textarea.value.trim() && !confirm('确定要清空输入内容吗？')) return;
+            textarea.value = '';
+            clearDraft(effIndex);
+            showToast('输入已清空');
+        }
+
+        function getDrafts() {
+            const saved = localStorage.getItem(STORAGE_KEY_DRAFTS);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function clearDraft(effIndex) {
+            const drafts = getDrafts();
+            delete drafts[effIndex];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => {
+                if (isAnswered(i) && !isAnswerCorrect(i)) {
+                    wrongIndices.push(i);
+                }
+            });
+            if (wrongIndices.length === 0) {
+                showToast('恭喜！没有错题需要回顾 🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewIndices = wrongIndices;
+            currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            reviewIndices = [];
+            currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已返回正常刷题模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => {
+                if (isAnswered(i) && !isAnswerCorrect(i)) {
+                    wrongIndices.push(i);
+                }
+            });
+            if (wrongIndices.length === 0) {
+                showToast('没有错题可导出');
+                return;
+            }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题号,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongIndices.forEach(i => {
+                const q = questions[i];
+                const aVal = answers[i];
+                let userAnswerStr = '';
+                let correctAnswerStr = '';
+                let hitRateStr = '';
+                let resultStr = '';
+                if (isChoiceType(q)) {
+                    const selectedLabel = (typeof aVal === 'number' && aVal >= 0 && q.options[aVal]) ? q.options[
+                        aVal].label : '未作答';
+                    const correctLabel = q.options[q.answer] ? q.options[q.answer].label : '';
+                    userAnswerStr = selectedLabel;
+                    correctAnswerStr = correctLabel;
+                    hitRateStr = (typeof aVal === 'number' && aVal === q.answer) ? '100%' : '0%';
+                    resultStr = (typeof aVal === 'number' && aVal === q.answer) ? '正确' : '错误';
+                } else if (isTextInputType(q)) {
+                    userAnswerStr = (aVal && aVal.userInput) ? aVal.userInput.replace(/\n/g, ' ').replace(
+                        /"/g, '""') : '未作答';
+                    correctAnswerStr = q.answer ? q.answer.replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                    hitRateStr = (aVal && aVal.submitted) ? Math.round((aVal.hitRate || 0) * 100) + '%' :
+                    '未提交';
+                    const hr = (aVal && aVal.submitted) ? (aVal.hitRate || 0) : 0;
+                    if (q.type === '简答题') {
+                        resultStr = hr >= 0.6 ? '回答较好' : (hr >= 0.3 ? '部分正确' : '需加强');
+                    } else {
+                        resultStr = hr >= 0.85 ? '优秀' : (hr >= 0.7 ? '良好' : (hr >= 0.5 ? '合格' : '需加强'));
+                    }
+                }
+                const analysisPlain = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(
+                    /"/g, '""') : '';
+                csvContent +=
+                    `"${q.type}","${i+1}","${q.stem.replace(/"/g,'""')}","${userAnswerStr}","${correctAnswerStr}","${hitRateStr}","${resultStr}","${analysisPlain}"\n`;
+            });
+            const now = new Date();
+            const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now
+                .getDate()).padStart(2, '0');
+            const filename = `错题本_专家系统_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`错题已导出：${filename}`);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            const effectiveTotal = getEffectiveTotal();
+            if (currentIndex < effectiveTotal - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            const effIndex = getEffectiveIndex();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            let answeredCount = 0;
+            const scopeIndices = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            scopeIndices.forEach(i => { if (isAnswered(i)) answeredCount++; });
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = effectiveTotal;
+            document.getElementById('progressFill').style.width = effectiveTotal > 0 ?
+                `${(answeredCount / effectiveTotal) * 100}%` : '0%';
+            if (reviewMode) {
+                document.getElementById('questionInfo').querySelector('.progress-text').textContent =
+                    `错题回顾 · ${answeredCount}/${effectiveTotal} 已答`;
+            }
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex >= effectiveTotal - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+            `;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                const status = getAnswerStatus(index);
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (status === 'correct') { statusClass = 'correct';
+                    statusText = '正确'; } else if (status === 'wrong') { statusClass = 'wrong';
+                    statusText = '错误'; } else if (status === 'partial') { statusClass = 'partial';
+                    statusText = '部分'; }
+                if (index === getEffectiveIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && reviewIndices.includes(index) && reviewIndices.indexOf(index) === currentIndex) {
+                    statusClass += ' current';
+                }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && status !== 'unanswered') return;
+                    if (currentFilter === 'correct' && status !== 'correct') return;
+                    if (currentFilter === 'wrong' && status !== 'wrong' && status !== 'partial') return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) {
+                const pos = reviewIndices.indexOf(index);
+                if (pos >= 0) { currentIndex = pos; } else {
+                    reviewMode = false;
+                    reviewIndices = [];
+                    currentIndex = index;
+                }
+            } else {
+                currentIndex = index;
+            }
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`
+                    ; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) {
+                    return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a
+                            .hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a
+                        .totalKeywords };
+                }
+                return a;
+            });
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = record.answers.map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) {
+                        return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0,
+                            hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [],
+                            totalKeywords: a.totalKeywords || 0 };
+                    }
+                    return a;
+                });
+                currentIndex = 0;
+                reviewMode = false;
+                reviewIndices = [];
+                saveAnswers();
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        function saveAnswers() {
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) {
+                    return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a
+                            .hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a
+                        .totalKeywords };
+                }
+                return a;
+            });
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers: serializableAnswers,
+                reviewMode, reviewIndices }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                reviewMode = data.reviewMode || false;
+                reviewIndices = data.reviewIndices || [];
+                answers = (data.answers || new Array(questions.length).fill(null)).map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) {
+                        return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0,
+                            hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [],
+                            totalKeywords: a.totalKeywords || 0 };
+                    }
+                    if (isChoiceType(questions[i]) && typeof a === 'number') return a;
+                    if (a === null || a === undefined) return null;
+                    if (typeof a === 'number') return a;
+                    if (a && a.submitted) {
+                        return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0,
+                            hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [],
+                            totalKeywords: a.totalKeywords || 0 };
+                    }
+                    return null;
+                });
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+            const drafts = getDrafts();
+            if (Object.keys(drafts).length > 0) {
+                Object.keys(drafts).forEach(idx => {
+                    const i = parseInt(idx);
+                    if (i >= 0 && i < questions.length && isTextInputType(questions[i]) && !isAnswered(i)) {
+                        if (!answers[i] || !answers[i].submitted) {
+                            if (!answers[i]) answers[i] = { userInput: drafts[idx], submitted: false,
+                                hitRate: 0, hitKeywords: [], missedKeywords: [], totalKeywords: 0 };
+                            else if (!answers[i].submitted) answers[i].userInput = drafts[idx];
+                        }
+                    }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm('确定要重新开始吗？当前进度将被清除。')) return;
+            currentIndex = 0;
+            answers = new Array(questions.length).fill(null);
+            reviewMode = false;
+            reviewIndices = [];
+            localStorage.removeItem(STORAGE_KEY_ANSWERS);
+            localStorage.removeItem(STORAGE_KEY_DRAFTS);
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

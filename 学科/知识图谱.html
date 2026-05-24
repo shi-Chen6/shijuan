@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>知识图谱刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* 新增题型样式扩展 */
+        .question-type.diff-basic { background: #e6f7ff; color: #1890ff; }
+        .question-type.diff-mid { background: #fffbe6; color: #d48806; }
+        .question-type.diff-high { background: #fff2f0; color: #cf1322; }
+        .textarea-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        .textarea-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+        .task-list li {
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--primary-color);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .submit-btn,
+        .draft-btn,
+        .clear-input-btn {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .submit-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .draft-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .clear-input-btn { background: #fff2f0; color: var(--error-color); }
+        .submit-btn:active, .draft-btn:active, .clear-input-btn:active { transform: scale(0.97); }
+        .hit-rate-bar { height: 8px; background: #e8e8e8; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .hit-rate-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .hit-rate-fill.excellent { background: var(--success-color); }
+        .hit-rate-fill.good { background: #73d13d; }
+        .hit-rate-fill.ok { background: var(--warning-color); }
+        .hit-rate-fill.weak { background: var(--error-color); }
+        .tag-excellent, .tag-good, .tag-ok, .tag-weak {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-excellent { background: var(--success-light); color: var(--success-color); }
+        .tag-good { background: #d4edda; color: #389e0d; }
+        .tag-ok { background: var(--warning-light); color: #d48806; }
+        .tag-weak { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .sheet-item.partial { border-color: var(--warning-color); background: var(--warning-light); color: #d48806; }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 1px solid #ffd591; }
+        .analysis-content .highlight-hit { background: #d4edda; padding: 2px 4px; border-radius: 3px; color: #155724; font-weight: 600; }
+        .analysis-content .highlight-miss { background: #f8d7da; padding: 2px 4px; border-radius: 3px; color: #721c24; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">知识图谱（高中信息科技）</div>
+                        <div class="progress-text">人工智能核心 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "知识图谱的基本表示单元是（ ）",
+            "options": [{ "label": "A", "text": "节点" }, { "label": "B", "text": "边" }, { "label": "C", "text": "三元组" }, { "label": "D", "text": "属性" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。知识图谱的基本表示单元是\u201C实体-关系-实体\u201D三元组，所有的知识都以三元组的形式存储。<br><strong>📚 知识点讲解：</strong>节点表示实体，边表示关系，属性是实体的特征。三元组将这些要素组合起来，形成结构化的知识。<br><strong>💡 解题思路：</strong>节点和边是图的组成部分，但基本知识单元是三元组。属性是描述实体的，不是表示单元。<br><strong>🧠 记忆口诀：</strong>知识单元三元组，实体关系加属性。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "知识图谱中的节点表示（ ）",
+            "options": [{ "label": "A", "text": "实体" }, { "label": "B", "text": "关系" }, { "label": "C", "text": "属性" }, { "label": "D", "text": "三元组" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。知识图谱中的节点表示实体，是现实世界中独立存在的、可区分的事物。<br><strong>📚 知识点讲解：</strong>实体可以是人、地点、事物、概念等。边则表示实体之间的关系。属性是实体的特征。<br><strong>💡 解题思路：</strong>节点=实体，边=关系，这是图结构的基本概念。<br><strong>🧠 记忆口诀：</strong>节点是实体，边连关系起。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "知识图谱中的边表示（ ）",
+            "options": [{ "label": "A", "text": "实体" }, { "label": "B", "text": "关系" }, { "label": "C", "text": "属性" }, { "label": "D", "text": "三元组" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。知识图谱中的边表示关系，描述两个实体之间的联系。<br><strong>📚 知识点讲解：</strong>关系如\u201C创作\u201D\u201C朝代\u201D\u201C作者\u201D等，连接两个实体构成三元组。<br><strong>💡 解题思路：</strong>边连接节点，表示它们之间的关系。<br><strong>🧠 记忆口诀：</strong>边是关系线，连接两实体。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列属于知识图谱应用的是（ ）",
+            "options": [{ "label": "A", "text": "语音输入法" }, { "label": "B", "text": "百度搜索知识卡片" }, { "label": "C", "text": "人脸识别解锁" }, { "label": "D", "text": "刷脸支付" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。百度搜索知识卡片是知识图谱的典型应用，将分散的知识整合在一起以结构化方式呈现。<br><strong>📚 知识点讲解：</strong>语音输入法属于语音识别，人脸识别解锁和刷脸支付属于计算机视觉。知识图谱主要应用于搜索、问答、推荐等领域。<br><strong>💡 解题思路：</strong>知识卡片展示的是结构化的知识，背后依赖知识图谱。其他选项与知识图谱无关。<br><strong>🧠 记忆口诀：</strong>知识卡片搜百科，图谱应用最典型。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "覆盖广泛领域和主题的知识图谱是（ ）",
+            "options": [{ "label": "A", "text": "通用知识图谱" }, { "label": "B", "text": "领域知识图谱" }, { "label": "C", "text": "医疗知识图谱" }, { "label": "D", "text": "金融知识图谱" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。通用知识图谱覆盖广泛的领域和主题，知识全面但深度有限。<br><strong>📚 知识点讲解：</strong>通用知识图谱如谷歌知识图谱、百度百科知识图谱，包含各领域的常识。领域知识图谱则专注于某一特定领域。<br><strong>💡 解题思路：</strong>题干强调\u201C覆盖广泛领域\u201D，对应通用知识图谱。医疗、金融都是特定领域。<br><strong>🧠 记忆口诀：</strong>通用图谱覆盖面广，领域图谱专业深。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专注于某一特定领域的知识图谱是（ ）",
+            "options": [{ "label": "A", "text": "通用知识图谱" }, { "label": "B", "text": "领域知识图谱" }, { "label": "C", "text": "谷歌知识图谱" }, { "label": "D", "text": "百度百科知识图谱" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。领域知识图谱专注于某一特定领域，知识深度高、专业性强。<br><strong>📚 知识点讲解：</strong>例如医疗知识图谱、金融知识图谱、教育学科知识图谱，都属于领域知识图谱。<br><strong>💡 解题思路：</strong>\u201C专注于某一特定领域\u201D是领域知识图谱的定义。<br><strong>🧠 记忆口诀：</strong>领域图谱深而专，医疗金融各擅长。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "知识图谱构建流程中最核心的环节是（ ）",
+            "options": [{ "label": "A", "text": "确定领域" }, { "label": "B", "text": "知识抽取" }, { "label": "C", "text": "知识融合" }, { "label": "D", "text": "知识存储" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。知识抽取是从多源数据中提取实体、关系和属性的过程，是构建知识图谱最核心也最具挑战的环节。<br><strong>📚 知识点讲解：</strong>知识抽取包括实体抽取、关系抽取和属性抽取，是知识图谱的\u201C造血\u201D环节。没有高质量的知识抽取，后续步骤无法进行。<br><strong>💡 解题思路：</strong>构建知识图谱，首先要从数据中获取知识，因此知识抽取是最核心的环节。<br><strong>🧠 记忆口诀：</strong>知识抽取是核心，实体关系属性抓。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "从非结构化文本中提取实体、关系和属性的技术是（ ）",
+            "options": [{ "label": "A", "text": "信息抽取" }, { "label": "B", "text": "知识融合" }, { "label": "C", "text": "知识推理" }, { "label": "D", "text": "知识存储" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为A。信息抽取技术包括实体抽取、关系抽取和属性抽取，能够从非结构化文本中提取结构化的知识。<br><strong>📚 知识点讲解：</strong>信息抽取是知识抽取的核心技术，利用自然语言处理和机器学习方法从文本中识别出实体和它们之间的关系。<br><strong>💡 解题思路：</strong>题干描述的就是信息抽取的定义。知识融合是整合不同来源的知识，知识推理是推导新知识。<br><strong>🧠 记忆口诀：</strong>信息抽取找知识，文本之中淘三元。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "解决\u201C土豆\u201D和\u201C马铃薯\u201D是同一个实体问题的技术是（ ）",
+            "options": [{ "label": "A", "text": "信息抽取" }, { "label": "B", "text": "实体对齐" }, { "label": "C", "text": "知识推理" }, { "label": "D", "text": "知识存储" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。实体对齐是知识融合的重要环节，用于识别不同来源中表示同一事物的实体。<br><strong>📚 知识点讲解：</strong>\u201C土豆\u201D和\u201C马铃薯\u201D是同一实体的不同名称，实体对齐可以将它们合并为一个实体，消除歧义。<br><strong>💡 解题思路：</strong>解决同一实体不同名称的问题属于实体对齐。信息抽取是提取实体，知识推理是推导新知识。<br><strong>🧠 记忆口诀：</strong>实体对齐消歧义，土豆马铃薯归一。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "基于已有的知识推导出新知识的技术是（ ）",
+            "options": [{ "label": "A", "text": "信息抽取" }, { "label": "B", "text": "知识融合" }, { "label": "C", "text": "知识推理" }, { "label": "D", "text": "知识存储" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。知识推理是基于已有的知识推导出新的知识，是知识图谱的重要能力之一。<br><strong>📚 知识点讲解：</strong>例如根据\u201C李白是唐朝人\u201D和\u201C唐朝诗人是古代诗人\u201D推导出\u201C李白是古代诗人\u201D。这体现了知识图谱的智能性。<br><strong>💡 解题思路：</strong>\u201C推导出新知识\u201D是知识推理的核心功能。<br><strong>🧠 记忆口诀：</strong>知识推理出新知，逻辑演绎拓图谱。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于知识图谱和关系型数据库的说法，正确的是（ ）",
+            "options": [{ "label": "A", "text": "知识图谱是表结构，关系型数据库是图结构" }, { "label": "B", "text": "知识图谱适合表示复杂的关系，关系型数据库适合存储结构化数据" }, { "label": "C", "text": "知识图谱和关系型数据库没有区别" }, { "label": "D", "text": "知识图谱的查询速度一定比关系型数据库快" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。知识图谱是图结构，适合表示复杂的实体关系；关系型数据库是表结构，适合存储结构化的数据。两者各有优势。<br><strong>📚 知识点讲解：</strong>关系型数据库通过主键和外键关联，但在多对多关系上查询复杂。知识图谱以节点和边直接表达关系，查询更直观。<br><strong>💡 解题思路：</strong>A说反了，C说没有区别显然错误，D\u201C一定\u201D太绝对。B正确描述了各自的优势场景。<br><strong>🧠 记忆口诀：</strong>图谱图库各有所长，复杂关系图谱强。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于知识图谱和思维导图的说法，错误的是（ ）",
+            "options": [{ "label": "A", "text": "知识图谱是计算机可理解的，思维导图是人类可理解的" }, { "label": "B", "text": "知识图谱是结构化的，思维导图是半结构化的" }, { "label": "C", "text": "知识图谱和思维导图都是知识表示方法" }, { "label": "D", "text": "知识图谱就是思维导图的数字化形式" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为D。知识图谱和思维导图是两种不同的知识表示方法。知识图谱是计算机可理解的结构化知识表示，思维导图是人类思维的可视化工具。<br><strong>📚 知识点讲解：</strong>思维导图通常用于个人整理思路，没有严格的三元组结构。知识图谱则遵循\u201C实体-关系-实体\u201D的规范格式，便于机器处理。<br><strong>💡 解题思路：</strong>A、B、C正确，D将两者等同是错误的，知识图谱不是思维导图的简单数字化。<br><strong>🧠 记忆口诀：</strong>图谱机器懂，导图人脑用，二者不相同。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "某医院想要构建一个知识图谱来辅助医生进行疾病诊断，这属于（ ）",
+            "options": [{ "label": "A", "text": "通用知识图谱" }, { "label": "B", "text": "医疗领域知识图谱" }, { "label": "C", "text": "金融领域知识图谱" }, { "label": "D", "text": "教育领域知识图谱" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。专注于医疗领域的知识图谱属于医疗领域知识图谱。<br><strong>📚 知识点讲解：</strong>领域知识图谱针对特定行业，包含该领域的专业知识和术语。医疗知识图谱包含疾病、症状、药物、治疗方案等实体和关系。<br><strong>💡 解题思路：</strong>医院构建辅助诊断系统，显然是医疗领域，因此属于医疗领域知识图谱。<br><strong>🧠 记忆口诀：</strong>医疗辅助诊断图谱，领域专业深又专。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "当用户在百度搜索\u201C北京\u201D时，搜索结果中显示北京的天气、人口、面积、景点等信息，这主要使用了（ ）",
+            "options": [{ "label": "A", "text": "语音识别技术" }, { "label": "B", "text": "人脸识别技术" }, { "label": "C", "text": "知识图谱技术" }, { "label": "D", "text": "专家系统技术" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为C。百度搜索结果中的结构化信息来自百度知识图谱，它能够将关于北京的各种信息整合在一起，以直观的方式呈现给用户。<br><strong>📚 知识点讲解：</strong>这是知识图谱在搜索引擎中的典型应用——知识卡片。它将实体相关的多维度信息聚合展示，提升搜索体验。<br><strong>💡 解题思路：</strong>搜索结果中显示结构化的知识摘要，是知识图谱的典型表现，与语音、人脸、专家系统无关。<br><strong>🧠 记忆口诀：</strong>搜索展示知识卡，图谱聚合信息全。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于知识图谱的说法，错误的是（ ）",
+            "options": [{ "label": "A", "text": "知识图谱能够帮助计算机理解知识" }, { "label": "B", "text": "知识图谱中的知识都是准确无误的" }, { "label": "C", "text": "知识图谱需要不断更新和维护" }, { "label": "D", "text": "知识图谱在智能问答中发挥着重要作用" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为B。知识图谱中的知识可能存在错误和过时的信息，需要不断更新和审核。<br><strong>📚 知识点讲解：</strong>由于知识来源的多样性和抽取技术的不完美，知识图谱不可能100%准确。因此需要人工审核和持续更新机制。<br><strong>💡 解题思路：</strong>A、C、D都是正确的陈述。B中\u201C都是准确无误的\u201D过于绝对，是错误的。<br><strong>🧠 记忆口诀：</strong>图谱知识非无误，更新审核不可缺。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "知识图谱以图的形式组织和表示知识。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。知识图谱以图（Graph）的形式组织和表示知识，由节点和边组成。<br><strong>📚 知识点讲解：</strong>图结构由节点（实体）和边（关系）构成，能够直观地表示复杂的语义网络。<br><strong>💡 解题思路：</strong>这是知识图谱的基本定义。<br><strong>🧠 记忆口诀：</strong>知识图谱图结构，节点实体边关系。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "知识图谱的基本单元是\u201C实体-关系-实体\u201D三元组。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。\u201C实体-关系-实体\u201D三元组是知识图谱的基本表示单元。<br><strong>📚 知识点讲解：</strong>三元组可以表示为（主语，谓语，宾语），如（李白，创作，静夜思）。<br><strong>💡 解题思路：</strong>这是知识图谱的核心概念。<br><strong>🧠 记忆口诀：</strong>三元组主谓宾，知识单元最基本。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "实体是知识图谱中的边。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。实体是知识图谱中的节点，关系才是边。<br><strong>📚 知识点讲解：</strong>实体是节点，关系是边。两者不能混淆。<br><strong>💡 解题思路：</strong>节点=实体，边=关系，这是图论的基本概念。<br><strong>🧠 记忆口诀：</strong>实体节点关系边，图谱构成记心间。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "关系是知识图谱中的节点。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。关系是知识图谱中的边，实体才是节点。<br><strong>📚 知识点讲解：</strong>与上一题类似，实体和关系的角色不能互换。<br><strong>💡 解题思路：</strong>关系是连接实体的，在图中表现为边。<br><strong>🧠 记忆口诀：</strong>关系是边非节点，连接实体建网络。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "百度百科知识图谱属于通用知识图谱。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。百度百科知识图谱覆盖了广泛的领域和主题，属于通用知识图谱。<br><strong>📚 知识点讲解：</strong>通用知识图谱追求广度，包含各类常识性知识。<br><strong>💡 解题思路：</strong>百度百科涵盖各个领域，符合通用知识图谱的定义。<br><strong>🧠 记忆口诀：</strong>百科图谱通天下，通用图谱广覆盖。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "医疗知识图谱属于领域知识图谱。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。医疗知识图谱专注于医疗领域，属于领域知识图谱。<br><strong>📚 知识点讲解：</strong>领域知识图谱追求深度，包含特定领域的专业知识。<br><strong>💡 解题思路：</strong>医疗是特定领域，所以是领域知识图谱。<br><strong>🧠 记忆口诀：</strong>医疗图谱领域专，深度知识助诊断。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "知识抽取是从非结构化文本中提取实体、关系和属性的过程。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法正确（√）。这是知识抽取的基本定义。<br><strong>📚 知识点讲解：</strong>知识抽取是构建知识图谱的第一步，包括实体抽取、关系抽取和属性抽取。<br><strong>💡 解题思路：</strong>描述完全符合知识抽取的定义。<br><strong>🧠 记忆口诀：</strong>知识抽取挖三元，实体关系属性全。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "知识图谱和关系型数据库是完全相同的技术。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。知识图谱是图结构，关系型数据库是表结构，它们是两种不同的技术。<br><strong>📚 知识点讲解：</strong>两者在数据结构、查询方式、适用场景上均有显著差异。<br><strong>💡 解题思路：</strong>\u201C完全相同\u201D明显错误，它们的设计理念不同。<br><strong>🧠 记忆口诀：</strong>图谱图库两回事，表结构对图结构。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "知识图谱中的知识一旦构建完成就不需要更新了。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。知识是不断发展变化的，知识图谱需要根据新的数据不断更新和维护。<br><strong>📚 知识点讲解：</strong>知识图谱需要动态更新，否则知识会过时，影响应用效果。<br><strong>💡 解题思路：</strong>\u201C不需要更新\u201D违背常识，知识需要与时俱进。<br><strong>🧠 记忆口诀：</strong>知识图谱活水来，持续更新保新鲜。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "知识图谱只能用于搜索引擎。",
+            "options": [{ "label": "√", "text": "正确" }, { "label": "×", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>该说法错误（×）。知识图谱的应用非常广泛，除了搜索引擎，还包括智能问答、推荐系统、医疗诊断、金融风控等多个领域。<br><strong>📚 知识点讲解：</strong>知识图谱作为知识表示的基础技术，可在任何需要理解和推理知识的场景中发挥作用。<br><strong>💡 解题思路：</strong>\u201C只能\u201D过于绝对。知识图谱是平台型技术，应用广泛。<br><strong>🧠 记忆口诀：</strong>图谱应用多又广，搜索问答推荐强。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述知识图谱的基本结构，并举例说明一个三元组。",
+            "answer": "知识图谱由节点和边组成。节点表示实体，如\u201C李白\u201D；边表示关系，如\u201C创作\u201D。实体和关系构成三元组，例如（李白，创作，《静夜思》）。",
+            "keywords": ["节点", "边", "实体", "关系", "三元组", "李白", "创作", "静夜思"],
+            "analysis": "<strong>🎯 答案解析：</strong>知识图谱的基本结构包括实体节点和关系边，基本表示单元是三元组。例如（李白，创作，《静夜思》）。<br><strong>📚 知识点讲解：</strong>实体是独立存在的事物，关系是实体之间的联系。三元组将两者组合，形成结构化的知识。<br><strong>💡 解题思路：</strong>从节点、边、三元组三个层面回答，并给出一个经典的文化类三元组作为例子。<br><strong>🧠 记忆口诀：</strong>节点实体边关系，三元组里知识存。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述知识图谱的完整构建流程。",
+            "answer": "知识图谱的构建流程包括：（1）确定领域与本体设计；（2）知识抽取（从数据中提取实体、关系和属性）；（3）知识融合（实体对齐、冲突解决）；（4）知识加工（推理、补全、审核）；（5）知识存储与更新。",
+            "keywords": ["确定领域", "本体设计", "知识抽取", "实体抽取", "知识融合", "实体对齐", "知识加工", "知识推理", "知识存储"],
+            "analysis": "<strong>🎯 答案解析：</strong>构建流程依次为：确定领域与本体设计→知识抽取→知识融合→知识加工→知识存储与更新。<br><strong>📚 知识点讲解：</strong>知识抽取是核心环节，知识融合解决歧义，知识加工提升质量，存储与更新保证生命力。<br><strong>💡 解题思路：</strong>按照构建的先后顺序回答，每一步说明其关键任务。<br><strong>🧠 记忆口诀：</strong>定抽融加存，五步建图谱。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "请比较知识图谱和关系型数据库的区别，并说明知识图谱的优势。",
+            "answer": "区别：知识图谱是图结构（节点和边），适合复杂关系；关系型数据库是表结构（行和列），适合结构化数据。查询方式上，图谱使用图查询（如Cypher），数据库使用SQL。知识图谱的优势：能自然表示复杂关系，具有推理能力，扩展性好，支持语义查询。",
+            "keywords": ["图结构", "表结构", "图查询", "SQL", "复杂关系", "推理能力", "扩展性", "语义查询"],
+            "analysis": "<strong>🎯 答案解析：</strong>知识图谱与关系型数据库在数据结构、查询方式上不同。图谱的优势在于复杂关系表达、知识推理和灵活扩展。<br><strong>📚 知识点讲解：</strong>关系型数据库在处理多对多关系时需引入中间表，查询复杂；知识图谱通过边直接连接，查询高效直观。知识推理是图谱的独特能力。<br><strong>💡 解题思路：</strong>先对比数据结构、查询方式，再列出图谱的三大优势。<br><strong>🧠 记忆口诀：</strong>图库表库各有长，复杂关系图谱强。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "请为你所在的班级构建一个简单的知识图谱。要求：（1）至少包含3种实体类型（如学生、老师、课程）；（2）至少包含5个实体；（3）至少包含5个关系；（4）用三元组的形式表示所有的知识。",
+            "tasks": ["设计实体类型", "列出实体", "列出关系", "用三元组表示知识"],
+            "answer": "实体类型：学生、老师、课程。实体：张三（学生）、李四（学生）、王老师（老师）、信息技术（课程）、数学（课程）。关系：学习、教授、同班同学、班主任。三元组：（张三，学习，信息技术）、（张三，学习，数学）、（李四，学习，信息技术）、（王老师，教授，信息技术）、（张三，同班同学，李四）、（王老师，班主任，张三）。",
+            "keywords": [
+                ["学生", "老师", "课程", "实体类型"],
+                ["张三", "李四", "王老师", "信息技术", "数学", "实体"],
+                ["学习", "教授", "同班同学", "班主任", "关系"],
+                ["三元组", "学习", "教授", "班主任"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>示例给出了3种实体类型、5个实体、4种关系，并用6个三元组表示了班级知识图谱。<br><strong>📚 知识点讲解：</strong>实体类型是实体的分类，如学生、老师；关系类型描述实体间的联系。三元组是具体的知识表达。<br><strong>💡 解题思路：</strong>先确定实体类型和关系类型，再填充具体实体，最后以三元组形式写出知识。<br><strong>🧠 记忆口诀：</strong>实体类型定框架，三元组里填知识。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某学校想要构建一个高中信息技术学科知识图谱，帮助学生系统地学习学科知识。请回答以下问题：",
+            "tasks": ["（1）这个知识图谱属于哪种类型？为什么？", "（2）这个知识图谱应该包含哪些实体类型和关系类型？", "（3）构建这个知识图谱对学生的学习有什么帮助？"],
+            "answer": "（1）属于教育领域知识图谱，因为它专注于高中信息技术这一特定学科领域。（2）实体类型：知识点、章节、教材、试题；关系类型：包含、属于、考查、前置知识。（3）帮助：帮助学生梳理知识体系，发现薄弱环节；支持个性化学习推荐，提高学习效率。",
+            "keywords": [
+                ["教育领域", "知识图谱", "特定学科"],
+                ["知识点", "章节", "教材", "试题", "包含", "属于", "考查", "前置知识"],
+                ["梳理", "薄弱", "个性化", "推荐", "效率"]
+            ],
+            "analysis": "<strong>🎯 答案解析：</strong>（1）教育领域知识图谱；（2）实体类型包括知识点、章节等，关系类型包括包含、前置知识等；（3）帮助梳理知识、发现薄弱点、支持个性化学习。<br><strong>📚 知识点讲解：</strong>教育知识图谱是领域知识图谱的重要应用，它通过关联知识点，形成学科知识网络，为智能学习系统提供基础。<br><strong>💡 解题思路：</strong>从类型判断、要素设计、应用价值三方面展开，结合教育场景具体分析。<br><strong>🧠 记忆口诀：</strong>教育图谱连知识，梳理薄弱个性化。"
+        }];
+
+        const APP_ID = 'knowledge_graph_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextInputType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getAnswerStatus(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return 'unanswered';
+            if (isChoiceType(q)) return a === q.answer ? 'correct' : 'wrong';
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return 'unanswered';
+                const hr = a.hitRate || 0;
+                if (hr >= 0.8) return 'correct';
+                if (hr >= 0.4) return 'partial';
+                return 'wrong';
+            }
+            return 'unanswered';
+        }
+
+        function isAnswerCorrect(index) {
+            const q = questions[index]; const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(q)) return a === q.answer;
+            if (isTextInputType(q)) {
+                if (!a || !a.submitted) return false;
+                const hr = a.hitRate || 0;
+                if (q.type === '简答题') return hr >= 0.6;
+                if (q.type === '综合应用题') return hr >= 0.7;
+                return hr >= 0.6;
+            }
+            return false;
+        }
+
+        function isAnswered(index) {
+            const a = answers[index];
+            if (a === null || a === undefined) return false;
+            if (isChoiceType(questions[index])) return typeof a === 'number';
+            if (isTextInputType(questions[index])) return a && a.submitted === true;
+            return false;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '知识图谱核心技术与三元组表示';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>知识图谱是<strong>人工智能领域重要的结构化知识表示技术</strong>，它以图（Graph）的形式组织和表示知识，将现实世界中的事物抽象为<strong>节点</strong>（表示实体），将事物之间的联系抽象为<strong>边</strong>（表示关系）。知识图谱的基本单元是<strong>\u201C实体-关系-实体\u201D三元组</strong>，通过这种方式将零散的知识连接成一个巨大的语义网络，使计算机能够理解和推理知识。</p>
+                <h3>🔑 核心要点拆解</h3>
+                <p><strong>1. 知识图谱的基本结构（高频考点）</strong></p>
+                <ul>
+                    <li><strong>实体：</strong>知识图谱中的节点，如\u201C李白\u201D\u201C唐朝\u201D\u201C《静夜思》\u201D</li>
+                    <li><strong>关系：</strong>知识图谱中的边，如\u201C李白-创作-《静夜思》\u201D</li>
+                    <li><strong>属性：</strong>实体的特征，如\u201C李白-出生日期-701年\u201D</li>
+                    <li><strong>三元组：</strong>基本单元，形式为（实体1，关系，实体2）</li>
+                </ul>
+                <p><strong>2. 知识图谱的完整构建流程</strong></p>
+                <ul>
+                    <li><strong>确定领域与本体设计：</strong>定义实体类型、关系类型</li>
+                    <li><strong>知识抽取：</strong>从数据中提取实体、关系和属性（核心环节）</li>
+                    <li><strong>知识融合：</strong>实体对齐，消除歧义</li>
+                    <li><strong>知识加工：</strong>推理、补全和人工审核</li>
+                    <li><strong>知识存储与更新：</strong>使用图数据库存储，持续更新</li>
+                </ul>
+                <p><strong>3. 两大主要类型</strong></p>
+                <ul>
+                    <li><strong>通用知识图谱：</strong>覆盖广泛，如百度百科知识图谱</li>
+                    <li><strong>领域知识图谱：</strong>专注特定领域，如医疗知识图谱</li>
+                </ul>
+                <p><strong>4. 核心技术</strong></p>
+                <ul>
+                    <li><strong>信息抽取：</strong>从文本中提取实体、关系和属性</li>
+                    <li><strong>知识融合：</strong>实体对齐、冲突解决</li>
+                    <li><strong>知识推理：</strong>基于已有知识推导新知识</li>
+                </ul>
+                <h3>📋 教材典型案例</h3>
+                <p><strong>百度百科知识卡片：</strong>搜索\u201C李白\u201D时展示结构化信息，来自知识图谱。</p>
+                <p><strong>智能问答：</strong>如问\u201C李白的代表作\u201D，系统通过图谱查询返回结果。</p>
+                <p><strong>教育学科知识图谱：</strong>连接知识点，帮助学生系统学习。</p>
+                <h3>⚠️ 教学重点/易错点</h3>
+                <ul>
+                    <li><strong>重点：</strong>三元组结构；构建流程；通用与领域图谱区别</li>
+                    <li><strong>易错点①：</strong>混淆实体与属性——实体独立存在，属性是实体的特征</li>
+                    <li><strong>易错点②：</strong>混淆知识图谱与思维导图——知识图谱是机器可理解的结构化知识</li>
+                    <li><strong>易错点③：</strong>认为知识图谱完全准确——需不断更新和审核</li>
+                </ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveIndex() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices[Math.min(currentIndex, reviewIndices.length - 1)];
+            return currentIndex;
+        }
+
+        function getEffectiveTotal() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const effIndex = getEffectiveIndex();
+            const q = questions[effIndex];
+            const contentArea = document.getElementById('quizContent');
+            const aVal = answers[effIndex];
+            let diffClass = '';
+            if (q.difficulty === '基础') diffClass = 'diff-basic';
+            else if (q.difficulty === '中档') diffClass = 'diff-mid';
+            else if (q.difficulty === '提高') diffClass = 'diff-high';
+
+            let html = `<div class="question-card"><span class="question-type ${diffClass}">${q.type} · ${q.difficulty || ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.tableData) html += q.tableData;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = (aVal !== null && aVal !== undefined && typeof aVal === 'number') && aVal === idx;
+                    const isCorrectAns = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (aVal !== null && aVal !== undefined && typeof aVal === 'number') {
+                        if (isSelected && isCorrectAns) classes.push('correct');
+                        else if (isSelected && !isCorrectAns) classes.push('wrong');
+                        else if (isCorrectAns) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (isTextInputType(q)) {
+                const isSubmitted = aVal && aVal.submitted;
+                const userInput = (aVal && aVal.userInput) ? aVal.userInput : '';
+                if (q.tasks && q.tasks.length > 0) {
+                    html += `<ol class="task-list">`;
+                    q.tasks.forEach(t => { html += `<li>${t}</li>`; });
+                    html += `</ol>`;
+                }
+                html += `<textarea class="textarea-input" id="textAnswerInput" placeholder="请在此输入你的回答..." ${isSubmitted ? 'disabled' : ''}>${userInput}</textarea>`;
+                if (!isSubmitted) {
+                    html += `<div class="submit-row">
+                        <button class="draft-btn" onclick="saveDraft(${effIndex})"><i class="fas fa-save"></i> 保存草稿</button>
+                        <button class="clear-input-btn" onclick="clearInput(${effIndex})"><i class="fas fa-eraser"></i> 清空输入</button>
+                        <button class="submit-btn" onclick="submitTextAnswer(${effIndex})"><i class="fas fa-check-circle"></i> 提交作答</button>
+                    </div>`;
+                }
+            }
+            html += '</div>';
+
+            if (isAnswered(effIndex)) {
+                const status = getAnswerStatus(effIndex);
+                let badgeHtml = '';
+                if (status === 'correct') badgeHtml = '<span class="result-badge correct">✓ 回答正确</span>';
+                else if (status === 'partial') badgeHtml = '<span class="result-badge partial">△ 部分正确</span>';
+                else badgeHtml = '<span class="result-badge wrong">✗ 回答错误</span>';
+
+                if (isTextInputType(q) && aVal && aVal.submitted) {
+                    const hr = aVal.hitRate || 0;
+                    const hrPercent = Math.round(hr * 100);
+                    let hrClass = 'weak', tagHtml = '<span class="tag-weak">需加强</span>';
+                    if (q.type === '简答题') {
+                        if (hr >= 0.6) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">回答较好</span>'; }
+                        else if (hr >= 0.3) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">部分正确</span>'; }
+                    } else if (q.type === '综合应用题') {
+                        if (hr >= 0.85) { hrClass = 'excellent'; tagHtml = '<span class="tag-excellent">优秀</span>'; }
+                        else if (hr >= 0.7) { hrClass = 'good'; tagHtml = '<span class="tag-good">良好</span>'; }
+                        else if (hr >= 0.5) { hrClass = 'ok'; tagHtml = '<span class="tag-ok">合格</span>'; }
+                    }
+                    html += `<div class="analysis-card" style="padding:16px; margin-top:16px;">
+                        <p><strong>📝 你的回答：</strong></p>
+                        <div style="background:#fafafa;padding:12px;border-radius:8px;margin:8px 0;white-space:pre-wrap;">${escapeHtml(aVal.userInput || '')}</div>
+                        <p><strong>关键词命中率：</strong>${tagHtml} <span style="font-weight:700;">${hrPercent}%</span></p>
+                        <div class="hit-rate-bar"><div class="hit-rate-fill ${hrClass}" style="width:${hrPercent}%"></div></div>
+                        ${aVal.hitKeywords && aVal.hitKeywords.length > 0 ? `<p><strong>✅ 命中关键词：</strong>${aVal.hitKeywords.map(k => '<span class="highlight-hit">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        ${aVal.missedKeywords && aVal.missedKeywords.length > 0 ? `<p><strong>❌ 未命中关键词：</strong>${aVal.missedKeywords.map(k => '<span class="highlight-miss">'+escapeHtml(k)+'</span>').join('、')}</p>` : ''}
+                        <p style="margin-top:10px;"><strong>📋 标准答案：</strong>${q.answer}</p>
+                    </div>`;
+                }
+
+                html += `<div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 答案分析 ${badgeHtml}</div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                </div>`;
+            }
+
+            const allAnsweredInScope = reviewMode ? reviewIndices.every(i => isAnswered(i)) : questions.every((_, i) => isAnswered(i));
+            const lastInScope = (currentIndex >= getEffectiveTotal() - 1);
+
+            if (lastInScope && allAnsweredInScope && !reviewMode) {
+                let totalQ = questions.length, correctCount = 0;
+                questions.forEach((_, i) => { if (isAnswerCorrect(i)) correctCount++; });
+                const accuracy = Math.round(correctCount / totalQ * 100);
+                saveToHistory(correctCount, accuracy);
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">🎉</div>
+                    <h1 class="completion-title">刷题完成！</h1>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${totalQ}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()"><i class="fas fa-redo"></i> 重新开始</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-exclamation-triangle"></i> 回看错题</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()"><i class="fas fa-history"></i> 查看历史</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            if (lastInScope && allAnsweredInScope && reviewMode) {
+                html += `<div class="completion-screen">
+                    <div class="completion-icon">📋</div>
+                    <h1 class="completion-title">错题回顾完成！</h1>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="exitReviewMode()"><i class="fas fa-arrow-left"></i> 返回刷题</button>
+                        <button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()"><i class="fas fa-redo"></i> 再次回看</button>
+                        <button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>
+                    </div>
+                </div>`;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effIndex = getEffectiveIndex();
+            if (!isChoiceType(questions[effIndex])) return;
+            if (answers[effIndex] !== null && typeof answers[effIndex] === 'number') return;
+            answers[effIndex] = idx;
+            saveAnswers();
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            showToast(idx === questions[effIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const userInput = textarea.value.trim();
+            if (!userInput) { showToast('请输入你的回答后再提交'); return; }
+            const q = questions[effIndex];
+            let allKeywords = [];
+            if (q.type === '简答题') allKeywords = q.keywords || [];
+            else if (q.type === '综合应用题' && q.keywords && Array.isArray(q.keywords)) {
+                q.keywords.forEach(kArr => { if (Array.isArray(kArr)) allKeywords = allKeywords.concat(kArr); });
+            }
+            const hitKeywords = [], missedKeywords = [];
+            const inputLower = userInput.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (inputLower.includes(kw.toLowerCase())) hitKeywords.push(kw);
+                else missedKeywords.push(kw);
+            });
+            const hitRate = allKeywords.length > 0 ? hitKeywords.length / allKeywords.length : 0;
+            answers[effIndex] = { userInput, submitted: true, hitRate, hitKeywords, missedKeywords, totalKeywords: allKeywords.length };
+            saveAnswers();
+            clearDraft(effIndex);
+            renderQuestion(); renderAnswerSheet(); updateNavButtons();
+            const hrPercent = Math.round(hitRate * 100);
+            if (q.type === '简答题') {
+                if (hitRate >= 0.6) showToast(`回答较好！命中率 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.3) showToast(`部分正确，命中率 ${hrPercent}%`);
+                else showToast(`需加强，命中率 ${hrPercent}%`);
+            } else {
+                if (hitRate >= 0.85) showToast(`优秀！完成度 ${hrPercent}% ✓`);
+                else if (hitRate >= 0.7) showToast(`良好！完成度 ${hrPercent}%`);
+                else if (hitRate >= 0.5) showToast(`合格，完成度 ${hrPercent}%`);
+                else showToast(`需加强，完成度 ${hrPercent}%`);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function saveDraft(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            const drafts = getDrafts(); drafts[effIndex] = textarea.value;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+            showToast('草稿已保存 ✓');
+        }
+
+        function clearInput(effIndex) {
+            const textarea = document.getElementById('textAnswerInput');
+            if (!textarea) return;
+            if (textarea.value.trim() && !confirm('确定要清空输入内容吗？')) return;
+            textarea.value = '';
+            clearDraft(effIndex);
+            showToast('输入已清空');
+        }
+
+        function getDrafts() { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; }
+        function clearDraft(effIndex) { const drafts = getDrafts(); delete drafts[effIndex]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('恭喜！没有错题需要回顾 🎉'); return; }
+            reviewMode = true; reviewIndices = wrongIndices; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast(`共 ${wrongIndices.length} 道错题，开始回顾`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; reviewIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            showToast('已返回正常刷题模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongIndices = [];
+            questions.forEach((_, i) => { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); });
+            if (wrongIndices.length === 0) { showToast('没有错题可导出'); return; }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题号,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongIndices.forEach(i => {
+                const q = questions[i]; const aVal = answers[i];
+                let userAnswerStr = '', correctAnswerStr = '', hitRateStr = '', resultStr = '';
+                if (isChoiceType(q)) {
+                    const selectedLabel = (typeof aVal === 'number' && aVal >= 0 && q.options[aVal]) ? q.options[aVal].label : '未作答';
+                    const correctLabel = q.options[q.answer] ? q.options[q.answer].label : '';
+                    userAnswerStr = selectedLabel; correctAnswerStr = correctLabel;
+                    hitRateStr = (typeof aVal === 'number' && aVal === q.answer) ? '100%' : '0%';
+                    resultStr = (typeof aVal === 'number' && aVal === q.answer) ? '正确' : '错误';
+                } else if (isTextInputType(q)) {
+                    userAnswerStr = (aVal && aVal.userInput) ? aVal.userInput.replace(/\n/g, ' ').replace(/"/g, '""') : '未作答';
+                    correctAnswerStr = q.answer ? q.answer.replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                    hitRateStr = (aVal && aVal.submitted) ? Math.round((aVal.hitRate || 0) * 100) + '%' : '未提交';
+                    const hr = (aVal && aVal.submitted) ? (aVal.hitRate || 0) : 0;
+                    if (q.type === '简答题') resultStr = hr >= 0.6 ? '回答较好' : (hr >= 0.3 ? '部分正确' : '需加强');
+                    else resultStr = hr >= 0.85 ? '优秀' : (hr >= 0.7 ? '良好' : (hr >= 0.5 ? '合格' : '需加强'));
+                }
+                const analysisPlain = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/\n/g, ' ').replace(/"/g, '""') : '';
+                csvContent += `"${q.type}","${i+1}","${q.stem.replace(/"/g,'""')}","${userAnswerStr}","${correctAnswerStr}","${hitRateStr}","${resultStr}","${analysisPlain}"\n`;
+            });
+            const dateStr = new Date().toISOString().slice(0,10);
+            const filename = `错题本_知识图谱_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a'); link.href = url; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast(`错题已导出：${filename}`);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling, icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < getEffectiveTotal() - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            let answeredCount = 0;
+            const scope = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            scope.forEach(i => { if (isAnswered(i)) answeredCount++; });
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = effectiveTotal;
+            document.getElementById('progressFill').style.width = effectiveTotal > 0 ? `${(answeredCount / effectiveTotal) * 100}%` : '0%';
+            if (reviewMode) document.getElementById('questionInfo').querySelector('.progress-text').textContent = `错题回顾 · ${answeredCount}/${effectiveTotal} 已答`;
+        }
+
+        function updateNavButtons() {
+            if (currentPage !== 'quiz') return;
+            const effectiveTotal = getEffectiveTotal();
+            document.getElementById('footerContent').innerHTML = `<button class="nav-btn prev-btn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${currentIndex >= effectiveTotal - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay'), panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid'); let html = '';
+            questions.forEach((q, index) => {
+                const status = getAnswerStatus(index);
+                let statusClass = 'unanswered', statusText = '未答';
+                if (status === 'correct') { statusClass = 'correct'; statusText = '正确'; }
+                else if (status === 'wrong') { statusClass = 'wrong'; statusText = '错误'; }
+                else if (status === 'partial') { statusClass = 'partial'; statusText = '部分'; }
+                if (index === getEffectiveIndex() && !reviewMode) statusClass += ' current';
+                if (reviewMode && reviewIndices.includes(index) && reviewIndices.indexOf(index) === currentIndex) statusClass += ' current';
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && status !== 'unanswered') return;
+                    if (currentFilter === 'correct' && status !== 'correct') return;
+                    if (currentFilter === 'wrong' && status !== 'wrong' && status !== 'partial') return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index+1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode) { const pos = reviewIndices.indexOf(index); if (pos >= 0) currentIndex = pos; else { reviewMode = false; reviewIndices = []; currentIndex = index; } }
+            else currentIndex = index;
+            renderQuestion(); updateNavButtons(); toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay'), panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList'), history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            history.unshift({ timestamp: Date.now(), totalCount: questions.length, correctCount, accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                const record = history[index];
+                answers = record.answers.map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    return a;
+                });
+                currentIndex = 0; reviewMode = false; reviewIndices = [];
+                saveAnswers();
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion(); updateNavButtons(); toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() {
+            const serializableAnswers = answers.map((a, i) => {
+                if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput, submitted: true, hitRate: a.hitRate, hitKeywords: a.hitKeywords, missedKeywords: a.missedKeywords, totalKeywords: a.totalKeywords };
+                return a;
+            });
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers: serializableAnswers, reviewMode, reviewIndices }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0; reviewMode = data.reviewMode || false; reviewIndices = data.reviewIndices || [];
+                answers = (data.answers || new Array(questions.length).fill(null)).map((a, i) => {
+                    if (isTextInputType(questions[i]) && a && a.submitted) return { userInput: a.userInput || '', submitted: true, hitRate: a.hitRate || 0, hitKeywords: a.hitKeywords || [], missedKeywords: a.missedKeywords || [], totalKeywords: a.totalKeywords || 0 };
+                    if (isChoiceType(questions[i]) && typeof a === 'number') return a;
+                    return null;
+                });
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            const drafts = getDrafts();
+            if (Object.keys(drafts).length > 0) {
+                Object.keys(drafts).forEach(idx => {
+                    const i = parseInt(idx);
+                    if (i >= 0 && i < questions.length && isTextInputType(questions[i]) && !isAnswered(i)) {
+                        if (!answers[i] || !answers[i].submitted) { if (!answers[i]) answers[i] = { userInput: drafts[idx], submitted: false, hitRate: 0, hitKeywords: [], missedKeywords: [], totalKeywords: 0 }; else if (!answers[i].submitted) answers[i].userInput = drafts[idx]; }
+                    }
+                });
+            }
+        }
+
+        function restartQuiz() {
+            if (!confirm('确定要重新开始吗？当前进度将被清除。')) return;
+            currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+            localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message;
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 1800);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div'); div.textContent = str; return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

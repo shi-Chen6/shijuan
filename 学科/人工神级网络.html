@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>人工神经网络刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 2000px; }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-wrap: wrap;
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: #d48806;
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 80px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+            font-size: 12px;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-btn {
+            background: #fff7e6;
+            color: #d48806;
+            border: 2px solid #faad14;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        /* 新增题型样式 */
+        .text-answer-area {
+            margin-top: 16px;
+        }
+        .text-answer-area textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            background: #fafbfc;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            box-sizing: border-box;
+        }
+        .text-answer-area textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .text-answer-area textarea:disabled {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .text-answer-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .text-answer-buttons button {
+            flex: 1;
+            min-width: 70px;
+            height: 42px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .btn-draft {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .btn-clear {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .text-answer-buttons button:active {
+            transform: scale(0.96);
+        }
+        .tasks-list {
+            margin: 16px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .tasks-list li {
+            background: #fafbfc;
+            border-left: 4px solid var(--primary-color);
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-weight: 500;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        .tasks-list li .task-id {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        .keyword-match-result {
+            margin-top: 12px;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .keyword-match-result.good {
+            background: var(--success-light);
+            border: 1px solid #b7eb8f;
+            color: #135200;
+        }
+        .keyword-match-result.partial {
+            background: var(--warning-light);
+            border: 1px solid #ffe58f;
+            color: #7c5200;
+        }
+        .keyword-match-result.weak {
+            background: var(--error-light);
+            border: 1px solid #ffa39e;
+            color: #820014;
+        }
+        .keyword-highlight {
+            background: #ffd591;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .keyword-missed {
+            background: #ffccc7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-decoration: line-through;
+        }
+        .score-progress {
+            width: 100%;
+            height: 10px;
+            background: #e8e8e8;
+            border-radius: 5px;
+            margin: 8px 0 4px;
+            overflow: hidden;
+        }
+        .score-progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        .score-progress-fill.excellent {
+            background: linear-gradient(90deg, #52c41a, #73d13d);
+        }
+        .score-progress-fill.good {
+            background: linear-gradient(90deg, #4a90e2, #6ba8ff);
+        }
+        .score-progress-fill.pass {
+            background: linear-gradient(90deg, #faad14, #ffc53d);
+        }
+        .score-progress-fill.fail {
+            background: linear-gradient(90deg, #f5222d, #ff7875);
+        }
+        .score-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+        .score-tag.excellent {
+            background: #f6ffed;
+            color: #237804;
+            border: 1px solid #b7eb8f;
+        }
+        .score-tag.good {
+            background: #e6f7ff;
+            color: #096dd9;
+            border: 1px solid #91d5ff;
+        }
+        .score-tag.pass {
+            background: #fffbe6;
+            color: #ad6800;
+            border: 1px solid #ffe58f;
+        }
+        .score-tag.fail {
+            background: #fff2f0;
+            color: #a8071a;
+            border: 1px solid #ffa39e;
+        }
+        .review-mode-banner {
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: #ad6800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .review-mode-banner .exit-review {
+            margin-left: auto;
+            background: #fff;
+            border: 1px solid #ffd591;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ad6800;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">人工神经网络</div>
+                        <div class="progress-text">高中信息科技 · 同步练习</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "人工神经网络模仿的是（ ）",
+            "options": [{ "label": "A", "text": "人脑的结构和功能" }, { "label": "B", "text": "计算机的结构和功能" }, { "label": "C", "text": "动物的行为" }, { "label": "D", "text": "人类的语言" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 人脑的结构和功能</strong>。人工神经网络（ANN）的设计灵感直接来源于生物大脑的神经元连接结构和信息处理方式。<br><strong>📚 知识点讲解：</strong>人工神经网络是一种模仿生物大脑神经元连接结构和信息处理方式的计算模型，是深度学习的基础。它通过调整神经元之间的连接权重来学习数据中的规律。<br><strong>💡 解题思路：</strong>选项B、C、D都不准确——ANN模仿的是人脑而非计算机结构，也不是动物行为或人类语言。核心关键词是“模仿生物大脑”。<br><strong>🧠 记忆口诀：</strong>人脑结构是蓝本，人工神经元来模拟，连接权重勤调整，深度学习靠它起。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "人工神经网络的基本组成单位是（ ）",
+            "options": [{ "label": "A", "text": "晶体管" }, { "label": "B", "text": "人工神经元" }, { "label": "C", "text": "芯片" }, { "label": "D", "text": "程序" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 人工神经元</strong>。就像细胞是生物体的基本组成单位一样，人工神经元是人工神经网络的基本组成单位。<br><strong>📚 知识点讲解：</strong>人工神经元包含输入、权重、求和、激活函数和输出五个部分，多个神经元相互连接构成了神经网络。<br><strong>💡 解题思路：</strong>晶体管和芯片是硬件层面的组件，程序是软件指令，它们都不是神经网络的组成单位。只有人工神经元才是神经网络的基本结构单元。<br><strong>🧠 记忆口诀：</strong>神经网络神经元，五大部分组成它——输入权重求和值，激活函数出结果。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列不属于人工神经元组成部分的是（ ）",
+            "options": [{ "label": "A", "text": "输入" }, { "label": "B", "text": "权重" }, { "label": "C", "text": "硬盘" }, { "label": "D", "text": "激活函数" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 硬盘</strong>。硬盘是计算机的存储设备，不属于人工神经元的组成部分。<br><strong>📚 知识点讲解：</strong>人工神经元由输入、权重、求和、激活函数和输出五个部分组成。权重表示输入信号的重要程度，激活函数引入非线性因素。<br><strong>💡 解题思路：</strong>A、B、D都是神经元的核心组成部分，而硬盘属于计算机硬件存储设备，与神经元结构无关。<br><strong>🧠 记忆口诀：</strong>输入权重求和值，激活输出五要素，硬盘存储不相干，分清结构和硬件。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "在人工神经网络中，表示输入信号重要程度的参数是（ ）",
+            "options": [{ "label": "A", "text": "输入值" }, { "label": "B", "text": "权重" }, { "label": "C", "text": "输出值" }, { "label": "D", "text": "激活函数" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 权重</strong>。权重表示每个输入信号对输出结果的影响程度，是神经网络在训练过程中需要不断调整的核心参数。<br><strong>📚 知识点讲解：</strong>权重是神经网络学习的核心参数。训练过程本质上就是不断调整权重的过程，使得网络能够更好地拟合数据。<br><strong>💡 解题思路：</strong>输入值是原始数据，输出值是计算结果，激活函数引入非线性——它们都不表示“重要程度”。只有权重才体现了不同输入的相对重要性。<br><strong>🧠 记忆口诀：</strong>权重决定重要性，训练调整靠它变，输入乘权重再求和，核心参数记心间。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "人工神经网络中引入非线性因素的是（ ）",
+            "options": [{ "label": "A", "text": "输入层" }, { "label": "B", "text": "权重" }, { "label": "C", "text": "激活函数" }, { "label": "D", "text": "输出层" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 激活函数</strong>。如果没有激活函数，神经网络只能处理线性问题，激活函数引入了非线性因素。<br><strong>📚 知识点讲解：</strong>激活函数（如Sigmoid、ReLU、Tanh等）是神经网络中至关重要的组件，它使神经网络能够拟合复杂的非线性函数，处理非线性可分问题。<br><strong>💡 解题思路：</strong>输入层和输出层是结构概念，权重是线性参数。只有激活函数专门负责引入非线性变换。<br><strong>🧠 记忆口诀：</strong>激活函数真奇妙，非线性全靠它，没有它来只能线，复杂问题解不了。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列不属于神经网络基本层次的是（ ）",
+            "options": [{ "label": "A", "text": "输入层" }, { "label": "B", "text": "隐藏层" }, { "label": "C", "text": "输出层" }, { "label": "D", "text": "存储层" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>D. 存储层</strong>。神经网络的基本层次包括输入层、隐藏层和输出层，不存在“存储层”这一层次。<br><strong>📚 知识点讲解：</strong>输入层接收原始数据，隐藏层提取和转换特征，输出层产生最终预测结果。这三个层次构成了神经网络的基本架构。<br><strong>💡 解题思路：</strong>A、B、C都是神经网络的标准层次名称。存储层是数据库或计算机存储的概念，与神经网络结构无关。<br><strong>🧠 记忆口诀：</strong>三层架构记清楚——输入接收原始数，隐藏提取转特征，输出预测出结果。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责接收原始数据的神经网络层次是（ ）",
+            "options": [{ "label": "A", "text": "输入层" }, { "label": "B", "text": "隐藏层" }, { "label": "C", "text": "输出层" }, { "label": "D", "text": "以上都是" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 输入层</strong>。输入层负责接收原始数据，每个神经元对应数据的一个特征。<br><strong>📚 知识点讲解：</strong>输入层是神经网络的第一层，它将原始数据（如图像像素、文本词向量等）传递给后续的隐藏层进行处理。<br><strong>💡 解题思路：</strong>隐藏层负责特征提取和转换，输出层产生预测结果，它们都不直接接收原始数据。<br><strong>🧠 记忆口诀：</strong>输入层在最前，接收数据第一关，一个特征一neuron，传给后面去处理。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "负责提取和转换数据特征的神经网络层次是（ ）",
+            "options": [{ "label": "A", "text": "输入层" }, { "label": "B", "text": "隐藏层" }, { "label": "C", "text": "输出层" }, { "label": "D", "text": "以上都是" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 隐藏层</strong>。隐藏层位于输入层和输出层之间，负责对输入数据进行层层处理，提取和转换数据特征。<br><strong>📚 知识点讲解：</strong>隐藏层可以有一层或多层，深度神经网络就是包含多个隐藏层的网络。每一层提取不同层次的特征。<br><strong>💡 解题思路：</strong>输入层只接收数据，输出层只产生结果。特征提取和转换的核心工作在隐藏层完成。<br><strong>🧠 记忆口诀：</strong>隐藏层是加工厂，层层提取特征忙，低层边缘高层形，深度网络靠它强。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "最简单的神经网络类型是（ ）",
+            "options": [{ "label": "A", "text": "感知机" }, { "label": "B", "text": "卷积神经网络" }, { "label": "C", "text": "循环神经网络" }, { "label": "D", "text": "深度神经网络" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 感知机</strong>。感知机是最简单的神经网络，只有输入层和输出层，没有隐藏层。<br><strong>📚 知识点讲解：</strong>感知机由Frank Rosenblatt于1957年提出，是一种线性分类器，只能解决线性可分问题（如与、或逻辑），无法解决异或等非线性问题。<br><strong>💡 解题思路：</strong>CNN和RNN都是复杂的深度网络结构，深度神经网络包含多个隐藏层。感知机结构最简单。<br><strong>🧠 记忆口诀：</strong>感知机最简单，输入输出两层面，线性可分它能解，异或问题就难办。"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "专门用于处理图像数据的神经网络是（ ）",
+            "options": [{ "label": "A", "text": "感知机" }, { "label": "B", "text": "卷积神经网络" }, { "label": "C", "text": "循环神经网络" }, { "label": "D", "text": "以上都是" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 卷积神经网络（CNN）</strong>。CNN具有局部感受野和权值共享的特点，特别适合处理图像数据。<br><strong>📚 知识点讲解：</strong>CNN通过卷积层提取图像的局部特征（边缘、纹理等），池化层降低数据维度，全连接层进行分类。典型应用包括手写数字识别、人脸识别等。<br><strong>💡 解题思路：</strong>感知机太简单无法处理复杂图像，RNN适合序列数据。CNN专为图像设计。<br><strong>🧠 记忆口诀：</strong>CNN看图像，局部感受野共享权重，卷积池化全连接，图像识别它最强。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "专门用于处理序列数据（如文本、语音）的神经网络是（ ）",
+            "options": [{ "label": "A", "text": "感知机" }, { "label": "B", "text": "卷积神经网络" }, { "label": "C", "text": "循环神经网络" }, { "label": "D", "text": "以上都是" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 循环神经网络（RNN）</strong>。RNN具有记忆功能，能够处理序列数据，如文本、语音、时间序列等。<br><strong>📚 知识点讲解：</strong>RNN的核心特点是具有内部循环结构，能将之前时刻的信息传递到当前时刻，因此适合处理有前后关联的序列数据。<br><strong>💡 解题思路：</strong>CNN适合图像，感知机太简单。RNN的“循环”体现了对序列中前后依赖关系的处理能力。<br><strong>🧠 记忆口诀：</strong>RNN有记忆，序列数据它擅长，文本语音时间序，前后关联记心上。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于深度学习的说法，正确的是（ ）",
+            "options": [{ "label": "A", "text": "深度学习就是人工神经网络" }, { "label": "B", "text": "深度学习是基于深度神经网络的机器学习方法" }, { "label": "C", "text": "深度学习不需要数据" }, { "label": "D", "text": "深度学习只能处理图像数据" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 深度学习是基于深度神经网络的机器学习方法</strong>。深度学习是机器学习的一个分支，其核心是包含多个隐藏层的深度神经网络。<br><strong>📚 知识点讲解：</strong>深度学习与人工神经网络的关系：深度学习⊂机器学习，深度神经网络是深度学习的核心工具。深度学习可处理图像、文本、语音等多种数据类型。<br><strong>💡 解题思路：</strong>A错误——深度学习不等于ANN，而是基于深度ANN的方法。C明显错误，深度学习需要大量数据。D错误，深度学习应用广泛。<br><strong>🧠 记忆口诀：</strong>深度学习靠深度网络，多层隐藏是核心，图像文本都能处理，数据驱动是根本。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "数据从输入层经过隐藏层传递到输出层的过程称为（ ）",
+            "options": [{ "label": "A", "text": "前向传播" }, { "label": "B", "text": "反向传播" }, { "label": "C", "text": "损失计算" }, { "label": "D", "text": "迭代训练" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 前向传播</strong>。前向传播是指数据从输入层开始，经过隐藏层的逐层处理，最终到达输出层得到预测结果的过程。<br><strong>📚 知识点讲解：</strong>前向传播是神经网络的基本工作流程之一，与之对应的是反向传播（根据误差调整权重）。两者交替进行完成训练。<br><strong>💡 解题思路：</strong>反向传播是误差反向传递调整权重，损失计算是计算误差大小，迭代训练是整体循环过程。前向传播是数据正向流动。<br><strong>🧠 记忆口诀：</strong>前向传播数据走，从输入到输出流，层层计算得预测，反向传播再回头。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "根据误差调整神经网络权重的过程称为（ ）",
+            "options": [{ "label": "A", "text": "前向传播" }, { "label": "B", "text": "反向传播" }, { "label": "C", "text": "损失计算" }, { "label": "D", "text": "迭代训练" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 反向传播</strong>。反向传播是指根据预测结果与真实结果之间的误差，从输出层向输入层逐层调整神经元之间连接权重的过程。<br><strong>📚 知识点讲解：</strong>反向传播算法（Backpropagation）是训练神经网络的核心算法，利用梯度下降思想，通过链式法则计算各层权重的梯度并更新。<br><strong>💡 解题思路：</strong>前向传播是数据正向流动，损失计算只算误差，迭代训练是整体循环。反向传播专门指误差反向传递并调整权重的过程。<br><strong>🧠 记忆口诀：</strong>反向传播调权重，误差回传逐层走，梯度下降找最优，权重更新靠它做。"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "卷积神经网络的两个重要特点是（ ）",
+            "options": [{ "label": "A", "text": "局部感受野和权值共享" }, { "label": "B", "text": "全局感受野和权值共享" }, { "label": "C", "text": "局部感受野和权值独立" }, { "label": "D", "text": "全局感受野和权值独立" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 局部感受野和权值共享</strong>。这两个特点大大减少了卷积神经网络的参数数量，提高了训练效率。<br><strong>📚 知识点讲解：</strong>局部感受野指每个神经元只感受局部的图像区域（而非整张图）；权值共享指同一层的多个神经元共享相同的权重参数（卷积核）。<br><strong>💡 解题思路：</strong>CNN使用的是局部感受野而非全局感受野，权值是共享的而非独立的。这两个特点共同降低了参数量。<br><strong>🧠 记忆口诀：</strong>CNN两大特点——局部感受看小片，权值共享减参数，图像识别效率高。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "人工神经网络是一种模仿生物大脑的计算模型。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。人工神经网络的设计灵感来源于生物大脑的结构和功能，是对人脑信息处理方式的简化模拟。<br><strong>📚 知识点讲解：</strong>ANN通过大量相互连接的人工神经元来模拟生物神经元的工作方式，是深度学习的基础模型。<br><strong>💡 解题思路：</strong>这是ANN的基本定义，说法准确无误。<br><strong>🧠 记忆口诀：</strong>ANN模仿生物脑，神经元连接来模拟，简化抽象是本质，深度学习靠它起。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "人工神经元和生物神经元是完全相同的。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。人工神经元是对生物神经元的高度简化和抽象，并非完全相同。生物神经元的结构和功能要复杂得多。<br><strong>📚 知识点讲解：</strong>生物神经元涉及复杂的电化学过程、多种神经递质、树突和轴突的精细结构等，而人工神经元只是一个简化的数学模型。<br><strong>💡 解题思路：</strong>这是常见易错点——人工神经元只是“模仿”而非“复制”，两者存在本质差异。<br><strong>🧠 记忆口诀：</strong>人工简化生物复杂，数学模型非完全同，模仿不等于复制，分清抽象与现实。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "权重是神经网络学习的核心参数。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。神经网络的学习过程本质上就是不断调整神经元之间连接权重的过程，权重决定了神经网络的性能。<br><strong>📚 知识点讲解：</strong>训练的目标是找到一组最优的权重值，使得网络在给定任务上的表现最好。这是通过反向传播和梯度下降来实现的。<br><strong>💡 解题思路：</strong>权重确实是神经网络中最核心的可学习参数，这一说法完全正确。<br><strong>🧠 记忆口诀：</strong>权重是核心，训练调它勤，反向传播算梯度，梯度下降寻最优。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "激活函数的作用是引入非线性因素。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。激活函数的主要作用就是引入非线性因素，使神经网络能够拟合复杂的非线性函数。<br><strong>📚 知识点讲解：</strong>如果没有激活函数，多层神经网络将退化为线性模型，无法解决非线性可分问题。常见的激活函数有ReLU、Sigmoid、Tanh等。<br><strong>💡 解题思路：</strong>这是激活函数的核心作用，表述准确。<br><strong>🧠 记忆口诀：</strong>激活函数引非线性，没有它来只能线，ReLU、Sigmoid、Tanh，复杂问题有解法。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "神经网络只能有一个隐藏层。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。神经网络可以有一个或多个隐藏层，隐藏层的数量和每层的神经元数量是神经网络的重要超参数。<br><strong>📚 知识点讲解：</strong>深度神经网络（DNN）就是指包含多个隐藏层的网络，这也是“深度学习”名称的由来。<br><strong>💡 解题思路：</strong>单隐藏层网络是浅层网络，多层隐藏层才是深度网络。隐藏层数量灵活可变。<br><strong>🧠 记忆口诀：</strong>隐藏层数不唯一，一层多层都可以，层数多了变深度，灵活调整看任务。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "感知机只能解决线性可分问题。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。感知机是一种线性分类器，只能解决线性可分问题，对于非线性可分问题（如异或问题）无能为力。<br><strong>📚 知识点讲解：</strong>这是感知机的经典局限性，也是推动多层神经网络发展的动力之一。增加隐藏层可以解决非线性问题。<br><strong>💡 解题思路：</strong>感知机没有隐藏层，本质上是线性模型，无法处理异或等非线性问题。<br><strong>🧠 记忆口诀：</strong>感知机是线性器，异或问题解不了，引入隐藏多层后，非线性也能处理好。"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "卷积神经网络适合处理图像数据。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。卷积神经网络的结构特点（局部感受野、权值共享）使其非常适合处理具有网格结构的数据，如图像。<br><strong>📚 知识点讲解：</strong>CNN能够自动提取图像中的边缘、纹理、形状等多层次特征，在图像分类、目标检测、人脸识别等领域表现出色。<br><strong>💡 解题思路：</strong>这是CNN的核心应用领域，表述正确。<br><strong>🧠 记忆口诀：</strong>CNN天生爱图像，局部感受共享权重，边缘纹理自动提，图像识别它最棒。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "深度学习不需要人工进行特征工程。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。深度学习能够自动从原始数据中提取多层次的特征，无需人工进行复杂的特征工程，这是深度学习相比传统机器学习的一个重要优势。<br><strong>📚 知识点讲解：</strong>传统机器学习需要人工设计特征（如SIFT、HOG等），而深度学习通过多层网络自动学习特征表示。<br><strong>💡 解题思路：</strong>自动特征提取确实是深度学习的核心优势之一。<br><strong>🧠 记忆口诀：</strong>深度学习自动化，特征提取不用愁，层层网络自己学，人工特征可省去。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "神经网络的隐藏层越多，模型性能一定越好。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。过多的隐藏层可能会导致过拟合（模型在训练数据上表现很好但在测试数据上表现很差），同时也会增加计算成本和训练时间。<br><strong>📚 知识点讲解：</strong>网络深度需要根据任务复杂度和数据量合理选择，过深的网络可能带来梯度消失/爆炸、过拟合等问题。<br><strong>💡 解题思路：</strong>这是常见易错点——更多层不等于更好，需要在模型复杂度和泛化能力之间取得平衡。<br><strong>🧠 记忆口诀：</strong>隐藏层多不一定好，过拟合风险要记牢，计算成本也增加，合理选择才高效。"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "反向传播是从输入层向输出层调整权重。",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。反向传播是从输出层向输入层逐层调整权重，而不是从输入层向输出层。方向恰恰相反。<br><strong>📚 知识点讲解：</strong>反向传播利用链式法则，从输出端的误差开始，逐层向前计算各层权重的梯度，因此是“反向”的。<br><strong>💡 解题思路：</strong>前向传播是输入→输出，反向传播是输出→输入，两者方向相反。题目混淆了方向。<br><strong>🧠 记忆口诀：</strong>前向输入到输出，反向输出回输入，两个方向要分清，权重调整靠反向。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请简述人工神经元的基本结构和工作过程。",
+            "answer": "人工神经元的基本结构包括输入、权重、求和、激活函数和输出五个部分。工作过程：（1）接收来自其他神经元或外部的多个输入信号；（2）每个输入信号乘以对应的权重，表示该输入信号的重要程度；（3）对所有加权后的输入信号进行求和，得到总输入；（4）将总输入输入到激活函数中，引入非线性因素；（5）激活函数的输出就是该人工神经元的最终输出。",
+            "keywords": ["输入", "权重", "求和", "激活函数", "输出", "加权求和", "非线性", "神经元"],
+            "analysis": "<strong>🎯 答案解析：</strong>人工神经元由五部分组成：输入、权重、求和、激活函数、输出。工作过程为：接收输入→加权→求和→激活→输出。<br><strong>📚 知识点讲解：</strong>这是神经网络最基础的知识点。权重表示重要程度，激活函数引入非线性，两者是核心机制。理解单个神经元是理解整个网络的基础。<br><strong>💡 解题思路：</strong>按“输入→处理→输出”的逻辑顺序描述，突出权重和激活函数两个关键概念。<br><strong>🧠 记忆口诀：</strong>输入权重先相乘，求和之后激活过，五步流程记清楚——接收、加权、求和、激活、出结果。"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "请分别说明卷积神经网络和循环神经网络的特点及适用场景。",
+            "answer": "卷积神经网络（CNN）的特点：具有局部感受野和权值共享的特点，能够自动提取图像中的空间特征。适用场景：图像处理、计算机视觉领域，如图像分类、目标检测、人脸识别、图像分割等。循环神经网络（RNN）的特点：具有内部循环结构，能够记住之前的信息，处理序列数据。适用场景：自然语言处理、语音识别、时间序列预测等领域，如机器翻译、语音转文字、股票价格预测等。",
+            "keywords": ["卷积神经网络", "局部感受野", "权值共享", "图像处理", "循环神经网络", "记忆功能", "序列数据", "文本", "语音", "时间序列"],
+            "analysis": "<strong>🎯 答案解析：</strong>CNN核心特点为局部感受野+权值共享，擅长图像处理；RNN核心特点为内部循环+记忆功能，擅长序列数据处理。<br><strong>📚 知识点讲解：</strong>CNN通过卷积核提取局部特征，RNN通过隐藏状态传递时序信息。两者设计理念不同，适用场景有明显区分。<br><strong>💡 解题思路：</strong>从“结构特点→为什么适合→典型应用”的逻辑链来组织答案，突出两者的本质区别。<br><strong>🧠 记忆口诀：</strong>CNN看图像空间特征，RNN记序列前后关联；一个共享权重看局部，一个循环记忆传信息。"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "请简述神经网络训练的基本过程。",
+            "answer": "神经网络训练的基本过程包括以下步骤：（1）初始化权重：随机设置神经元之间的连接权重；（2）前向传播：将训练数据输入神经网络，经过逐层计算得到预测结果；（3）损失计算：使用损失函数计算预测结果与真实结果之间的误差；（4）反向传播：根据误差从输出层向输入层逐层计算梯度，调整神经元之间的连接权重；（5）迭代训练：重复步骤（2）-（4），直到损失函数的值达到可接受的范围，或者达到预设的训练次数。",
+            "keywords": ["初始化权重", "前向传播", "损失计算", "反向传播", "迭代训练", "误差", "梯度", "权重调整", "损失函数"],
+            "analysis": "<strong>🎯 答案解析：</strong>训练过程为：初始化权重→前向传播→损失计算→反向传播→迭代训练，循环进行直到收敛。<br><strong>📚 知识点讲解：</strong>这是神经网络学习的完整流程。前向传播负责预测，反向传播负责学习，两者交替进行构成训练循环。<br><strong>💡 解题思路：</strong>按训练的时间顺序描述，突出“前向预测-计算误差-反向调整”的核心循环。<br><strong>🧠 记忆口诀：</strong>初始化后前向走，算出误差再回头，反向调整权重值，循环迭代到最优。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某同学想要构建一个简单的神经网络来预测学生的考试成绩。已知影响学生考试成绩的因素有学习时间、作业完成情况和课堂表现三个特征，预测结果是考试分数（0-100分）。请回答以下问题：",
+            "tasks": [{
+                "id": 1,
+                "stem": "这个神经网络的输入层应该有多少个神经元？为什么？",
+                "answer": "输入层应该有3个神经元。因为影响学生考试成绩的因素有学习时间、作业完成情况和课堂表现三个特征，每个特征对应输入层的一个神经元。",
+                "keywords": ["3个", "三个", "学习时间", "作业完成情况", "课堂表现", "特征", "神经元"]
+            }, {
+                "id": 2,
+                "stem": "这个神经网络的输出层应该有多少个神经元？为什么？",
+                "answer": "输出层应该有1个神经元。因为我们只需要预测一个结果——考试分数。",
+                "keywords": ["1个", "一个", "考试分数", "预测", "神经元", "输出"]
+            }, {
+                "id": 3,
+                "stem": "这个任务属于分类任务还是回归任务？为什么？",
+                "answer": "这个任务属于回归任务。因为回归任务的输出是连续的数值，而考试分数是0-100之间的连续数值。",
+                "keywords": ["回归任务", "连续", "数值", "0-100", "分数"]
+            }, {
+                "id": 4,
+                "stem": "如果在训练过程中发现模型在训练数据上表现很好，但在测试数据上表现很差，这可能是什么原因？应该如何解决？",
+                "answer": "这种情况称为过拟合。过拟合是指模型在训练数据上表现很好，但在未见过的测试数据上表现很差，说明模型学习到了训练数据中的噪声和特殊特征，而不是普遍规律。解决方法：①增加训练数据量；②减少神经网络的复杂度（如减少隐藏层的数量或每层的神经元数量）；③使用正则化技术（如L1正则化、L2正则化）；④使用早停技术（在模型性能开始下降时停止训练）。",
+                "keywords": ["过拟合", "训练数据", "测试数据", "噪声", "正则化", "早停", "增加数据", "减少复杂度"]
+            }],
+            "answer": "（1）输入层3个神经元，对应三个特征；（2）输出层1个神经元，预测一个分数值；（3）回归任务，因为分数是连续数值；（4）过拟合现象，可通过增加数据、减少模型复杂度、正则化、早停等方法解决。",
+            "keywords": ["3个", "1个", "回归", "连续", "过拟合", "正则化", "早停", "增加数据", "减少复杂度"],
+            "analysis": "<strong>🎯 答案解析：</strong>输入层3个神经元对应3个特征，输出层1个神经元预测分数，这是回归任务（连续数值输出），训练差→过拟合需采用正则化等方法解决。<br><strong>📚 知识点讲解：</strong>神经网络结构设计原则：输入层神经元数=特征数，输出层神经元数=预测目标数。分类输出离散标签，回归输出连续数值。过拟合是深度学习中常见问题。<br><strong>💡 解题思路：</strong>从特征数量确定输入维度，从预测目标确定输出维度，从输出类型判断任务类型，从训练/测试表现差异识别过拟合。<br><strong>🧠 记忆口诀：</strong>特征数定输入，目标数定输出，连续回归离散分类，过拟合要正则化——增数据、减复杂度、早停技术来帮忙。"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "某医院想要使用卷积神经网络来辅助医生诊断肺部疾病，通过分析肺部CT图像来判断是否存在病变。请回答以下问题：",
+            "tasks": [{
+                "id": 1,
+                "stem": "为什么选择卷积神经网络而不是其他类型的神经网络来处理这个问题？",
+                "answer": "因为肺部CT图像是二维的图像数据，而卷积神经网络（CNN）具有局部感受野和权值共享的特点，特别适合处理图像数据。CNN能够自动提取图像中的边缘、纹理、形状等多层次特征，无需人工进行复杂的特征工程，在图像识别任务中表现出色。",
+                "keywords": ["卷积神经网络", "局部感受野", "权值共享", "图像数据", "特征提取", "CT图像", "二维"]
+            }, {
+                "id": 2,
+                "stem": "请简述使用卷积神经网络进行肺部疾病诊断的基本步骤。",
+                "answer": "基本步骤：①数据收集：收集大量的肺部CT图像数据，并由专业医生进行标注；②数据预处理：对CT图像进行预处理，如裁剪、归一化、数据增强等；③模型构建：构建合适的卷积神经网络模型，包括卷积层、池化层、全连接层等；④模型训练：使用标注好的训练数据训练模型，调整模型参数；⑤模型评估：使用测试数据评估模型的性能，如准确率、召回率、F1值等；⑥模型部署：将训练好的模型部署到医院的系统中，辅助医生进行诊断。",
+                "keywords": ["数据收集", "数据预处理", "模型构建", "模型训练", "模型评估", "模型部署", "标注", "归一化", "数据增强", "卷积层", "池化层", "全连接层"]
+            }, {
+                "id": 3,
+                "stem": "在这个应用中，可能会遇到哪些伦理问题？",
+                "answer": "可能遇到的伦理问题：①数据隐私：患者的CT图像和医疗记录属于敏感个人信息，需要采取严格的措施保护患者的隐私；②算法偏见：如果训练数据中存在偏见，模型可能会对某些地区或人群的诊断准确率较低；③责任划分：如果模型做出了错误的诊断，导致患者受到伤害，责任应该由谁承担（医院、医生、模型开发者）；④可解释性：卷积神经网络的决策过程通常被称为“黑箱”，医生和患者可能无法理解模型为什么做出这样的诊断，这会影响对模型的信任。",
+                "keywords": ["数据隐私", "算法偏见", "责任划分", "可解释性", "黑箱", "信任", "个人信息", "偏见"]
+            }],
+            "answer": "（1）CNN具有局部感受野和权值共享特点，特别适合处理CT图像数据，能自动提取多层次特征；（2）基本步骤：数据收集→数据预处理→模型构建→模型训练→模型评估→模型部署；（3）伦理问题包括数据隐私、算法偏见、责任划分和可解释性等。",
+            "keywords": ["卷积神经网络", "局部感受野", "权值共享", "数据收集", "数据预处理", "模型构建", "模型训练", "模型评估", "模型部署", "数据隐私", "算法偏见", "责任划分", "可解释性", "黑箱"],
+            "analysis": "<strong>🎯 答案解析：</strong>CNN适合CT图像处理因为其局部感受野和权值共享特点；诊断流程包括数据收集、预处理、建模、训练、评估、部署六大步骤；伦理问题涉及隐私、偏见、责任和可解释性。<br><strong>📚 知识点讲解：</strong>本题综合考查CNN应用场景、AI项目流程和AI伦理。这是高中新课标强调的核心素养——不仅会用技术，还要思考技术带来的社会影响。<br><strong>💡 解题思路：</strong>从CNN的技术特点解释选择理由，按项目流程梳理步骤，从隐私、公平、责任、透明四个维度分析伦理问题。<br><strong>🧠 记忆口诀：</strong>CNN选它因图像强，六大步骤走流程——收集预处理建模训评估部署；伦理四问记心上——隐私偏见责任和黑箱。"
+        }];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'ann_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '人工神经网络（ANN）';
+            const content = `
+                    <h3>📖 核心定义</h3>
+                    <p>人工神经网络（Artificial Neural Network，简称<span class="highlight">ANN</span>）是一种<strong>模仿生物大脑神经元连接结构和信息处理方式</strong>的计算模型，是<strong>深度学习</strong>的基础。它由大量相互连接的人工神经元组成，通过调整神经元之间的<strong>连接权重</strong>来学习数据中的规律，从而实现分类、预测、识别等功能。</p>
+
+                    <h3>🔍 核心要点拆解</h3>
+                    <p><strong>1. 人工神经元的基本结构</strong></p>
+                    <ul>
+                        <li><strong>输入：</strong>接收来自其他神经元或外部的数据</li>
+                        <li><strong>权重：</strong>表示输入信号的重要程度，是神经网络学习的<strong>核心参数</strong></li>
+                        <li><strong>求和：</strong>对所有输入信号进行加权求和</li>
+                        <li><strong>激活函数：</strong>引入<strong>非线性因素</strong>，使神经网络能够处理复杂的非线性问题</li>
+                        <li><strong>输出：</strong>经过激活函数处理后产生的结果</li>
+                    </ul>
+                    <p><strong>2. 人工神经网络的基本层次结构</strong></p>
+                    <ul>
+                        <li><strong>输入层：</strong>接收原始数据，每个神经元对应一个特征</li>
+                        <li><strong>隐藏层：</strong>位于输入层和输出层之间，负责提取和转换数据特征，可以有一层或多层</li>
+                        <li><strong>输出层：</strong>产生最终的预测结果，神经元数量取决于任务类型</li>
+                    </ul>
+                    <p><strong>3. 神经网络的基本工作过程</strong></p>
+                    <ul>
+                        <li><strong>前向传播：</strong>数据从输入层经过隐藏层逐层传递到输出层，得到预测结果</li>
+                        <li><strong>损失计算：</strong>计算预测结果与真实结果之间的误差</li>
+                        <li><strong>反向传播：</strong>根据误差从输出层向输入层逐层调整神经元之间的连接权重</li>
+                        <li><strong>迭代训练：</strong>重复前向传播和反向传播过程，直到误差达到可接受的范围</li>
+                    </ul>
+                    <p><strong>4. 常见的神经网络类型</strong></p>
+                    <table class="knowledge-table">
+                        <tr><th>类型</th><th>特点</th><th>适用场景</th></tr>
+                        <tr><td>感知机</td><td>最简单，只有输入层和输出层</td><td>线性可分问题</td></tr>
+                        <tr><td>卷积神经网络（CNN）</td><td>局部感受野、权值共享</td><td>图像处理</td></tr>
+                        <tr><td>循环神经网络（RNN）</td><td>具有记忆功能</td><td>序列数据（文本、语音）</td></tr>
+                    </table>
+                    <p><strong>5. 深度学习与人工神经网络的关系</strong></p>
+                    <ul>
+                        <li>深度学习是机器学习的一个分支，其核心是<strong>深度神经网络</strong></li>
+                        <li>深度神经网络是指包含<strong>多个隐藏层</strong>的人工神经网络</li>
+                        <li>深度学习能够<strong>自动</strong>从原始数据中提取多层次的特征，无需人工进行复杂的特征工程</li>
+                    </ul>
+
+                    <h3>📚 教材典型案例</h3>
+                    <p><strong>1. 手写数字识别（MNIST数据集）</strong></p>
+                    <p>这是人教版、粤教版、沪教版高中教材中普遍使用的经典案例。通过构建一个简单的全连接神经网络，输入28×28像素的手写数字图像，经过隐藏层处理后，输出层的10个神经元分别对应数字0-9。</p>
+                    <p><strong>2. 猫狗图像分类</strong></p>
+                    <p>这是卷积神经网络的典型应用案例。教材中通常会介绍如何使用CNN自动提取图像中的边缘、纹理、形状等特征，然后判断图像中的动物是猫还是狗。</p>
+
+                    <h3>⚠️ 教学重点 / 易错点</h3>
+                    <p><strong>教学重点：</strong>人工神经元的基本结构；神经网络的层次结构；前向传播的基本过程；常见神经网络类型的特点和应用场景；深度学习与人工神经网络的关系。</p>
+                    <p><strong>易错点：</strong></p>
+                    <ul>
+                        <li>❌ 混淆人工神经元和生物神经元：人工神经元是对生物神经元的<strong>简化模拟</strong>，并非完全相同</li>
+                        <li>❌ 认为隐藏层越多越好：过多的隐藏层可能会导致<strong>过拟合</strong>和计算成本增加</li>
+                        <li>❌ 混淆CNN和RNN：CNN适合处理<strong>图像</strong>，RNN适合处理<strong>序列数据</strong></li>
+                        <li>❌ 认为深度学习就是人工神经网络：深度学习是<strong>基于深度神经网络</strong>的机器学习方法</li>
+                    </ul>
+
+                    <h3>🎓 学段区分说明</h3>
+                    <p><strong>初中阶段：</strong>仅要求了解基本概念，知道它是模仿人脑结构的计算模型，能举例说明生活中的应用（如人脸识别、语音识别、图像搜索）。</p>
+                    <p><strong>高中阶段：</strong>要求理解人工神经元的基本结构和工作原理，掌握神经网络的层次结构和前向传播过程，了解常见类型及其特点，理解深度学习与ANN的关系，能够搭建简单的神经网络模型解决实际问题。</p>
+                `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) {
+            const t = q.type;
+            if (t === '单选题') return '单选题';
+            if (t === '判断题') return '判断题';
+            if (t === '简答题') return '简答题';
+            if (t === '综合应用题') return '综合应用题';
+            return t;
+        }
+
+        function isChoiceType(q) {
+            return q.type === '单选题' || q.type === '判断题';
+        }
+
+        function isTextType(q) {
+            return q.type === '简答题' || q.type === '综合应用题';
+        }
+
+        function getActualIndex() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return wrongIndices[reviewIndex];
+            }
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return wrongIndices.length;
+            }
+            return questions.length;
+        }
+
+        function getCurrentPosition() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return reviewIndex + 1;
+            }
+            return currentIndex + 1;
+        }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex();
+            const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+
+            let html = '';
+
+            if (reviewMode) {
+                html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            }
+
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+
+            if (q.image) {
+                html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            }
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx;
+                    const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) {
+                        if (isSelected && isCorrect) classes.push('correct');
+                        else if (isSelected && !isCorrect) classes.push('wrong');
+                        else if (isCorrect) classes.push('correct');
+                    } else if (isSelected) {
+                        classes.push('selected');
+                    }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') {
+                html += renderTextAnswerArea(actualIdx, q);
+            } else if (q.type === '综合应用题') {
+                html += renderComprehensiveArea(actualIdx, q);
+            }
+
+            html += '</div>';
+
+            if (answers[actualIdx] !== null && isChoiceType(q)) {
+                const isCorrect = answers[actualIdx] === q.answer;
+                html += buildAnalysisCard(isCorrect, q.analysis);
+            } else if (answers[actualIdx] !== null && isTextType(q)) {
+                const result = evaluateTextAnswer(actualIdx, q);
+                html += buildTextResultCard(actualIdx, q, result);
+            }
+
+            const allAnsweredInMode = checkAllAnsweredInMode();
+
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allAnsweredInMode) ||
+                (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount();
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = getWrongCount();
+                if (!reviewMode) {
+                    saveToHistory(correctCount, accuracy);
+                }
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount, allAnsweredInMode);
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+
+            setTimeout(() => {
+                if (isTextType(q)) {
+                    const ta = document.getElementById('textAnswerInput');
+                    if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') {
+                        ta.value = answers[actualIdx];
+                    }
+                    const draft = getDraft(actualIdx);
+                    if (ta && answers[actualIdx] === null && draft) {
+                        ta.value = draft;
+                    }
+                }
+            }, 50);
+
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const savedAnswer = answers[actualIdx];
+            const draft = getDraft(actualIdx);
+            const displayVal = (savedAnswer !== null && typeof savedAnswer === 'string') ? savedAnswer : (draft || '');
+            const disabled = savedAnswer !== null && typeof savedAnswer === 'string';
+            let html = `<div class="text-answer-area">`;
+            html += `<textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea>`;
+            html += `<div class="text-answer-buttons">`;
+            if (!disabled) {
+                html += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button>`;
+                html += `<button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button>`;
+                html += `<button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                html += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) {
+            let html = '';
+            if (q.tasks && q.tasks.length > 0) {
+                html += `<ul class="tasks-list">`;
+                q.tasks.forEach(task => {
+                    html += `<li><span class="task-id">${task.id}</span> ${task.stem}</li>`;
+                });
+                html += `</ul>`;
+            }
+            html += renderTextAnswerArea(actualIdx, q);
+            return html;
+        }
+
+        function buildAnalysisCard(isCorrect, analysisHtml) {
+            return `
+                <div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">${analysisHtml}</div>
+                </div>
+            `;
+        }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const badgeClass = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const badgeText = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            let html = `
+                <div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 作答评估 <span class="result-badge ${badgeClass}">${badgeText}</span></div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">
+                        <p><strong>📋 你的作答：</strong></p>
+                        <div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div>
+                        <p><strong>✅ 标准答案：</strong></p>
+                        <div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div>
+                        <p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p>
+                        <div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div>
+                        <span class="score-tag ${result.progressClass}">${result.levelLabel}</span>
+                        <p style="margin-top:8px;"><strong>命中关键词：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p>
+                        <p><strong>未命中关键词：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p>
+                        <hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">
+                        ${q.analysis}
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount, allDone) {
+            let html = `
+                <div class="completion-screen">
+                    <div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div>
+                    <h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1>
+                    <p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        <div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+            `;
+            if (wrongCount > 0 && !reviewMode) {
+                html += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button>`;
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            if (reviewMode && wrongCount > 0) {
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function selectOption(idx) {
+            const actualIdx = getActualIndex();
+            if (answers[actualIdx] !== null) return;
+            if (!isChoiceType(questions[actualIdx])) return;
+            answers[actualIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const isCorrect = idx === questions[actualIdx].answer;
+            showToast(isCorrect ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(actualIdx) {
+            if (answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') return;
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const userAnswer = ta.value.trim();
+            if (!userAnswer) {
+                showToast('请先输入你的回答');
+                return;
+            }
+            answers[actualIdx] = userAnswer;
+            clearDraft(actualIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const result = evaluateTextAnswer(actualIdx, questions[actualIdx]);
+            const msg = result.level === 'good' ? '回答较好！✓' : (result.level === 'partial' ? '部分正确 △' : '需加强 ✗');
+            showToast(msg);
+        }
+
+        function saveDraftOnly(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const val = ta.value.trim();
+            if (val) {
+                saveDraft(actualIdx, val);
+                showToast('草稿已保存 ✓');
+            } else {
+                clearDraft(actualIdx);
+                showToast('草稿已清空');
+            }
+        }
+
+        function clearTextInput(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (ta) ta.value = '';
+            clearDraft(actualIdx);
+            showToast('输入已清空');
+        }
+
+        function evaluateTextAnswer(actualIdx, q) {
+            const userAnswer = (answers[actualIdx] && typeof answers[actualIdx] === 'string') ? answers[actualIdx] : '';
+            const allKeywords = [];
+            let referenceAnswer = '';
+
+            if (q.type === '简答题') {
+                if (q.keywords) allKeywords.push(...q.keywords);
+                referenceAnswer = q.answer || '';
+            } else if (q.type === '综合应用题') {
+                if (q.keywords) allKeywords.push(...q.keywords);
+                referenceAnswer = q.answer || '';
+            }
+
+            const totalKeywords = allKeywords.length;
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const userLower = userAnswer.toLowerCase();
+
+            allKeywords.forEach(kw => {
+                if (userLower.includes(kw.toLowerCase())) {
+                    hitKeywords.push(kw);
+                } else {
+                    missedKeywords.push(kw);
+                }
+            });
+
+            const hitCount = hitKeywords.length;
+            const hitRate = totalKeywords > 0 ? Math.round((hitCount / totalKeywords) * 100) : 0;
+
+            let level, levelLabel, progressClass;
+            if (q.type === '简答题') {
+                if (hitRate >= 60) { level = 'good'; levelLabel = '回答较好'; progressClass = 'excellent'; }
+                else if (hitRate >= 30) { level = 'partial'; levelLabel = '部分正确'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            } else {
+                if (hitRate >= 80) { level = 'good'; levelLabel = '优秀'; progressClass = 'excellent'; }
+                else if (hitRate >= 60) { level = 'good'; levelLabel = '良好'; progressClass = 'good'; }
+                else if (hitRate >= 40) { level = 'partial'; levelLabel = '合格'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            }
+
+            return {
+                userAnswer,
+                referenceAnswer,
+                totalKeywords,
+                hitCount,
+                hitRate,
+                hitKeywords,
+                missedKeywords,
+                level,
+                levelLabel,
+                progressClass
+            };
+        }
+
+        function getCorrectCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) {
+                    if (answers[i] === q.answer) count++;
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(i, q);
+                    if (result.level === 'good') count++;
+                }
+            });
+            return count;
+        }
+
+        function getWrongCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) {
+                    if (answers[i] !== q.answer) count++;
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(i, q);
+                    if (result.level === 'weak') count++;
+                }
+            });
+            return count;
+        }
+
+        function getWrongIndicesArray() {
+            const arr = [];
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) {
+                    if (answers[i] !== q.answer) arr.push(i);
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(i, q);
+                    if (result.level === 'weak') arr.push(i);
+                }
+            });
+            return arr;
+        }
+
+        function checkAllAnsweredInMode() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return wrongIndices.every(wi => answers[wi] !== null);
+            }
+            return answers.every(a => a !== null);
+        }
+
+        function startReviewWrong() {
+            wrongIndices = getWrongIndicesArray();
+            if (wrongIndices.length === 0) {
+                showToast('没有错题可回顾');
+                return;
+            }
+            reviewMode = true;
+            reviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false;
+            wrongIndices = [];
+            currentIndex = 0;
+            currentPage = 'quiz';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已退出错题回顾模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongArr = getWrongIndicesArray();
+            if (wrongArr.length === 0) {
+                showToast('没有错题可导出');
+                return;
+            }
+            const moduleName = '人工神经网络';
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const fileName = `错题本_${moduleName}_${dateStr}.csv`;
+
+            const rows = [];
+            rows.push(['题型', '题目', '用户答案', '正确答案', '关键词命中率', '结果', '解析']);
+
+            wrongArr.forEach(i => {
+                const q = questions[i];
+                const qType = getQuestionTypeLabel(q);
+                const stem = q.stem.replace(/"/g, '""');
+                let userAns = '';
+                let correctAns = '';
+                let hitRate = '';
+                let result = '';
+
+                if (isChoiceType(q)) {
+                    userAns = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : '';
+                    correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                    result = answers[i] === q.answer ? '正确' : '错误';
+                    hitRate = answers[i] === q.answer ? '100%' : '0%';
+                } else if (isTextType(q)) {
+                    userAns = (answers[i] && typeof answers[i] === 'string') ? answers[i] : '';
+                    correctAns = q.answer || '';
+                    const evalResult = evaluateTextAnswer(i, q);
+                    hitRate = evalResult.hitRate + '%';
+                    result = evalResult.levelLabel;
+                }
+
+                const analysisText = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+
+                rows.push([
+                    qType,
+                    '"' + stem + '"',
+                    '"' + userAns.replace(/"/g, '""') + '"',
+                    '"' + correctAns.replace(/"/g, '""') + '"',
+                    hitRate,
+                    result,
+                    '"' + analysisText + '"'
+                ]);
+            });
+
+            const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('错题CSV已导出：' + fileName);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); }
+            } else if (!reviewMode && currentIndex > 0) {
+                currentIndex--; renderQuestion(); updateNavButtons();
+            }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) {
+                if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); }
+            } else if (!reviewMode && currentIndex < questions.length - 1) {
+                currentIndex++; renderQuestion(); updateNavButtons();
+            }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            document.getElementById('currentNum').textContent = currentPos;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            const isFirst = currentPos <= 1;
+            const isLast = currentPos >= totalInMode;
+            const allDone = checkAllAnsweredInMode();
+
+            footerContent.innerHTML = `
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+            `;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (isChoiceType(q)) {
+                        if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                        else { statusClass = 'wrong'; statusText = '错误'; }
+                    } else if (isTextType(q)) {
+                        const result = evaluateTextAnswer(index, q);
+                        if (result.level === 'good') { statusClass = 'correct'; statusText = '较好'; }
+                        else if (result.level === 'partial') { statusClass = 'correct'; statusText = '部分'; }
+                        else { statusClass = 'wrong'; statusText = '加强'; }
+                    }
+                }
+                if (index === getActualIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && wrongIndices.includes(index) && wrongIndices[reviewIndex] === index) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] !== q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level === 'weak') return; }
+                    }
+                    if (currentFilter === 'wrong') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] === q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level !== 'weak') return; }
+                    }
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter, e) {
+            currentFilter = filter;
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            reviewMode = false;
+            wrongIndices = [];
+            currentIndex = index;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`;
+                return;
+            }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY_HISTORY);
+                return saved ? JSON.parse(saved) : [];
+            } catch (e) {
+                console.warn('历史记录数据异常，已重置');
+                localStorage.removeItem(STORAGE_KEY_HISTORY);
+                return [];
+            }
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                answers = [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                wrongIndices = [];
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除');
+            }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        function saveAnswers() {
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex }));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            try {
+                const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+                if (savedAnswers) {
+                    const data = JSON.parse(savedAnswers);
+                    currentIndex = data.currentIndex || 0;
+                    answers = data.answers || new Array(questions.length).fill(null);
+                    reviewMode = data.reviewMode || false;
+                    wrongIndices = data.wrongIndices || [];
+                    reviewIndex = data.reviewIndex || 0;
+                }
+            } catch (e) {
+                console.warn('答题进度数据解析失败，已重置');
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                answers = new Array(questions.length).fill(null);
+            }
+            try {
+                const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    fontSize = settings.fontSize || 16;
+                    document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                    document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                    document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+                }
+            } catch (e) {
+                console.warn('设置数据解析失败，已重置');
+                localStorage.removeItem(STORAGE_KEY_SETTINGS);
+            }
+        }
+
+        function saveDraft(index, value) {
+            const drafts = getDrafts();
+            drafts[index] = value;
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function getDraft(index) {
+            const drafts = getDrafts();
+            return drafts[index] || null;
+        }
+
+        function clearDraft(index) {
+            const drafts = getDrafts();
+            delete drafts[index];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function getDrafts() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY_DRAFTS);
+                return saved ? JSON.parse(saved) : {};
+            } catch (e) {
+                console.warn('草稿数据异常，已重置');
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                return {};
+            }
+        }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0;
+                reviewMode = false;
+                wrongIndices = [];
+                reviewIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion();
+                updateNavButtons();
+                renderAnswerSheet();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0;
+                reviewMode = false;
+                wrongIndices = [];
+                reviewIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage();
+                renderAnswerSheet();
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+    </script>
+</body>
+</html>

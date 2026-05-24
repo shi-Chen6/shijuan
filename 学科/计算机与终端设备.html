@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>计算机与终端设备刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 4px 20px rgba(0,0,0,0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item:hover { border-color: var(--primary-color); } .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); } .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); } .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; } .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0,0,0,0.08); z-index: 150; }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); } .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); } .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; } .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); } .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; } .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); } .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; } .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; } .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); } .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%,-50%) scale(0.9); } to { opacity: 1; transform: translate(-50%,-50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); } .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .text-answer-area { margin-top: 16px; } .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; } .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; } .btn-draft { background: #f5f5f5; color: var(--text-secondary); } .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; } .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; } .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; } .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); } .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); } .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; } .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; } .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+<div class="app-container">
+<header class="header"><div class="header-top"><div class="left-section"><div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div><div class="question-info" id="questionInfo"><div class="question-number">第 <span id="currentNum">1</span> 题</div><div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div></div><div class="question-info" id="pageTitle" style="display:none;"><div class="question-number">计算机与终端设备</div><div class="progress-text">高中信息科技 · 核心考点</div></div></div><div class="right-section"><div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div><div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div><div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div><div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div></div></div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:5%"></div></div></header>
+<main class="content-area" id="contentArea"><div class="knowledge-page" id="knowledgePage"><div class="knowledge-card"><div class="knowledge-title" id="knowledgeTitle"></div><div class="knowledge-content" id="knowledgeContent"></div></div></div><div id="quizContent" style="display:none;"></div></main>
+<footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+<div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div><div class="sheet-panel" id="sheetPanel"><div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div><div class="sheet-filters"><button class="filter-btn active" onclick="filterQuestions('all',event)">全部</button><button class="filter-btn" onclick="filterQuestions('unanswered',event)">未答</button><button class="filter-btn" onclick="filterQuestions('correct',event)">正确</button><button class="filter-btn" onclick="filterQuestions('wrong',event)">错误</button></div><div class="sheet-grid" id="sheetGrid"></div></div>
+<div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div><div class="history-panel" id="historyPanel"><div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div><div class="history-list" id="historyList"></div></div>
+</div>
+<script>
+    const questions = [];
+    const APP_ID = 'comp_term_quiz_1';
+    const STORAGE_KEY_ANSWERS = APP_ID + '_answers', STORAGE_KEY_SETTINGS = APP_ID + '_settings', STORAGE_KEY_HISTORY = APP_ID + '_history', STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+    let currentIndex = 0, currentPage = 'learn', answers = [], fontSize = 16, currentFilter = 'all', reviewMode = false, wrongIndices = [], reviewIndex = 0;
+    // 注入所有题目数据
+    (function(){questions.push(...[{"type":"单选题","difficulty":"基础","stem":"直接面向用户、实现人机交互操作的设备统称为（ ）","options":[{"label":"A","text":"终端设备"},{"label":"B","text":"网线"},{"label":"C","text":"电源"},{"label":"D","text":"路由器"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 终端设备</strong>。终端设备是面向用户、实现人机交互的硬件统称。<br><strong>📚 知识点讲解：</strong>终端包括手机、平板、扫码枪、显示屏等，负责输入与输出。<br><strong>💡 解题思路：</strong>网线、电源、路由器是传输或供电设备，不直接交互。<br><strong>🧠 记忆口诀：</strong>终端人机交互口，手机平板扫码枪，输入输出直接碰，网线电源不算它。"},{"type":"单选题","difficulty":"基础","stem":"信息系统中承担数据计算、逻辑处理的核心载体是（ ）","options":[{"label":"A","text":"音箱"},{"label":"B","text":"计算机"},{"label":"C","text":"台灯"},{"label":"D","text":"打印机"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 计算机</strong>。计算机负责数据计算、逻辑判断和程序运行，是系统的核心。<br><strong>📚 知识点讲解：</strong>服务器、个人电脑都属于计算机范畴，承担运算管控任务。<br><strong>💡 解题思路：</strong>音箱、打印机是输出设备，台灯无关。<br><strong>🧠 记忆口诀：</strong>计算机是大脑，运算逻辑全包办，终端只管交互忙，分工不同莫混淆。"},{"type":"单选题","difficulty":"基础","stem":"手机、平板、扫码枪都属于信息系统中的（ ）","options":[{"label":"A","text":"传输介质"},{"label":"B","text":"终端设备"},{"label":"C","text":"存储硬盘"},{"label":"D","text":"防护软件"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 终端设备</strong>。它们都是日常使用的人机交互终端。<br><strong>📚 知识点讲解：</strong>终端设备种类繁多，共同特点是直接面向用户操作。<br><strong>💡 解题思路：</strong>传输介质如网线，存储硬盘是配件。<br><strong>🧠 记忆口诀：</strong>手机平板扫码枪，统统归入终端类，人手一台交互用，信息系统输入口。"},{"type":"单选题","difficulty":"基础","stem":"顾客扫码付款录入消费数据，扫码设备起到的作用是（ ）","options":[{"label":"A","text":"数据输入交互"},{"label":"B","text":"数据永久销毁"},{"label":"C","text":"网络信号放大"},{"label":"D","text":"线路连通"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 数据输入交互</strong>。扫码设备采集商品信息，属于数据输入环节。<br><strong>📚 知识点讲解：</strong>输入终端负责采集原始数据，如键盘、扫码枪、传感器等。<br><strong>💡 解题思路：</strong>扫码是录入数据的过程。<br><strong>🧠 记忆口诀：</strong>扫码输入数据来，键盘鼠标也同类，采集原始信息源，输入终端作用显。"},{"type":"单选题","difficulty":"基础","stem":"后台服务器汇总全校学生成绩并统计排名，该设备属于（ ）","options":[{"label":"A","text":"核心计算机"},{"label":"B","text":"输出终端"},{"label":"C","text":"输入终端"},{"label":"D","text":"外接外设"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 核心计算机</strong>。服务器是高性能计算机，负责数据汇总、统计等核心运算。<br><strong>📚 知识点讲解：</strong>服务器属于计算机范畴，不是终端设备。<br><strong>💡 解题思路：</strong>汇总成绩需要计算能力，服务器胜任。<br><strong>🧠 记忆口诀：</strong>服务器是计算机，后台运算担大任，终端只管交互用，分清角色不混淆。"},{"type":"单选题","difficulty":"基础","stem":"显示器展示系统处理后的图文结果，属于终端的（ ）","options":[{"label":"A","text":"数据输出作用"},{"label":"B","text":"数据录入作用"},{"label":"C","text":"运算处理作用"},{"label":"D","text":"病毒查杀作用"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 数据输出作用</strong>。显示器将处理好的信息展示给用户，是输出终端。<br><strong>📚 知识点讲解：</strong>输出终端包括显示器、音箱、打印机等，呈现处理结果。<br><strong>💡 解题思路：</strong>展示结果=输出功能。<br><strong>🧠 记忆口诀：</strong>显示器输出结果，音箱打印机同类，展现处理完信息，输出终端作用明。"},{"type":"单选题","difficulty":"基础","stem":"单台台式电脑离线编辑文档，体现设备的（ ）","options":[{"label":"A","text":"独立信息处理作用"},{"label":"B","text":"跨区域远程共享"},{"label":"C","text":"多人异地协作"},{"label":"D","text":"全网数据互通"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 独立信息处理作用</strong>。单机离线工作体现了计算机独立处理信息的能力。<br><strong>📚 知识点讲解：</strong>单台计算机可完成本地文档编辑、数据统计等任务。<br><strong>💡 解题思路：</strong>离线表示无需网络，独立运行。<br><strong>🧠 记忆口诀：</strong>单机离线能办公，独立处理不联网，文档编辑数据算，基本能力已具备。"},{"type":"单选题","difficulty":"基础","stem":"下列设备不属于终端设备的是（ ）","options":[{"label":"A","text":"人脸识别门禁屏"},{"label":"B","text":"收银操作屏"},{"label":"C","text":"系统服务器"},{"label":"D","text":"学习平板"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 系统服务器</strong>。服务器是核心计算机，不属于前端操作展示类终端。<br><strong>📚 知识点讲解：</strong>终端与计算机的核心区别：终端侧重交互，计算机侧重运算。<br><strong>💡 解题思路：</strong>服务器后台运算，不是终端。<br><strong>🧠 记忆口诀：</strong>服务器是计算机，不是终端莫混淆，人脸收银学习板，都是终端交互用。"},{"type":"单选题","difficulty":"基础","stem":"计算机运行应用软件、判定业务规则，主要发挥（ ）","options":[{"label":"A","text":"运算管控作用"},{"label":"B","text":"画面播放作用"},{"label":"C","text":"声音输出作用"},{"label":"D","text":"纸质打印作用"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 运算管控作用</strong>。计算机的核心价值是运算分析、逻辑判断和系统管控。<br><strong>📚 知识点讲解：</strong>计算机是信息系统的“大脑”，负责处理数据、做出决策。<br><strong>💡 解题思路：</strong>运行软件、判定规则都需要运算能力。<br><strong>🧠 记忆口诀：</strong>计算机大脑运算忙，逻辑判断规则定，运行软件管控强，核心作用记心上。"},{"type":"单选题","difficulty":"基础","stem":"多台终端与计算机联网后，无法实现的功能是（ ）","options":[{"label":"A","text":"跨设备数据共享"},{"label":"B","text":"远程提交信息"},{"label":"C","text":"隔绝所有数据往来"},{"label":"D","text":"分布式协同处理"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 隔绝所有数据往来</strong>。联网的目的就是实现数据互通，无法隔绝所有数据往来。<br><strong>📚 知识点讲解：</strong>网络连接使设备间可以共享数据和协同工作。<br><strong>💡 解题思路：</strong>A、B、D都是联网的优势。<br><strong>🧠 记忆口诀：</strong>联网共享协同忙，数据互通是目标，隔绝往来做不到，网络连接价值高。"},{"type":"单选题","difficulty":"中档","stem":"关于终端与计算机作用描述正确的是（ ）","options":[{"label":"A","text":"终端负责运算，计算机负责交互"},{"label":"B","text":"终端多用于人机操作，计算机承担核心处理"},{"label":"C","text":"二者功能完全一致，可以互相替换"},{"label":"D","text":"计算机只能展示画面，不能计算数据"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 终端多用于人机操作，计算机承担核心处理</strong>。这是两者的本质分工。<br><strong>📚 知识点讲解：</strong>终端侧重交互（输入输出），计算机侧重运算处理。<br><strong>💡 解题思路：</strong>A、C、D都颠倒了功能。<br><strong>🧠 记忆口诀：</strong>终端交互计算机算，分工明确不替换，终端操作展示用，计算机核心运算强。"},{"type":"单选题","difficulty":"中档","stem":"超市收银系统中，核算商品总价的设备是（ ）","options":[{"label":"A","text":"扫码输入终端"},{"label":"B","text":"收银计算机"},{"label":"C","text":"付款显示屏"},{"label":"D","text":"小票打印机"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 收银计算机</strong>。价格核算属于数据运算，由收银计算机完成。<br><strong>📚 知识点讲解：</strong>计算机负责计算总价、折扣、找零等逻辑处理。<br><strong>💡 解题思路：</strong>扫码是输入，显示屏是输出，核算是处理。<br><strong>🧠 记忆口诀：</strong>收银计算机核算，商品总价它来算，扫码输入屏输出，分工协作收银快。"},{"type":"单选题","difficulty":"中档","stem":"大型智慧城市管控系统，数据统筹调度依靠（ ）","options":[{"label":"A","text":"普通手机终端"},{"label":"B","text":"核心服务器计算机"},{"label":"C","text":"家用平板"},{"label":"D","text":"个人笔记本"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 核心服务器计算机</strong>。大型系统数据调度需要高性能服务器支撑。<br><strong>📚 知识点讲解：</strong>服务器具备强大的计算和数据处理能力，是大型系统的中枢。<br><strong>💡 解题思路：</strong>手机、平板、笔记本性能不足以统筹大型系统。<br><strong>🧠 记忆口诀：</strong>智慧城市服务器，数据调度它统筹，手机平板能力小，核心中枢靠计算机。"},{"type":"单选题","difficulty":"中档","stem":"下列行为依靠终端设备交互作用完成的是（ ）","options":[{"label":"A","text":"服务器统计车流数据"},{"label":"B","text":"电脑后台运算公式"},{"label":"C","text":"学生手机点击提交作业"},{"label":"D","text":"主机内部处理信息"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 学生手机点击提交作业</strong>。手机点击是典型的人机交互操作。<br><strong>📚 知识点讲解：</strong>终端交互包括点击、输入、查看等用户操作。<br><strong>💡 解题思路：</strong>A、B、D都是计算机内部运算，非交互。<br><strong>🧠 记忆口诀：</strong>手机点击交作业，终端交互典型例，后台运算服务器事，人机交互终端做。"},{"type":"单选题","difficulty":"中档","stem":"一台设备无法独立完成大型管理系统业务，原因是（ ）","options":[{"label":"A","text":"大型系统需要多类设备分工协作"},{"label":"B","text":"设备本身无任何处理能力"},{"label":"C","text":"网络会限制设备所有功能"},{"label":"D","text":"终端不能录入任何数据"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 大型系统需要多类设备分工协作</strong>。复杂系统需要输入、处理、输出多类设备配合。<br><strong>📚 知识点讲解：</strong>信息系统由多种设备协同完成数据采集、处理、存储、输出。<br><strong>💡 解题思路：</strong>单台设备能力有限，无法覆盖所有环节。<br><strong>🧠 记忆口诀：</strong>大型系统协作忙，单台设备难承担，输入处理输出分，多类设备齐上阵。"},{"type":"判断题","difficulty":"基础","stem":"手机、台式机、人脸识别屏都属于信息系统终端设备。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。这些设备都直接面向用户，实现人机交互。<br><strong>📚 知识点讲解：</strong>终端设备种类多样，共同特点是交互功能。<br><strong>💡 解题思路：</strong>三者都是常见的交互设备。<br><strong>🧠 记忆口诀：</strong>手机台式人脸屏，信息系统终端兵，人机交互靠它们，分类明确记心中。"},{"type":"判断题","difficulty":"基础","stem":"计算机是信息系统里负责数据运算、业务处理的核心设备。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。计算机是系统的运算和控制核心。<br><strong>📚 知识点讲解：</strong>计算机负责数据处理、逻辑判断、程序运行。<br><strong>💡 解题思路：</strong>符合计算机的核心定位。<br><strong>🧠 记忆口诀：</strong>计算机核心运算，业务处理全靠它，数据计算逻辑判，系统大脑作用大。"},{"type":"判断题","difficulty":"基础","stem":"终端设备仅能输入数据，不具备展示结果的功能。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。显示类终端可以输出、展示处理后的结果信息。<br><strong>📚 知识点讲解：</strong>终端分为输入终端和输出终端，显示器、音箱就是输出终端。<br><strong>💡 解题思路：</strong>终端既能输入也能输出。<br><strong>🧠 记忆口诀：</strong>终端输入也输出，显示器展示结果，键盘输入显输出，功能齐全不单一。"},{"type":"判断题","difficulty":"基础","stem":"单台计算机可以独立完成简单的本地信息处理工作。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。单机离线可完成文档编辑、数据统计等简单任务。<br><strong>📚 知识点讲解：</strong>计算机具备独立处理信息的能力。<br><strong>💡 解题思路：</strong>日常使用电脑办公就是例子。<br><strong>🧠 记忆口诀：</strong>单机离线能办公，文档编辑数据算，独立处理能力强，日常使用最常见。"},{"type":"判断题","difficulty":"基础","stem":"联网后的计算机与终端，能够实现远程数据共享与协同操作。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。网络使设备间可以共享数据和远程协作。<br><strong>📚 知识点讲解：</strong>联网协作是信息系统的重要价值。<br><strong>💡 解题思路：</strong>互联网的基本功能就是共享和协作。<br><strong>🧠 记忆口诀：</strong>联网共享协同强，远程交互数据通，打破地域限制，信息系统价值增。"},{"type":"判断题","difficulty":"基础","stem":"后台服务器属于核心计算机，不属于普通操作终端。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。服务器是高性能计算机，负责后台运算，不是前端终端。<br><strong>📚 知识点讲解：</strong>服务器是计算机的一种，不属于终端设备类别。<br><strong>💡 解题思路：</strong>服务器不直接面向用户交互。<br><strong>🧠 记忆口诀：</strong>服务器是计算机，后台运算不交互，终端面前用户用，分类清晰不混淆。"},{"type":"判断题","difficulty":"基础","stem":"键盘、扫码枪作为输入终端，主要用来采集录入原始数据。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。输入终端的主要作用就是采集和录入数据。<br><strong>📚 知识点讲解：</strong>键盘、鼠标、扫码枪、传感器等都是典型的输入终端。<br><strong>💡 解题思路：</strong>输入终端=数据采集入口。<br><strong>🧠 记忆口诀：</strong>键盘扫码输入终端，采集数据第一关，信息录入靠它们，原始数据进系统。"},{"type":"判断题","difficulty":"中档","stem":"终端设备和计算机功能可以相互替代，没有分工区别。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。终端侧重交互，计算机侧重运算，分工不同不可替代。<br><strong>📚 知识点讲解：</strong>两者在信息系统中扮演不同角色，缺一不可。<br><strong>💡 解题思路：</strong>无法用显示器替代服务器进行运算。<br><strong>🧠 记忆口诀：</strong>终端交互计算机算，分工明确不可替，各司其职配合好，系统运转才顺畅。"},{"type":"判断题","difficulty":"中档","stem":"大型信息系统依靠单一计算机就能完成全部管控与交互工作。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。大型系统需要多种设备分工协作，单一计算机无法覆盖所有环节。<br><strong>📚 知识点讲解：</strong>信息系统由输入、处理、输出、存储等多类设备协同组成。<br><strong>💡 解题思路：</strong>大型系统复杂，需多设备配合。<br><strong>🧠 记忆口诀：</strong>大型系统协作多，单一计算机不够，终端输入输出忙，服务器运算来撑。"},{"type":"判断题","difficulty":"中档","stem":"计算机既可以处理数据，也能搭配终端实现人机信息交互。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。计算机本身可处理数据，连接显示器、键盘等终端后即可实现交互。<br><strong>📚 知识点讲解：</strong>个人电脑就是计算机搭配终端的典型例子。<br><strong>💡 解题思路：</strong>电脑主机+显示器+键盘=计算机+终端组合。<br><strong>🧠 记忆口诀：</strong>计算机处理数据强，搭配终端交互忙，主机接屏和键盘，信息系统完整样。"},{"type":"简答题","difficulty":"中档","stem":"简要说明终端设备与计算机在信息系统中的核心作用区别。","answer":"终端设备：主要面向使用者，完成数据录入、指令下发、结果展示，负责人机交互。计算机：作为系统核心，完成数据计算、逻辑判定、程序运行、设备统筹管控工作。","keywords":["终端","交互","计算机","运算","核心"],"analysis":"<strong>🎯 答案解析：</strong>终端侧重人机交互（输入输出），计算机侧重数据处理与系统管控。<br><strong>📚 知识点讲解：</strong>这是理解信息系统设备分工的基础。<br><strong>💡 解题思路：</strong>从交互和运算两个维度说明。<br><strong>🧠 记忆口诀：</strong>终端交互输入出，计算机运算核心，一个面对使用者，一个后台处理忙。"},{"type":"简答题","difficulty":"中档","stem":"列举三种常见终端设备，并分别写出对应的使用场景。","answer":"①手机终端：日常线上学习、移动支付操作；②人脸识别终端：小区、校园门禁身份核验；③收银扫码终端：商超商品信息录入结算。","keywords":["手机","人脸识别","扫码","学习","门禁","收银"],"analysis":"<strong>🎯 答案解析：</strong>常见终端包括手机、人脸识别设备、扫码枪等，各场景下发挥交互作用。<br><strong>📚 知识点讲解：</strong>终端设备在生活中应用广泛。<br><strong>💡 解题思路：</strong>列举三种并说明使用场景。<br><strong>🧠 记忆口诀：</strong>手机学习支付便，人脸门禁核身份，扫码收银录商品，终端生活处处见。"},{"type":"简答题","difficulty":"提高","stem":"结合信息系统运行逻辑，说说单机运行与联网协作状态下，设备作用有什么不同。","answer":"单机运行：设备仅能处理本地数据，服务个人单独使用，无法和其他设备互通信息，功能范围有限。联网协作：多终端、多计算机联动，可跨设备共享数据、远程交互、分布式处理，能够支撑多人、跨区域的复杂信息业务。","keywords":["单机","本地","联网","共享","远程","协作"],"analysis":"<strong>🎯 答案解析：</strong>单机独立处理能力有限，联网后设备协同可支撑大型复杂业务。<br><strong>📚 知识点讲解：</strong>网络让信息系统从单机走向协同。<br><strong>💡 解题思路：</strong>从功能范围、数据共享、协作能力三方面对比。<br><strong>🧠 记忆口诀：</strong>单机本地功能限，联网共享协同强，一人用变多人协，网络连接价值增。"},{"type":"综合应用题","difficulty":"提高","stem":"校园食堂消费信息系统包含：刷卡消费终端、后台管理计算机、窗口价格显示屏，请结合设备作用作答。\n（1）分别写出三类设备各自承担的功能作用。\n（2）分析该系统中，终端与计算机如何配合完成消费结算业务。\n（3）判断该系统能否仅依靠一台终端独立运行，并说明理由。","tasks":[{"id":1,"stem":"写出三类设备的功能。","answer":"刷卡终端：录入学生身份与消费数据；管理计算机：核算消费金额、统计账务；显示屏：展示菜品价格、扣款信息。","keywords":["录入","核算","展示"]},{"id":2,"stem":"分析设备配合过程。","answer":"学生刷卡终端录入数据，数据上传计算机完成扣费计算，结果推送显示屏展示，整套配合完成扣款、记账、提示。","keywords":["录入","上传","计算","推送","展示"]},{"id":3,"stem":"判断能否仅靠一台终端运行并说明理由。","answer":"不能。消费需录入、运算、展示多环节，单台终端无法完成数据核算处理，必须依靠计算机配合。","keywords":["不能","录入","运算","展示","计算机"]}],"answer":"（1）刷卡终端录入，计算机核算，显示屏展示；（2）录入→上传→计算→展示；（3）不能，需计算机运算支持。","keywords":["刷卡","计算机","显示屏","录入","核算"],"analysis":"<strong>🎯 答案解析：</strong>食堂消费系统需要刷卡终端、计算机、显示屏协作完成结算流程，单一终端无法替代计算机的运算功能。<br><strong>📚 知识点讲解：</strong>典型的信息系统设备分工案例。<br><strong>💡 解题思路：</strong>按设备角色分析功能，描述数据流。<br><strong>🧠 记忆口诀：</strong>刷卡终端录数据，计算机来算金额，显示屏上展示价，三设备协作收银。"},{"type":"综合应用题","difficulty":"提高","stem":"线上课堂信息系统使用手机终端、教师办公计算机、课程服务器，请回答问题。\n（1）指出录入听课信息、处理课堂数据、播放课程画面分别对应的设备。\n（2）简述三类设备分工协作，完成一节线上授课的完整过程。\n（3）对比终端和核心计算机，分析二者在系统里的定位差异。","tasks":[{"id":1,"stem":"指出对应设备。","answer":"录入听课信息：手机终端；处理课堂数据：课程服务器；播放课程画面：手机终端。","keywords":["手机","服务器","画面"]},{"id":2,"stem":"描述协作过程。","answer":"学生手机进入课堂、提交互动；教师计算机发布内容；服务器中转处理数据；画面语音传回手机，实现同步授课。","keywords":["进入","提交","发布","中转","传回"]},{"id":3,"stem":"分析定位差异。","answer":"终端是前端入口，供师生操作、查看内容，侧重交互；核心计算机是后台中枢，负责数据中转、业务处理、资源调度，保障系统稳定。","keywords":["前端","后端","交互","处理","中枢"]}],"answer":"（1）手机终端录播，服务器处理，手机播放；（2）学生手机交互，教师机发布，服务器中转；（3）终端交互前端，计算机处理后端。","keywords":["手机","服务器","交互","处理"],"analysis":"<strong>🎯 答案解析：</strong>线上课堂需要手机终端和服务器计算机配合，终端负责交互，服务器负责数据处理与中转。<br><strong>📚 知识点讲解：</strong>体现了C/S或B/S架构中终端与服务器的分工。<br><strong>💡 解题思路：</strong>按设备角色分工描述，强调终端与计算机的定位差异。<br><strong>🧠 记忆口诀：</strong>手机终端做交互，服务器后处理忙，前端后端分工明，线上课堂协作畅。"}]);})();
+
+    // 覆盖核心函数并增强
+    function renderKnowledgePage(){document.getElementById('knowledgeTitle').textContent='计算机与终端设备（高中信息科技）';document.getElementById('knowledgeContent').innerHTML=`<h3>📖 核心定义</h3><p>计算机与终端设备是信息系统实现人机交互、数据运算与业务运转的基础硬件载体。终端作为用户操作入口，负责信息录入与结果查看；计算机承担核心运算、数据管控工作，各类设备分工配合，共同支撑信息系统完成数据采集、处理、存储、传输、控制全流程功能。</p><h3>🔍 核心要点拆解</h3><p><strong>1. 终端设备</strong>：面向用户，人机交互，如手机、平板、扫码枪、显示屏。</p><p><strong>2. 计算机</strong>：运算与管理核心，如个人电脑、服务器。</p><p><strong>3. 设备分工</strong>：输入终端采集数据，计算机处理运算，输出终端展示结果。</p><p><strong>4. 单机运行</strong>：独立完成简单任务。</p><p><strong>5. 联网协作</strong>：多设备协同支撑大型信息系统。</p><h3>⚠️ 易错点</h3><ul><li>服务器是计算机不是终端</li><li>终端既能输入也能输出</li><li>大型系统需要多设备协作</li></ul>`}
+    function switchToKnowledgePage(){currentPage='learn';reviewMode=false;document.getElementById('knowledgePage').classList.remove('hidden');document.getElementById('quizContent').style.display='none';document.getElementById('questionInfo').style.display='none';document.getElementById('pageTitle').style.display='block';document.querySelector('.progress-bar').style.display='none';document.getElementById('footerContent').innerHTML=`<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`}
+    function startQuiz(){currentPage='quiz';reviewMode=false;wrongIndices=[];document.getElementById('knowledgePage').classList.add('hidden');document.getElementById('quizContent').style.display='block';document.getElementById('questionInfo').style.display='block';document.getElementById('pageTitle').style.display='none';document.querySelector('.progress-bar').style.display='block';currentIndex=0;renderQuestion();updateNavButtons();window.scrollTo({top:0,behavior:'smooth'})}
+    function getQuestionTypeLabel(q){return{'单选题':'单选题','判断题':'判断题','简答题':'简答题','综合应用题':'综合应用题'}[q.type]||q.type}
+    function isChoiceType(q){return q.type==='单选题'||q.type==='判断题'}
+    function isTextType(q){return q.type==='简答题'||q.type==='综合应用题'}
+    function getActualIndex(){return reviewMode&&wrongIndices.length?wrongIndices[reviewIndex]:currentIndex}
+    function getTotalInMode(){return reviewMode&&wrongIndices.length?wrongIndices.length:questions.length}
+    function getCurrentPosition(){return reviewMode&&wrongIndices.length?reviewIndex+1:currentIndex+1}
+
+    function renderQuestion(){
+        const ai=getActualIndex(),q=questions[ai],area=document.getElementById('quizContent');
+        const tim=getTotalInMode(),cp=getCurrentPosition();
+        let h='';
+        if(reviewMode) h+=`<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${cp}/${tim} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+        h+=`<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty?' · '+q.difficulty:''}</span><div class="question-stem">${q.stem}</div>`;
+        if(q.image) h+=`<img src="${q.image}" class="question-image">`;
+        if(isChoiceType(q)){
+            h+=`<div class="options-container">`;
+            q.options.forEach((o,i)=>{
+                const sel=answers[ai]===i,cor=q.answer===i;
+                let cls=['option-item'];
+                if(answers[ai]!==null){if(sel&&cor)cls.push('correct');else if(sel&&!cor)cls.push('wrong');else if(cor)cls.push('correct');}else if(sel)cls.push('selected');
+                h+=`<div class="${cls.join(' ')}" onclick="selectOption(${i})"><div class="option-label">${o.label}</div><div class="option-text">${o.text}</div></div>`;
+            });
+            h+=`</div>`;
+        }else if(q.type==='简答题'){h+=renderTextAnswerArea(ai,q);}
+        else if(q.type==='综合应用题'){h+=renderComprehensiveArea(ai,q);}
+        h+=`</div>`;
+        if(answers[ai]!==null){
+            if(isChoiceType(q)){
+                const cor=answers[ai]===q.answer;
+                h+=`<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${cor?'correct':'wrong'}">${cor?'✓ 回答正确':'✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;">${q.analysis}</div></div>`;
+            }else if(isTextType(q)){
+                const res=evaluateTextAnswer(ai,q);
+                h+=buildTextResultCard(ai,q,res);
+            }
+        }
+        const done=checkAllAnsweredInMode();
+        if((reviewMode&&reviewIndex>=wrongIndices.length-1&&done)||(!reviewMode&&currentIndex===questions.length-1&&answers.every(a=>a!==null))){
+            const cc=getCorrectCount(),ac=Math.round(cc/questions.length*100),wc=getWrongCount();
+            if(!reviewMode) saveToHistory(cc,ac);
+            h+=buildCompletionScreen(cc,ac,wc);
+        }
+        area.innerHTML=h; updateHeader();
+        setTimeout(()=>{if(isTextType(q)){const ta=document.getElementById('textAnswerInput');if(ta&&answers[ai]!==null&&typeof answers[ai]==='string')ta.value=answers[ai];const dr=getDraft(ai);if(ta&&answers[ai]===null&&dr)ta.value=dr;}},50);
+        if(window.MathJax) MathJax.typeset();
+    }
+
+    function renderTextAnswerArea(ai,q){
+        const saved=answers[ai],draft=getDraft(ai);
+        const dv=(saved!==null&&typeof saved==='string')?saved:(draft||'');
+        const dis=saved!==null&&typeof saved==='string';
+        let h=`<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${dis?'disabled':''}>${escapeHtml(dv)}</textarea><div class="text-answer-buttons">`;
+        if(!dis) h+=`<button class="btn-draft" onclick="saveDraftOnly(${ai})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${ai})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${ai})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+        else h+=`<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+        return h+`</div></div>`;
+    }
+
+    function renderComprehensiveArea(ai,q){let h='';if(q.tasks&&q.tasks.length){h+=`<ul class="tasks-list">`;q.tasks.forEach(t=>h+=`<li><span class="task-id">${t.id}</span> ${t.stem}</li>`);h+=`</ul>`;}return h+renderTextAnswerArea(ai,q);}
+
+    function buildTextResultCard(ai,q,res){
+        const bc=res.level==='good'?'correct':(res.level==='partial'?'partial':'wrong');
+        const bt=res.level==='good'?'✓ 回答较好':(res.level==='partial'?'△ 部分正确':'✗ 需加强');
+        return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display:block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.userAnswer||'（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(res.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${res.hitCount}/${res.totalKeywords} 个（${res.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${res.progressClass}" style="width:${res.hitRate}%;"></div></div><span class="score-tag ${res.progressClass}">${res.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${res.hitKeywords.length?res.hitKeywords.map(k=>'<span class="keyword-highlight">'+k+'</span>').join('、'):'无'}</p><p><strong>未命中：</strong>${res.missedKeywords.length?res.missedKeywords.map(k=>'<span class="keyword-missed">'+k+'</span>').join('、'):'无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+    }
+
+    function buildCompletionScreen(cc,ac,wc){
+        let h=`<div class="completion-screen"><div class="completion-icon">${ac>=80?'🎉':ac>=60?'👍':'💪'}</div><h1 class="completion-title">${reviewMode?'错题回顾完成！':'刷题完成！'}</h1><p style="color:var(--text-secondary);">${reviewMode?'你已经回顾了所有错题':'太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${cc}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${ac}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wc}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+        if(wc>0&&!reviewMode){h+=`<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;}
+        if(reviewMode&&wc>0) h+=`<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+        return h+`</div></div>`;
+    }
+
+    function selectOption(i){const ai=getActualIndex();if(answers[ai]!==null||!isChoiceType(questions[ai]))return;answers[ai]=i;saveAnswers();renderQuestion();renderAnswerSheet();updateNavButtons();showToast(i===questions[ai].answer?'回答正确！✓':'回答错误 ✗');}
+    function submitTextAnswer(ai){if(answers[ai]!==null&&typeof answers[ai]==='string')return;const ta=document.getElementById('textAnswerInput');if(!ta)return;const ua=ta.value.trim();if(!ua){showToast('请先输入你的回答');return;}answers[ai]=ua;clearDraft(ai);saveAnswers();renderQuestion();renderAnswerSheet();updateNavButtons();const res=evaluateTextAnswer(ai,questions[ai]);showToast(res.level==='good'?'回答较好！✓':(res.level==='partial'?'部分正确 △':'需加强 ✗'));}
+    function saveDraftOnly(ai){const ta=document.getElementById('textAnswerInput');if(!ta)return;const v=ta.value.trim();if(v){saveDraft(ai,v);showToast('草稿已保存 ✓');}else{clearDraft(ai);showToast('草稿已清空');}}
+    function clearTextInput(ai){const ta=document.getElementById('textAnswerInput');if(ta)ta.value='';clearDraft(ai);showToast('输入已清空');}
+
+    function evaluateTextAnswer(ai,q){
+        const ua=(answers[ai]&&typeof answers[ai]==='string')?answers[ai]:'';const ak=[];let ra='';
+        if(q.type==='简答题'){if(q.keywords)ak.push(...q.keywords);ra=q.answer||'';}else if(q.type==='综合应用题'){if(q.keywords)ak.push(...q.keywords);ra=q.answer||'';}
+        const tk=ak.length,hk=[],mk=[],ul=ua.toLowerCase();
+        ak.forEach(k=>{if(ul.includes(k.toLowerCase()))hk.push(k);else mk.push(k);});
+        const hc=hk.length,hr=tk>0?Math.round((hc/tk)*100):0;let l,ll,pc;
+        if(q.type==='简答题'){if(hr>=60){l='good';ll='回答较好';pc='excellent';}else if(hr>=30){l='partial';ll='部分正确';pc='pass';}else{l='weak';ll='需加强';pc='fail';}}
+        else{if(hr>=80){l='good';ll='优秀';pc='excellent';}else if(hr>=60){l='good';ll='良好';pc='good';}else if(hr>=40){l='partial';ll='合格';pc='pass';}else{l='weak';ll='需加强';pc='fail';}}
+        return{userAnswer:ua,referenceAnswer:ra,totalKeywords:tk,hitCount:hc,hitRate:hr,hitKeywords:hk,missedKeywords:mk,level:l,levelLabel:ll,progressClass:pc};
+    }
+
+    function getCorrectCount(){let c=0;questions.forEach((q,i)=>{if(answers[i]===null)return;if(isChoiceType(q)){if(answers[i]===q.answer)c++;}else{const r=evaluateTextAnswer(i,q);if(r.level==='good')c++;}});return c;}
+    function getWrongCount(){let c=0;questions.forEach((q,i)=>{if(answers[i]===null)return;if(isChoiceType(q)){if(answers[i]!==q.answer)c++;}else{const r=evaluateTextAnswer(i,q);if(r.level==='weak')c++;}});return c;}
+    function getWrongIndicesArray(){const a=[];questions.forEach((q,i)=>{if(answers[i]===null)return;if(isChoiceType(q)){if(answers[i]!==q.answer)a.push(i);}else{const r=evaluateTextAnswer(i,q);if(r.level==='weak')a.push(i);}});return a;}
+    function checkAllAnsweredInMode(){if(reviewMode&&wrongIndices.length)return wrongIndices.every(wi=>answers[wi]!==null);return answers.every(a=>a!==null);}
+
+    function startReviewWrong(){wrongIndices=getWrongIndicesArray();if(!wrongIndices.length){showToast('没有错题可回顾');return;}reviewMode=true;reviewIndex=0;currentPage='quiz';document.getElementById('knowledgePage').classList.add('hidden');document.getElementById('quizContent').style.display='block';document.getElementById('questionInfo').style.display='block';document.getElementById('pageTitle').style.display='none';document.querySelector('.progress-bar').style.display='block';renderQuestion();updateNavButtons();window.scrollTo({top:0,behavior:'smooth'});showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`);}
+    function exitReviewMode(){reviewMode=false;wrongIndices=[];currentIndex=0;currentPage='quiz';renderQuestion();updateNavButtons();window.scrollTo({top:0,behavior:'smooth'});showToast('已退出错题回顾模式');}
+
+    function exportWrongCSV(){
+        const wa=getWrongIndicesArray();if(!wa.length){showToast('没有错题可导出');return;}
+        const mn='计算机与终端设备',ds=new Date().toISOString().slice(0,10),fn=`错题本_${mn}_${ds}.csv`;
+        const rows=[['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+        wa.forEach(i=>{const q=questions[i],qt=getQuestionTypeLabel(q);const stem=q.stem.replace(/"/g,'""');let ua='',ca='',hr='',res='';
+            if(isChoiceType(q)){ua=(answers[i]!==null&&answers[i]!==undefined)?(q.options[answers[i]]?q.options[answers[i]].text:String(answers[i])):'';ca=q.options[q.answer]?q.options[q.answer].text:String(q.answer);res=answers[i]===q.answer?'正确':'错误';hr=answers[i]===q.answer?'100%':'0%';}
+            else{ua=(answers[i]&&typeof answers[i]==='string')?answers[i]:'';ca=q.answer||'';const er=evaluateTextAnswer(i,q);hr=er.hitRate+'%';res=er.levelLabel;}
+            const at=q.analysis?q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""'):'';
+            rows.push([qt,'"'+stem+'"','"'+ua.replace(/"/g,'""')+'"','"'+ca.replace(/"/g,'""')+'"',hr,res,'"'+at+'"']);});
+        const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=fn;document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);showToast('错题CSV已导出：'+fn);
+    }
+
+    function toggleAnalysis(h){const c=h.nextElementSibling,i=h.querySelector('.toggle-icon');if(c.style.display==='none'){c.style.display='block';i.classList.add('expanded');}else{c.style.display='none';i.classList.remove('expanded');}}
+    function prevQuestion(){if(reviewMode&&wrongIndices.length){if(reviewIndex>0){reviewIndex--;renderQuestion();updateNavButtons();}}else if(!reviewMode&&currentIndex>0){currentIndex--;renderQuestion();updateNavButtons();}}
+    function nextQuestion(){if(reviewMode&&wrongIndices.length){if(reviewIndex<wrongIndices.length-1){reviewIndex++;renderQuestion();updateNavButtons();}}else if(!reviewMode&&currentIndex<questions.length-1){currentIndex++;renderQuestion();updateNavButtons();}}
+
+    function updateHeader(){if(currentPage!=='quiz')return;document.getElementById('currentNum').textContent=getCurrentPosition();const ac=answers.filter(a=>a!==null).length;document.getElementById('answeredCount').textContent=ac;document.getElementById('totalCount').textContent=questions.length;document.getElementById('progressFill').style.width=`${(ac/questions.length)*100}%`;}
+    function updateNavButtons(){const fc=document.getElementById('footerContent');if(currentPage!=='quiz')return;const tim=getTotalInMode(),cp=getCurrentPosition(),isF=cp<=1,isL=cp>=tim,ad=checkAllAnsweredInMode();fc.innerHTML=`<button class="nav-btn prev-btn" onclick="prevQuestion()" ${isF?'disabled':''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" onclick="nextQuestion()" ${isL&&ad?'disabled':''}>下一题 <i class="fas fa-chevron-right"></i></button>`;}
+
+    function changeFontSize(d){fontSize=Math.max(14,Math.min(22,fontSize+d));document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`);document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`);document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`);saveSettings();}
+    function toggleSheet(){const o=document.getElementById('sheetOverlay'),p=document.getElementById('sheetPanel');if(p.classList.contains('show')){o.classList.remove('show');p.classList.remove('show');}else{o.classList.add('show');p.classList.add('show');renderAnswerSheet();}}
+    function renderAnswerSheet(){const g=document.getElementById('sheetGrid');let h='';questions.forEach((q,i)=>{let sc='unanswered',st='未答';if(answers[i]!==null){if(isChoiceType(q)){if(answers[i]===q.answer){sc='correct';st='正确';}else{sc='wrong';st='错误';}}else{const r=evaluateTextAnswer(i,q);if(r.level==='good'){sc='correct';st='较好';}else if(r.level==='partial'){sc='correct';st='部分';}else{sc='wrong';st='加强';}}}if(i===getActualIndex()&&!reviewMode)sc+=' current';if(reviewMode&&wrongIndices.includes(i)&&wrongIndices[reviewIndex]===i)sc+=' current';
+        if(currentFilter!=='all'){if(currentFilter==='unanswered'&&answers[i]!==null)return;if(currentFilter==='correct'){if(answers[i]===null)return;if(isChoiceType(q)&&answers[i]!==q.answer)return;if(isTextType(q)){const r=evaluateTextAnswer(i,q);if(r.level==='weak')return;}}if(currentFilter==='wrong'){if(answers[i]===null)return;if(isChoiceType(q)&&answers[i]===q.answer)return;if(isTextType(q)){const r=evaluateTextAnswer(i,q);if(r.level!=='weak')return;}}}
+        h+=`<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i+1}</div><div class="sheet-status">${st}</div></div>`;});g.innerHTML=h;}
+    function filterQuestions(f,e){currentFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));if(e&&e.target)e.target.classList.add('active');renderAnswerSheet();}
+    function jumpToQuestion(i){reviewMode=false;wrongIndices=[];currentIndex=i;renderQuestion();updateNavButtons();toggleSheet();}
+
+    function toggleHistory(){const o=document.getElementById('historyOverlay'),p=document.getElementById('historyPanel');if(p.classList.contains('show')){o.classList.remove('show');p.classList.remove('show');}else{o.classList.add('show');p.classList.add('show');renderHistory();}}
+    function renderHistory(){const l=document.getElementById('historyList'),h=getHistory();if(!h.length){l.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`;return;}let ht='';h.forEach((r,i)=>{const ds=new Date(r.timestamp).toLocaleDateString('zh-CN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});ht+=`<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`;});l.innerHTML=ht;}
+    function saveToHistory(cc,ac){const h=getHistory();h.unshift({timestamp:Date.now(),totalCount:questions.length,correctCount:cc,accuracy:ac,answers:[...answers]});if(h.length>50)h.pop();localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h));}
+    function getHistory(){try{const s=localStorage.getItem(STORAGE_KEY_HISTORY);return s?JSON.parse(s):[];}catch(e){localStorage.removeItem(STORAGE_KEY_HISTORY);return[];}}
+    function reviewHistory(i){const h=getHistory();if(i>=0&&i<h.length){answers=[...h[i].answers];currentIndex=0;reviewMode=false;wrongIndices=[];saveAnswers();renderQuestion();updateNavButtons();toggleHistory();showToast('已加载历史记录');}}
+    function deleteHistory(i){if(!confirm('确定删除？'))return;const h=getHistory();if(i>=0&&i<h.length){h.splice(i,1);localStorage.setItem(STORAGE_KEY_HISTORY,JSON.stringify(h));renderHistory();showToast('记录已删除');}}
+    function clearAllHistory(){if(!confirm('确定清空所有历史记录？'))return;localStorage.removeItem(STORAGE_KEY_HISTORY);renderHistory();showToast('历史记录已清空');}
+
+    function saveAnswers(){localStorage.setItem(STORAGE_KEY_ANSWERS,JSON.stringify({currentIndex,answers,reviewMode,wrongIndices,reviewIndex}));}
+    function saveSettings(){localStorage.setItem(STORAGE_KEY_SETTINGS,JSON.stringify({fontSize}));}
+    function loadAllData(){try{const s=localStorage.getItem(STORAGE_KEY_ANSWERS);if(s){const d=JSON.parse(s);currentIndex=d.currentIndex||0;answers=d.answers||new Array(questions.length).fill(null);reviewMode=d.reviewMode||false;wrongIndices=d.wrongIndices||[];reviewIndex=d.reviewIndex||0;}}catch(e){localStorage.removeItem(STORAGE_KEY_ANSWERS);answers=new Array(questions.length).fill(null);}try{const ss=localStorage.getItem(STORAGE_KEY_SETTINGS);if(ss){const st=JSON.parse(ss);fontSize=st.fontSize||16;document.documentElement.style.setProperty('--font-size-base',`${fontSize}px`);document.documentElement.style.setProperty('--font-size-small',`${fontSize-2}px`);document.documentElement.style.setProperty('--font-size-large',`${fontSize+2}px`);}}catch(e){localStorage.removeItem(STORAGE_KEY_SETTINGS);}}
+
+    function saveDraft(i,v){const d=getDrafts();d[i]=v;localStorage.setItem(STORAGE_KEY_DRAFTS,JSON.stringify(d));}
+    function getDraft(i){const d=getDrafts();return d[i]||null;}
+    function clearDraft(i){const d=getDrafts();delete d[i];localStorage.setItem(STORAGE_KEY_DRAFTS,JSON.stringify(d));}
+    function getDrafts(){try{const s=localStorage.getItem(STORAGE_KEY_DRAFTS);return s?JSON.parse(s):{};}catch(e){localStorage.removeItem(STORAGE_KEY_DRAFTS);return{};}}
+
+    function restartQuiz(){if(confirm('确定重新开始？进度将被清除。')){currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null);localStorage.removeItem(STORAGE_KEY_ANSWERS);localStorage.removeItem(STORAGE_KEY_DRAFTS);renderQuestion();updateNavButtons();renderAnswerSheet();}}
+    function showHome(){if(confirm('返回主页将丢失进度，确定吗？')){currentIndex=0;reviewMode=false;wrongIndices=[];reviewIndex=0;answers=new Array(questions.length).fill(null);localStorage.removeItem(STORAGE_KEY_ANSWERS);localStorage.removeItem(STORAGE_KEY_DRAFTS);switchToKnowledgePage();renderAnswerSheet();}}
+    function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),1500);}
+    function escapeHtml(s){if(!s)return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+    // 初始化
+    window.onload=function(){
+        renderKnowledgePage();
+        switchToKnowledgePage();
+        renderQuestion();
+        renderAnswerSheet();
+        renderHistory();
+        updateNavButtons();
+    };
+</script>
+</body>
+</html>

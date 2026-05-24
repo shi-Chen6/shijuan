@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>防火墙技术刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        /* 新增题型样式 */
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">防火墙技术</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header"><div class="sheet-title">答题卡</div><div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div></div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header"><div class="history-title">历史记录</div><button class="clear-history" onclick="clearAllHistory()">清空</button></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"防火墙的核心作用是（ ）","options":[{"label":"A","text":"查杀病毒和木马"},{"label":"B","text":"过滤网络流量，阻止非法访问"},{"label":"C","text":"提高网络传输速度"},{"label":"D","text":"备份网络数据"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 过滤网络流量，阻止非法访问</strong>。防火墙的核心作用就是根据安全策略过滤进出的网络流量，阻止未授权的访问和攻击。<br><strong>📚 知识点讲解：</strong>查杀病毒是杀毒软件的功能，提高速度是路由器/交换机的功能，备份数据是存储设备的功能。<br><strong>💡 解题思路：</strong>防火墙是网络的门卫，核心任务是控制进出。<br><strong>🧠 记忆口诀：</strong>防火墙看门狗，过滤流量是核心，病毒查杀靠杀软，各司其职要分清。"},{"type":"单选题","difficulty":"基础","stem":"下列属于软件防火墙的是（ ）","options":[{"label":"A","text":"华为USG防火墙"},{"label":"B","text":"深信服NGAF"},{"label":"C","text":"Windows防火墙"},{"label":"D","text":"天融信防火墙"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. Windows防火墙</strong>。Windows防火墙是运行在Windows操作系统上的软件程序，属于软件防火墙。<br><strong>📚 知识点讲解：</strong>华为USG、深信服NGAF、天融信都是硬件防火墙产品。<br><strong>💡 解题思路：</strong>操作系统自带的防火墙是软件防火墙。<br><strong>🧠 记忆口诀：</strong>Windows自带软件防，华为深信硬件墙，软硬区分看部署，系统内置是软件。"},{"type":"单选题","difficulty":"基础","stem":"包过滤防火墙工作在OSI模型的哪一层？（ ）","options":[{"label":"A","text":"物理层"},{"label":"B","text":"数据链路层"},{"label":"C","text":"网络层/传输层"},{"label":"D","text":"应用层"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 网络层/传输层</strong>。包过滤防火墙检查数据包的IP地址、端口号和协议类型，工作在网络层和传输层。<br><strong>📚 知识点讲解：</strong>应用层网关工作在应用层，状态检测也在网络/传输层但增加了连接跟踪。<br><strong>💡 解题思路：</strong>包过滤只看头部，对应网络层和传输层。<br><strong>🧠 记忆口诀：</strong>包过滤看头部，网络传输两层忙，应用网关深度查，七层应用才上场。"},{"type":"单选题","difficulty":"基础","stem":"应用层网关防火墙工作在OSI模型的哪一层？（ ）","options":[{"label":"A","text":"物理层"},{"label":"B","text":"数据链路层"},{"label":"C","text":"网络层"},{"label":"D","text":"应用层"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 应用层</strong>。应用层网关防火墙工作在OSI模型的应用层，能深度检查数据包内容，识别具体应用协议。<br><strong>📚 知识点讲解：</strong>它作为中间人代理内外通信，安全性最高但性能损耗也最大。<br><strong>💡 解题思路：</strong>应用层网关=应用层。<br><strong>🧠 记忆口诀：</strong>应用网关七层查，中间代理隔内外，内容深度检测强，性能损耗代价大。"},{"type":"单选题","difficulty":"基础","stem":"目前网络中最主流的防火墙技术是（ ）","options":[{"label":"A","text":"包过滤防火墙"},{"label":"B","text":"应用层网关防火墙"},{"label":"C","text":"状态检测防火墙"},{"label":"D","text":"代理防火墙"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 状态检测防火墙</strong>。状态检测防火墙结合了包过滤的性能优势和连接状态跟踪功能，是目前最主流的防火墙技术。<br><strong>📚 知识点讲解：</strong>它比包过滤更安全，比应用层网关性能更好。<br><strong>💡 解题思路：</strong>状态检测是当前主流。<br><strong>🧠 记忆口诀：</strong>状态检测是主流，包过滤加状态跟踪，安全性能两兼顾，多数网络都采用。"},{"type":"单选题","difficulty":"基础","stem":"防火墙的NAT功能主要作用是（ ）","options":[{"label":"A","text":"提高网络速度"},{"label":"B","text":"将私有IP转换为公有IP"},{"label":"C","text":"查杀病毒"},{"label":"D","text":"过滤应用层内容"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 将私有IP转换为公有IP</strong>。NAT（网络地址转换）将内部私有IP转换为外部公有IP，实现多设备共享公网IP上网。<br><strong>📚 知识点讲解：</strong>NAT同时还能隐藏内部网络结构，提高安全性。<br><strong>💡 解题思路：</strong>NAT就是地址转换。<br><strong>🧠 记忆口诀：</strong>NAT转换地址忙，私有IP变公网，隐藏内网保安全，多设备共享上网。"},{"type":"单选题","difficulty":"基础","stem":"下列关于防火墙的说法，正确的是（ ）","options":[{"label":"A","text":"防火墙可以防范所有网络攻击"},{"label":"B","text":"防火墙可以查杀病毒和木马"},{"label":"C","text":"防火墙可以阻止外部非法访问"},{"label":"D","text":"防火墙可以防范内部攻击"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 防火墙可以阻止外部非法访问</strong>。防火墙的核心功能就是阻止外部网络对内部网络的非法访问。<br><strong>📚 知识点讲解：</strong>防火墙不能防范所有攻击，不能查杀病毒，对内部攻击防护能力有限。<br><strong>💡 解题思路：</strong>A、B、D都夸大了防火墙的能力。<br><strong>🧠 记忆口诀：</strong>防火墙防外部，内部病毒管不着，安全防线第一道，配合杀软才可靠。"},{"type":"单选题","difficulty":"基础","stem":"传统防火墙无法防范以下哪种攻击？（ ）","options":[{"label":"A","text":"端口扫描"},{"label":"B","text":"IP地址欺骗"},{"label":"C","text":"SQL注入攻击"},{"label":"D","text":"非法IP访问"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. SQL注入攻击</strong>。SQL注入是应用层攻击，传统防火墙无法深度检测数据包内容，不能识别和阻断此类攻击。<br><strong>📚 知识点讲解：</strong>端口扫描、IP地址欺骗和非法IP访问都可以通过防火墙规则进行拦截。<br><strong>💡 解题思路：</strong>应用层攻击需WAF或下一代防火墙防御。<br><strong>🧠 记忆口诀：</strong>SQL注入应用层，传统防火墙拦不住，需用WAF或NGFW，应用攻击才能防。"},{"type":"单选题","difficulty":"基础","stem":"状态检测防火墙相比包过滤防火墙的主要优势是（ ）","options":[{"label":"A","text":"处理速度更快"},{"label":"B","text":"能够跟踪连接状态"},{"label":"C","text":"能够检查应用层内容"},{"label":"D","text":"配置更简单"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 能够跟踪连接状态</strong>。状态检测防火墙会记录所有主动发起的网络连接状态，只允许属于已建立合法连接的响应数据包通过。<br><strong>📚 知识点讲解：</strong>这是状态检测防火墙最核心的优势。<br><strong>💡 解题思路：</strong>跟踪状态是状态检测的标志。<br><strong>🧠 记忆口诀：</strong>状态检测记连接，合法响应自动放，包过滤只看头，状态信息不保留。"},{"type":"单选题","difficulty":"基础","stem":"下一代防火墙（NGFW）在传统防火墙基础上增加了什么功能？（ ）","options":[{"label":"A","text":"包过滤"},{"label":"B","text":"状态检测"},{"label":"C","text":"NAT转换"},{"label":"D","text":"应用识别和入侵防御"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 应用识别和入侵防御</strong>。下一代防火墙集成了应用识别、入侵防御（IPS）、防病毒等高级安全功能。<br><strong>📚 知识点讲解：</strong>NGFW可以识别具体应用程序，而不仅仅是端口号。<br><strong>💡 解题思路：</strong>NGFW的核心是“下一代”高级功能。<br><strong>🧠 记忆口诀：</strong>下一代墙功能强，应用识别入侵防，传统功能都包含，深度安全一站解。"},{"type":"单选题","difficulty":"中档","stem":"下列关于防火墙局限性的说法，错误的是（ ）","options":[{"label":"A","text":"无法防范内部攻击"},{"label":"B","text":"无法查杀病毒和恶意代码"},{"label":"C","text":"无法防范应用层攻击"},{"label":"D","text":"无法阻止外部非法访问"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 无法阻止外部非法访问</strong>。防火墙的核心功能就是阻止外部非法访问，因此D选项说法错误。<br><strong>📚 知识点讲解：</strong>A、B、C都是防火墙的固有局限性。<br><strong>💡 解题思路：</strong>D和防火墙的定义矛盾。<br><strong>🧠 记忆口诀：</strong>防火墙防外部是本职，内部病毒应用层，才是它的局限性，分清能力和局限。"},{"type":"单选题","difficulty":"中档","stem":"某公司需要禁止员工在工作时间访问视频网站，最适合使用哪种防火墙技术？（ ）","options":[{"label":"A","text":"包过滤防火墙"},{"label":"B","text":"状态检测防火墙"},{"label":"C","text":"应用层网关防火墙"},{"label":"D","text":"下一代防火墙"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 下一代防火墙</strong>。下一代防火墙支持应用识别与控制，能够识别具体的视频网站应用，并根据时间进行访问控制。<br><strong>📚 知识点讲解：</strong>传统防火墙只能基于端口封堵，无法精确识别应用。<br><strong>💡 解题思路：</strong>需要应用识别功能，选NGFW。<br><strong>🧠 记忆口诀：</strong>禁止视频下一代，应用识别精准拦，传统只认端口号，封端口误伤一大片。"},{"type":"单选题","difficulty":"中档","stem":"防火墙的日志审计功能主要用于（ ）","options":[{"label":"A","text":"提高网络速度"},{"label":"B","text":"记录网络访问行为，便于追溯"},{"label":"C","text":"查杀病毒"},{"label":"D","text":"转换IP地址"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 记录网络访问行为，便于追溯</strong>。日志审计功能全量记录所有网络访问行为，便于安全事件的追溯和分析。<br><strong>📚 知识点讲解：</strong>满足等保要求，记录谁在什么时间访问了什么。<br><strong>💡 解题思路：</strong>日志审计就是记录日志。<br><strong>🧠 记忆口诀：</strong>日志审计记行踪，谁何时访问啥，安全事件可追溯，等保要求必须做。"},{"type":"单选题","difficulty":"中档","stem":"下列关于NAT功能的说法，错误的是（ ）","options":[{"label":"A","text":"可以解决IP地址不足的问题"},{"label":"B","text":"可以隐藏内部网络结构"},{"label":"C","text":"可以提高网络安全性"},{"label":"D","text":"可以提高网络传输速度"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 可以提高网络传输速度</strong>。NAT功能不能提高网络传输速度，它的主要作用是地址转换和隐藏内网结构。<br><strong>📚 知识点讲解：</strong>NAT还可能略微增加延迟，不会提高速度。<br><strong>💡 解题思路：</strong>A、B、C都是NAT的正确作用。<br><strong>🧠 记忆口诀：</strong>NAT省地址隐结构，增加安全不加速，转换过程有开销，提速不是它任务。"},{"type":"单选题","difficulty":"中档","stem":"当有新程序尝试联网时，Windows防火墙会弹出提示窗口，这体现了防火墙的什么功能？（ ）","options":[{"label":"A","text":"访问控制"},{"label":"B","text":"NAT转换"},{"label":"C","text":"日志审计"},{"label":"D","text":"病毒查杀"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 访问控制</strong>。防火墙弹出提示询问是否允许程序联网，是对应用程序进行访问控制。<br><strong>📚 知识点讲解：</strong>只有用户允许的程序才能访问网络。<br><strong>💡 解题思路：</strong>询问是否放行=访问控制。<br><strong>🧠 记忆口诀：</strong>程序联网防火墙问，允许拒绝你来定，这是访问控制功，保护电脑不被侵。"},{"type":"判断题","difficulty":"基础","stem":"防火墙可以查杀病毒和木马。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。防火墙负责网络访问控制，不能查杀病毒和木马，这是杀毒软件的功能。<br><strong>📚 知识点讲解：</strong>防火墙和杀毒软件功能不同，需要配合使用。<br><strong>💡 解题思路：</strong>防火墙不管病毒。<br><strong>🧠 记忆口诀：</strong>防火墙管网络通，病毒查杀找杀软，两者分工各不同，配合使用才安全。"},{"type":"判断题","difficulty":"基础","stem":"包过滤防火墙只检查数据包的头部信息。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。包过滤防火墙只检查数据包的头部（IP、端口、协议），不检查数据包内容。<br><strong>📚 知识点讲解：</strong>这是包过滤防火墙的基本工作方式。<br><strong>💡 解题思路：</strong>包过滤=只查头部。<br><strong>🧠 记忆口诀：</strong>包过滤查头部，IP端口和协议，内容不看速度快，规则简单性能好。"},{"type":"判断题","difficulty":"基础","stem":"应用层网关防火墙的性能比包过滤防火墙好。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。应用层网关防火墙需要深度检查数据包内容，性能损耗大，处理速度比包过滤防火墙慢。<br><strong>📚 知识点讲解：</strong>包过滤性能最好，应用层网关安全性最高。<br><strong>💡 解题思路：</strong>深度检查必然慢。<br><strong>🧠 记忆口诀：</strong>应用网关深度查，性能自然不如包，安全性能成反比，选择需看场景定。"},{"type":"判断题","difficulty":"基础","stem":"状态检测防火墙能够跟踪网络连接的状态。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。这是状态检测防火墙的核心特点，它会记录所有主动发起的连接状态。<br><strong>📚 知识点讲解：</strong>基于连接状态来决定是否放行返回的数据包。<br><strong>💡 解题思路：</strong>状态检测=跟踪状态。<br><strong>🧠 记忆口诀：</strong>状态检测记连接，出去回来都跟踪，合法响应自动放，安全规则更智能。"},{"type":"判断题","difficulty":"基础","stem":"NAT功能只能解决IP地址不足的问题。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。NAT不仅解决IP地址不足，还能隐藏内部网络结构，提高网络安全性。<br><strong>📚 知识点讲解：</strong>NAT起到了一定的安全隔离作用。<br><strong>💡 解题思路：</strong>NAT有两个作用。<br><strong>🧠 记忆口诀：</strong>NAT省地址又隐藏，一功两用安全强，外部不知内网貌，安全加分不能忘。"},{"type":"判断题","difficulty":"基础","stem":"防火墙可以防范内部网络的攻击。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。防火墙主要防范来自外部网络的攻击，对内部网络中授权用户的恶意行为几乎无防护能力。<br><strong>📚 知识点讲解：</strong>这是防火墙的固有局限性之一。<br><strong>💡 解题思路：</strong>防火墙防外不防内。<br><strong>🧠 记忆口诀：</strong>防火墙防外不防内，内部攻击管不了，内部安全靠管理，权限审计加培训。"},{"type":"判断题","difficulty":"基础","stem":"下一代防火墙能够识别具体的应用程序。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。应用识别是下一代防火墙的核心功能之一，能够识别微信、抖音等具体应用程序。<br><strong>📚 知识点讲解：</strong>通过深度包检测技术实现。<br><strong>💡 解题思路：</strong>NGFW=应用识别。<br><strong>🧠 记忆口诀：</strong>下一代墙识应用，微信抖音分得清，深度检测不靠端口，精准管控更智能。"},{"type":"判断题","difficulty":"中档","stem":"防火墙的日志审计功能可以记录所有网络访问行为。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。日志审计是防火墙的基本功能，全量记录所有网络访问行为，包括时间、源IP、目的IP和动作。<br><strong>📚 知识点讲解：</strong>满足等保合规要求。<br><strong>💡 解题思路：</strong>日志审计=全量记录。<br><strong>🧠 记忆口诀：</strong>日志审计全记录，访问时间源目的，允许拒绝都记下，安全追溯有依据。"},{"type":"判断题","difficulty":"中档","stem":"硬件防火墙一定比软件防火墙好。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。硬件防火墙适合大型网络边界，软件防火墙适合个人主机和小型网络，应根据实际需求选择，没有绝对的好坏。<br><strong>📚 知识点讲解：</strong>各有适用场景。<br><strong>💡 解题思路：</strong>场景不同选择不同。<br><strong>🧠 记忆口诀：</strong>硬件墙强企业用，软件墙便个人选，场景不同各有长，按需选择最明智。"},{"type":"判断题","difficulty":"中档","stem":"开启防火墙就可以保证网络绝对安全。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。防火墙只是网络安全防御体系的一部分，不能保证绝对安全，需要配合杀毒软件、入侵检测等安全措施。<br><strong>📚 知识点讲解：</strong>没有绝对的安全，纵深防御才是王道。<br><strong>💡 解题思路：</strong>防火墙不是万能的。<br><strong>🧠 记忆口诀：</strong>防火墙非万能药，配合杀软和IPS，多重防护纵深防，安全意识最重要。"},{"type":"简答题","difficulty":"中档","stem":"请简述包过滤防火墙、状态检测防火墙和应用层网关防火墙的区别。","answer":"1.工作层级不同：包过滤和状态检测工作在网络层/传输层，应用层网关工作在应用层。2.检查深度不同：包过滤只查头部，状态检测查头部并跟踪连接，应用层网关深度检查内容。3.性能不同：包过滤最快，状态检测适中，应用层网关最慢。4.安全性不同：应用层网关最安全，状态检测适中，包过滤最弱。5.配置复杂度不同：包过滤简单，状态检测适中，应用层网关复杂。","keywords":["包过滤","状态检测","应用层网关","网络层","应用层","连接状态","性能","安全性"],"analysis":"<strong>🎯 答案解析：</strong>三大防火墙技术的区别主要体现在工作层级、检查深度、性能和安全性的权衡上。<br><strong>📚 知识点讲解：</strong>包过滤只看头，状态检测记连接，应用层网关代理检查内容。<br><strong>💡 解题思路：</strong>从层级、深度、性能、安全四个维度对比。<br><strong>🧠 记忆口诀：</strong>包过滤快安全低，状态检测中中居，应用网关安全高，性能代价要权衡。"},{"type":"简答题","difficulty":"中档","stem":"请简述防火墙的核心功能。","answer":"1.访问控制：基于IP、端口、协议控制网络访问。2.NAT：将私有IP转换为公有IP，隐藏内网。3.日志审计：记录所有网络访问行为。4.VPN支持：提供远程安全加密通道。5.流量管理：基于应用和用户进行带宽控制。","keywords":["访问控制","NAT","日志审计","VPN","流量管理"],"analysis":"<strong>🎯 答案解析：</strong>防火墙五大核心功能：访问控制、NAT、日志审计、VPN、流量管理。<br><strong>📚 知识点讲解：</strong>访问控制是最基本的功能。<br><strong>💡 解题思路：</strong>逐一列举并简要说明。<br><strong>🧠 记忆口诀：</strong>访问控制NAT转，日志审计VPN连，流量管理带宽控，五大功能防火墙。"},{"type":"简答题","difficulty":"提高","stem":"为什么说防火墙不是万能的？它有哪些固有局限性？","answer":"防火墙有以下局限性：1.无法防范内部攻击。2.无法查杀病毒和恶意代码。3.无法防范应用层攻击（如SQL注入）。4.无法检测加密流量。5.无法防范零日漏洞攻击。6.无法防范社会工程学攻击。","keywords":["内部攻击","病毒","应用层攻击","加密流量","零日漏洞","社会工程学"],"analysis":"<strong>🎯 答案解析：</strong>防火墙有明确的防护边界，不能抵御所有威胁，需与其他安全措施配合。<br><strong>📚 知识点讲解：</strong>防火墙主要是网络层防护，对内容和人的因素防护不足。<br><strong>💡 解题思路：</strong>从内到外、从技术到人为逐一列举。<br><strong>🧠 记忆口诀：</strong>内攻病毒应用层，加密零日社工攻，防火墙有局限性，纵深防御才安全。"},{"type":"综合应用题","difficulty":"提高","stem":"某学校要建设校园网，需要将校园网与互联网连接起来，同时保障校园网的安全。请回答以下问题：","tasks":[{"id":1,"stem":"应该在网络的什么位置部署防火墙？为什么？","answer":"部署在校园网与互联网的出口位置。因为防火墙需要隔离不同信任级别的网络，校园网是内部信任网络，互联网是外部不可信网络，在出口部署可阻止外部攻击进入校园网。","keywords":["出口","互联网","校园网","隔离","信任"]},{"id":2,"stem":"应该选择哪种类型的防火墙？为什么？","answer":"选择下一代防火墙（NGFW）。因需识别具体应用禁止游戏视频，需IPS防应用层攻击，需用户识别和审计，传统防火墙无法满足。","keywords":["下一代防火墙","应用识别","IPS","审计"]},{"id":3,"stem":"防火墙可以为学校提供哪些安全防护？","answer":"阻止外部攻击访问内部服务器；限制学生访问不良和游戏网站；NAT隐藏内网结构；日志审计记录上网行为；VPN支持远程办公。","keywords":["阻止攻击","网站限制","NAT","日志审计","VPN"]},{"id":4,"stem":"防火墙无法防范哪些安全威胁？学校还需采取什么补充措施？","answer":"无法防范病毒、内部攻击、应用层攻击、社工攻击。补充：安装杀毒软件、安全培训、应用安全加固、漏洞扫描。","keywords":["病毒","内部攻击","应用层","社工","杀毒软件","培训"]}],"answer":"（1）部署在校园网与互联网出口；（2）选择下一代防火墙，因应用识别和IPS需求；（3）防攻击、限网站、NAT、审计、VPN；（4）需杀软、培训、应用加固等补充。","keywords":["出口","下一代防火墙","应用识别","NAT","杀毒软件","培训"],"analysis":"<strong>🎯 答案解析：</strong>校园网出口部署NGFW，可实现访问控制、应用识别和日志审计，但还需配合其他安全措施。<br><strong>📚 知识点讲解：</strong>防火墙是边界防护，内部安全和应用安全需额外措施。<br><strong>💡 解题思路：</strong>从部署位置、设备选型、功能、局限性四个层面分析。<br><strong>🧠 记忆口诀：</strong>出口部署下一代，应用识别加IPS，防外限内记日志，病毒内攻靠补充。"},{"type":"综合应用题","difficulty":"提高","stem":"小明的家里安装了无线路由器，他听说路由器有防火墙功能，可以保护家里的网络安全。请回答以下问题：","tasks":[{"id":1,"stem":"家庭无线路由器的防火墙默认开启了哪些功能？","answer":"SPI状态检测防火墙、NAT网络地址转换、禁止外部主动访问内部设备。","keywords":["SPI","状态检测","NAT","禁止外部访问"]},{"id":2,"stem":"这些功能可以保护家庭网络免受哪些攻击？","answer":"端口扫描、暴力破解、基于连接的攻击（如SYN洪水）、外部直接访问内部设备。","keywords":["端口扫描","暴力破解","SYN洪水","外部访问"]},{"id":3,"stem":"小明想让自己的电脑能够被外部网络访问，应该在防火墙上进行什么配置？","answer":"配置端口转发（虚拟服务器），将路由器外部端口映射到内部电脑的IP和端口。","keywords":["端口转发","虚拟服务器","映射"]},{"id":4,"stem":"除了路由器防火墙，小明还应该采取哪些措施保护电脑和网络安全？","answer":"安装杀毒软件和安全卫士；使用强密码保护WiFi和路由器管理；关闭路由器远程管理；不点击陌生链接；定期备份数据。","keywords":["杀毒软件","强密码","关闭远程管理","备份"]}],"answer":"（1）SPI防火墙+NAT+禁止外部主动访问；（2）防扫描、破解、SYN攻击、直接访问；（3）配置端口转发；（4）杀软、强密码、关远程管理、备份。","keywords":["SPI","NAT","端口转发","杀毒软件","强密码"],"analysis":"<strong>🎯 答案解析：</strong>家庭路由器防火墙默认开启SPI和NAT，基本安全但不够，还需电脑安全措施和良好习惯。<br><strong>📚 知识点讲解：</strong>端口转发可以让外部访问内部服务，但会暴露内网设备，需谨慎使用。<br><strong>💡 解题思路：</strong>从路由器功能、防护能力、端口映射、补充措施逐层分析。<br><strong>🧠 记忆口诀：</strong>路由默认SPI加NAT，防外攻击基本够，端口转发开服务，安全习惯不可少。"}];
+        
+        const APP_ID = 'firewall_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '防火墙技术（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>防火墙</strong>是部署在不同信任级别网络之间的安全屏障，按照预设安全策略对进出网络流量进行监控和过滤，<strong>允许合法流量通过，阻止非法访问和攻击</strong>，是网络安全的第一道防线。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. 防火墙基本工作原理</strong></p>
+                <p>基于<strong>访问控制列表（ACL）</strong>检查数据包的五元组信息（源IP、目的IP、源端口、目的端口、协议），与安全规则匹配后执行允许或拒绝。现代防火墙支持<strong>状态检测</strong>，自动记录连接状态。</p>
+                <p><strong>2. 三大核心技术类型</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>技术类型</th><th>工作层级</th><th>核心原理</th><th>优点</th><th>缺点</th></tr>
+                    <tr><td>包过滤</td><td>网络层/传输层</td><td>只检查数据包头部</td><td>速度快、配置简单</td><td>不检查内容、无法识别应用攻击</td></tr>
+                    <tr><td>状态检测</td><td>网络层+状态跟踪</td><td>在包过滤基础上跟踪连接状态</td><td>安全性较高、性能较好</td><td>无法深度检查应用层内容</td></tr>
+                    <tr><td>应用层网关</td><td>应用层</td><td>代理内外通信，深度检查内容</td><td>安全性最高</td><td>性能损耗大、配置复杂</td></tr>
+                </table>
+                <p><strong>3. 防火墙核心功能</strong>：访问控制、NAT（地址转换+隐藏内网）、日志审计、VPN支持、流量管理</p>
+                <p><strong>4. 防火墙固有局限性</strong>：无法防范内部攻击、病毒、应用层攻击、加密流量检测、零日漏洞、社会工程学攻击</p>
+                <p><strong>5. 下一代防火墙（NGFW）</strong>：增加应用识别、入侵防御、防病毒、用户身份识别等高级功能</p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul>
+                    <li>❌ 混淆防火墙和杀毒软件</li>
+                    <li>❌ 认为防火墙能防范所有攻击</li>
+                    <li>❌ 混淆不同技术类型的工作层次</li>
+                    <li>❌ 认为NAT只能解决地址不足</li>
+                    <li>❌ 认为硬件防火墙一定比软件好</li>
+                </ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn'; reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz'; reviewMode = false; wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0; renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) { const t = q.type; if (t === '单选题') return '单选题'; if (t === '判断题') return '判断题'; if (t === '简答题') return '简答题'; if (t === '综合应用题') return '综合应用题'; return t; }
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+        function getActualIndex() { if (reviewMode && wrongIndices.length > 0) return wrongIndices[reviewIndex]; return currentIndex; }
+        function getTotalInMode() { if (reviewMode && wrongIndices.length > 0) return wrongIndices.length; return questions.length; }
+        function getCurrentPosition() { if (reviewMode && wrongIndices.length > 0) return reviewIndex + 1; return currentIndex + 1; }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex(); const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode(); const currentPos = getCurrentPosition();
+            let html = '';
+            if (reviewMode) html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx; const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) { if (isSelected && isCorrect) classes.push('correct'); else if (isSelected && !isCorrect) classes.push('wrong'); else if (isCorrect) classes.push('correct'); } else if (isSelected) classes.push('selected');
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') { html += renderTextAnswerArea(actualIdx, q); }
+            else if (q.type === '综合应用题') { html += renderComprehensiveArea(actualIdx, q); }
+            html += '</div>';
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) { const isCorrect = answers[actualIdx] === q.answer; html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`; }
+                else if (isTextType(q)) { const result = evaluateTextAnswer(actualIdx, q); html += buildTextResultCard(actualIdx, q, result); }
+            }
+            const allDone = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allDone) || (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount(); const accuracy = Math.round(correctCount / questions.length * 100); const wrongCount = getWrongCount();
+                if (!reviewMode) saveToHistory(correctCount, accuracy);
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount);
+            }
+            contentArea.innerHTML = html; updateHeader();
+            setTimeout(() => { if (isTextType(q)) { const ta = document.getElementById('textAnswerInput'); if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') ta.value = answers[actualIdx]; const draft = getDraft(actualIdx); if (ta && answers[actualIdx] === null && draft) ta.value = draft; } }, 50);
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const saved = answers[actualIdx]; const draft = getDraft(actualIdx);
+            const displayVal = (saved !== null && typeof saved === 'string') ? saved : (draft || '');
+            const disabled = saved !== null && typeof saved === 'string';
+            let h = `<div class="text-answer-area"><textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea><div class="text-answer-buttons">`;
+            if (!disabled) { h += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button><button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button><button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`; }
+            else h += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            return h + `</div></div>`;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) { let h = ''; if (q.tasks && q.tasks.length > 0) { h += `<ul class="tasks-list">`; q.tasks.forEach(t => { h += `<li><span class="task-id">${t.id}</span> ${t.stem}</li>`; }); h += `</ul>`; } return h + renderTextAnswerArea(actualIdx, q); }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const bc = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const bt = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 作答评估 <span class="result-badge ${bc}">${bt}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;"><p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div><p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div><p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p><div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div><span class="score-tag ${result.progressClass}">${result.levelLabel}</span><p style="margin-top:8px;"><strong>命中：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p><p><strong>未命中：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p><hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">${q.analysis}</div></div>`;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount) {
+            let h = `<div class="completion-screen"><div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div><h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div><div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wrongCount > 0 && !reviewMode) { h += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button><button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`; }
+            if (reviewMode && wrongCount > 0) h += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            return h + `</div></div>`;
+        }
+
+        function selectOption(idx) { const ai = getActualIndex(); if (answers[ai] !== null || !isChoiceType(questions[ai])) return; answers[ai] = idx; saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); showToast(idx === questions[ai].answer ? '回答正确！✓' : '回答错误 ✗'); }
+        function submitTextAnswer(ai) { if (answers[ai] !== null && typeof answers[ai] === 'string') return; const ta = document.getElementById('textAnswerInput'); if (!ta) return; const ua = ta.value.trim(); if (!ua) { showToast('请先输入你的回答'); return; } answers[ai] = ua; clearDraft(ai); saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); const r = evaluateTextAnswer(ai, questions[ai]); showToast(r.level === 'good' ? '回答较好！✓' : (r.level === 'partial' ? '部分正确 △' : '需加强 ✗')); }
+        function saveDraftOnly(ai) { const ta = document.getElementById('textAnswerInput'); if (!ta) return; const v = ta.value.trim(); if (v) { saveDraft(ai, v); showToast('草稿已保存 ✓'); } else { clearDraft(ai); showToast('草稿已清空'); } }
+        function clearTextInput(ai) { const ta = document.getElementById('textAnswerInput'); if (ta) ta.value = ''; clearDraft(ai); showToast('输入已清空'); }
+
+        function evaluateTextAnswer(ai, q) {
+            const ua = (answers[ai] && typeof answers[ai] === 'string') ? answers[ai] : ''; const ak = []; let ra = '';
+            if (q.type === '简答题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; } else if (q.type === '综合应用题') { if (q.keywords) ak.push(...q.keywords); ra = q.answer || ''; }
+            const tk = ak.length; const hk = []; const mk = []; const ul = ua.toLowerCase();
+            ak.forEach(k => { if (ul.includes(k.toLowerCase())) hk.push(k); else mk.push(k); });
+            const hc = hk.length; const hr = tk > 0 ? Math.round((hc / tk) * 100) : 0; let l, ll, pc;
+            if (q.type === '简答题') { if (hr >= 60) { l = 'good'; ll = '回答较好'; pc = 'excellent'; } else if (hr >= 30) { l = 'partial'; ll = '部分正确'; pc = 'pass'; } else { l = 'weak'; ll = '需加强'; pc = 'fail'; } }
+            else { if (hr >= 80) { l = 'good'; ll = '优秀'; pc = 'excellent'; } else if (hr >= 60) { l = 'good'; ll = '良好'; pc = 'good'; } else if (hr >= 40) { l = 'partial'; ll = '合格'; pc = 'pass'; } else { l = 'weak'; ll = '需加强'; pc = 'fail'; } }
+            return { userAnswer: ua, referenceAnswer: ra, totalKeywords: tk, hitCount: hc, hitRate: hr, hitKeywords: hk, missedKeywords: mk, level: l, levelLabel: ll, progressClass: pc };
+        }
+
+        function getCorrectCount() { let c = 0; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] === q.answer) c++; } else { const r = evaluateTextAnswer(i, q); if (r.level === 'good') c++; } }); return c; }
+        function getWrongCount() { let c = 0; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] !== q.answer) c++; } else { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') c++; } }); return c; }
+        function getWrongIndicesArray() { const a = []; questions.forEach((q, i) => { if (answers[i] === null) return; if (isChoiceType(q)) { if (answers[i] !== q.answer) a.push(i); } else { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') a.push(i); } }); return a; }
+        function checkAllAnsweredInMode() { if (reviewMode && wrongIndices.length > 0) return wrongIndices.every(wi => answers[wi] !== null); return answers.every(a => a !== null); }
+
+        function startReviewWrong() { wrongIndices = getWrongIndicesArray(); if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; } reviewMode = true; reviewIndex = 0; currentPage = 'quiz'; document.getElementById('knowledgePage').classList.add('hidden'); document.getElementById('quizContent').style.display = 'block'; document.getElementById('questionInfo').style.display = 'block'; document.getElementById('pageTitle').style.display = 'none'; document.querySelector('.progress-bar').style.display = 'block'; renderQuestion(); updateNavButtons(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`); }
+        function exitReviewMode() { reviewMode = false; wrongIndices = []; currentIndex = 0; currentPage = 'quiz'; renderQuestion(); updateNavButtons(); window.scrollTo({ top: 0, behavior: 'smooth' }); showToast('已退出错题回顾模式'); }
+
+        function exportWrongCSV() {
+            const wa = getWrongIndicesArray(); if (wa.length === 0) { showToast('没有错题可导出'); return; }
+            const mn = '防火墙技术'; const ds = new Date().toISOString().slice(0, 10); const fn = `错题本_${mn}_${ds}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wa.forEach(i => { const q = questions[i]; const qt = getQuestionTypeLabel(q); const stem = q.stem.replace(/"/g, '""'); let ua = '', ca = '', hr = '', res = '';
+                if (isChoiceType(q)) { ua = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : ''; ca = q.options[q.answer] ? q.options[q.answer].text : String(q.answer); res = answers[i] === q.answer ? '正确' : '错误'; hr = answers[i] === q.answer ? '100%' : '0%'; }
+                else { ua = (answers[i] && typeof answers[i] === 'string') ? answers[i] : ''; ca = q.answer || ''; const er = evaluateTextAnswer(i, q); hr = er.hitRate + '%'; res = er.levelLabel; }
+                const at = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+                rows.push([qt, '"'+stem+'"', '"'+ua.replace(/"/g, '""')+'"', '"'+ca.replace(/"/g, '""')+'"', hr, res, '"'+at+'"']); });
+            const csv = '\uFEFF' + rows.map(r => r.join(',')).join('\n'); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fn; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出：' + fn);
+        }
+
+        function toggleAnalysis(h) { const c = h.nextElementSibling; const i = h.querySelector('.toggle-icon'); if (c.style.display === 'none') { c.style.display = 'block'; i.classList.add('expanded'); } else { c.style.display = 'none'; i.classList.remove('expanded'); } }
+        function prevQuestion() { if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } } else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() { if (currentPage !== 'quiz') return; document.getElementById('currentNum').textContent = getCurrentPosition(); const ac = answers.filter(a => a !== null).length; document.getElementById('answeredCount').textContent = ac; document.getElementById('totalCount').textContent = questions.length; document.getElementById('progressFill').style.width = `${(ac / questions.length) * 100}%`; }
+        function updateNavButtons() { const fc = document.getElementById('footerContent'); if (currentPage !== 'quiz') return; const tim = getTotalInMode(); const cp = getCurrentPosition(); const isF = cp <= 1; const isL = cp >= tim; const ad = checkAllAnsweredInMode(); fc.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isF ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isL && ad ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+
+        function changeFontSize(d) { fontSize = Math.max(14, Math.min(22, fontSize + d)); document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const o = document.getElementById('sheetOverlay'); const p = document.getElementById('sheetPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderAnswerSheet(); } }
+
+        function renderAnswerSheet() { const g = document.getElementById('sheetGrid'); let h = ''; questions.forEach((q, i) => { let sc = 'unanswered', st = '未答'; if (answers[i] !== null) { if (isChoiceType(q)) { if (answers[i] === q.answer) { sc = 'correct'; st = '正确'; } else { sc = 'wrong'; st = '错误'; } } else { const r = evaluateTextAnswer(i, q); if (r.level === 'good') { sc = 'correct'; st = '较好'; } else if (r.level === 'partial') { sc = 'correct'; st = '部分'; } else { sc = 'wrong'; st = '加强'; } } } if (i === getActualIndex() && !reviewMode) sc += ' current'; if (reviewMode && wrongIndices.includes(i) && wrongIndices[reviewIndex] === i) sc += ' current';
+            if (currentFilter !== 'all') { if (currentFilter === 'unanswered' && answers[i] !== null) return; if (currentFilter === 'correct') { if (answers[i] === null) return; if (isChoiceType(q) && answers[i] !== q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') return; } } if (currentFilter === 'wrong') { if (answers[i] === null) return; if (isChoiceType(q) && answers[i] === q.answer) return; if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level !== 'weak') return; } } }
+            h += `<div class="sheet-item ${sc}" onclick="jumpToQuestion(${i})"><div class="sheet-number">${i + 1}</div><div class="sheet-status">${st}</div></div>`; }); g.innerHTML = h; }
+        function filterQuestions(f, e) { currentFilter = f; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); if (e && e.target) e.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(i) { reviewMode = false; wrongIndices = []; currentIndex = i; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() { const o = document.getElementById('historyOverlay'); const p = document.getElementById('historyPanel'); if (p.classList.contains('show')) { o.classList.remove('show'); p.classList.remove('show'); } else { o.classList.add('show'); p.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const l = document.getElementById('historyList'); const h = getHistory(); if (h.length === 0) { l.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; } let ht = ''; h.forEach((r, i) => { const ds = new Date(r.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); ht += `<div class="history-item"><div class="history-date">${ds}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`; }); l.innerHTML = ht; }
+        function saveToHistory(cc, ac) { const h = getHistory(); h.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: cc, accuracy: ac, answers: [...answers] }); if (h.length > 50) h.pop(); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(h)); }
+
+        function getHistory() { try { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; } catch(e) { console.warn('历史记录异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; } }
+        function reviewHistory(i) { const h = getHistory(); if (i >= 0 && i < h.length) { answers = [...h[i].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(i) { if (!confirm('确定删除？')) return; const h = getHistory(); if (i >= 0 && i < h.length) { h.splice(i, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(h)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() { try { const s = localStorage.getItem(STORAGE_KEY_ANSWERS); if (s) { const d = JSON.parse(s); currentIndex = d.currentIndex || 0; answers = d.answers || new Array(questions.length).fill(null); reviewMode = d.reviewMode || false; wrongIndices = d.wrongIndices || []; reviewIndex = d.reviewIndex || 0; } } catch(e) { console.warn('进度数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); } try { const ss = localStorage.getItem(STORAGE_KEY_SETTINGS); if (ss) { const st = JSON.parse(ss); fontSize = st.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); } } catch(e) { console.warn('设置数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); } }
+
+        function saveDraft(i, v) { const d = getDrafts(); d[i] = v; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDraft(i) { const d = getDrafts(); return d[i] || null; }
+        function clearDraft(i) { const d = getDrafts(); delete d[i]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDrafts() { try { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; } catch(e) { console.warn('草稿异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() { if (confirm('确定重新开始？当前进度将被清除。')) { currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion(); updateNavButtons(); renderAnswerSheet(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null); localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); switchToKnowledgePage(); renderAnswerSheet(); } }
+        function showToast(msg) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 1500); }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>

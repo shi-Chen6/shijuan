@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>网页编辑刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+        /* 新增题型及增强功能样式 */
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-match-result { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.7; }
+        .keyword-match-result.good { background: var(--success-light); border: 1px solid #b7eb8f; color: #135200; }
+        .keyword-match-result.partial { background: var(--warning-light); border: 1px solid #ffe58f; color: #7c5200; }
+        .keyword-match-result.weak { background: var(--error-light); border: 1px solid #ffa39e; color: #820014; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .action-btn.review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .action-btn.export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">网页编辑</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"网页的基本编写语言是（ ）","options":[{"label":"A","text":"C++"},{"label":"B","text":"Java"},{"label":"C","text":"HTML"},{"label":"D","text":"Python"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. HTML</strong>。HTML（超文本标记语言）是网页的基本编写语言，用于定义网页的内容和结构。<br><strong>📚 知识点讲解：</strong>HTML是标记语言，不是编程语言，它没有逻辑判断和循环能力。<br><strong>💡 解题思路：</strong>C++、Java、Python都是编程语言，HTML才是网页专用的标记语言。<br><strong>🧠 记忆口诀：</strong>网页基本是HTML，标记语言定结构，C++ Java Python，编程语言非标记。"},{"type":"单选题","difficulty":"基础","stem":"下列属于纯文本网页编辑工具的是（ ）","options":[{"label":"A","text":"Dreamweaver"},{"label":"B","text":"记事本"},{"label":"C","text":"HBuilder X"},{"label":"D","text":"Photoshop"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 记事本</strong>。记事本是Windows自带的纯文本编辑器，需要手动编写代码。Dreamweaver和HBuilder X是可视化编辑器，Photoshop是图像处理软件。<br><strong>📚 知识点讲解：</strong>纯文本编辑器没有任何可视化功能，只能编辑代码本身。<br><strong>💡 解题思路：</strong>Dreamweaver、HBuilder X带有可视化功能，Photoshop是图像工具。<br><strong>🧠 记忆口诀：</strong>记事本是纯文本，手动编码无预览，Dreamweaver可视化，Photoshop修图忙。"},{"type":"单选题","difficulty":"基础","stem":"HTML文档中，用于定义页面标题的标签是（ ）","options":[{"label":"A","text":"<head>"},{"label":"B","text":"<title>"},{"label":"C","text":"<meta>"},{"label":"D","text":"<body>"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. <title></strong>。<title>标签用于定义页面标题，显示在浏览器标签页上。<br><strong>📚 知识点讲解：</strong><head>是头部区域，<meta>定义元信息，<body>是主体区域。<br><strong>💡 解题思路：</strong>标题显示在浏览器标签，只能由<title>设置。<br><strong>🧠 记忆口诀：</strong>标题标签是title，显示在标签页，head装元信息，body放可见。"},{"type":"单选题","difficulty":"基础","stem":"用于解决中文乱码问题的meta标签是（ ）","options":[{"label":"A","text":"<meta name=\"viewport\" content=\"width=device-width\">"},{"label":"B","text":"<meta charset=\"UTF-8\">"},{"label":"C","text":"<meta name=\"description\" content=\"网页描述\">"},{"label":"D","text":"<meta name=\"keywords\" content=\"关键词\">"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. <meta charset="UTF-8"></strong>。指定字符编码为UTF-8，可解决中文乱码问题。<br><strong>📚 知识点讲解：</strong>UTF-8是全球通用的字符编码，支持中文等多国语言。<br><strong>💡 解题思路：</strong>其他meta标签用于移动端适配、描述和关键词，不解决乱码。<br><strong>🧠 记忆口诀：</strong>乱码问题charset，UTF-8来解救，中文显示正常了，网页浏览无障碍。"},{"type":"单选题","difficulty":"基础","stem":"下列标签中，属于单标签的是（ ）","options":[{"label":"A","text":"<p>"},{"label":"B","text":"<h1>"},{"label":"C","text":"<img>"},{"label":"D","text":"<a>"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. <img></strong>。<img>是单标签，只有开始标签没有结束标签。<p>、<h1>、<a>都是双标签，需要成对出现。<br><strong>📚 知识点讲解：</strong>单标签如<img>、<br>、<hr>，双标签如<p>、<h1>。<br><strong>💡 解题思路：</strong>记住常见的单标签：<img>、<br>、<hr>。<br><strong>🧠 记忆口诀：</strong>img br hr，单标签不配对，其余多数双标签，成对出现是规范。"},{"type":"单选题","difficulty":"基础","stem":"用于插入图片的HTML标签是（ ）","options":[{"label":"A","text":"<a>"},{"label":"B","text":"<img>"},{"label":"C","text":"<video>"},{"label":"D","text":"<audio>"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. <img></strong>。<img>标签用于插入图片，通过src属性指定图片路径。<br><strong>📚 知识点讲解：</strong><a>是链接标签，<video>是视频标签，<audio>是音频标签。<br><strong>💡 解题思路：</strong>img是image的缩写，表示图片。<br><strong>🧠 记忆口诀：</strong>图片标签叫img，src路径指向它，alt替代文本写，图片不显示时用。"},{"type":"单选题","difficulty":"基础","stem":"用于定义超链接的HTML标签是（ ）","options":[{"label":"A","text":"<a>"},{"label":"B","text":"<img>"},{"label":"C","text":"<link>"},{"label":"D","text":"<p>"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. <a></strong>。<a>标签用于定义超链接，通过href属性指定目标网址。<br><strong>📚 知识点讲解：</strong><a>是anchor（锚）的缩写。<br><strong>💡 解题思路：</strong><link>用于引入外部资源，<p>是段落，<img>是图片。<br><strong>🧠 记忆口诀：</strong>超链接用a标签，href填网址，点击跳转页面，target开新窗。"},{"type":"单选题","difficulty":"基础","stem":"CSS的作用是（ ）","options":[{"label":"A","text":"定义网页的内容和结构"},{"label":"B","text":"控制网页的外观和样式"},{"label":"C","text":"实现网页的交互功能"},{"label":"D","text":"存储网页数据"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 控制网页的外观和样式</strong>。CSS（层叠样式表）用于美化网页。<br><strong>📚 知识点讲解：</strong>HTML负责结构，CSS负责样式，JavaScript负责交互。<br><strong>💡 解题思路：</strong>A是HTML的职责，C是JavaScript，D是数据库。<br><strong>🧠 记忆口诀：</strong>HTML定结构，CSS管外观，JavaScript交互忙，三者分工各不同。"},{"type":"单选题","difficulty":"基础","stem":"将CSS样式写在HTML标签的style属性中，这种方式称为（ ）","options":[{"label":"A","text":"内联样式"},{"label":"B","text":"内部样式表"},{"label":"C","text":"外部样式表"},{"label":"D","text":"导入样式表"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 内联样式</strong>。内联样式直接将CSS写在标签的style属性中，作用范围仅限当前元素。<br><strong>📚 知识点讲解：</strong>内部样式表写在<style>标签中，外部样式表是单独的.css文件。<br><strong>💡 解题思路：</strong>style属性写在标签内，所以叫内联样式。<br><strong>🧠 记忆口诀：</strong>内联样式写标签，内部样式在head，外部样式单独文件，三种方式灵活用。"},{"type":"单选题","difficulty":"基础","stem":"下列CSS引入方式中，优先级最高的是（ ）","options":[{"label":"A","text":"内联样式"},{"label":"B","text":"内部样式表"},{"label":"C","text":"外部样式表"},{"label":"D","text":"优先级相同"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 内联样式</strong>。CSS优先级：内联样式 > 内部样式表 > 外部样式表。<br><strong>📚 知识点讲解：</strong>越靠近元素的样式优先级越高。<br><strong>💡 解题思路：</strong>内联直接写在元素上，优先级最高。<br><strong>🧠 记忆口诀：</strong>内联第一内部二，外部样式排最后，就近原则优先级，离得越近越优先。"},{"type":"单选题","difficulty":"中档","stem":"下列HTML代码中，正确的是（ ）","options":[{"label":"A","text":"<p style=\"color: red\">红色文字</p>"},{"label":"B","text":"<p style=color:red>红色文字</p>"},{"label":"C","text":"<p style=\"color red\">红色文字</p>"},{"label":"D","text":"<p style=\"color: red;\">红色文字</p>"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. <p style="color: red;">红色文字</p></strong>。正确的内联样式语法：属性:值; 多个属性用分号隔开。<br><strong>📚 知识点讲解：</strong>属性值可用引号，但分号不能少。B缺引号，C用空格而非冒号，A少分号虽可能生效但不规范。<br><strong>💡 解题思路：</strong>规范写法是属性:值; D最规范。<br><strong>🧠 记忆口诀：</strong>style属性要规范，冒号分隔属性和值，分号隔开多条规则，引号括起值安全。"},{"type":"单选题","difficulty":"中档","stem":"下列关于HTML标签的说法，错误的是（ ）","options":[{"label":"A","text":"HTML标签不区分大小写"},{"label":"B","text":"双标签必须成对出现"},{"label":"C","text":"标签可以交叉嵌套"},{"label":"D","text":"标签的属性值应该用引号括起来"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 标签可以交叉嵌套</strong>。HTML标签不能交叉嵌套，必须正确嵌套。如<p><div></div></p>正确，<p><div></p></div>错误。<br><strong>📚 知识点讲解：</strong>正确嵌套是HTML语法基础。<br><strong>💡 解题思路：</strong>A、B、D都是正确的，C违反嵌套规则。<br><strong>🧠 记忆口诀：</strong>标签嵌套要规范，不能交叉来放置，先开后开最后关，后开先关记心间。"},{"type":"单选题","difficulty":"中档","stem":"图片标签`<img>`中，用于指定图片路径的属性是（ ）","options":[{"label":"A","text":"alt"},{"label":"B","text":"src"},{"label":"C","text":"href"},{"label":"D","text":"title"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. src</strong>。src属性指定图片的来源路径。<br><strong>📚 知识点讲解：</strong>alt是替代文本，href用于链接，title是提示信息。<br><strong>💡 解题思路：</strong>src = source，表示来源。<br><strong>🧠 记忆口诀：</strong>src来源路径写，alt替代当图缺，href链接跳转用，title提示悬停显。"},{"type":"单选题","difficulty":"中档","stem":"链接标签`<a>`中，用于指定目标网址的属性是（ ）","options":[{"label":"A","text":"alt"},{"label":"B","text":"src"},{"label":"C","text":"href"},{"label":"D","text":"title"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. href</strong>。href属性指定超链接的目标网址。<br><strong>📚 知识点讲解：</strong>href是hypertext reference的缩写。<br><strong>💡 解题思路：</strong>链接的网址用href，图片用src。<br><strong>🧠 记忆口诀：</strong>链接地址用href，图片路径用src，两个容易混淆，网址href图片src。"},{"type":"单选题","difficulty":"中档","stem":"制作网页时，应该将图片文件存放在（ ）","options":[{"label":"A","text":"与HTML文件同一目录"},{"label":"B","text":"专门的images文件夹"},{"label":"C","text":"C盘根目录"},{"label":"D","text":"桌面"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 专门的images文件夹</strong>。为便于管理和维护，应建立专门的文件夹存放图片。<br><strong>📚 知识点讲解：</strong>良好的项目结构有助于代码维护。<br><strong>💡 解题思路：</strong>专业做法是用images文件夹分类存放。<br><strong>🧠 记忆口诀：</strong>图片存放images，分类管理好维护，css js分开放，项目结构清又楚。"},{"type":"判断题","difficulty":"基础","stem":"HTML是一种编程语言。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。HTML是超文本标记语言，不是编程语言，它没有逻辑判断和循环能力。<br><strong>📚 知识点讲解：</strong>HTML用于定义网页结构和内容，属于标记语言。<br><strong>💡 解题思路：</strong>编程语言能够进行逻辑运算，HTML不能。<br><strong>🧠 记忆口诀：</strong>HTML标记语言，不是编程无逻辑，定义网页结构和内容，描述页面而非计算。"},{"type":"判断题","difficulty":"基础","stem":"网页文件的扩展名必须是.html或.htm。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。网页文件的标准扩展名是.html或.htm，浏览器根据扩展名解析文件。<br><strong>📚 知识点讲解：</strong>.html是推荐扩展名，.htm是历史遗留的短扩展名。<br><strong>💡 解题思路：</strong>符合网页文件标准。<br><strong>🧠 记忆口诀：</strong>网页扩展html或htm，浏览器识别就靠它，保存文件改后缀，双击就能看网页。"},{"type":"判断题","difficulty":"基础","stem":"<body>标签中的内容会显示在浏览器的页面上。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。<body>标签包含了网页的所有可见内容，如文本、图片、链接等。<br><strong>📚 知识点讲解：</strong><body>是网页的主体部分，用户看到的内容都在其中。<br><strong>💡 解题思路：</strong>body就是网页的身体，装可视内容。<br><strong>🧠 记忆口诀：</strong>body标签装内容，文本图片和链接，所有可见在其中，页面显示全靠它。"},{"type":"判断题","difficulty":"基础","stem":"<br>标签用于插入一个段落。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。<br>标签用于强制换行，<p>标签才用于定义段落。<br><strong>📚 知识点讲解：</strong><br>是单标签，<p>是双标签，两者作用不同。<br><strong>💡 解题思路：</strong>br是break的缩写，表示换行；p是paragraph的缩写，表示段落。<br><strong>🧠 记忆口诀：</strong>br换行单标签，p段落成对出，换行不隔空行，段落上下有空行。"},{"type":"判断题","difficulty":"基础","stem":"无序列表使用<ol>标签，有序列表使用<ul>标签。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。无序列表使用<ul>标签，有序列表使用<ol>标签。两者恰恰相反。<br><strong>📚 知识点讲解：</strong>ul = unordered list，ol = ordered list。<br><strong>💡 解题思路：</strong>u是无序，o是有序。<br><strong>🧠 记忆口诀：</strong>ul无序圆点标，ol有序数字排，u无o有要记牢，列表项都用li装。"},{"type":"判断题","difficulty":"基础","stem":"CSS可以实现内容与表现的分离。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。CSS将样式定义从HTML结构中分离出来，实现内容与表现的分离，使网页更易于维护。<br><strong>📚 知识点讲解：</strong>这是CSS的核心优势。<br><strong>💡 解题思路：</strong>内容与表现分离是Web标准的重要原则。<br><strong>🧠 记忆口诀：</strong>CSS样式分离出，HTML专心管结构，修改样式不动内容，维护便捷效率高。"},{"type":"判断题","difficulty":"基础","stem":"外部样式表通过<link>标签引入。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。外部样式表通过<link rel="stylesheet" href="style.css">标签引入到HTML文档中。<br><strong>📚 知识点讲解：</strong><link>标签放在<head>中，rel属性指定关系为stylesheet。<br><strong>💡 解题思路：</strong>这是引入外部CSS的标准方式。<br><strong>🧠 记忆口诀：</strong>外部样式link引入，rel样式表指明，href指向文件，写在head里面。"},{"type":"判断题","difficulty":"中档","stem":"HTML标签的属性值可以不用引号括起来。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。HTML标签的属性值应该用英文双引号或单引号括起来，虽然在某些情况下不加引号也能运行，但不符合规范，容易出错。<br><strong>📚 知识点讲解：</strong>加引号是推荐的最佳实践。<br><strong>💡 解题思路：</strong>规范要求属性值加引号。<br><strong>🧠 记忆口诀：</strong>属性值要加引号，双引单引都可以，规范写法少错误，良好习惯要坚持。"},{"type":"判断题","difficulty":"中档","stem":"用记事本编写的网页不能包含图片和链接。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。用记事本编写的网页可以包含图片、链接、音频、视频等所有HTML元素，和专业工具编写的网页没有本质区别。<br><strong>📚 知识点讲解：</strong>记事本只是编辑器，不影响HTML的功能。<br><strong>💡 解题思路：</strong>代码功能由HTML标签决定，与编辑器无关。<br><strong>🧠 记忆口诀：</strong>记事本写代码，功能不减少，图片链接全支持，标签正确就能显。"},{"type":"判断题","difficulty":"中档","stem":"网页编辑完成后，不需要测试就可以直接发布。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。网页编辑完成后必须在不同浏览器中测试，检查显示效果、链接是否正常，修复所有错误后才能发布。<br><strong>📚 知识点讲解：</strong>测试是网页制作的重要环节。<br><strong>💡 解题思路：</strong>不测试直接发布可能导致错误页面。<br><strong>🧠 记忆口诀：</strong>网页做好先测试，多浏览器查一遍，链接图片都检查，无误之后再发布。"},{"type":"简答题","difficulty":"中档","stem":"请写出HTML5文档的标准结构，并说明每个标签的作用。","answer":"<!DOCTYPE html> 声明文档类型为HTML5。 <html lang=\"zh-CN\"> 根标签，lang指定语言。 <head> 头部区域，存元信息。 <meta charset=\"UTF-8\"> 指定字符编码，解决中文乱码。 <title>页面标题</title> 定义浏览器标签页标题。 <body> 主体区域，包含所有可见内容。 </body> </html>","keywords":["DOCTYPE","html","head","meta","charset","UTF-8","title","body"],"analysis":"<strong>🎯 答案解析：</strong>HTML5标准结构从DOCTYPE开始，到html根标签，包含head和body两大区域。<br><strong>📚 知识点讲解：</strong>head放元信息，body放可见内容，这是必背结构。<br><strong>💡 解题思路：</strong>按顺序写出标签并解释作用。<br><strong>🧠 记忆口诀：</strong>DOCTYPE声明在首行，html根标签lang中文，head头部元信息，body主体装内容。"},{"type":"简答题","difficulty":"中档","stem":"请简述CSS的三种引入方式及其特点。","answer":"1.内联样式：写在标签style属性中，作用当前元素，优先级最高，不推荐大量使用。2.内部样式表：写在<head>的<style>标签中，作用当前页面，代码集中但不可复用。3.外部样式表：写在单独的.css文件中，通过<link>引入，作用所有引用页面，代码复用性高，最推荐。","keywords":["内联样式","style属性","内部样式表","<style>","外部样式表","<link>",".css","复用"],"analysis":"<strong>🎯 答案解析：</strong>三种引入方式：内联（元素style属性）、内部（<style>标签）、外部（<link>引入.css文件）。<br><strong>📚 知识点讲解：</strong>外部样式表是最佳实践，实现了内容与表现分离。<br><strong>💡 解题思路：</strong>从作用范围、优先级、复用性比较。<br><strong>🧠 记忆口诀：</strong>内联写标签，内部在head，外部单独文件link引，推荐外部好复用。"},{"type":"简答题","difficulty":"提高","stem":"请简述制作一个简单静态网页的完整步骤。","answer":"1.需求分析：确定主题、内容和布局。2.素材准备：收集文字、图片等，放入images文件夹。3.创建项目结构：新建项目文件夹，包含index.html和images文件夹。4.编写HTML结构：在编辑器中按标准结构编写代码，添加内容。5.添加CSS样式：通过内部或外部样式表美化页面。6.测试与调试：在浏览器中检查显示、链接，修复错误。7.发布网页：上传文件到服务器。","keywords":["需求分析","素材准备","项目结构","HTML结构","CSS样式","测试","发布"],"analysis":"<strong>🎯 答案解析：</strong>制作步骤为：需求分析→素材准备→创建结构→编写HTML→添加CSS→测试→发布。<br><strong>📚 知识点讲解：</strong>这是完整的网页制作流程，体现了软件工程的基本思想。<br><strong>💡 解题思路：</strong>按时间先后顺序描述。<br><strong>🧠 记忆口诀：</strong>需求素材建结构，HTML CSS写代码，测试无误再发布，七步流程做网页。"},{"type":"综合应用题","difficulty":"提高","stem":"请编写一个简单的个人介绍网页，要求：（1）包含一级标题“我的个人介绍”（2）包含一张个人照片（使用相对路径）（3）包含一段个人简介（段落）（4）包含一个无序列表，列出3个兴趣爱好（5）包含一个链接，指向百度首页（6）使用内部样式表，将一级标题设置为蓝色，段落文字设置为16px","tasks":[{"id":1,"stem":"请编写HTML结构代码，包含标题、照片、段落、列表和链接。","answer":"<!DOCTYPE html><html lang=\"zh-CN\"><head><meta charset=\"UTF-8\"><title>我的个人介绍</title><style>h1{color:blue;}p{font-size:16px;}</style></head><body><h1>我的个人介绍</h1><img src=\"images/photo.jpg\" alt=\"我的照片\"><p>大家好，我是张三，是一名高中学生。我喜欢编程、阅读和运动。</p><h2>我的兴趣爱好</h2><ul><li>编程</li><li>阅读</li><li>打篮球</li></ul><p>访问<a href=\"https://www.baidu.com\" target=\"_blank\">百度</a>了解更多信息。</p></body></html>","keywords":["h1","我的个人介绍","img","src","alt","p","ul","li","a","href","style","color","blue","font-size","16px"]},{"id":2,"stem":"图片路径为什么使用相对路径？请解释。","answer":"使用相对路径便于项目整体迁移，无论项目文件夹移动到哪个位置，只要内部结构不变，图片都能正确显示。绝对路径依赖具体盘符，更换环境可能失效。","keywords":["相对路径","迁移","内部结构","绝对路径","盘符"]},{"id":3,"stem":"内部样式表是如何实现标题蓝色、段落16px的？请说明CSS选择器和属性。","answer":"通过h1选择器{color:blue;}将一级标题文字颜色设为蓝色；通过p选择器{font-size:16px;}将段落文字大小设为16像素。选择器指定样式应用的元素，属性:值;设置具体样式。","keywords":["h1","color","blue","p","font-size","16px","选择器"]}],"answer":"（1）见代码；（2）使用相对路径便于迁移；（3）h1{color:blue;} p{font-size:16px;}","keywords":["DOCTYPE","html","head","title","style","h1","color","blue","p","font-size","16px","img","src","alt","ul","li","a","href","相对路径"],"analysis":"<strong>🎯 答案解析：</strong>综合应用HTML标签和CSS样式，实现一个包含标题、图片、段落、列表、链接的个人介绍网页，并用内部样式表美化。<br><strong>📚 知识点讲解：</strong>本题考察HTML常用标签和CSS的基本使用，以及相对路径的优势。<br><strong>💡 解题思路：</strong>先写结构，再添加样式，注意路径和属性的正确性。<br><strong>🧠 记忆口诀：</strong>标题图片段落列，链接百度样式写，h1蓝p十六，相对路径好处多。"},{"type":"综合应用题","difficulty":"提高","stem":"下面是一段有错误的HTML代码，请找出其中的5处错误并改正。\n```html\n<!DOCTYPE html>\n<html>\n<head>\n    <title>错误的网页</title>\n</head>\n<body>\n    <h1>这是一个有错误的网页<h1>\n    <p>这是第一段\n    <p>这是第二段<br>\n    <img src=\"photo.jpg\" alt=\"照片\">\n    <a href=\"www.baidu.com\">百度</a>\n    <ul>\n        <li>列表项1\n        <li>列表项2\n    </ul>\n</body>\n</html>\n```","tasks":[{"id":1,"stem":"请找出代码中的5处错误并改正。","answer":"错误1：<h1>这是一个有错误的网页<h1> → 结束标签应为</h1>。错误2：<p>这是第一段 → 缺少结束标签</p>。错误3：<p>这是第二段<br> → 缺少结束标签</p>。错误4：<a href=\"www.baidu.com\"> → 链接缺少协议头https://。错误5：<li>列表项1 和 <li>列表项2 → 缺少结束标签</li>。","keywords":["</h1>","</p>","https://","</li>","结束标签"]}],"answer":"错误：1. h1未闭合；2. 第一个p未闭合；3. 第二个p未闭合；4. 链接缺少https://；5. li未闭合。","keywords":["闭合","结束标签","https","</h1>","</p>","</li>"],"analysis":"<strong>🎯 答案解析：</strong>主要错误是标签未闭合和链接地址缺少协议头。正确写法应为成对标签闭合，链接地址包含协议。<br><strong>📚 知识点讲解：</strong>HTML标签必须正确闭合，属性值要完整。<br><strong>💡 解题思路：</strong>逐一检查标签是否配对，链接是否包含https://。<br><strong>🧠 记忆口诀：</strong>标签成对要闭合，链接地址加协议，li p h1莫忘关，代码规范少错误。"}];
+        
+        const APP_ID = 'web_edit_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '网页编辑（高中信息科技）';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p><strong>网页编辑</strong>是指创建、修改和维护网页的全过程，通过<strong>HTML</strong>定义内容和结构，<strong>CSS</strong>控制外观和布局，<strong>JavaScript</strong>实现交互功能。它是网站开发的基础，也是高中“网络技术应用”模块的核心内容。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. 网页编辑工具</strong></p>
+                <ul>
+                    <li><strong>文本编辑器</strong>：记事本、VS Code、Sublime Text（手写代码）</li>
+                    <li><strong>可视化编辑器</strong>：Dreamweaver、HBuilder X（所见即所得）</li>
+                    <li><strong>在线编辑器</strong>：CodePen、JSFiddle（浏览器中编辑）</li>
+                </ul>
+                <p><strong>2. HTML基础语法</strong></p>
+                <ul>
+                    <li><strong>标签</strong>：双标签如&lt;p&gt;&lt;/p&gt;，单标签如&lt;img&gt;、&lt;br&gt;</li>
+                    <li><strong>元素</strong>：开始标签+内容+结束标签</li>
+                    <li><strong>属性</strong>：写在开始标签中，格式 属性名="属性值"</li>
+                </ul>
+                <p><strong>HTML5标准结构（必背）</strong></p>
+                <pre style="background:#f5f5f5;padding:12px;border-radius:8px;overflow-x:auto;">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;标题&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    网页内容
+&lt;/body&gt;
+&lt;/html&gt;
+                </pre>
+                <p><strong>3. 常用HTML标签</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>标签</th><th>作用</th></tr>
+                    <tr><td>&lt;h1&gt;~&lt;h6&gt;</td><td>标题</td></tr>
+                    <tr><td>&lt;p&gt;</td><td>段落</td></tr>
+                    <tr><td>&lt;br&gt;</td><td>换行</td></tr>
+                    <tr><td>&lt;img&gt;</td><td>图片</td></tr>
+                    <tr><td>&lt;a&gt;</td><td>超链接</td></tr>
+                    <tr><td>&lt;ul&gt;&lt;ol&gt;&lt;li&gt;</td><td>列表</td></tr>
+                </table>
+                <p><strong>4. CSS三种引入方式</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>方式</th><th>位置</th><th>优先级</th></tr>
+                    <tr><td>内联样式</td><td>style属性</td><td>最高</td></tr>
+                    <tr><td>内部样式表</td><td>&lt;style&gt;标签</td><td>中</td></tr>
+                    <tr><td>外部样式表</td><td>.css文件</td><td>低（推荐）</td></tr>
+                </table>
+                <p><strong>5. 网页制作步骤</strong>：需求分析→素材准备→创建结构→编写HTML→添加CSS→测试→发布</p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul>
+                    <li>❌ 忘记设置字符编码导致中文乱码</li>
+                    <li>❌ 标签不闭合（双标签缺少结束标签）</li>
+                    <li>❌ 属性值不使用引号</li>
+                    <li>❌ 图片或链接路径错误</li>
+                    <li>❌ 标签交叉嵌套</li>
+                </ul>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) {
+            const t = q.type;
+            if (t === '单选题') return '单选题';
+            if (t === '判断题') return '判断题';
+            if (t === '简答题') return '简答题';
+            if (t === '综合应用题') return '综合应用题';
+            return t;
+        }
+
+        function isChoiceType(q) { return q.type === '单选题' || q.type === '判断题'; }
+        function isTextType(q) { return q.type === '简答题' || q.type === '综合应用题'; }
+
+        function getActualIndex() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices[reviewIndex];
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices.length;
+            return questions.length;
+        }
+
+        function getCurrentPosition() {
+            if (reviewMode && wrongIndices.length > 0) return reviewIndex + 1;
+            return currentIndex + 1;
+        }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex();
+            const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            let html = '';
+            if (reviewMode) {
+                html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            }
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx;
+                    const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) {
+                        if (isSelected && isCorrect) classes.push('correct');
+                        else if (isSelected && !isCorrect) classes.push('wrong');
+                        else if (isCorrect) classes.push('correct');
+                    } else if (isSelected) { classes.push('selected'); }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') {
+                html += renderTextAnswerArea(actualIdx, q);
+            } else if (q.type === '综合应用题') {
+                html += renderComprehensiveArea(actualIdx, q);
+            }
+            html += '</div>';
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) {
+                    const isCorrect = answers[actualIdx] === q.answer;
+                    html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(actualIdx, q);
+                    html += buildTextResultCard(actualIdx, q, result);
+                }
+            }
+            const allAnsweredInMode = checkAllAnsweredInMode();
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allAnsweredInMode) ||
+                (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount();
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = getWrongCount();
+                if (!reviewMode) { saveToHistory(correctCount, accuracy); }
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount);
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            setTimeout(() => {
+                if (isTextType(q)) {
+                    const ta = document.getElementById('textAnswerInput');
+                    if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') {
+                        ta.value = answers[actualIdx];
+                    }
+                    const draft = getDraft(actualIdx);
+                    if (ta && answers[actualIdx] === null && draft) { ta.value = draft; }
+                }
+            }, 50);
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const savedAnswer = answers[actualIdx];
+            const draft = getDraft(actualIdx);
+            const displayVal = (savedAnswer !== null && typeof savedAnswer === 'string') ? savedAnswer : (draft || '');
+            const disabled = savedAnswer !== null && typeof savedAnswer === 'string';
+            let html = `<div class="text-answer-area">`;
+            html += `<textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea>`;
+            html += `<div class="text-answer-buttons">`;
+            if (!disabled) {
+                html += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button>`;
+                html += `<button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button>`;
+                html += `<button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                html += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) {
+            let html = '';
+            if (q.tasks && q.tasks.length > 0) {
+                html += `<ul class="tasks-list">`;
+                q.tasks.forEach(task => { html += `<li><span class="task-id">${task.id}</span> ${task.stem}</li>`; });
+                html += `</ul>`;
+            }
+            html += renderTextAnswerArea(actualIdx, q);
+            return html;
+        }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const badgeClass = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const badgeText = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `<div class="analysis-card">
+                <div class="analysis-header" onclick="toggleAnalysis(this)">
+                    <div class="analysis-title">📝 作答评估 <span class="result-badge ${badgeClass}">${badgeText}</span></div>
+                    <div class="toggle-icon expanded">▼</div>
+                </div>
+                <div class="analysis-content" style="display: block;">
+                    <p><strong>📋 你的作答：</strong></p><div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div>
+                    <p><strong>✅ 标准答案：</strong></p><div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div>
+                    <p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p>
+                    <div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div>
+                    <span class="score-tag ${result.progressClass}">${result.levelLabel}</span>
+                    <p style="margin-top:8px;"><strong>命中关键词：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p>
+                    <p><strong>未命中关键词：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p>
+                    <hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">
+                    ${q.analysis}
+                </div>
+            </div>`;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount) {
+            let html = `<div class="completion-screen">
+                <div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div>
+                <h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1>
+                <p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p>
+                <div class="stats">
+                    <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                    <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    <div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                    <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>`;
+            if (wrongCount > 0 && !reviewMode) {
+                html += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button>`;
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            if (reviewMode && wrongCount > 0) {
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function selectOption(idx) {
+            const actualIdx = getActualIndex();
+            if (answers[actualIdx] !== null) return;
+            if (!isChoiceType(questions[actualIdx])) return;
+            answers[actualIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[actualIdx].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(actualIdx) {
+            if (answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') return;
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const userAnswer = ta.value.trim();
+            if (!userAnswer) { showToast('请先输入你的回答'); return; }
+            answers[actualIdx] = userAnswer;
+            clearDraft(actualIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const result = evaluateTextAnswer(actualIdx, questions[actualIdx]);
+            const msg = result.level === 'good' ? '回答较好！✓' : (result.level === 'partial' ? '部分正确 △' : '需加强 ✗');
+            showToast(msg);
+        }
+
+        function saveDraftOnly(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const val = ta.value.trim();
+            if (val) { saveDraft(actualIdx, val); showToast('草稿已保存 ✓'); }
+            else { clearDraft(actualIdx); showToast('草稿已清空'); }
+        }
+
+        function clearTextInput(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (ta) ta.value = '';
+            clearDraft(actualIdx);
+            showToast('输入已清空');
+        }
+
+        function evaluateTextAnswer(actualIdx, q) {
+            const userAnswer = (answers[actualIdx] && typeof answers[actualIdx] === 'string') ? answers[actualIdx] : '';
+            const allKeywords = [];
+            let referenceAnswer = '';
+            if (q.type === '简答题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            else if (q.type === '综合应用题') { if (q.keywords) allKeywords.push(...q.keywords); referenceAnswer = q.answer || ''; }
+            const totalKeywords = allKeywords.length;
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const userLower = userAnswer.toLowerCase();
+            allKeywords.forEach(kw => { if (userLower.includes(kw.toLowerCase())) hitKeywords.push(kw); else missedKeywords.push(kw); });
+            const hitCount = hitKeywords.length;
+            const hitRate = totalKeywords > 0 ? Math.round((hitCount / totalKeywords) * 100) : 0;
+            let level, levelLabel, progressClass;
+            if (q.type === '简答题') {
+                if (hitRate >= 60) { level = 'good'; levelLabel = '回答较好'; progressClass = 'excellent'; }
+                else if (hitRate >= 30) { level = 'partial'; levelLabel = '部分正确'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            } else {
+                if (hitRate >= 80) { level = 'good'; levelLabel = '优秀'; progressClass = 'excellent'; }
+                else if (hitRate >= 60) { level = 'good'; levelLabel = '良好'; progressClass = 'good'; }
+                else if (hitRate >= 40) { level = 'partial'; levelLabel = '合格'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            }
+            return { userAnswer, referenceAnswer, totalKeywords, hitCount, hitRate, hitKeywords, missedKeywords, level, levelLabel, progressClass };
+        }
+
+        function getCorrectCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] === q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'good') count++; }
+            });
+            return count;
+        }
+
+        function getWrongCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') count++; }
+            });
+            return count;
+        }
+
+        function getWrongIndicesArray() {
+            const arr = [];
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) arr.push(i); }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') arr.push(i); }
+            });
+            return arr;
+        }
+
+        function checkAllAnsweredInMode() {
+            if (reviewMode && wrongIndices.length > 0) return wrongIndices.every(wi => answers[wi] !== null);
+            return answers.every(a => a !== null);
+        }
+
+        function startReviewWrong() {
+            wrongIndices = getWrongIndicesArray();
+            if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; }
+            reviewMode = true; reviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; wrongIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已退出错题回顾模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongArr = getWrongIndicesArray();
+            if (wrongArr.length === 0) { showToast('没有错题可导出'); return; }
+            const moduleName = '网页编辑';
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const fileName = `错题本_${moduleName}_${dateStr}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wrongArr.forEach(i => {
+                const q = questions[i];
+                const qType = getQuestionTypeLabel(q);
+                const stem = q.stem.replace(/"/g, '""');
+                let userAns = '', correctAns = '', hitRate = '', result = '';
+                if (isChoiceType(q)) {
+                    userAns = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : '';
+                    correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                    result = answers[i] === q.answer ? '正确' : '错误';
+                    hitRate = answers[i] === q.answer ? '100%' : '0%';
+                } else if (isTextType(q)) {
+                    userAns = (answers[i] && typeof answers[i] === 'string') ? answers[i] : '';
+                    correctAns = q.answer || '';
+                    const evalR = evaluateTextAnswer(i, q);
+                    hitRate = evalR.hitRate + '%';
+                    result = evalR.levelLabel;
+                }
+                const analysisText = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+                rows.push([qType, '"'+stem+'"', '"'+userAns.replace(/"/g, '""')+'"', '"'+correctAns.replace(/"/g, '""')+'"', hitRate, result, '"'+analysisText+'"']);
+            });
+            const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; link.download = fileName;
+            document.body.appendChild(link); link.click();
+            document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast('错题CSV已导出：' + fileName);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            document.getElementById('currentNum').textContent = currentPos;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            const isFirst = currentPos <= 1;
+            const isLast = currentPos >= totalInMode;
+            const allDone = checkAllAnsweredInMode();
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (isChoiceType(q)) {
+                        if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                        else { statusClass = 'wrong'; statusText = '错误'; }
+                    } else if (isTextType(q)) {
+                        const result = evaluateTextAnswer(index, q);
+                        if (result.level === 'good') { statusClass = 'correct'; statusText = '较好'; }
+                        else if (result.level === 'partial') { statusClass = 'correct'; statusText = '部分'; }
+                        else { statusClass = 'wrong'; statusText = '加强'; }
+                    }
+                }
+                if (index === getActualIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && wrongIndices.includes(index) && wrongIndices[reviewIndex] === index) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] !== q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level === 'weak') return; }
+                    }
+                    if (currentFilter === 'wrong') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] === q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level !== 'weak') return; }
+                    }
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { reviewMode = false; wrongIndices = []; currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() {
+            try { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+            catch(e) { console.warn('历史记录数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; }
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            try {
+                const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+                if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); reviewMode = data.reviewMode || false; wrongIndices = data.wrongIndices || []; reviewIndex = data.reviewIndex || 0; }
+            } catch(e) { console.warn('答题进度数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); }
+            try {
+                const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            } catch(e) { console.warn('设置数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); }
+        }
+
+        function saveDraft(index, value) { const drafts = getDrafts(); drafts[index] = value; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDraft(index) { const drafts = getDrafts(); return drafts[index] || null; }
+        function clearDraft(index) { const drafts = getDrafts(); delete drafts[index]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDrafts() { try { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; } catch(e) { console.warn('草稿数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion(); updateNavButtons(); renderAnswerSheet();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); renderAnswerSheet();
+            }
+        }
+
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>

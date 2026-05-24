@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>人工智能发展与算法刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: #d48806; }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 80px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 12px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: linear-gradient(135deg, #f5222d, #ff7875); color: white; }
+        .export-btn { background: #fff7e6; color: #d48806; border: 2px solid #faad14; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        /* 新增题型样式（追加，不破坏原有） */
+        .text-answer-area { margin-top: 16px; }
+        .text-answer-area textarea { width: 100%; min-height: 120px; padding: 14px 16px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; background: #fafbfc; transition: all 0.3s ease; color: var(--text-primary); box-sizing: border-box; }
+        .text-answer-area textarea:focus { outline: none; border-color: var(--primary-color); background: var(--bg-card); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+        .text-answer-area textarea:disabled { background: #f5f5f5; color: var(--text-secondary); cursor: not-allowed; }
+        .text-answer-buttons { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .text-answer-buttons button { flex: 1; min-width: 70px; height: 42px; border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-submit { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .btn-draft { background: #f5f5f5; color: var(--text-secondary); }
+        .btn-clear { background: #fff2f0; color: var(--error-color); }
+        .text-answer-buttons button:active { transform: scale(0.96); }
+        .tasks-list { margin: 16px 0; padding: 0; list-style: none; }
+        .tasks-list li { background: #fafbfc; border-left: 4px solid var(--primary-color); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-weight: 500; color: var(--text-primary); line-height: 1.6; }
+        .tasks-list li .task-id { display: inline-block; background: var(--primary-color); color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 12px; font-weight: 700; margin-right: 8px; }
+        .keyword-match-result { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius-sm); font-size: 14px; line-height: 1.7; }
+        .keyword-match-result.good { background: var(--success-light); border: 1px solid #b7eb8f; color: #135200; }
+        .keyword-match-result.partial { background: var(--warning-light); border: 1px solid #ffe58f; color: #7c5200; }
+        .keyword-match-result.weak { background: var(--error-light); border: 1px solid #ffa39e; color: #820014; }
+        .keyword-highlight { background: #ffd591; padding: 2px 6px; border-radius: 3px; font-weight: 600; }
+        .keyword-missed { background: #ffccc7; padding: 2px 6px; border-radius: 3px; text-decoration: line-through; }
+        .score-progress { width: 100%; height: 10px; background: #e8e8e8; border-radius: 5px; margin: 8px 0 4px; overflow: hidden; }
+        .score-progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .score-progress-fill.excellent { background: linear-gradient(90deg, #52c41a, #73d13d); }
+        .score-progress-fill.good { background: linear-gradient(90deg, #4a90e2, #6ba8ff); }
+        .score-progress-fill.pass { background: linear-gradient(90deg, #faad14, #ffc53d); }
+        .score-progress-fill.fail { background: linear-gradient(90deg, #f5222d, #ff7875); }
+        .score-tag { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; margin-top: 6px; }
+        .score-tag.excellent { background: #f6ffed; color: #237804; border: 1px solid #b7eb8f; }
+        .score-tag.good { background: #e6f7ff; color: #096dd9; border: 1px solid #91d5ff; }
+        .score-tag.pass { background: #fffbe6; color: #ad6800; border: 1px solid #ffe58f; }
+        .score-tag.fail { background: #fff2f0; color: #a8071a; border: 1px solid #ffa39e; }
+        .review-mode-banner { background: #fff7e6; border: 1px solid #ffd591; border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 16px; font-weight: 600; color: #ad6800; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .review-mode-banner .exit-review { margin-left: auto; background: #fff; border: 1px solid #ffd591; padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; color: #ad6800; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0,0,0,0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">人工智能发展与算法</div>
+                        <div class="progress-text">高中信息科技 · 核心考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all', event)">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered', event)">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct', event)">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong', event)">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"人工智能正式诞生的标志是（ ）","options":[{"label":"A","text":"图灵测试的提出"},{"label":"B","text":"达特茅斯会议的召开"},{"label":"C","text":"深蓝战胜卡斯帕罗夫"},{"label":"D","text":"AlphaGo战胜李世石"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 达特茅斯会议的召开</strong>。1956年达特茅斯会议上，科学家们首次提出了“人工智能”的概念，标志着AI作为一门正式学科的诞生。<br><strong>📚 知识点讲解：</strong>1956年达特茅斯会议是人工智能史上的里程碑事件，麦卡锡、明斯基、香农等科学家参会，确立了人工智能的研究方向。<br><strong>💡 解题思路：</strong>图灵测试提出于1950年，为AI提供了哲学基础，但并非学科诞生的标志；深蓝和AlphaGo都是后来的标志性成果。<br><strong>🧠 记忆口诀：</strong>五六达特茅斯会，人工智能正式立，图灵测试是前奏，深蓝Alpha后辉煌。"},{"type":"单选题","difficulty":"基础","stem":"第一次人工智能浪潮的核心思想是（ ）","options":[{"label":"A","text":"符号主义"},{"label":"B","text":"连接主义"},{"label":"C","text":"行为主义"},{"label":"D","text":"深度学习"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 符号主义</strong>。第一次AI浪潮(1956-1970年代末)的核心思想是符号主义，认为智能的本质是符号运算，通过逻辑推理实现智能。<br><strong>📚 知识点讲解：</strong>符号主义又称逻辑主义，主张用符号表示知识，通过逻辑推理模拟人类思维。代表成果有逻辑理论家程序等。<br><strong>💡 解题思路：</strong>连接主义是神经网络的思想，深度学习是第三次浪潮的核心。第一次浪潮主要解决数学定理证明等逻辑问题。<br><strong>🧠 记忆口诀：</strong>一次浪潮符号派，逻辑推理最擅长，数学定理能证明，简单问题它来扛。"},{"type":"单选题","difficulty":"基础","stem":"专家系统属于人工智能发展的哪个阶段？（ ）","options":[{"label":"A","text":"第一次浪潮"},{"label":"B","text":"第二次浪潮"},{"label":"C","text":"第三次浪潮"},{"label":"D","text":"未来阶段"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 第二次浪潮</strong>。专家系统是第二次人工智能浪潮(1980年代初-2000年代初)的核心技术，将人类专家的知识编码到计算机中。<br><strong>📚 知识点讲解：</strong>第二次浪潮又称知识工程时代，通过知识表示和推理机模拟专家决策，典型系统有MYCIN医疗诊断系统。<br><strong>💡 解题思路：</strong>第一次浪潮主要是符号推理，第三次是深度学习。专家系统属于知识工程，正是第二次浪潮的标志。<br><strong>🧠 记忆口诀：</strong>二次浪潮知识库，专家系统来坐镇，MYCIN看病PROSPECTOR探矿，规则知识显神通。"},{"type":"单选题","difficulty":"基础","stem":"深度学习时代开始的标志性事件是（ ）","options":[{"label":"A","text":"2006年杰弗里·辛顿提出深度学习"},{"label":"B","text":"2012年AlexNet在ImageNet竞赛中夺冠"},{"label":"C","text":"2016年AlphaGo战胜李世石"},{"label":"D","text":"2022年ChatGPT发布"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 2006年杰弗里·辛顿提出深度学习</strong>。2006年辛顿在《Science》上发表论文，提出了深度信念网络，标志着深度学习时代的开启。<br><strong>📚 知识点讲解：</strong>虽然2012年AlexNet的成功让深度学习广受关注，但学术上公认2006年为深度学习元年。AlphaGo和ChatGPT都是后来的里程碑。<br><strong>💡 解题思路：</strong>2006年辛顿的工作奠定了深度学习理论基础，是起点；其他选项都是深度学习发展过程中的重要事件。<br><strong>🧠 记忆口诀：</strong>零六辛顿开新篇，深度学习始扬帆，一二AlexNet惊四座，一六AlphaGo更向前。"},{"type":"单选题","difficulty":"基础","stem":"下列属于基于规则的人工智能算法的是（ ）","options":[{"label":"A","text":"专家系统"},{"label":"B","text":"决策树"},{"label":"C","text":"朴素贝叶斯"},{"label":"D","text":"卷积神经网络"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 专家系统</strong>。专家系统是典型的基于规则的算法，由人类专家编写所有规则，计算机按规则执行。<br><strong>📚 知识点讲解：</strong>基于规则的算法可解释性强，结果确定，但规则编写困难。决策树和朴素贝叶斯属于统计学习，CNN属于深度学习。<br><strong>💡 解题思路：</strong>专家系统的核心是规则库和推理机，符合基于规则的特征。其他选项都涉及从数据中学习。<br><strong>🧠 记忆口诀：</strong>规则算法专家系统，人类知识规则多，决策树与贝叶斯，统计数据来分类。"},{"type":"单选题","difficulty":"基础","stem":"下列属于基于统计学习的人工智能算法的是（ ）","options":[{"label":"A","text":"专家系统"},{"label":"B","text":"逻辑推理算法"},{"label":"C","text":"K-Means聚类"},{"label":"D","text":"卷积神经网络"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. K-Means聚类</strong>。K-Means是典型的基于统计学习的无监督学习算法，通过数据间的距离度量进行聚类。<br><strong>📚 知识点讲解：</strong>统计学习算法从数据中学习统计规律，包括决策树、朴素贝叶斯、SVM、K-Means等，需要人工特征工程。<br><strong>💡 解题思路：</strong>专家系统和逻辑推理属于基于规则，CNN属于深度学习。K-Means通过计算距离进行聚类，属于统计学习。<br><strong>🧠 记忆口诀：</strong>统计学习靠数据，决策树贝叶斯SVM，K-Means聚类分群组，特征工程需人工。"},{"type":"单选题","difficulty":"基础","stem":"下列属于基于深度学习的人工智能算法的是（ ）","options":[{"label":"A","text":"专家系统"},{"label":"B","text":"决策树"},{"label":"C","text":"朴素贝叶斯"},{"label":"D","text":"卷积神经网络"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 卷积神经网络</strong>。卷积神经网络是典型的深度学习算法，通过多层神经网络自动提取特征。<br><strong>📚 知识点讲解：</strong>深度学习算法包括CNN、RNN、Transformer等，能够自动从数据中学习多层次特征，无需人工特征工程。<br><strong>💡 解题思路：</strong>专家系统基于规则，决策树和朴素贝叶斯属于统计学习，只有CNN是深度学习算法。<br><strong>🧠 记忆口诀：</strong>深度学习网络深，CNN图像RNN序，自动提取特征强，大数据来算力撑。"},{"type":"单选题","difficulty":"基础","stem":"专门用于处理图像数据的深度学习算法是（ ）","options":[{"label":"A","text":"决策树"},{"label":"B","text":"朴素贝叶斯"},{"label":"C","text":"卷积神经网络"},{"label":"D","text":"循环神经网络"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 卷积神经网络（CNN）</strong>。CNN具有局部感受野和权值共享的特点，特别适合处理图像数据。<br><strong>📚 知识点讲解：</strong>CNN通过卷积层提取局部特征，池化层降维，在图像分类、人脸识别等领域表现优异。<br><strong>💡 解题思路：</strong>决策树和朴素贝叶斯是通用统计学习算法，RNN擅长序列数据。CNN专为图像设计。<br><strong>🧠 记忆口诀：</strong>CNN擅图像，局部感受权共享，卷积池化全连接，人脸识别它最强。"},{"type":"单选题","difficulty":"基础","stem":"专门用于处理序列数据的深度学习算法是（ ）","options":[{"label":"A","text":"决策树"},{"label":"B","text":"朴素贝叶斯"},{"label":"C","text":"卷积神经网络"},{"label":"D","text":"循环神经网络"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 循环神经网络（RNN）</strong>。RNN具有内部循环结构，能够记忆之前的信息，特别适合处理序列数据。<br><strong>📚 知识点讲解：</strong>RNN通过隐藏状态传递时序信息，广泛应用于文本、语音、时间序列等领域，如机器翻译、语音识别。<br><strong>💡 解题思路：</strong>CNN处理图像，决策树和朴素贝叶斯是统计学习算法。RNN的“循环”体现了对时序依赖的处理能力。<br><strong>🧠 记忆口诀：</strong>RNN有记忆，序列数据它擅长，文本语音时间序，前后关联记心上。"},{"type":"单选题","difficulty":"基础","stem":"垃圾邮件分类系统通常使用哪种算法？（ ）","options":[{"label":"A","text":"专家系统"},{"label":"B","text":"朴素贝叶斯"},{"label":"C","text":"K-Means聚类"},{"label":"D","text":"卷积神经网络"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 朴素贝叶斯</strong>。垃圾邮件分类系统通常使用朴素贝叶斯算法，这是一种基于概率的分类算法，简单高效。<br><strong>📚 知识点讲解：</strong>朴素贝叶斯基于贝叶斯定理，假设特征之间相互独立，计算邮件属于垃圾邮件或正常邮件的概率。<br><strong>💡 解题思路：</strong>专家系统不适合动态变化的任务，K-Means是聚类算法，CNN过于复杂。朴素贝叶斯是文本分类的经典算法。<br><strong>🧠 记忆口诀：</strong>垃圾邮件贝叶斯，概率计算来判断，特征独立假设强，简单高效常用它。"},{"type":"单选题","difficulty":"中档","stem":"下列关于人工智能三次发展浪潮的说法，错误的是（ ）","options":[{"label":"A","text":"第一次浪潮主要解决逻辑推理问题"},{"label":"B","text":"第二次浪潮的核心是专家系统"},{"label":"C","text":"第三次浪潮是数据驱动的"},{"label":"D","text":"第三次浪潮已经实现了通用人工智能"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 第三次浪潮已经实现了通用人工智能</strong>。目前我们仍处于弱人工智能阶段，只能解决特定领域的问题，还没有实现通用人工智能。<br><strong>📚 知识点讲解：</strong>弱人工智能只能完成特定任务，通用人工智能（AGI）能像人类一样完成各种智能任务，目前尚未实现。<br><strong>💡 解题思路：</strong>A、B、C对三次浪潮的描述都是正确的。D错误，深度学习时代仍然是弱人工智能。<br><strong>🧠 记忆口诀：</strong>三次浪潮仍弱AI，特定任务能做好，通用智能尚未至，未来发展路漫长。"},{"type":"单选题","difficulty":"中档","stem":"下列关于基于规则和基于统计学习算法的区别，说法正确的是（ ）","options":[{"label":"A","text":"基于规则的算法需要大量数据"},{"label":"B","text":"基于统计学习的算法需要人工编写所有规则"},{"label":"C","text":"基于规则的算法可解释性强"},{"label":"D","text":"基于统计学习的算法只能处理分类问题"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 基于规则的算法可解释性强</strong>。基于规则的算法由人类专家编写规则，每一步推理都清晰可追溯，可解释性强。<br><strong>📚 知识点讲解：</strong>基于规则不需要大量数据，但规则编写困难。统计学习需要数据，不需要人工编写所有规则，能处理分类和回归等多种问题。<br><strong>💡 解题思路：</strong>A错，基于规则不依赖数据；B错，统计学习自动从数据中学习；D错，统计学习能处理回归等任务。<br><strong>🧠 记忆口诀：</strong>规则算法解释强，统计学习靠数据，一个规则人工写，一个模型数据训。"},{"type":"单选题","difficulty":"中档","stem":"AlphaGo使用的核心算法是（ ）","options":[{"label":"A","text":"专家系统"},{"label":"B","text":"决策树"},{"label":"C","text":"深度神经网络和蒙特卡洛树搜索"},{"label":"D","text":"朴素贝叶斯"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 深度神经网络和蒙特卡洛树搜索</strong>。AlphaGo结合了深度神经网络和蒙特卡洛树搜索算法，通过学习大量棋谱和自我对弈战胜了李世石。<br><strong>📚 知识点讲解：</strong>深度神经网络用于评估棋局和选择落子，蒙特卡洛树搜索用于探索可能的走法，两者结合实现了强大的围棋AI。<br><strong>💡 解题思路：</strong>专家系统、决策树、朴素贝叶斯都难以处理围棋的复杂局面。AlphaGo是深度学习时代的里程碑。<br><strong>🧠 记忆口诀：</strong>AlphaGo深度网络加搜索，蒙特卡洛树探路，评估选择相结合，战胜人类里程碑。"},{"type":"单选题","difficulty":"中档","stem":"下列关于算法在人工智能中的作用，说法错误的是（ ）","options":[{"label":"A","text":"算法是人工智能的核心"},{"label":"B","text":"算法决定了人工智能系统的性能"},{"label":"C","text":"算法的创新推动了人工智能的发展"},{"label":"D","text":"只要有好的算法，不需要数据也能实现人工智能"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 只要有好的算法，不需要数据也能实现人工智能</strong>。数据是人工智能的基础，特别是深度学习算法，需要大量高质量的数据才能训练出好的模型。<br><strong>📚 知识点讲解：</strong>算法、数据、算力是人工智能的三大要素，缺一不可。算法是核心，但脱离数据无法发挥作用。<br><strong>💡 解题思路：</strong>A、B、C都正确描述了算法的重要作用。D错误，数据和算法同样重要。<br><strong>🧠 记忆口诀：</strong>算法数据与算力，人工智能三要素，算法核心但非独，没有数据难成器。"},{"type":"单选题","difficulty":"中档","stem":"训练数据中的偏见会导致算法产生歧视性结果，这属于人工智能的什么问题？（ ）","options":[{"label":"A","text":"算法黑箱"},{"label":"B","text":"算法偏见"},{"label":"C","text":"隐私保护"},{"label":"D","text":"就业影响"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 算法偏见</strong>。算法偏见是指训练数据中的偏见会导致算法产生歧视性结果，这是人工智能伦理中的重要问题。<br><strong>📚 知识点讲解：</strong>算法偏见可能源于数据不均衡、标注偏见或设计者价值观，可能导致种族、性别等方面的歧视。<br><strong>💡 解题思路：</strong>算法黑箱指难以解释决策过程，隐私保护涉及数据安全，就业影响指工作替代。题目描述的是偏见问题。<br><strong>🧠 记忆口诀：</strong>数据有偏算法偏，歧视结果不公平，多样数据来纠正，审计制度保公正。"},{"type":"判断题","difficulty":"基础","stem":"人工智能的发展历程本质上就是算法不断演进的过程。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。人工智能的每一次重大突破都离不开算法的创新，算法是人工智能的核心与灵魂。<br><strong>📚 知识点讲解：</strong>从符号推理到专家系统再到深度学习，每次AI浪潮都对应着核心算法的革新。<br><strong>💡 解题思路：</strong>算法是推动AI发展的核心驱动力，这一说法准确。<br><strong>🧠 记忆口诀：</strong>AI发展算法推，符号知识到深度，核心灵魂是算法，创新不断上层楼。"},{"type":"判断题","difficulty":"基础","stem":"第一次人工智能浪潮的核心技术是深度学习。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。第一次人工智能浪潮的核心技术是符号表示和逻辑推理，深度学习是第三次浪潮的核心技术。<br><strong>📚 知识点讲解：</strong>三次浪潮核心技术各不相同：第一次-符号推理，第二次-专家系统/知识工程，第三次-深度学习。<br><strong>💡 解题思路：</strong>混淆了三次浪潮的技术特征。深度学习直到2006年后才成为主流。<br><strong>🧠 记忆口诀：</strong>一次符号二次知，三次深度才兴起，浪潮技术要分清，张冠李戴不可取。"},{"type":"判断题","difficulty":"基础","stem":"专家系统是基于规则的人工智能系统。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。专家系统通过将人类专家的知识以规则的形式存储在计算机中，是典型的基于规则的人工智能系统。<br><strong>📚 知识点讲解：</strong>专家系统由知识库（规则）和推理机组成，根据输入事实和规则进行推理，得出结论。<br><strong>💡 解题思路：</strong>专家系统的核心就是IF-THEN规则，符合基于规则算法的定义。<br><strong>🧠 记忆口诀：</strong>专家系统规则库，IF-THEN来推理，知识工程代表物，基于规则是本质。"},{"type":"判断题","difficulty":"基础","stem":"深度学习算法需要人工进行特征工程。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。深度学习算法能够自动从数据中提取特征，不需要人工进行复杂的特征工程，这是深度学习相比传统机器学习的一个重要优势。<br><strong>📚 知识点讲解：</strong>传统机器学习需要人工设计特征（如SIFT、HOG），深度学习通过多层网络自动学习特征表示。<br><strong>💡 解题思路：</strong>自动特征提取是深度学习的核心优势，说它需要人工特征工程是错误的。<br><strong>🧠 记忆口诀：</strong>深度学习自动化，特征提取不用愁，层层网络自己学，人工特征可省去。"},{"type":"判断题","difficulty":"基础","stem":"卷积神经网络适合处理图像数据。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。卷积神经网络的结构特点（局部感受野、权值共享）使其非常适合处理具有网格结构的数据，如图像。<br><strong>📚 知识点讲解：</strong>CNN能够自动提取图像中的边缘、纹理、形状等多层次特征，在图像分类、目标检测等领域表现出色。<br><strong>💡 解题思路：</strong>这是CNN的核心应用领域，表述正确。<br><strong>🧠 记忆口诀：</strong>CNN天生爱图像，局部感受共享权重，边缘纹理自动提，图像识别它最棒。"},{"type":"判断题","difficulty":"基础","stem":"循环神经网络适合处理序列数据。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。循环神经网络具有记忆功能，能够处理序列数据，如文本、语音、时间序列等。<br><strong>📚 知识点讲解：</strong>RNN通过隐藏状态在时间步之间传递信息，能够捕捉序列中的前后依赖关系。<br><strong>💡 解题思路：</strong>RNN的设计初衷就是处理序列数据，表述正确。<br><strong>🧠 记忆口诀：</strong>RNN记序列，隐藏状态传信息，文本语音时间序，前后依赖它捕捉。"},{"type":"判断题","difficulty":"基础","stem":"朴素贝叶斯算法是基于概率的分类算法。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。朴素贝叶斯算法基于贝叶斯定理，通过计算后验概率来进行分类。<br><strong>📚 知识点讲解：</strong>朴素贝叶斯假设特征之间相互独立，虽然假设简单，但在文本分类等任务中效果很好。<br><strong>💡 解题思路：</strong>贝叶斯本身就是概率方法，表述正确。<br><strong>🧠 记忆口诀：</strong>朴素贝叶斯概率派，贝叶斯定理为基础，特征独立假设强，垃圾邮件常用它。"},{"type":"判断题","difficulty":"中档","stem":"深度学习算法的可解释性很强。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。深度学习算法的决策过程通常被称为“黑箱”，可解释性差，这是深度学习的一个重要局限性。<br><strong>📚 知识点讲解：</strong>深度神经网络参数众多，中间层特征难以直观理解，导致其决策过程难以向人类解释。<br><strong>💡 解题思路：</strong>可解释性差是深度学习的主要缺点之一，与基于规则的算法形成对比。<br><strong>🧠 记忆口诀：</strong>深度学习黑箱多，可解释性比较弱，决策过程难理解，研究热点可解释AI。"},{"type":"判断题","difficulty":"中档","stem":"只要有足够多的数据，深度学习算法就能解决所有问题。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。深度学习算法虽然强大，但并不是万能的，它也有自己的局限性，如需要大量数据和计算资源、可解释性差等。<br><strong>📚 知识点讲解：</strong>深度学习还面临小样本学习、因果推理、常识推理等挑战，单纯依靠数据和算力无法解决所有问题。<br><strong>💡 解题思路：</strong>深度学习不是万能的，有其适用范围和局限性。<br><strong>🧠 记忆口诀：</strong>深度学习非万能，数据算力有要求，小样本和因果推，仍是挑战待突破。"},{"type":"判断题","difficulty":"中档","stem":"算法是客观中立的，不会产生偏见。","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。算法并不是客观中立的，它会受到训练数据、设计者价值观等因素的影响，可能会产生偏见。<br><strong>📚 知识点讲解：</strong>算法偏见可能来源于数据采集不均衡、历史偏见、特征选择不当等，需要在设计和应用时加以注意。<br><strong>💡 解题思路：</strong>算法是人为设计的，数据和设计者都存在主观性，因此算法并非中立。<br><strong>🧠 记忆口诀：</strong>算法非中立，数据设计带偏见，公平公正需努力，审计制度保平衡。"},{"type":"简答题","difficulty":"中档","stem":"请简述人工智能的三次发展浪潮及其核心特点。","answer":"人工智能经历了三次发展浪潮：（1）第一次浪潮（1956-1970年代末）：符号主义时代，核心特点：认为智能的本质是符号运算，通过逻辑推理实现智能，主要解决数学定理证明、简单游戏等逻辑问题。（2）第二次浪潮（1980年代初-2000年代初）：知识工程时代，核心特点：将人类专家的知识编码到计算机中，开发专家系统来解决特定领域的问题。（3）第三次浪潮（2006年至今）：深度学习时代，核心特点：通过多层神经网络从大量数据中自动学习特征和规律，是数据驱动的人工智能。","keywords":["第一次浪潮","符号主义","逻辑推理","第二次浪潮","知识工程","专家系统","第三次浪潮","深度学习","数据驱动","1956","2006"],"analysis":"<strong>🎯 答案解析：</strong>三次浪潮分别是：符号主义时代（1956-）、知识工程时代（1980-）、深度学习时代（2006-）。每次浪潮的核心思想和技术不同。<br><strong>📚 知识点讲解：</strong>人工智能发展历程反映了人类对智能理解的深化，从逻辑推理到知识工程再到数据驱动，技术不断演进。<br><strong>💡 解题思路：</strong>按照时间顺序，突出每次浪潮的核心思想、代表技术和局限性。关键词包括符号主义、专家系统、深度学习。<br><strong>🧠 记忆口诀：</strong>五六符号搞推理，八零知识专家忙，零六深度数据驱动，三次浪潮记心上。"},{"type":"简答题","difficulty":"中档","stem":"请比较基于规则、基于统计学习和基于深度学习的人工智能算法的优缺点。","answer":"基于规则的算法优点：可解释性强，结果确定，不需要大量数据；缺点：规则编写困难，无法处理复杂问题和不确定性问题。基于统计学习的算法优点：能够处理不确定性问题，具有一定的学习能力；缺点：需要人工进行特征工程，对复杂问题的处理能力有限。基于深度学习的算法优点：自动特征提取，处理复杂问题能力强，泛化能力好；缺点：可解释性差，需要大量数据和计算资源，容易过拟合。","keywords":["基于规则","可解释性强","统计学习","特征工程","深度学习","自动特征提取","可解释性差","大量数据","计算资源"],"analysis":"<strong>🎯 答案解析：</strong>三大算法类型各有优劣：基于规则可解释但僵化，统计学习需人工特征，深度学习自动但黑箱。<br><strong>📚 知识点讲解：</strong>选择算法时需根据任务需求、数据量、可解释性要求等因素权衡。没有一种算法适合所有场景。<br><strong>💡 解题思路：</strong>从可解释性、数据需求、处理能力、特征工程等维度进行对比。<br><strong>🧠 记忆口诀：</strong>规则解释强但死板，统计学习需特征，深度学习自动强，却难解释黑箱中。"},{"type":"简答题","difficulty":"提高","stem":"请分析人工智能算法可能带来的伦理与社会问题，并提出相应的应对措施。","answer":"人工智能算法可能带来的伦理与社会问题及应对措施：（1）算法偏见：训练数据中的偏见会导致算法产生歧视性结果。应对措施：使用多样化的训练数据，定期检测和消除算法中的偏见，建立算法审计制度。（2）算法黑箱：深度学习算法的决策过程难以解释。应对措施：研究可解释性人工智能技术，要求关键领域的算法具有可解释性，建立算法决策的问责机制。（3）隐私保护：人工智能算法需要处理大量个人数据，可能导致隐私泄露。应对措施：加强数据安全保护，使用联邦学习、差分隐私等技术保护用户隐私，完善相关法律法规。（4）就业影响：人工智能技术可能会替代部分人类工作，导致失业。应对措施：加强职业培训，帮助劳动者转型，创造新的就业岗位，建立社会保障体系。","keywords":["算法偏见","算法黑箱","隐私保护","就业影响","数据偏见","可解释性","数据安全","职业培训","审计制度","问责机制"],"analysis":"<strong>🎯 答案解析：</strong>AI伦理问题主要包括算法偏见、黑箱问题、隐私保护和就业影响，需从技术、制度和法律多层面应对。<br><strong>📚 知识点讲解：</strong>这是高中信息科技新课标强调的核心素养，不仅会用技术，还要思考技术带来的社会影响，培养负责任的科技观。<br><strong>💡 解题思路：</strong>从四个维度分别阐述问题和应对措施，每个维度都应有具体的技术或制度方案。<br><strong>🧠 记忆口诀：</strong>偏见黑箱隐私就业，四大伦理要记牢，多样数据可解释，联邦学习加培训。"},{"type":"综合应用题","difficulty":"提高","stem":"某电商平台想要开发一个智能推荐系统，为用户推荐可能感兴趣的商品。请回答以下问题：","tasks":[{"id":1,"stem":"这个问题适合使用哪种类型的人工智能算法来解决？为什么？","answer":"适合使用基于统计学习或深度学习的推荐算法。因为电商平台有大量的用户浏览历史、购买记录等数据，推荐算法可以从这些数据中学习用户的兴趣偏好，为用户推荐可能感兴趣的商品。基于规则的算法无法处理如此复杂和动态的用户行为数据。","keywords":["统计学习","深度学习","推荐算法","用户数据","浏览历史","购买记录","兴趣偏好"]},{"id":2,"stem":"请简述开发这个智能推荐系统的基本步骤。","answer":"基本步骤：①数据收集：收集用户的基本信息、浏览历史、购买记录、评价等数据。②数据预处理：对原始数据进行清洗、去噪、转换等处理，提取有用的特征。③算法选择：根据业务需求和数据特点选择合适的推荐算法，如协同过滤、内容推荐、深度学习推荐算法等。④模型训练：使用历史数据训练推荐模型。⑤模型评估：使用测试数据评估模型的性能，如准确率、召回率、点击率等。⑥模型部署：将训练好的模型部署到线上环境，为用户提供推荐服务。⑦模型更新：根据用户的反馈和新的数据不断更新模型，提高推荐效果。","keywords":["数据收集","数据预处理","算法选择","模型训练","模型评估","模型部署","模型更新","协同过滤","深度学习"]},{"id":3,"stem":"在开发和使用这个推荐系统的过程中，可能会遇到哪些伦理问题？","answer":"可能遇到的伦理问题：①隐私问题：推荐系统需要收集和分析用户的大量个人数据，可能导致用户隐私泄露。②信息茧房：推荐系统会根据用户的兴趣偏好推荐内容，导致用户只能看到自己感兴趣的信息，形成信息茧房。③算法歧视：如果训练数据中存在偏见，推荐系统可能会对某些用户群体产生歧视。④过度推荐：推荐系统可能会过度推荐商品，导致用户消费成瘾。","keywords":["隐私问题","信息茧房","算法歧视","过度推荐","消费成瘾","数据泄露"]}],"answer":"（1）适合使用基于统计学习或深度学习的推荐算法，因为需要从大量用户行为数据中学习偏好；（2）基本步骤：数据收集→预处理→算法选择→模型训练→评估→部署→更新；（3）伦理问题：隐私泄露、信息茧房、算法歧视、过度推荐。","keywords":["统计学习","深度学习","推荐算法","数据收集","数据预处理","协同过滤","模型训练","隐私","信息茧房","算法歧视"],"analysis":"<strong>🎯 答案解析：</strong>推荐系统适合用统计学习或深度学习算法，流程包括数据收集到模型更新的七步，需关注隐私、信息茧房等伦理问题。<br><strong>📚 知识点讲解：</strong>推荐系统是AI典型应用，协同过滤利用用户相似性，深度学习可提取更复杂特征。伦理问题反映了技术应用的社会责任。<br><strong>💡 解题思路：</strong>从数据类型判断算法类型，按项目流程梳理步骤，从隐私、公平、社会影响等维度分析伦理。<br><strong>🧠 记忆口诀：</strong>推荐系统靠数据，协同过滤深度学，七步流程建模型，伦理隐私要牢记。"},{"type":"综合应用题","difficulty":"提高","stem":"某医院想要使用人工智能技术辅助医生进行疾病诊断。请回答以下问题：","tasks":[{"id":1,"stem":"如果要诊断肺部疾病，需要分析肺部CT图像，应该选择哪种算法？为什么？","answer":"应该选择卷积神经网络（CNN）。因为肺部CT图像是二维的图像数据，卷积神经网络具有局部感受野和权值共享的特点，特别适合处理图像数据，能够自动提取图像中的病变特征。","keywords":["卷积神经网络","CNN","CT图像","局部感受野","权值共享","图像数据","病变特征"]},{"id":2,"stem":"如果要根据患者的症状和检查结果进行疾病诊断，应该选择哪种算法？为什么？","answer":"可以选择决策树、朴素贝叶斯或专家系统。决策树和朴素贝叶斯是基于统计学习的算法，能够根据患者的症状和检查结果等特征进行分类，判断患者可能患有的疾病。专家系统则可以将医生的诊断知识以规则的形式存储起来，模拟医生的诊断过程。","keywords":["决策树","朴素贝叶斯","专家系统","症状","检查结果","分类","统计学习"]},{"id":3,"stem":"在使用人工智能辅助诊断系统时，医生和患者应该注意什么？","answer":"医生和患者应该注意：①人工智能辅助诊断系统只是一种辅助工具，不能替代医生的专业判断。医生应该结合自己的临床经验和患者的具体情况做出最终诊断。②患者应该了解人工智能辅助诊断系统的局限性，不要完全依赖系统的诊断结果。③医院应该建立完善的管理制度，确保人工智能辅助诊断系统的安全性和可靠性。④应该保护患者的隐私，确保患者的医疗数据不被泄露。","keywords":["辅助工具","不能替代","专业判断","局限性","管理制度","安全可靠","隐私保护","数据泄露"]}],"answer":"（1）诊断肺部CT图像应选择CNN，因其擅长处理图像数据；（2）根据症状和检查结果诊断可选择决策树、朴素贝叶斯或专家系统；（3）医生和患者应注意AI只是辅助工具，不能替代医生，同时需保护隐私。","keywords":["卷积神经网络","CNN","决策树","朴素贝叶斯","专家系统","辅助工具","专业判断","隐私保护","局限性"],"analysis":"<strong>🎯 答案解析：</strong>图像诊断用CNN，症状分类用决策树/贝叶斯/专家系统，AI只是辅助，医生最终决策，同时需重视隐私保护。<br><strong>📚 知识点讲解：</strong>不同算法适用不同场景，医疗AI需平衡技术优势与伦理责任，人机协同是当前最佳实践。<br><strong>💡 解题思路：</strong>根据数据类型选择合适算法，从辅助定位、局限性、隐私等角度给出使用建议。<br><strong>🧠 记忆口诀：</strong>图像诊断CNN，症状分类决策树，AI辅助不替代，隐私安全放首位。"}];
+        const APP_ID = 'ai_dev_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let wrongIndices = [];
+        let reviewIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '人工智能发展与算法';
+            const content = `
+                <h3>📖 核心定义</h3>
+                <p>人工智能（Artificial Intelligence，简称<span class="highlight">AI</span>）是指通过计算机系统模拟、延伸和扩展人类智能的理论、方法、技术及应用系统。<strong>算法是人工智能的核心与灵魂</strong>，是解决人工智能问题的一系列清晰、有限的步骤和规则。</p>
+                <h3>🔍 核心要点拆解</h3>
+                <p><strong>1. 人工智能的三次发展浪潮</strong></p>
+                <ul>
+                    <li><strong>第一次浪潮（1956-1970年代末）：符号主义时代</strong> — 核心思想：智能的本质是符号运算，通过逻辑推理实现智能。标志性成果：1956年达特茅斯会议、逻辑理论家程序。</li>
+                    <li><strong>第二次浪潮（1980年代初-2000年代初）：知识工程时代</strong> — 核心思想：将人类专家的知识编码到计算机中。标志性成果：MYCIN医疗诊断专家系统、第五代计算机计划。</li>
+                    <li><strong>第三次浪潮（2006年至今）：深度学习时代</strong> — 核心思想：通过多层神经网络从大量数据中自动学习特征。标志性成果：AlexNet、AlphaGo、大语言模型。</li>
+                </ul>
+                <p><strong>2. 人工智能算法的三大核心类型</strong></p>
+                <table class="knowledge-table">
+                    <tr><th>类型</th><th>代表算法</th><th>优点</th><th>缺点</th></tr>
+                    <tr><td>基于规则的算法</td><td>专家系统、逻辑推理</td><td>可解释性强，结果确定</td><td>规则编写困难</td></tr>
+                    <tr><td>基于统计学习的算法</td><td>决策树、朴素贝叶斯、SVM、K-Means</td><td>处理不确定性问题，具有一定学习能力</td><td>需要人工特征工程</td></tr>
+                    <tr><td>基于深度学习的算法</td><td>CNN、RNN、Transformer</td><td>自动特征提取，处理复杂问题能力强</td><td>可解释性差，需大量数据和算力</td></tr>
+                </table>
+                <p><strong>3. 经典人工智能算法及其应用</strong></p>
+                <ul><li><strong>决策树</strong> — 贷款风险评估、疾病诊断</li><li><strong>朴素贝叶斯</strong> — 垃圾邮件识别、文本分类</li><li><strong>K-Means聚类</strong> — 客户分群、图像分割</li><li><strong>CNN</strong> — 人脸识别、图像分类</li><li><strong>RNN</strong> — 语音识别、机器翻译</li><li><strong>Transformer</strong> — 大语言模型、机器翻译</li></ul>
+                <p><strong>4. 算法在人工智能中的核心作用</strong> — 算法决定AI能解决什么问题，算法优劣直接影响性能，算法创新是AI发展的主要驱动力。</p>
+                <p><strong>5. 人工智能算法的伦理与社会影响</strong> — 算法偏见、算法黑箱、隐私保护、就业影响等。</p>
+                <h3>📚 教材典型案例</h3>
+                <p><strong>深蓝战胜卡斯帕罗夫（1997）</strong> — 符号主义巅峰，基于规则的搜索算法。</p>
+                <p><strong>AlphaGo战胜李世石（2016）</strong> — 深度学习里程碑，深度神经网络+蒙特卡洛树搜索。</p>
+                <p><strong>垃圾邮件分类</strong> — 朴素贝叶斯统计学习应用。</p>
+                <p><strong>手写数字识别</strong> — CNN深度学习入门案例。</p>
+                <h3>⚠️ 教学重点 / 易错点</h3>
+                <ul><li>❌ 混淆三次发展浪潮的时间和核心技术</li><li>❌ 混淆基于规则、统计学习和深度学习算法的区别</li><li>❌ 认为深度学习可以解决所有问题</li><li>❌ 认为算法是客观中立的，不会产生偏见</li></ul>
+                <h3>🎓 学段区分说明</h3>
+                <p><strong>初中阶段：</strong>了解AI基本概念和发展历程，举例说明生活中AI应用，知道算法是AI的核心。</p>
+                <p><strong>高中阶段：</strong>理解三次浪潮核心思想和技术特点，掌握三大算法类型的区别和应用场景，了解经典算法原理，能分析AI伦理与社会问题。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            reviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            wrongIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getQuestionTypeLabel(q) {
+            const t = q.type;
+            if (t === '单选题') return '单选题';
+            if (t === '判断题') return '判断题';
+            if (t === '简答题') return '简答题';
+            if (t === '综合应用题') return '综合应用题';
+            return t;
+        }
+
+        function isChoiceType(q) {
+            return q.type === '单选题' || q.type === '判断题';
+        }
+
+        function isTextType(q) {
+            return q.type === '简答题' || q.type === '综合应用题';
+        }
+
+        function getActualIndex() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return wrongIndices[reviewIndex];
+            }
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return wrongIndices.length;
+            }
+            return questions.length;
+        }
+
+        function getCurrentPosition() {
+            if (reviewMode && wrongIndices.length > 0) {
+                return reviewIndex + 1;
+            }
+            return currentIndex + 1;
+        }
+
+        function renderQuestion() {
+            const actualIdx = getActualIndex();
+            const q = questions[actualIdx];
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+
+            let html = '';
+            if (reviewMode) {
+                html += `<div class="review-mode-banner">🔁 错题回顾模式 — 第 ${currentPos}/${totalInMode} 题 <span class="exit-review" onclick="exitReviewMode()">退出回顾</span></div>`;
+            }
+
+            html += `<div class="question-card"><span class="question-type">${getQuestionTypeLabel(q)}${q.difficulty ? ' · ' + q.difficulty : ''}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+
+            if (isChoiceType(q)) {
+                html += `<div class="options-container">`;
+                q.options.forEach((opt, idx) => {
+                    const isSelected = answers[actualIdx] === idx;
+                    const isCorrect = q.answer === idx;
+                    let classes = ['option-item'];
+                    if (answers[actualIdx] !== null) {
+                        if (isSelected && isCorrect) classes.push('correct');
+                        else if (isSelected && !isCorrect) classes.push('wrong');
+                        else if (isCorrect) classes.push('correct');
+                    } else if (isSelected) {
+                        classes.push('selected');
+                    }
+                    html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+                });
+                html += '</div>';
+            } else if (q.type === '简答题') {
+                html += renderTextAnswerArea(actualIdx, q);
+            } else if (q.type === '综合应用题') {
+                html += renderComprehensiveArea(actualIdx, q);
+            }
+
+            html += '</div>';
+
+            if (answers[actualIdx] !== null) {
+                if (isChoiceType(q)) {
+                    const isCorrect = answers[actualIdx] === q.answer;
+                    html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+                } else if (isTextType(q)) {
+                    const result = evaluateTextAnswer(actualIdx, q);
+                    html += buildTextResultCard(actualIdx, q, result);
+                }
+            }
+
+            const allAnsweredInMode = checkAllAnsweredInMode();
+
+            if ((reviewMode && reviewIndex >= wrongIndices.length - 1 && allAnsweredInMode) || (!reviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null))) {
+                const correctCount = getCorrectCount();
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                const wrongCount = getWrongCount();
+                if (!reviewMode) { saveToHistory(correctCount, accuracy); }
+                html += buildCompletionScreen(correctCount, accuracy, wrongCount, allAnsweredInMode);
+            }
+
+            contentArea.innerHTML = html;
+            updateHeader();
+
+            setTimeout(() => {
+                if (isTextType(q)) {
+                    const ta = document.getElementById('textAnswerInput');
+                    if (ta && answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') {
+                        ta.value = answers[actualIdx];
+                    }
+                    const draft = getDraft(actualIdx);
+                    if (ta && answers[actualIdx] === null && draft) {
+                        ta.value = draft;
+                    }
+                }
+            }, 50);
+
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function renderTextAnswerArea(actualIdx, q) {
+            const savedAnswer = answers[actualIdx];
+            const draft = getDraft(actualIdx);
+            const displayVal = (savedAnswer !== null && typeof savedAnswer === 'string') ? savedAnswer : (draft || '');
+            const disabled = savedAnswer !== null && typeof savedAnswer === 'string';
+            let html = `<div class="text-answer-area">`;
+            html += `<textarea id="textAnswerInput" placeholder="请在此输入你的回答..." ${disabled ? 'disabled' : ''}>${escapeHtml(displayVal)}</textarea>`;
+            html += `<div class="text-answer-buttons">`;
+            if (!disabled) {
+                html += `<button class="btn-draft" onclick="saveDraftOnly(${actualIdx})"><i class="fas fa-save"></i> 保存草稿</button>`;
+                html += `<button class="btn-clear" onclick="clearTextInput(${actualIdx})"><i class="fas fa-eraser"></i> 清空输入</button>`;
+                html += `<button class="btn-submit" onclick="submitTextAnswer(${actualIdx})"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                html += `<button class="btn-submit" disabled style="opacity:0.6;"><i class="fas fa-check-circle"></i> 已提交</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function renderComprehensiveArea(actualIdx, q) {
+            let html = '';
+            if (q.tasks && q.tasks.length > 0) {
+                html += `<ul class="tasks-list">`;
+                q.tasks.forEach(task => {
+                    html += `<li><span class="task-id">${task.id}</span> ${task.stem}</li>`;
+                });
+                html += `</ul>`;
+            }
+            html += renderTextAnswerArea(actualIdx, q);
+            return html;
+        }
+
+        function buildTextResultCard(actualIdx, q, result) {
+            const badgeClass = result.level === 'good' ? 'correct' : (result.level === 'partial' ? 'partial' : 'wrong');
+            const badgeText = result.level === 'good' ? '✓ 回答较好' : (result.level === 'partial' ? '△ 部分正确' : '✗ 需加强');
+            return `
+                <div class="analysis-card">
+                    <div class="analysis-header" onclick="toggleAnalysis(this)">
+                        <div class="analysis-title">📝 作答评估 <span class="result-badge ${badgeClass}">${badgeText}</span></div>
+                        <div class="toggle-icon expanded">▼</div>
+                    </div>
+                    <div class="analysis-content" style="display: block;">
+                        <p><strong>📋 你的作答：</strong></p>
+                        <div style="background:#fafbfc;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.userAnswer || '（空）')}</div>
+                        <p><strong>✅ 标准答案：</strong></p>
+                        <div style="background:#f6ffed;padding:12px;border-radius:8px;margin-bottom:10px;white-space:pre-wrap;">${escapeHtml(result.referenceAnswer)}</div>
+                        <p><strong>🔑 关键词命中：</strong>命中 ${result.hitCount}/${result.totalKeywords} 个（${result.hitRate}%）</p>
+                        <div class="score-progress"><div class="score-progress-fill ${result.progressClass}" style="width:${result.hitRate}%;"></div></div>
+                        <span class="score-tag ${result.progressClass}">${result.levelLabel}</span>
+                        <p style="margin-top:8px;"><strong>命中关键词：</strong>${result.hitKeywords.length > 0 ? result.hitKeywords.map(k => '<span class="keyword-highlight">' + k + '</span>').join('、') : '无'}</p>
+                        <p><strong>未命中关键词：</strong>${result.missedKeywords.length > 0 ? result.missedKeywords.map(k => '<span class="keyword-missed">' + k + '</span>').join('、') : '无'}</p>
+                        <hr style="border:none;border-top:1px solid #e8e8e8;margin:12px 0;">
+                        ${q.analysis}
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildCompletionScreen(correctCount, accuracy, wrongCount, allDone) {
+            let html = `
+                <div class="completion-screen">
+                    <div class="completion-icon">${accuracy >= 80 ? '🎉' : accuracy >= 60 ? '👍' : '💪'}</div>
+                    <h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1>
+                    <p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        <div class="stat-item"><div class="stat-value">${wrongCount}</div><div class="stat-label">错题数</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+            `;
+            if (wrongCount > 0 && !reviewMode) {
+                html += `<button class="action-btn review-wrong-btn" onclick="startReviewWrong()"><i class="fas fa-redo"></i> 回看错题</button>`;
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            if (reviewMode && wrongCount > 0) {
+                html += `<button class="action-btn export-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题</button>`;
+            }
+            html += `</div></div>`;
+            return html;
+        }
+
+        function selectOption(idx) {
+            const actualIdx = getActualIndex();
+            if (answers[actualIdx] !== null) return;
+            if (!isChoiceType(questions[actualIdx])) return;
+            answers[actualIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[actualIdx].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitTextAnswer(actualIdx) {
+            if (answers[actualIdx] !== null && typeof answers[actualIdx] === 'string') return;
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const userAnswer = ta.value.trim();
+            if (!userAnswer) { showToast('请先输入你的回答'); return; }
+            answers[actualIdx] = userAnswer;
+            clearDraft(actualIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const result = evaluateTextAnswer(actualIdx, questions[actualIdx]);
+            const msg = result.level === 'good' ? '回答较好！✓' : (result.level === 'partial' ? '部分正确 △' : '需加强 ✗');
+            showToast(msg);
+        }
+
+        function saveDraftOnly(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (!ta) return;
+            const val = ta.value.trim();
+            if (val) { saveDraft(actualIdx, val); showToast('草稿已保存 ✓'); }
+            else { clearDraft(actualIdx); showToast('草稿已清空'); }
+        }
+
+        function clearTextInput(actualIdx) {
+            const ta = document.getElementById('textAnswerInput');
+            if (ta) ta.value = '';
+            clearDraft(actualIdx);
+            showToast('输入已清空');
+        }
+
+        function evaluateTextAnswer(actualIdx, q) {
+            const userAnswer = (answers[actualIdx] && typeof answers[actualIdx] === 'string') ? answers[actualIdx] : '';
+            const allKeywords = [];
+            let referenceAnswer = '';
+            if (q.type === '简答题') {
+                if (q.keywords) allKeywords.push(...q.keywords);
+                referenceAnswer = q.answer || '';
+            } else if (q.type === '综合应用题') {
+                if (q.keywords) allKeywords.push(...q.keywords);
+                referenceAnswer = q.answer || '';
+            }
+            const totalKeywords = allKeywords.length;
+            const hitKeywords = [];
+            const missedKeywords = [];
+            const userLower = userAnswer.toLowerCase();
+            allKeywords.forEach(kw => {
+                if (userLower.includes(kw.toLowerCase())) { hitKeywords.push(kw); }
+                else { missedKeywords.push(kw); }
+            });
+            const hitCount = hitKeywords.length;
+            const hitRate = totalKeywords > 0 ? Math.round((hitCount / totalKeywords) * 100) : 0;
+            let level, levelLabel, progressClass;
+            if (q.type === '简答题') {
+                if (hitRate >= 60) { level = 'good'; levelLabel = '回答较好'; progressClass = 'excellent'; }
+                else if (hitRate >= 30) { level = 'partial'; levelLabel = '部分正确'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            } else {
+                if (hitRate >= 80) { level = 'good'; levelLabel = '优秀'; progressClass = 'excellent'; }
+                else if (hitRate >= 60) { level = 'good'; levelLabel = '良好'; progressClass = 'good'; }
+                else if (hitRate >= 40) { level = 'partial'; levelLabel = '合格'; progressClass = 'pass'; }
+                else { level = 'weak'; levelLabel = '需加强'; progressClass = 'fail'; }
+            }
+            return { userAnswer, referenceAnswer, totalKeywords, hitCount, hitRate, hitKeywords, missedKeywords, level, levelLabel, progressClass };
+        }
+
+        function getCorrectCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] === q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'good') count++; }
+            });
+            return count;
+        }
+
+        function getWrongCount() {
+            let count = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) count++; }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') count++; }
+            });
+            return count;
+        }
+
+        function getWrongIndicesArray() {
+            const arr = [];
+            questions.forEach((q, i) => {
+                if (answers[i] === null) return;
+                if (isChoiceType(q)) { if (answers[i] !== q.answer) arr.push(i); }
+                else if (isTextType(q)) { const r = evaluateTextAnswer(i, q); if (r.level === 'weak') arr.push(i); }
+            });
+            return arr;
+        }
+
+        function checkAllAnsweredInMode() {
+            if (reviewMode && wrongIndices.length > 0) { return wrongIndices.every(wi => answers[wi] !== null); }
+            return answers.every(a => a !== null);
+        }
+
+        function startReviewWrong() {
+            wrongIndices = getWrongIndicesArray();
+            if (wrongIndices.length === 0) { showToast('没有错题可回顾'); return; }
+            reviewMode = true; reviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongIndices.length} 题`);
+        }
+
+        function exitReviewMode() {
+            reviewMode = false; wrongIndices = []; currentIndex = 0;
+            currentPage = 'quiz';
+            renderQuestion(); updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast('已退出错题回顾模式');
+        }
+
+        function exportWrongCSV() {
+            const wrongArr = getWrongIndicesArray();
+            if (wrongArr.length === 0) { showToast('没有错题可导出'); return; }
+            const moduleName = '人工智能发展与算法';
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const fileName = `错题本_${moduleName}_${dateStr}.csv`;
+            const rows = [['题型','题目','用户答案','正确答案','关键词命中率','结果','解析']];
+            wrongArr.forEach(i => {
+                const q = questions[i];
+                const qType = getQuestionTypeLabel(q);
+                const stem = q.stem.replace(/"/g, '""');
+                let userAns = '', correctAns = '', hitRate = '', result = '';
+                if (isChoiceType(q)) {
+                    userAns = (answers[i] !== null && answers[i] !== undefined) ? (q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i])) : '';
+                    correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                    result = answers[i] === q.answer ? '正确' : '错误';
+                    hitRate = answers[i] === q.answer ? '100%' : '0%';
+                } else if (isTextType(q)) {
+                    userAns = (answers[i] && typeof answers[i] === 'string') ? answers[i] : '';
+                    correctAns = q.answer || '';
+                    const evalR = evaluateTextAnswer(i, q);
+                    hitRate = evalR.hitRate + '%';
+                    result = evalR.levelLabel;
+                }
+                const analysisText = q.analysis ? q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""') : '';
+                rows.push([qType, '"'+stem+'"', '"'+userAns.replace(/"/g, '""')+'"', '"'+correctAns.replace(/"/g, '""')+'"', hitRate, result, '"'+analysisText+'"']);
+            });
+            const csvContent = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; link.download = fileName;
+            document.body.appendChild(link); link.click();
+            document.body.removeChild(link); URL.revokeObjectURL(url);
+            showToast('错题CSV已导出：' + fileName);
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex > 0) { reviewIndex--; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            if (reviewMode && wrongIndices.length > 0) { if (reviewIndex < wrongIndices.length - 1) { reviewIndex++; renderQuestion(); updateNavButtons(); } }
+            else if (!reviewMode && currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            document.getElementById('currentNum').textContent = currentPos;
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = questions.length;
+            document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            const currentPos = getCurrentPosition();
+            const isFirst = currentPos <= 1;
+            const isLast = currentPos >= totalInMode;
+            const allDone = checkAllAnsweredInMode();
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${isFirst ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (isChoiceType(q)) {
+                        if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                        else { statusClass = 'wrong'; statusText = '错误'; }
+                    } else if (isTextType(q)) {
+                        const result = evaluateTextAnswer(index, q);
+                        if (result.level === 'good') { statusClass = 'correct'; statusText = '较好'; }
+                        else if (result.level === 'partial') { statusClass = 'correct'; statusText = '部分'; }
+                        else { statusClass = 'wrong'; statusText = '加强'; }
+                    }
+                }
+                if (index === getActualIndex() && !reviewMode) { statusClass += ' current'; }
+                if (reviewMode && wrongIndices.includes(index) && wrongIndices[reviewIndex] === index) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] !== q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level === 'weak') return; }
+                    }
+                    if (currentFilter === 'wrong') {
+                        if (answers[index] === null) return;
+                        if (isChoiceType(q) && answers[index] === q.answer) return;
+                        if (isTextType(q)) { const r = evaluateTextAnswer(index, q); if (r.level !== 'weak') return; }
+                    }
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter, e) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { reviewMode = false; wrongIndices = []; currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() {
+            try { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+            catch(e) { console.warn('历史记录数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_HISTORY); return []; }
+        }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; reviewMode = false; wrongIndices = []; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, wrongIndices, reviewIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            try {
+                const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+                if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); reviewMode = data.reviewMode || false; wrongIndices = data.wrongIndices || []; reviewIndex = data.reviewIndex || 0; }
+            } catch(e) { console.warn('答题进度数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_ANSWERS); answers = new Array(questions.length).fill(null); }
+            try {
+                const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            } catch(e) { console.warn('设置数据解析失败，已重置'); localStorage.removeItem(STORAGE_KEY_SETTINGS); }
+        }
+
+        function saveDraft(index, value) { const drafts = getDrafts(); drafts[index] = value; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDraft(index) { const drafts = getDrafts(); return drafts[index] || null; }
+        function clearDraft(index) { const drafts = getDrafts(); delete drafts[index]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts)); }
+        function getDrafts() { try { const saved = localStorage.getItem(STORAGE_KEY_DRAFTS); return saved ? JSON.parse(saved) : {}; } catch(e) { console.warn('草稿数据异常，已重置'); localStorage.removeItem(STORAGE_KEY_DRAFTS); return {}; } }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion(); updateNavButtons(); renderAnswerSheet();
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                currentIndex = 0; reviewMode = false; wrongIndices = []; reviewIndex = 0; answers = new Array(questions.length).fill(null);
+                localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                switchToKnowledgePage(); renderAnswerSheet();
+            }
+        }
+
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    </script>
+</body>
+</html>
