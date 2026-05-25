@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>函数、模块与基础算法刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: var(--warning-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 60px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .submit-btn { background: var(--success-color); color: white; flex: 2; }
+        .draft-btn { background: #f5f5f5; color: var(--text-secondary); flex: 1; }
+        .clear-btn { background: #fff2f0; color: var(--error-color); flex: 1; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 11px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: var(--warning-color); color: white; }
+        .export-btn { background: #52c41a; color: white; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; pointer-events: none; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        .textarea-answer { width: 100%; min-height: 120px; padding: 14px; border: 2px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-size-base); font-family: inherit; line-height: 1.7; resize: vertical; transition: border-color 0.3s ease; background: var(--bg-card); color: var(--text-primary); box-sizing: border-box; }
+        .textarea-answer:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); }
+        .textarea-answer:disabled { background: #fafafa; color: var(--text-secondary); cursor: not-allowed; }
+        .task-list { background: #fafbfc; border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 14px; border-left: 4px solid var(--primary-color); }
+        .task-list ol { margin: 8px 0 0 18px; padding: 0; }
+        .task-list li { margin-bottom: 6px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.6; }
+        .keyword-highlight { background: #ffeaa7; padding: 1px 4px; border-radius: 3px; font-weight: 600; }
+        .keyword-match-info { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; align-items: center; }
+        .match-tag { padding: 4px 10px; border-radius: 16px; font-size: 12px; font-weight: 600; }
+        .match-tag.hit { background: var(--success-light); color: var(--success-color); }
+        .match-tag.miss { background: #f5f5f5; color: var(--text-light); }
+        .progress-score-bar { height: 10px; background: #e8e8e8; border-radius: 5px; overflow: hidden; margin: 8px 0; }
+        .progress-score-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+        .progress-score-fill.excellent { background: #52c41a; }
+        .progress-score-fill.good { background: #1890ff; }
+        .progress-score-fill.pass { background: #faad14; }
+        .progress-score-fill.weak { background: #f5222d; }
+        .user-answer-display { background: #fafbfc; border-radius: var(--radius-sm); padding: 14px; margin: 10px 0; font-size: var(--font-size-small); line-height: 1.7; border: 1px solid var(--border-color); white-space: pre-wrap; word-break: break-word; max-height: 200px; overflow-y: auto; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">函数、模块与基础算法</div>
+                        <div class="progress-text">高中信息科技 · 必修1 · 数据与计算</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"定义Python函数的关键字是（）","options":[{"label":"A","text":"function"},{"label":"B","text":"def"},{"label":"C","text":"define"},{"label":"D","text":"func"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. def</strong>。Python 中使用 def 关键字定义函数，function 是其他语言的关键字，define 和 func 不是 Python 关键字。<br><br><strong>📚 知识点讲解：</strong>函数定义格式：def 函数名(参数列表): 函数体。def 是 define 的缩写，表示“定义”。<br><br><strong>💡 解题思路：</strong>Python 中定义函数必须用 def，其他选项都不是合法的 Python 关键字。<br><br><strong>🧠 记忆口诀：</strong>“def 定义函数，冒号不能少；缩进函数体，调用才执行。”"},{"type":"单选题","difficulty":"基础","stem":"下列关于函数的说法错误的是（）","options":[{"label":"A","text":"函数是完成特定功能的代码块"},{"label":"B","text":"函数可以实现代码复用"},{"label":"C","text":"函数必须有参数和返回值"},{"label":"D","text":"函数调用时才会执行函数体代码"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 函数必须有参数和返回值</strong>。这是错误的，函数可以没有参数（无参函数），也可以没有返回值（默认返回 None）。<br><br><strong>📚 知识点讲解：</strong>函数可以有 0 个或多个参数，return 语句可选，无 return 时函数返回 None。<br><br><strong>💡 解题思路：</strong>A、B、D 都是函数的正确特征，C 过于绝对。<br><br><strong>🧠 记忆口诀：</strong>“函数参数可有无，返回值也可省略；无返回时默认 None，不必强求都齐全。”"},{"type":"单选题","difficulty":"基础","stem":"函数调用时，传递给函数的具体值称为（）","options":[{"label":"A","text":"形参"},{"label":"B","text":"实参"},{"label":"C","text":"返回值"},{"label":"D","text":"变量"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 实参</strong>。调用函数时传入的具体值称为实参（实际参数），定义函数时括号内的变量称为形参（形式参数）。<br><br><strong>📚 知识点讲解：</strong>形参是接收数据的“占位符”，实参是调用时实际传递的数据。<br><br><strong>💡 解题思路：</strong>形参是定义时，实参是调用时。<br><br><strong>🧠 记忆口诀：</strong>“定义形参占位置，调用实参传数值。”"},{"type":"单选题","difficulty":"基础","stem":"没有return语句的函数，默认返回（）","options":[{"label":"A","text":"0"},{"label":"B","text":"1"},{"label":"C","text":"None"},{"label":"D","text":"空字符串"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. None</strong>。Python 中无 return 或单独 return 时，函数返回 None。<br><br><strong>📚 知识点讲解：</strong>None 是 Python 表示空值的特殊常量。<br><br><strong>💡 解题思路：</strong>其他选项都是具体值，只有 None 符合 Python 语法。<br><br><strong>🧠 记忆口诀：</strong>“无返回，None 来替，空值常量记心里。”"},{"type":"单选题","difficulty":"基础","stem":"导入math模块的正确语句是（）","options":[{"label":"A","text":"import math"},{"label":"B","text":"include math"},{"label":"C","text":"use math"},{"label":"D","text":"load math"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. import math</strong>。Python 使用 import 关键字导入模块。<br><br><strong>📚 知识点讲解：</strong>导入方式还有 from math import sqrt 等。<br><br><strong>💡 解题思路：</strong>其他选项不是 Python 语法。<br><br><strong>🧠 记忆口诀：</strong>“导入模块用 import，后面跟上模块名。”"},{"type":"单选题","difficulty":"基础","stem":"math.sqrt(16)的结果是（）","options":[{"label":"A","text":"2"},{"label":"B","text":"4"},{"label":"C","text":"8"},{"label":"D","text":"16"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 4</strong>。math.sqrt(x) 计算 x 的平方根，16 的平方根是 4.0。<br><br><strong>📚 知识点讲解：</strong>sqrt 是 square root 的缩写。<br><br><strong>💡 解题思路：</strong>平方根运算。<br><br><strong>🧠 记忆口诀：</strong>“sqrt 求平方根，根号十六得四。”"},{"type":"单选题","difficulty":"基础","stem":"生成1-10之间随机整数的函数是（）","options":[{"label":"A","text":"random.randint(1, 10)"},{"label":"B","text":"random.random(1, 10)"},{"label":"C","text":"random.choice(1, 10)"},{"label":"D","text":"random.rand(1, 10)"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. random.randint(1,10)</strong>。randint 返回 [a,b] 之间的随机整数。<br><br><strong>📚 知识点讲解：</strong>random.random() 返回 [0,1) 浮点数，random.choice() 从序列中随机选元素。<br><br><strong>💡 解题思路：</strong>只有 randint 产生整数且包含两端。<br><br><strong>🧠 记忆口诀：</strong>“randint 整数含两端，随机整数它来担。”"},{"type":"单选题","difficulty":"基础","stem":"逐一列举所有可能情况找出符合条件的解，这种算法是（）","options":[{"label":"A","text":"枚举算法"},{"label":"B","text":"模拟算法"},{"label":"C","text":"统计算法"},{"label":"D","text":"排序算法"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 枚举算法</strong>。枚举算法（穷举法）核心思想就是逐一列举所有可能情况。<br><br><strong>📚 知识点讲解：</strong>适用于解有限且可列举的问题。<br><br><strong>💡 解题思路：</strong>其他选项不符合“逐一列举”特征。<br><br><strong>🧠 记忆口诀：</strong>“枚举穷举全列出，一个一个来验证。”"},{"type":"单选题","difficulty":"基础","stem":"猜数字游戏主要使用的算法是（）","options":[{"label":"A","text":"枚举算法"},{"label":"B","text":"模拟算法"},{"label":"C","text":"统计算法"},{"label":"D","text":"查找算法"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 模拟算法</strong>。猜数字游戏模拟了人猜数字的过程，具有随机性和交互性。<br><br><strong>📚 知识点讲解：</strong>模拟算法用程序模拟实际过程。<br><br><strong>💡 解题思路：</strong>猜数字不是穷举所有可能，而是基于反馈逐步逼近。<br><br><strong>🧠 记忆口诀：</strong>“猜数游戏靠模拟，随机反馈来互动。”"},{"type":"单选题","difficulty":"基础","stem":"下列不属于简单统计算法的是（）","options":[{"label":"A","text":"求和"},{"label":"B","text":"求平均值"},{"label":"C","text":"求最大值"},{"label":"D","text":"排序"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 排序</strong>。排序属于排序算法，不属于简单统计算法。<br><br><strong>📚 知识点讲解：</strong>简单统计包括求和、计数、均值、最值等。<br><br><strong>💡 解题思路：</strong>排序是重新排列数据，不是统计计算。<br><br><strong>🧠 记忆口诀：</strong>“求和求均最大值，简单统计不含排序。”"},{"type":"单选题","difficulty":"中档","stem":"执行下列代码后，输出结果是（）\ndef add(a, b):\n    return a + b\nresult = add(3, 5)\nprint(result)","options":[{"label":"A","text":"3"},{"label":"B","text":"5"},{"label":"C","text":"8"},{"label":"D","text":"None"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 8</strong>。函数 add 返回两数之和，3+5=8。<br><br><strong>📚 知识点讲解：</strong>函数调用 result = add(3,5) 返回 8 并赋值。<br><br><strong>💡 解题思路：</strong>直接计算。<br><br><strong>🧠 记忆口诀：</strong>“参数传入求两数和，返回结果打印出。”"},{"type":"单选题","difficulty":"中档","stem":"执行下列代码后，输出结果是（）\ndef test():\n    print(\"Hello\")\n    return\n    print(\"World\")\ntest()","options":[{"label":"A","text":"Hello"},{"label":"B","text":"World"},{"label":"C","text":"Hello World"},{"label":"D","text":"无输出"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. Hello</strong>。函数执行到 return 即结束，后面 print(\"World\") 不会执行。<br><br><strong>📚 知识点讲解：</strong>return 终止函数并返回值。<br><br><strong>💡 解题思路：</strong>return 后的代码被跳过。<br><br><strong>🧠 记忆口诀：</strong>“return 一出函数停，后面代码全不灵。”"},{"type":"单选题","difficulty":"中档","stem":"下列代码的运行结果是（）\nimport random\nlst = [1, 2, 3, 4, 5]\nprint(random.choice(lst))","options":[{"label":"A","text":"1"},{"label":"B","text":"5"},{"label":"C","text":"1-5之间的随机整数"},{"label":"D","text":"以上都有可能"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 以上都有可能</strong>。random.choice(lst) 从列表中随机选择一个元素，列表中的每个元素都可能被选中。<br><br><strong>📚 知识点讲解：</strong>choice 函数是随机选取，每次运行结果可能不同。<br><br><strong>💡 解题思路：</strong>无法确定具体输出，但必定是列表中的某个值。<br><br><strong>🧠 记忆口诀：</strong>“choice 随机选元素，每次结果不确定。”"},{"type":"单选题","difficulty":"中档","stem":"下列关于枚举算法的说法正确的是（）","options":[{"label":"A","text":"枚举算法效率很高，适用于所有问题"},{"label":"B","text":"枚举算法需要遍历所有可能的情况"},{"label":"C","text":"枚举算法只能用于解决数学问题"},{"label":"D","text":"枚举算法不需要条件判断"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 枚举算法需要遍历所有可能的情况</strong>。枚举算法必须逐一检查每个候选解。<br><br><strong>📚 知识点讲解：</strong>枚举算法效率较低，适用于解空间有限的问题。<br><br><strong>💡 解题思路：</strong>A 错在效率高，C 错在只能数学，D 错在不需要条件判断。<br><br><strong>🧠 记忆口诀：</strong>“枚举穷举全遍历，条件判断筛答案。”"},{"type":"单选题","difficulty":"中档","stem":"执行下列代码后，输出结果是（）\ndef calculate(x):\n    return x * 2, x * 3\na, b = calculate(4)\nprint(a, b)","options":[{"label":"A","text":"4 4"},{"label":"B","text":"8 12"},{"label":"C","text":"8 8"},{"label":"D","text":"12 8"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 8 12</strong>。函数返回元组 (8,12)，分别赋值给 a 和 b。<br><br><strong>📚 知识点讲解：</strong>Python 函数可以返回多个值，用逗号分隔。<br><br><strong>💡 解题思路：</strong>4*2=8, 4*3=12。<br><br><strong>🧠 记忆口诀：</strong>“多个返回值，元组来打包；顺序对应拆，赋值刚刚好。”"},{"type":"判断题","difficulty":"基础","stem":"函数定义时必须写参数列表。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。函数可以没有参数，如 def hello(): print(\"Hello\")。<br><br><strong>📚 知识点讲解：</strong>无参函数定义时括号内为空。<br><br><strong>💡 解题思路：</strong>参数列表可为空。<br><br><strong>🧠 记忆口诀：</strong>“无参函数括号空，定义调用都从容。”"},{"type":"判断题","difficulty":"基础","stem":"函数调用时，实参的数量必须与形参的数量一致。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。使用位置参数时，实参与形参数量必须相等，否则 TypeError。<br><br><strong>📚 知识点讲解：</strong>除非使用默认参数或可变参数，否则数量要一致。<br><br><strong>💡 解题思路：</strong>基础语法规则。<br><br><strong>🧠 记忆口诀：</strong>“位置参数一对一，数量匹配不能错。”"},{"type":"判断题","difficulty":"基础","stem":"return语句只能返回一个值。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。return 可以返回多个值，用逗号分隔，实际返回元组。<br><br><strong>📚 知识点讲解：</strong>return a,b 返回 (a,b)。<br><br><strong>💡 解题思路：</strong>Python 支持多返回值。<br><br><strong>🧠 记忆口诀：</strong>“return 返回多值用逗号，元组打包一起到。”"},{"type":"判断题","difficulty":"基础","stem":"模块是包含Python代码的文件，扩展名为.py。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。模块就是 .py 文件。<br><br><strong>📚 知识点讲解：</strong>模块可封装函数、类、变量。<br><br><strong>💡 解题思路：</strong>Python 文件即模块。<br><br><strong>🧠 记忆口诀：</strong>“点 py 文件是模块，import 导入就能用。”"},{"type":"判断题","difficulty":"基础","stem":"使用math模块中的函数前必须先导入math模块。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。不导入无法使用模块内函数。<br><br><strong>📚 知识点讲解：</strong>导入是使用模块的前提。<br><br><strong>💡 解题思路：</strong>必须导入。<br><br><strong>🧠 记忆口诀：</strong>“要用模块先导入，import 语句最前头。”"},{"type":"判断题","difficulty":"基础","stem":"random.randint(1, 10)可以生成1到10之间的随机整数，包括1和10。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。randint(a,b) 包含两端点。<br><br><strong>📚 知识点讲解：</strong>闭区间。<br><br><strong>💡 解题思路：</strong>randint 全包含。<br><br><strong>🧠 记忆口诀：</strong>“randint 包前又包后，随机整数它最优。”"},{"type":"判断题","difficulty":"基础","stem":"枚举算法的核心思想是逐一列举所有可能的情况。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。枚举算法核心就是穷举。<br><br><strong>📚 知识点讲解：</strong>也叫穷举法。<br><br><strong>💡 解题思路：</strong>定义正确。<br><br><strong>🧠 记忆口诀：</strong>“枚举穷举全列上，逐个检验不遗漏。”"},{"type":"判断题","difficulty":"中档","stem":"函数内部定义的变量可以在函数外部直接访问。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。函数内部变量是局部变量，外部不可访问。<br><br><strong>📚 知识点讲解：</strong>局部变量作用域仅限于函数内。<br><br><strong>💡 解题思路：</strong>变量作用域规则。<br><br><strong>🧠 记忆口诀：</strong>“函数内部局部量，出了函数找不见。”"},{"type":"判断题","difficulty":"中档","stem":"模拟算法适用于解决具有随机性的问题。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。模拟算法常用于随机性、过程性问题。<br><br><strong>📚 知识点讲解：</strong>如掷骰子、猜数字。<br><br><strong>💡 解题思路：</strong>模拟随机过程。<br><br><strong>🧠 记忆口诀：</strong>“模拟算法仿真真，随机过程它能跟。”"},{"type":"判断题","difficulty":"中档","stem":"求一组数据的最大值属于简单统计算法。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。求最大值是简单统计的常见操作。<br><br><strong>📚 知识点讲解：</strong>统计包括求和、均值、最值等。<br><br><strong>💡 解题思路：</strong>属于统计范畴。<br><br><strong>🧠 记忆口诀：</strong>“最值求和与计数，简单统计大家庭。”"},{"type":"简答题","difficulty":"中档","stem":"简述函数的定义格式和调用方法，并说明函数的作用。","answer":"定义格式：def 函数名(参数列表): 函数体; return 返回值。调用方法：函数名(实参列表)。作用：①代码复用；②模块化编程；③提高效率。","keywords":["def","函数名","参数列表","return","调用","代码复用","模块化","提高效率"],"analysis":"<strong>🎯 答案解析：</strong>函数的定义使用 def 关键字，调用时使用函数名加括号。函数使代码可复用、易维护。<br><br><strong>📚 知识点讲解：</strong>函数是组织代码的基本单元。<br><br><strong>💡 解题思路：</strong>回答格式和作用即可。<br><br><strong>🧠 记忆口诀：</strong>“def 定义函数体，调用加括号；复用模块化，效率大提高。”"},{"type":"简答题","difficulty":"中档","stem":"写出导入模块的两种常用方式，并举例说明如何使用模块中的函数。","answer":"① import 模块名，使用 模块名.函数名()。如 import math; math.sqrt(16)。② from 模块名 import 函数名，直接使用函数名。如 from random import randint; randint(1,10)。","keywords":["import","from","模块名","函数名","math","random","sqrt","randint"],"analysis":"<strong>🎯 答案解析：</strong>两种方式：import 模块名 和 from 模块名 import 函数名。注意调用方式不同。<br><br><strong>📚 知识点讲解：</strong>导入模块是使用标准库的前提。<br><br><strong>💡 解题思路：</strong>分别写出语法并举例。<br><br><strong>🧠 记忆口诀：</strong>“import 模块全导入，from 精准取函数。”"},{"type":"简答题","difficulty":"提高","stem":"简述枚举算法的核心思想和适用场景，并举例说明。","answer":"核心思想：逐一列举所有可能的解，判断是否符合条件。适用场景：解的数量有限且可列举。举例：判断素数，枚举2到sqrt(n)的所有整数。","keywords":["枚举","列举","可能","条件","有限","素数","平方根","判断"],"analysis":"<strong>🎯 答案解析：</strong>枚举算法就是穷举所有可能性，常用于解空间有限的问题。<br><br><strong>📚 知识点讲解：</strong>如百钱买百鸡、水仙花数等。<br><br><strong>💡 解题思路：</strong>举例说明即可。<br><br><strong>🧠 记忆口诀：</strong>“枚举列举全可能，条件筛选得答案；解空间若不太大，此法简单又直接。”"},{"type":"综合应用题","difficulty":"提高","stem":"定义一个函数，接收三个整数作为参数，返回这三个数的最大值。","tasks":["（1）函数名为 max_three；","（2）使用分支结构实现最大值判断；","（3）调用该函数，输入三个整数，输出最大值。"],"answer":"def max_three(a,b,c):\n    max_num = a\n    if b > max_num: max_num = b\n    if c > max_num: max_num = c\n    return max_num\n\n# 调用\nnum1=int(input())\nnum2=int(input())\nnum3=int(input())\nprint(max_three(num1,num2,num3))","keywords":["def","max_three","if","return","input","print","最大值"],"analysis":"<strong>🎯 答案解析：</strong>定义函数 max_three，通过分支比较找出最大值。<br><br><strong>📚 知识点讲解：</strong>分支结构求最值。<br><br><strong>💡 解题思路：</strong>先假设第一个最大，依次与后两个比较。<br><br><strong>🧠 记忆口诀：</strong>“先设最大第一个，逐个比较更新值。”"},{"type":"综合应用题","difficulty":"提高","stem":"编写一个程序，模拟掷骰子游戏。","tasks":["（1）导入random模块；","（2）定义函数 roll_dice() 返回1-6随机整数；","（3）循环掷骰子100次，统计每个点数出现的次数；","（4）输出统计结果。"],"answer":"import random\ndef roll_dice():\n    return random.randint(1,6)\ncounts = [0]*7\nfor _ in range(100):\n    point = roll_dice()\n    counts[point] += 1\nfor i in range(1,7):\n    print(f\"点数{i}出现{counts[i]}次\")","keywords":["random","randint","def","for","range","counts","统计"],"analysis":"<strong>🎯 答案解析：</strong>使用随机函数模拟掷骰子，循环100次并记录频次。<br><br><strong>📚 知识点讲解：</strong>模拟算法结合循环和列表统计。<br><br><strong>💡 解题思路：</strong>注意列表索引从1开始存放频次。<br><br><strong>🧠 记忆口诀：</strong>“随机生成骰子点，循环累加计数栏；最后输出各点数，模拟统计一气成。”"}];
+
+        const APP_ID = 'function_module_algo_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function isAnswerCorrect(index) {
+            const q = questions[index];
+            const ans = answers[index];
+            if (ans === null) return false;
+            if (q.type === '单选题' || q.type === '判断题') return ans === q.answer;
+            if (q.type === '简答题' || q.type === '综合应用题') {
+                const match = calculateKeywordMatch(ans, q.keywords || []);
+                return match.hitRate >= 60;
+            }
+            return false;
+        }
+
+        function calculateKeywordMatch(text, keywords) {
+            if (!text || !keywords || keywords.length === 0) return { hitRate: 0, hitKeywords: [], missKeywords: keywords || [] };
+            const lowerText = text.toLowerCase();
+            const hit = [], miss = [];
+            keywords.forEach(kw => {
+                if (lowerText.includes(kw.toLowerCase())) hit.push(kw);
+                else miss.push(kw);
+            });
+            return { hitRate: Math.round((hit.length / keywords.length) * 100), hitKeywords: hit, missKeywords: miss };
+        }
+
+        function renderKnowledgePage() {
+            const title = '函数、模块与基础算法知识精讲';
+            const content = `<h3>核心定义</h3><p><strong>函数</strong>是完成特定功能的独立代码块，通过封装实现<strong>代码复用</strong>和<strong>模块化编程</strong>。<strong>模块</strong>是包含Python代码的文件（.py），可实现跨文件复用。<strong>基础算法</strong>包括枚举、模拟和简单统计算法，是程序设计的灵魂。</p><h3>（一）函数基础</h3><ul><li><strong>定义格式：</strong>def 函数名(参数): 函数体; return 返回值</li><li><strong>调用：</strong>函数名(实参)</li><li><strong>参数：</strong>形参（定义时）与实参（调用时）</li><li><strong>返回值：</strong>可返回多个值（元组），无return返回None</li></ul><h3>（二）模块基础</h3><ul><li><strong>导入：</strong>import 模块名 或 from 模块名 import 函数</li><li><strong>常用模块：</strong>math（数学）、random（随机）</li></ul><h3>（三）基础算法</h3><ul><li><strong>枚举算法：</strong>逐一列举所有可能，找出解</li><li><strong>模拟算法：</strong>用程序模拟实际过程</li><li><strong>简单统计算法：</strong>求和、均值、最值等</li></ul><h3>易错点</h3><ul><li>函数定义缺少冒号或缩进错误</li><li>实参与形参数量不匹配</li><li>return后代码不执行</li><li>忘记导入模块</li><li>枚举算法未遍历全部可能</li></ul>`;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            if (answers.every(a => a === null) && currentIndex === 0) currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getCurrentQuestion() {
+            if (reviewMode && reviewIndices.length) return questions[reviewIndices[currentIndex]];
+            return questions[currentIndex];
+        }
+
+        function getRealIndex() {
+            if (reviewMode && reviewIndices.length) return reviewIndices[currentIndex];
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            return reviewMode ? reviewIndices.length : questions.length;
+        }
+
+        function renderQuestion() {
+            const q = getCurrentQuestion();
+            const realIdx = getRealIndex();
+            const contentArea = document.getElementById('quizContent');
+            if (q.type === '简答题' || q.type === '综合应用题') {
+                renderOpenEndedQuestion(q, realIdx, contentArea);
+                return;
+            }
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[realIdx] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[realIdx] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) classes.push('selected');
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+            if (answers[realIdx] !== null) {
+                const correct = answers[realIdx] === q.answer;
+                html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${correct ? 'correct' : 'wrong'}">${correct ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+            }
+            if (currentIndex === getTotalInMode() - 1 && checkAllAnswered()) {
+                html += renderCompletionScreen();
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderOpenEndedQuestion(q, realIdx, contentArea) {
+            const userAnswer = answers[realIdx] || '';
+            const isSubmitted = answers[realIdx] !== null && typeof answers[realIdx] === 'string';
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.tasks && q.tasks.length) {
+                html += `<div class="task-list"><strong>📋 任务列表：</strong><ol>`;
+                q.tasks.forEach(t => html += `<li>${t}</li>`);
+                html += `</ol></div>`;
+            }
+            html += `<textarea class="textarea-answer" id="openAnswerTextarea" placeholder="请在此输入你的作答内容..." ${isSubmitted ? 'disabled' : ''}>${userAnswer}</textarea>`;
+            if (isSubmitted && q.keywords && q.keywords.length) {
+                const match = calculateKeywordMatch(userAnswer, q.keywords);
+                let levelText = '', levelClass = '', barClass = '';
+                if (q.type === '简答题') {
+                    if (match.hitRate >= 60) { levelText = '回答较好'; levelClass = 'correct'; barClass = 'excellent'; }
+                    else if (match.hitRate >= 30) { levelText = '部分正确'; levelClass = 'partial'; barClass = 'pass'; }
+                    else { levelText = '需加强'; levelClass = 'wrong'; barClass = 'weak'; }
+                } else {
+                    if (match.hitRate >= 80) { levelText = '优秀'; levelClass = 'correct'; barClass = 'excellent'; }
+                    else if (match.hitRate >= 60) { levelText = '良好'; levelClass = 'correct'; barClass = 'good'; }
+                    else if (match.hitRate >= 40) { levelText = '合格'; levelClass = 'partial'; barClass = 'pass'; }
+                    else { levelText = '需加强'; levelClass = 'wrong'; barClass = 'weak'; }
+                }
+                html += `<div style="margin-top:12px;"><strong>📊 关键词命中率：</strong><span style="font-weight:700;color:var(--primary-color);">${match.hitRate}%</span> <span class="result-badge ${levelClass}">${levelText}</span></div>`;
+                html += `<div class="progress-score-bar"><div class="progress-score-fill ${barClass}" style="width:${match.hitRate}%;"></div></div>`;
+                html += `<div class="keyword-match-info"><strong>✅ 命中关键词：</strong>`;
+                match.hitKeywords.forEach(kw => html += `<span class="match-tag hit">${kw}</span>`);
+                html += `</div><div class="keyword-match-info"><strong>❌ 未命中关键词：</strong>`;
+                match.missKeywords.forEach(kw => html += `<span class="match-tag miss">${kw}</span>`);
+                html += `</div><div><strong>📝 你的作答：</strong><div class="user-answer-display">${highlightKeywords(userAnswer, match.hitKeywords)}</div></div>`;
+                html += `<div><strong>📋 参考答案：</strong><div class="user-answer-display">${q.answer}</div></div>`;
+            }
+            html += '</div>';
+            if (isSubmitted) {
+                const match = calculateKeywordMatch(userAnswer, q.keywords || []);
+                html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${match.hitRate >= 60 ? 'correct' : 'wrong'}">命中率 ${match.hitRate}%</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+            }
+            if (currentIndex === getTotalInMode() - 1 && checkAllAnswered()) {
+                html += renderCompletionScreen();
+            }
+            contentArea.innerHTML = html;
+            const textarea = document.getElementById('openAnswerTextarea');
+            if (textarea && !isSubmitted) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.max(120, this.scrollHeight) + 'px';
+                    saveDraft(realIdx, this.value);
+                });
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.max(120, textarea.scrollHeight) + 'px';
+            }
+            updateHeader();
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function highlightKeywords(text, hitKeywords) {
+            if (!text || !hitKeywords.length) return text || '';
+            let result = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            hitKeywords.forEach(kw => {
+                const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                result = result.replace(new RegExp(`(${escaped})`, 'gi'), '<span class="keyword-highlight">$1</span>');
+            });
+            return result;
+        }
+
+        function checkAllAnswered() {
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            return indices.every(i => answers[i] !== null);
+        }
+
+        function renderCompletionScreen() {
+            const total = getTotalInMode();
+            let correct = 0;
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            indices.forEach(i => { if (isAnswerCorrect(i)) correct++; });
+            const acc = total ? Math.round(correct / total * 100) : 0;
+            if (!reviewMode) saveToHistory(correct, acc);
+            return `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color:var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correct}/${total}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${acc}%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>${!reviewMode ? '<button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()">回看错题</button>' : ''}<button class="action-btn export-btn" onclick="exportWrongCSV()">📥 导出错题CSV</button></div></div>`;
+        }
+
+        function selectOption(idx) {
+            const realIdx = getRealIndex();
+            if (answers[realIdx] !== null) return;
+            answers[realIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === getCurrentQuestion().answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitOpenAnswer() {
+            const realIdx = getRealIndex();
+            const ta = document.getElementById('openAnswerTextarea');
+            if (!ta) return;
+            const text = ta.value.trim();
+            if (!text) { showToast('请输入作答内容'); return; }
+            answers[realIdx] = text;
+            clearDraft(realIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const match = calculateKeywordMatch(text, getCurrentQuestion().keywords || []);
+            showToast(`提交成功！命中率 ${match.hitRate}%`);
+        }
+
+        function clearOpenAnswer() {
+            const realIdx = getRealIndex();
+            const ta = document.getElementById('openAnswerTextarea');
+            if (ta && answers[realIdx] === null) { ta.value = ''; ta.style.height = '120px'; clearDraft(realIdx); }
+        }
+
+        function saveDraft(idx, val) {
+            const drafts = getDrafts();
+            if (val.trim()) drafts[idx] = val; else delete drafts[idx];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+        function clearDraft(idx) { const d = getDrafts(); delete d[idx]; localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+        function getDrafts() { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < getTotalInMode() - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const total = getTotalInMode();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            const answered = indices.filter(i => answers[i] !== null).length;
+            document.getElementById('answeredCount').textContent = answered;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = `${total ? (answered / total) * 100 : 0}%`;
+        }
+
+        function updateNavButtons() {
+            if (currentPage !== 'quiz') return;
+            const q = getCurrentQuestion();
+            const realIdx = getRealIndex();
+            const isSubmitted = answers[realIdx] !== null;
+            const footer = document.getElementById('footerContent');
+            if ((q.type === '简答题' || q.type === '综合应用题') && !isSubmitted) {
+                footer.innerHTML = `<button class="nav-btn draft-btn" onclick="saveDraft(${realIdx}, document.getElementById('openAnswerTextarea')?.value);showToast('草稿已保存')"><i class="fas fa-save"></i> 保存草稿</button><button class="nav-btn clear-btn" onclick="clearOpenAnswer()"><i class="fas fa-eraser"></i> 清空</button><button class="nav-btn submit-btn" onclick="submitOpenAnswer()"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                footer.innerHTML = `<button class="nav-btn prev-btn" ${currentIndex===0?'disabled':''} onclick="prevQuestion()"><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" ${currentIndex===getTotalInMode()-1?'disabled':''} onclick="nextQuestion()">下一题 <i class="fas fa-chevron-right"></i></button>`;
+            }
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            let html = '';
+            indices.forEach((realIdx, displayIdx) => {
+                let statusClass = 'unanswered', statusText = '未答';
+                if (answers[realIdx] !== null) {
+                    if (isAnswerCorrect(realIdx)) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (displayIdx === currentIndex) statusClass += ' current';
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[realIdx] !== null) return;
+                    if (currentFilter === 'correct' && !(answers[realIdx] !== null && isAnswerCorrect(realIdx))) return;
+                    if (currentFilter === 'wrong' && !(answers[realIdx] !== null && !isAnswerCorrect(realIdx))) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestionByDisplay(${displayIdx})"><div class="sheet-number">${displayIdx+1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestionByDisplay(displayIdx) { currentIndex = displayIdx; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (!history.length) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; }
+            let html = '';
+            history.forEach((r, i) => {
+                const d = new Date(r.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${d}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correct, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: Date.now(), totalCount: questions.length, correctCount: correct, accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+        function getHistory() { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; }
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { answers = [...history[index].answers]; reviewMode = false; reviewIndices = []; saveAnswers(); startQuiz(); toggleHistory(); showToast('已加载历史记录'); }
+        }
+        function deleteHistory(index) { if (!confirm('确定删除？')) return; const h = getHistory(); h.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(h)); renderHistory(); showToast('已删除'); }
+        function clearAllHistory() { if (!confirm('清空所有历史记录？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('已清空'); }
+
+        function reviewWrongQuestions() {
+            const wrong = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && !isAnswerCorrect(i)) wrong.push(i); });
+            if (!wrong.length) { showToast('没有错题，太棒了！🎉'); return; }
+            reviewMode = true;
+            reviewIndices = wrong;
+            currentIndex = 0;
+            startQuiz();
+            showToast(`进入错题回顾，共 ${wrong.length} 题`);
+        }
+
+        function exportWrongCSV() {
+            const wrong = [];
+            questions.forEach((q, i) => {
+                if (answers[i] !== null && !isAnswerCorrect(i)) {
+                    let userAns = '', correctAns = '', hitRate = '', result = '';
+                    if (q.type === '单选题' || q.type === '判断题') {
+                        userAns = q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i]);
+                        correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                        hitRate = 'N/A'; result = '错误';
+                    } else {
+                        userAns = (answers[i] || '').replace(/"/g, '""');
+                        correctAns = (q.answer || '').replace(/"/g, '""');
+                        const m = calculateKeywordMatch(answers[i], q.keywords || []);
+                        hitRate = m.hitRate + '%';
+                        result = m.hitRate >= 60 ? '正确' : (m.hitRate >= 30 ? '部分正确' : '需加强');
+                    }
+                    wrong.push({ type: q.type, stem: q.stem.replace(/"/g, '""'), userAnswer: userAns, correctAnswer: correctAns, hitRate, result, analysis: (q.analysis || '').replace(/<[^>]*>/g, '').replace(/"/g, '""') });
+                }
+            });
+            if (!wrong.length) { showToast('没有错题可导出！'); return; }
+            const BOM = '\uFEFF';
+            let csv = BOM + '题型,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrong.forEach(r => csv += `"${r.type}","${r.stem}","${r.userAnswer}","${r.correctAnswer}","${r.hitRate}","${r.result}","${r.analysis}"\n`);
+            const date = new Date().toISOString().slice(0, 10);
+            const filename = `错题本_函数模块基础算法_${date}.csv`;
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`已导出 ${wrong.length} 道错题`);
+        }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, reviewMode, reviewIndices })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const saved = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (saved) { const d = JSON.parse(saved); currentIndex = d.currentIndex || 0; answers = d.answers || new Array(questions.length).fill(null); reviewMode = d.reviewMode || false; reviewIndices = d.reviewIndices || []; }
+            const settings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (settings) { const s = JSON.parse(settings); fontSize = s.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+            const drafts = getDrafts(); Object.keys(drafts).forEach(k => { const i = parseInt(k); if (answers[i] === null && (questions[i].type === '简答题' || questions[i].type === '综合应用题')) {} });
+        }
+
+        function restartQuiz() { if (confirm('确定重新开始？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); reviewMode = false; reviewIndices = []; localStorage.removeItem(STORAGE_KEY_ANSWERS); localStorage.removeItem(STORAGE_KEY_DRAFTS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失进度，确定？')) window.location.href = 'index.html'; }
+        function showToast(msg) { const existing = document.querySelector('.toast'); if (existing) existing.remove(); const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 1500); }
+    </script>
+</body>
+</html>

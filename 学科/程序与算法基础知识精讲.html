@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>程序与算法基础 - 刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 2000px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex-wrap: wrap;
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .result-badge.partial {
+            background: var(--warning-light);
+            color: var(--warning-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 60px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .submit-btn {
+            background: var(--success-color);
+            color: white;
+            flex: 2;
+        }
+        .draft-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+        .clear-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+            flex: 1;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+            font-size: 11px;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .review-wrong-btn {
+            background: var(--warning-color);
+            color: white;
+        }
+        .export-btn {
+            background: #52c41a;
+            color: white;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+            pointer-events: none;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .textarea-answer {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-base);
+            font-family: inherit;
+            line-height: 1.7;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-sizing: border-box;
+        }
+        .textarea-answer:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        .textarea-answer:disabled {
+            background: #fafafa;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+        .task-list {
+            background: #fafbfc;
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .task-list ol {
+            margin: 8px 0 0 18px;
+            padding: 0;
+        }
+        .task-list li {
+            margin-bottom: 6px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .task-list strong {
+            color: var(--text-primary);
+        }
+        .keyword-highlight {
+            background: #ffeaa7;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .keyword-match-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+            align-items: center;
+        }
+        .match-tag {
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .match-tag.hit {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .match-tag.miss {
+            background: #f5f5f5;
+            color: var(--text-light);
+        }
+        .progress-score-bar {
+            height: 10px;
+            background: #e8e8e8;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .progress-score-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        .progress-score-fill.excellent {
+            background: #52c41a;
+        }
+        .progress-score-fill.good {
+            background: #1890ff;
+        }
+        .progress-score-fill.pass {
+            background: #faad14;
+        }
+        .progress-score-fill.weak {
+            background: #f5222d;
+        }
+        .user-answer-display {
+            background: #fafbfc;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin: 10px 0;
+            font-size: var(--font-size-small);
+            line-height: 1.7;
+            border: 1px solid var(--border-color);
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">程序与算法基础</div>
+                        <div class="progress-text">高中信息科技 · 必修1 · 数据与计算</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "计算机能够直接识别和执行的语言是（）",
+            "options": [{ "label": "A", "text": "机器语言" }, { "label": "B", "text": "汇编语言" }, {
+                "label": "C",
+                "text": "高级语言"
+            }, { "label": "D", "text": "Python语言" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 机器语言</strong>。机器语言由0和1组成的二进制指令构成，是计算机唯一能<strong>直接识别和执行</strong>的语言，无需翻译。<br><br><strong>📚 知识点讲解：</strong>程序设计语言分为三个层次：<strong>机器语言</strong>（二进制，直接执行，速度最快但难编写）、<strong>汇编语言</strong>（用助记符如ADD代替二进制，需汇编器翻译）、<strong>高级语言</strong>（接近人类语言，如Python、C、Java，需编译或解释）。计算机只能直接执行机器语言，其他语言都需要翻译。<br><br><strong>💡 解题思路：</strong>选项B汇编语言需要汇编器翻译；选项C高级语言需要编译或解释；选项D是高级语言的一种，同样需要解释器。只有机器语言是计算机硬件层面可直接执行的。排除法可得出A为正确选项。<br><br><strong>🧠 记忆口诀：</strong>“机器语言零一码，直接执行不用翻；汇编高级需翻译，层层抽象为人便。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "程序设计的核心环节是（）",
+            "options": [{ "label": "A", "text": "分析问题" }, { "label": "B", "text": "设计算法" }, {
+                "label": "C",
+                "text": "编写程序"
+            }, { "label": "D", "text": "调试运行" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 设计算法</strong>。算法是程序的灵魂，设计算法是程序设计过程中<strong>最核心</strong>的环节，决定了程序的效率和正确性。<br><br><strong>📚 知识点讲解：</strong>程序设计的一般过程为：<strong>分析问题→设计算法→编写程序→调试运行</strong>。其中设计算法是核心，因为算法决定了解决问题的思路和步骤。一个好的算法可以用不同编程语言实现，但若算法设计有误，再好的编程技巧也无法得到正确结果。<br><br><strong>💡 解题思路：</strong>选项A分析问题是前提准备；选项C编写程序是将算法转化为代码，属于执行层面；选项D调试运行是检验和修正。三者都围绕算法展开，算法设计才是驱动整个过程的<strong>核心引擎</strong>。<br><br><strong>🧠 记忆口诀：</strong>“分析问题是前提，设计算法是核心，编写程序来落地，调试运行保质量。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "算法必须在有限步骤内结束，这体现了算法的（）",
+            "options": [{ "label": "A", "text": "确定性" }, { "label": "B", "text": "可行性" }, {
+                "label": "C",
+                "text": "有穷性"
+            }, { "label": "D", "text": "输出性" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 有穷性</strong>。有穷性指算法必须在<strong>有限步骤内结束</strong>，不能出现无限循环（死循环）。<br><br><strong>📚 知识点讲解：</strong>算法的五大核心特征：<strong>有穷性</strong>（有限步骤结束）、<strong>确定性</strong>（每步明确定义无歧义）、<strong>可行性</strong>（每步可通过基本运算实现）、<strong>输入</strong>（0个或多个）、<strong>输出</strong>（至少1个）。有穷性不等同于“时间短”，而是步骤数量有限。<br><br><strong>💡 解题思路：</strong>题干关键词“有限步骤内结束”直接对应有穷性。选项A确定性强调无歧义；选项B可行性强调可实现；选项D输出性强调查有结果。只有C匹配题干描述。<br><br><strong>🧠 记忆口诀：</strong>“有穷有限不无限，确定明确不模糊，可行可实现不虚，输入可有也可无，输出必有才完整。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "流程图中，表示条件判断的符号是（）",
+            "options": [{ "label": "A", "text": "椭圆形" }, { "label": "B", "text": "矩形" }, {
+                "label": "C",
+                "text": "菱形"
+            }, { "label": "D", "text": "平行四边形" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 菱形</strong>。菱形是流程图的<strong>判断框</strong>，用于表示条件判断，根据条件结果选择不同的执行路径。<br><br><strong>📚 知识点讲解：</strong>流程图基本符号：<strong>椭圆形</strong>（起止框，表示开始/结束）、<strong>平行四边形</strong>（输入输出框）、<strong>矩形</strong>（处理框，表示运算操作）、<strong>菱形</strong>（判断框，条件分支）、<strong>箭头</strong>（流程线，表示执行顺序）。菱形是唯一具有两个出边的符号。<br><br><strong>💡 解题思路：</strong>选项A椭圆形表示起止；选项B矩形表示处理操作；选项D平行四边形表示输入输出。只有菱形用于条件判断，这是流程图最易识别的特征符号。<br><br><strong>🧠 记忆口诀：</strong>“椭圆起止圆又圆，矩形处理方又方，菱形判断尖又尖，平行四边形输入输出斜又斜。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "Python源文件的扩展名是（）",
+            "options": [{ "label": "A", "text": ".c" }, { "label": "B", "text": ".java" }, { "label": "C",
+                "text": ".py" }, { "label": "D", "text": ".txt" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. .py</strong>。Python源文件的标准扩展名是<strong>.py</strong>，这是Python解释器识别源代码文件的标识。<br><br><strong>📚 知识点讲解：</strong>常见编程语言源文件扩展名：<strong>C语言</strong>→.c、<strong>C++</strong>→.cpp、<strong>Java</strong>→.java、<strong>Python</strong>→.py、<strong>JavaScript</strong>→.js。扩展名帮助操作系统和开发工具识别文件类型。Python是解释型语言，.py文件可直接由Python解释器执行。<br><br><strong>💡 解题思路：</strong>选项A是C语言扩展名；选项B是Java语言扩展名；选项D是通用文本文件扩展名，不专属于任何编程语言。只有.py是Python的专属扩展名。<br><br><strong>🧠 记忆口诀：</strong>“C用.c，Java用.java，Python用.py，各回各家不混淆。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列不属于算法基本结构的是（）",
+            "options": [{ "label": "A", "text": "顺序结构" }, { "label": "B", "text": "分支结构" }, {
+                "label": "C",
+                "text": "循环结构"
+            }, { "label": "D", "text": "跳转结构" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>D. 跳转结构</strong>。算法的三种基本结构是<strong>顺序结构、分支结构（选择结构）、循环结构</strong>，跳转结构（如goto语句）不属于基本结构。<br><br><strong>📚 知识点讲解：</strong>1966年，计算机科学家Böhm和Jacopini证明了<strong>任何复杂算法都可以由顺序、分支、循环三种基本结构组合而成</strong>。现代结构化程序设计提倡使用这三种基本结构，避免使用跳转语句（goto），以提高程序的可读性和可维护性。<br><br><strong>💡 解题思路：</strong>选项A、B、C都是教材中明确列出的三种基本结构。选项D跳转结构是早期编程中使用的概念，已被现代结构化程序设计所摒弃。排除法可确定D不属于基本结构。<br><br><strong>🧠 记忆口诀：</strong>“顺序分支加循环，三种结构打天下；跳转语句应避免，结构化编程更优雅。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "用助记符代替二进制指令的语言是（）",
+            "options": [{ "label": "A", "text": "机器语言" }, { "label": "B", "text": "汇编语言" }, {
+                "label": "C",
+                "text": "高级语言"
+            }, { "label": "D", "text": "自然语言" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 汇编语言</strong>。汇编语言使用<strong>助记符</strong>（如ADD表示加法、SUB表示减法）代替二进制指令，比机器语言更易读，但仍需汇编器翻译才能执行。<br><br><strong>📚 知识点讲解：</strong>语言发展层级：<strong>机器语言</strong>（二进制0/1，唯一可直接执行）→<strong>汇编语言</strong>（助记符，需汇编器翻译，仍依赖硬件）→<strong>高级语言</strong>（接近人类语言，需编译或解释，跨平台性强）。汇编语言的助记符与机器指令一一对应，属于低级语言范畴。<br><br><strong>💡 解题思路：</strong>选项A机器语言直接用二进制；选项C高级语言使用接近自然语言的语法；选项D自然语言是人类日常语言。只有汇编语言使用助记符这一特征最为突出。<br><br><strong>🧠 记忆口诀：</strong>“机器零一最底层，汇编助记符来替，高级语言近人语，层层翻译才执行。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "算法的每一步操作都有明确的定义，不能有歧义，这体现了（）",
+            "options": [{ "label": "A", "text": "有穷性" }, { "label": "B", "text": "确定性" }, {
+                "label": "C",
+                "text": "可行性"
+            }, { "label": "D", "text": "输入性" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 确定性</strong>。确定性要求算法的<strong>每一步操作都有明确定义</strong>，不能产生歧义或二义性，确保每次执行结果一致。<br><br><strong>📚 知识点讲解：</strong>算法的确定性意味着：给定相同的输入，算法每次执行都应该得到<strong>相同的输出</strong>。例如，“把菜炒熟”不是确定性描述（什么叫“熟”没有标准），而“加热到100°C持续5分钟”则是确定的。确定性是算法区别于日常模糊描述的关键特征。<br><br><strong>💡 解题思路：</strong>题干关键词“明确的定义”“不能有歧义”直接对应确定性。选项A有穷性强调整体步骤有限；选项C可行性强调每步可实现；选项D输入性强调查可以有输入。B是唯一匹配的选项。<br><br><strong>🧠 记忆口诀：</strong>“确定无歧义，有穷不无限，可行能实现，输出必须有。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "按照从上到下的顺序依次执行的结构是（）",
+            "options": [{ "label": "A", "text": "顺序结构" }, { "label": "B", "text": "分支结构" }, {
+                "label": "C",
+                "text": "循环结构"
+            }, { "label": "D", "text": "嵌套结构" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>A. 顺序结构</strong>。顺序结构按照<strong>从上到下</strong>的顺序依次执行每一条语句，是最基本、最简单的程序结构。<br><br><strong>📚 知识点讲解：</strong>三种基本结构的执行特点：<strong>顺序结构</strong>→从上到下依次执行，每条语句只执行一次；<strong>分支结构</strong>→根据条件选择执行不同路径；<strong>循环结构</strong>→重复执行某段代码直到满足终止条件。顺序结构是所有程序默认的执行方式。<br><br><strong>💡 解题思路：</strong>题干“从上到下依次执行”是顺序结构的经典定义。选项B分支结构涉及条件判断和路径选择；选项C循环结构涉及重复执行；选项D嵌套结构是前三种结构的组合形式。<br><br><strong>🧠 记忆口诀：</strong>“顺序一条道走到底，分支路口选方向，循环来回反复跑，三种结构建大厦。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "基础",
+            "stem": "下列关于Python语言特点的说法错误的是（）",
+            "options": [{ "label": "A", "text": "解释型语言" }, { "label": "B", "text": "跨平台" }, {
+                "label": "C",
+                "text": "语法复杂"
+            }, { "label": "D", "text": "开源免费" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 语法复杂</strong>。Python语言的显著特点是<strong>语法简单、简洁易读</strong>，而非语法复杂。这是Python设计哲学“优雅、明确、简单”的体现。<br><br><strong>📚 知识点讲解：</strong>Python核心特点：<strong>解释型</strong>（逐行解释执行，调试方便）、<strong>跨平台</strong>（Windows/Mac/Linux均可运行）、<strong>简洁易读</strong>（语法简单，代码量少，适合初学者）、<strong>开源免费</strong>（拥有丰富的第三方库）。Python被广泛用于数据分析、人工智能、Web开发等领域。<br><br><strong>💡 解题思路：</strong>题目要求选“错误”的说法。选项A、B、D都是Python的正确特点。选项C与Python“简洁易读”的核心特点完全相反，因此是错误的说法。<br><br><strong>🧠 记忆口诀：</strong>“Python简单又易读，解释跨平台开源库；语法复杂是谣言，入门首选不糊涂。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列步骤序列中，属于算法的是（）",
+            "options": [{ "label": "A", "text": "从家到学校的路线：出门→一直走→到学校" }, {
+                "label": "B",
+                "text": "计算1+2+3+...+100的步骤：初始化sum=0，i=1；当i≤100时，sum=sum+i，i=i+1；输出sum"
+            }, { "label": "C", "text": "做饭的步骤：买菜→洗菜→炒菜→吃饭" }, { "label": "D",
+                "text": "学习的步骤：看书→做题→考试" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B</strong>。选项B的步骤<strong>明确、有限、可行</strong>，有初始化和终止条件，满足算法的五大特征，属于真正的算法。<br><br><strong>📚 知识点讲解：</strong>判断一个步骤序列是否为算法，需检查五大特征：<strong>有穷性</strong>（步骤有限）、<strong>确定性</strong>（每步明确）、<strong>可行性</strong>（可实现）、<strong>输入</strong>（可有可无）、<strong>输出</strong>（必须有）。日常生活中的描述往往缺乏确定性（如“一直走”没有说明走多远、往哪走），因此不构成算法。<br><br><strong>💡 解题思路：</strong>选项A“一直走”缺乏确定性；选项C“炒菜”没有明确温度和时间；选项D“看书”过于模糊。只有选项B的每个步骤都有精确的数学定义，满足算法全部特征。<br><br><strong>🧠 记忆口诀：</strong>“算法不是日常话，步步骤定义清；有限可行有输出，模糊描述不能行。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "流程图中，平行四边形的作用是（）",
+            "options": [{ "label": "A", "text": "表示算法的开始和结束" }, { "label": "B",
+                "text": "表示数据的输入或输出" }, { "label": "C", "text": "表示具体的运算操作" }, { "label": "D",
+                "text": "表示条件判断" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 表示数据的输入或输出</strong>。平行四边形是流程图的<strong>输入输出框</strong>，专门用于表示数据输入（如读取用户输入）或结果输出（如打印结果）。<br><br><strong>📚 知识点讲解：</strong>流程图符号职责分工：<strong>椭圆形</strong>→起止框（开始/结束）、<strong>平行四边形</strong>→输入输出框（数据进出）、<strong>矩形</strong>→处理框（运算操作）、<strong>菱形</strong>→判断框（条件分支）。平行四边形与矩形容易混淆，关键区别在于平行四边形专用于<strong>与外界的数据交互</strong>。<br><br><strong>💡 解题思路：</strong>选项A是椭圆形的功能；选项C是矩形的功能；选项D是菱形的功能。平行四边形的倾斜形状暗示数据的“流入流出”，这是区分它的关键视觉特征。<br><br><strong>🧠 记忆口诀：</strong>“椭圆起止两头圆，平行四边形数据传，矩形处理中间算，菱形判断分两边。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于程序设计语言的说法正确的是（）",
+            "options": [{ "label": "A", "text": "高级语言比机器语言执行速度快" }, {
+                "label": "B",
+                "text": "汇编语言不需要翻译就能被计算机执行"
+            }, { "label": "C", "text": "Python是编译型高级语言" }, { "label": "D",
+                "text": "高级语言可读性强，易于编写和维护" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>D. 高级语言可读性强，易于编写和维护</strong>。高级语言接近人类自然语言，代码可读性好，便于开发者编写和维护大型程序。<br><br><strong>📚 知识点讲解：</strong>常见误区纠正：<strong>机器语言执行速度最快</strong>（无需翻译，直接硬件执行），高级语言需要编译或解释，执行速度相对较慢；<strong>汇编语言需要汇编器翻译</strong>才能执行；<strong>Python是解释型语言</strong>（逐行解释执行），不是编译型语言。高级语言的优势在于<strong>开发效率</strong>而非执行效率。<br><br><strong>💡 解题思路：</strong>选项A错误，机器语言最快；选项B错误，汇编语言需要汇编器；选项C错误，Python是解释型。只有D准确描述了高级语言的核心优势——可读性和易维护性。<br><br><strong>🧠 记忆口诀：</strong>“机器最快但难写，高级好读速度慢；汇编要翻译，Python解释不用编译。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "某算法的步骤如下：①输入a和b；②如果a>b，则输出a；否则输出b。该算法采用的基本结构是（）",
+            "options": [{ "label": "A", "text": "顺序结构" }, { "label": "B", "text": "分支结构" }, {
+                "label": "C",
+                "text": "循环结构"
+            }, { "label": "D", "text": "嵌套结构" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B. 分支结构</strong>。该算法根据条件“a>b”的判断结果，<strong>选择执行</strong>不同的输出分支，这是典型的分支结构（选择结构）。<br><br><strong>📚 知识点讲解：</strong>分支结构的核心是<strong>条件判断+路径选择</strong>：满足条件执行一个分支，不满足条件执行另一个分支。Python中用<strong>if-else语句</strong>实现。本题算法对应代码：<code>if a > b: print(a) else: print(b)</code>。顺序结构没有判断，循环结构需要重复执行，本题不具备这些特征。<br><br><strong>💡 解题思路：</strong>题干中“如果...则...否则...”是分支结构的标志性句式。选项A顺序结构不涉及条件判断；选项C循环结构需要重复执行；选项D嵌套结构是多种结构的组合。B最准确。<br><br><strong>🧠 记忆口诀：</strong>“如果否则是分支，条件判断选路径；循环重复来回跑，顺序一条道走通。”"
+        }, {
+            "type": "单选题",
+            "difficulty": "中档",
+            "stem": "下列关于算法的说法错误的是（）",
+            "options": [{ "label": "A", "text": "算法可以没有输入，但必须有输出" }, {
+                "label": "B",
+                "text": "算法的每一步都必须是可行的"
+            }, { "label": "C", "text": "算法可以无限执行下去" }, { "label": "D",
+            "text": "算法的步骤必须是明确的" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C. 算法可以无限执行下去</strong>。这是错误的说法。算法必须满足<strong>有穷性</strong>，即必须在有限步骤内结束，不能无限执行（死循环）。<br><br><strong>📚 知识点讲解：</strong>算法五大特征回顾：<strong>有穷性</strong>（有限步骤，不能无限）、<strong>确定性</strong>（每步明确无歧义）、<strong>可行性</strong>（每步可实现）、<strong>输入</strong>（0个或多个）、<strong>输出</strong>（至少1个）。选项C直接违反了有穷性，因此是错误的。注意：算法可以没有输入（如计算1+1），但输出必须有。<br><br><strong>💡 解题思路：</strong>题目要求选“错误”说法。选项A正确（输入可有可无，输出必须有）；选项B正确（可行性）；选项D正确（确定性）。选项C与有穷性矛盾，是错误说法。<br><br><strong>🧠 记忆口诀：</strong>“算法必须能终止，无限循环不合格；输入可有输出必，明确可行是基本。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "程序是计算机能够执行的有序指令序列。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。这一定义精准概括了程序的本质：<strong>有序指令序列</strong>，计算机按照指令顺序依次执行以完成特定任务。<br><br><strong>📚 知识点讲解：</strong>程序（Program）是计算机能够识别和执行的<strong>有序指令序列</strong>。每条指令对应一个基本操作（如运算、输入、输出）。程序是人与计算机交流的桥梁，告诉计算机每一步要做什么、怎么做。<br><br><strong>💡 解题思路：</strong>题干描述完全符合教材中对“程序”的核心定义。关键词“有序”“指令序列”“计算机能够执行”都是定义中的核心要素，无一遗漏，因此判断为正确。<br><br><strong>🧠 记忆口诀：</strong>“程序是指令排好队，一条一条依次做；人机交流靠程序，有序执行不出错。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "程序设计的一般过程是：编写程序→设计算法→分析问题→调试运行。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。正确顺序应为：<strong>分析问题→设计算法→编写程序→调试运行</strong>。题干将顺序完全颠倒，算法设计应在编写程序之前。<br><br><strong>📚 知识点讲解：</strong>程序设计四步走的逻辑顺序：①<strong>分析问题</strong>（明确需求）→②<strong>设计算法</strong>（核心环节，规划步骤）→③<strong>编写程序</strong>（用代码实现算法）→④<strong>调试运行</strong>（发现并修正错误）。算法设计必须在编码之前，否则如同没有图纸就盖房子。<br><br><strong>💡 解题思路：</strong>题干将“编写程序”放在“设计算法”之前，违反了“先设计后实现”的基本逻辑。正确的流程是先想清楚怎么做（算法），再动手写代码（程序）。<br><br><strong>🧠 记忆口诀：</strong>“先分析后设计，算法在前程序后；调试收尾保质量，顺序颠倒要出糗。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "机器语言由0和1组成，计算机可以直接识别。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。机器语言由<strong>二进制代码（0和1）</strong>组成，是计算机硬件唯一能直接识别和执行的语言，无需任何翻译。<br><br><strong>📚 知识点讲解：</strong>机器语言是计算机的“母语”，每条指令都是一串二进制数字。虽然<strong>执行速度最快</strong>，但可读性极差、难以编写和维护。现代编程几乎不直接使用机器语言，而是通过高级语言编写后由编译器/解释器翻译为机器码执行。<br><br><strong>💡 解题思路：</strong>题干描述完全准确：机器语言由0和1组成（二进制），计算机可直接识别（无需翻译）。这是机器语言区别于汇编语言和高级语言的根本特征。<br><br><strong>🧠 记忆口诀：</strong>“零一代码机器识，直接执行不翻译；速度最快难编写，底层基石不可替。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "算法必须有输入和输出。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。算法<strong>必须有输出</strong>（至少1个），但<strong>输入可以没有</strong>（0个输入是允许的）。题干说“必须有输入”是错误的。<br><br><strong>📚 知识点讲解：</strong>算法五大特征中关于输入输出的规定：<strong>输入</strong>→算法可以有<strong>0个或多个</strong>输入；<strong>输出</strong>→算法必须有<strong>1个或多个</strong>输出。例如，计算1+1=2的算法没有输入但仍有输出（结果2），这是合法的算法。没有输出的算法没有意义。<br><br><strong>💡 解题思路：</strong>题干中的“必须”过于绝对。输入是“可选”的（0个也行），但输出是“必须”的。因此“必须有输入”的说法不准确，判断为错误。<br><br><strong>🧠 记忆口诀：</strong>“输入可有也可无，输出必须有结果；没有输出的算法，做了也白做。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "流程图中，矩形表示处理框，用于表示具体的运算操作。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。矩形是流程图的<strong>处理框</strong>，专门用于表示具体的运算或操作步骤，如赋值、计算等。<br><br><strong>📚 知识点讲解：</strong>流程图符号体系中，<strong>矩形</strong>的职责是表示<strong>处理操作</strong>（如sum=sum+i、i=i+1等具体运算）。矩形是流程图中使用频率最高的符号之一，每个处理步骤都用一个矩形表示。与之区分：菱形用于判断、平行四边形用于输入输出。<br><br><strong>💡 解题思路：</strong>题干描述与教材定义完全一致：矩形=处理框=运算操作。这是流程图学习中最基础的知识点，判断为正确。<br><br><strong>🧠 记忆口诀：</strong>“矩形方框做运算，菱形尖角来判断，平行四边形传数据，椭圆起止画两端。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "循环结构是指重复执行某一段代码，直到满足终止条件。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。循环结构的核心就是<strong>重复执行某段代码（循环体）</strong>，直到满足终止条件后退出循环。<br><br><strong>📚 知识点讲解：</strong>循环结构是三种基本结构之一，用于处理需要<strong>重复执行</strong>的任务。Python中常用<strong>while循环</strong>（条件循环）和<strong>for循环</strong>（遍历循环）实现。循环必须包含终止条件，否则会形成死循环，违反算法的有穷性。<br><br><strong>💡 解题思路：</strong>题干准确描述了循环结构的两个关键要素：①重复执行代码段；②满足终止条件后停止。这是循环结构的标准定义，判断为正确。<br><br><strong>🧠 记忆口诀：</strong>“循环重复做事情，条件满足才停下；while和for两兄弟，死循环要避开。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "基础",
+            "stem": "Python是解释型语言，无需编译即可执行。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。Python是<strong>解释型语言</strong>，源代码由Python解释器<strong>逐行解释执行</strong>，不需要事先编译为机器码。<br><br><strong>📚 知识点讲解：</strong>解释型语言与编译型语言的区别：<strong>解释型</strong>（如Python、JavaScript）→逐行翻译执行，调试方便，但执行速度相对较慢；<strong>编译型</strong>（如C、C++）→先整体编译为机器码再执行，运行速度快，但调试不如解释型灵活。Python的“无需编译”指的是开发者不需要手动执行编译步骤。<br><br><strong>💡 解题思路：</strong>题干描述符合Python的核心特征。Python确实不需要像C语言那样先编译生成.exe文件再运行，而是直接通过解释器执行.py文件。<br><br><strong>🧠 记忆口诀：</strong>“Python解释逐行跑，无需编译直接搞；C语言先编译后执行，两种方式各有妙。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "高级语言的执行速度比机器语言快。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。实际上<strong>机器语言执行速度最快</strong>，因为它是硬件直接执行的，无需翻译。高级语言需要编译或解释，增加了中间环节，执行速度相对较慢。<br><br><strong>📚 知识点讲解：</strong>语言层级与执行效率的关系：<strong>机器语言</strong>（最快，直接硬件执行）→<strong>汇编语言</strong>（较快，与机器指令一一对应）→<strong>高级语言</strong>（相对慢，需翻译）。高级语言的优势在于<strong>开发效率和可维护性</strong>，而非执行速度。这是典型的“用时间换效率”的权衡。<br><br><strong>💡 解题思路：</strong>题干说法与事实相反。机器语言是计算机的“母语”，无需任何中间翻译环节，执行速度是最快的。高级语言需要编译器/解释器转换，必然有性能开销。<br><br><strong>🧠 记忆口诀：</strong>“机器最快不用翻，高级好写速度慢；开发效率和执行效率，鱼和熊掌难两全。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "一个算法只能用一种编程语言实现。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。算法是独立于编程语言的<strong>逻辑方案</strong>，同一个算法可以用多种编程语言实现（如计算圆面积可用Python、C、Java等）。<br><br><strong>📚 知识点讲解：</strong>算法与程序的关系：<strong>算法是程序的灵魂</strong>，是解决问题的逻辑步骤；<strong>程序是算法的实现</strong>，是算法在特定编程语言中的具体表达。算法具有语言无关性——就像建筑图纸可以用不同材料施工，算法可以用不同语言编码。因此，“只能用一种语言”的说法是错误的。<br><br><strong>💡 解题思路：</strong>题干“只能”一词过于绝对。算法的价值恰恰在于其通用性：设计好算法后，开发者可以根据需求选择最合适的编程语言来实现。例如排序算法可以用Python、Java、C++等数十种语言编写。<br><br><strong>🧠 记忆口诀：</strong>“算法思想是灵魂，语言只是工具人；一种算法百种写，Python Java都能行。”"
+        }, {
+            "type": "判断题",
+            "difficulty": "中档",
+            "stem": "所有复杂算法都可以由顺序、分支、循环三种基本结构组合而成。（）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。这是结构化程序设计的<strong>基本定理</strong>，由Böhm和Jacopini在1966年证明：任何可计算算法都可以仅用顺序、分支、循环三种结构表达。<br><br><strong>📚 知识点讲解：</strong>这一理论奠定了<strong>结构化程序设计</strong>的基础。它意味着开发者不需要使用goto等跳转语句，仅凭三种基本结构就能构建任意复杂度的程序。这一发现极大地提升了程序的可读性和可靠性，是现代软件工程的基石。<br><br><strong>💡 解题思路：</strong>题干陈述的是计算机科学中已被严格证明的定理，是教材中的核心结论。三种基本结构的完备性得到了数学证明，因此判断为正确。<br><br><strong>🧠 记忆口诀：</strong>“三种结构威力大，顺序分支加循环；任意算法都能搭，结构化编程是王道。”"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "简述程序设计的一般过程。",
+            "answer": "程序设计的一般过程分为四个步骤：①分析问题：明确问题的需求，确定输入数据、输出结果和要解决的核心问题；②设计算法：设计解决问题的具体步骤，这是程序设计的核心环节；③编写程序：用选定的编程语言将算法转化为计算机可执行的代码；④调试运行：运行程序，发现并修正语法错误和逻辑错误，直到得到正确的结果。",
+            "keywords": ["分析问题", "设计算法", "编写程序", "调试运行", "输入", "输出", "需求", "步骤", "算法设计",
+            "编程语言", "语法错误", "逻辑错误"],
+            "analysis": "<strong>🎯 答案解析：</strong>程序设计的一般过程分为<strong>四个步骤</strong>：分析问题→设计算法→编写程序→调试运行。其中<strong>设计算法是核心环节</strong>，四个步骤环环相扣，不可颠倒。<br><br><strong>📚 知识点讲解：</strong>①<strong>分析问题</strong>：明确“要解决什么”，确定输入数据和期望输出；②<strong>设计算法</strong>：规划“怎么解决”，设计具体步骤（核心环节）；③<strong>编写程序</strong>：用代码“翻译”算法；④<strong>调试运行</strong>：检验并修正错误。这一流程体现了“先思考后动手”的工程思维。<br><br><strong>💡 解题思路：</strong>回答时应按顺序列出四个步骤，并简要说明每个步骤的作用。重点强调“设计算法是核心”，这是得分关键。避免将顺序写反（如先编写程序再设计算法）。<br><br><strong>🧠 记忆口诀：</strong>“一分析二设计三编写四调试，算法设计是核心；步骤顺序不能乱，环环相扣保质量。”"
+        }, {
+            "type": "简答题",
+            "difficulty": "中档",
+            "stem": "写出算法的五大核心特征，并简要说明。",
+            "answer": "算法的五大核心特征：①有穷性：算法必须在有限步骤内结束，不能无限循环；②确定性：算法的每一步操作都有明确的定义，不能有歧义；③可行性：算法的每一步操作都能通过计算机的基本运算实现；④输入：算法可以有0个或多个输入；⑤输出：算法必须有1个或多个输出，没有输出的算法没有意义。",
+            "keywords": ["有穷性", "确定性", "可行性", "输入", "输出", "有限步骤", "明确定义", "基本运算", "0个或多个",
+                "歧义", "无限循环"],
+            "analysis": "<strong>🎯 答案解析：</strong>算法五大核心特征为<strong>有穷性、确定性、可行性、输入、输出</strong>。其中输入可有可无（0个也可），但<strong>输出必须有</strong>（至少1个），这是常考点。<br><br><strong>📚 知识点讲解：</strong>①<strong>有穷性</strong>：步骤有限，不能死循环（≠时间短）；②<strong>确定性</strong>：每步精确无歧义（≠模糊描述）；③<strong>可行性</strong>：每步可实现（≠纸上谈兵）；④<strong>输入</strong>：0个或多个（可选）；⑤<strong>输出</strong>：至少1个（必须）。五大特征共同构成算法的“合格标准”。<br><br><strong>💡 解题思路：</strong>回答时五个特征缺一不可，每个特征需附一句话简要说明。特别注意“输入可以有0个”和“输出必须有”这一易错点，这是区分算法与非算法的关键。<br><br><strong>🧠 记忆口诀：</strong>“有穷确定可行，输入输出要记清；输入可有也可无，输出必须有一个。”"
+        }, {
+            "type": "简答题",
+            "difficulty": "提高",
+            "stem": "对比说明顺序结构、分支结构和循环结构的执行特点。",
+            "answer": "三种基本结构的执行特点：①顺序结构：按照从上到下的顺序依次执行，每一条语句都只执行一次，是最基本的结构；②分支结构：根据条件判断的结果，选择执行不同的分支路径，满足条件执行一个分支，不满足条件执行另一个分支；③循环结构：重复执行某一段代码（循环体），直到满足终止条件为止，适合处理需要重复执行的任务。",
+            "keywords": ["顺序结构", "分支结构", "循环结构", "从上到下", "依次执行", "条件判断", "选择执行", "重复执行", "终止条件",
+                "只执行一次", "分支路径"],
+            "analysis": "<strong>🎯 答案解析：</strong>三种结构的核心区别：<strong>顺序结构</strong>→一条路走到底（逐条执行）；<strong>分支结构</strong>→路口选方向（条件选择）；<strong>循环结构</strong>→来回反复跑（重复执行直到条件满足）。<br><br><strong>📚 知识点讲解：</strong>①<strong>顺序结构</strong>：默认执行方式，每条语句执行一次；②<strong>分支结构</strong>：通过if-else实现路径选择，不同条件走不同分支；③<strong>循环结构</strong>：通过while/for实现代码复用，适合累加、遍历等场景。三种结构可嵌套组合，构建任意复杂算法。<br><br><strong>💡 解题思路：</strong>采用对比方式回答，突出每种结构的独特执行特点。使用“依次执行”“选择执行”“重复执行”三个关键词区分，并说明各自适用场景。避免仅罗列定义而缺乏对比。<br><br><strong>🧠 记忆口诀：</strong>“顺序一条线走完，分支路口看条件，循环反复打转转，三种结构建万千。”"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "设计一个算法，计算两个数的最大值。",
+            "tasks": ["（1）用自然语言描述算法步骤；", "（2）绘制对应的流程图；", "（3）用Python语言编写实现程序。"],
+            "answer": "（1）自然语言描述：①输入两个数a和b；②判断a是否大于b；③如果a>b，则输出a；否则输出b。\n（2）流程图：开始→输入a,b→判断a>b?→是→输出a→结束；否→输出b→结束。\n（3）Python程序：\na = float(input('请输入第一个数：'))\nb = float(input('请输入第二个数：'))\nif a > b:\n    print('最大值是：', a)\nelse:\n    print('最大值是：', b)",
+            "keywords": ["输入", "a", "b", "判断", "大于", "输出", "最大值", "if", "else", "float", "input", "print",
+                "比较"],
+            "analysis": "<strong>🎯 答案解析：</strong>该算法采用<strong>分支结构</strong>，核心是<strong>比较a和b的大小</strong>并输出较大者。自然语言需描述输入、判断、输出三步；流程图需包含起止框、输入输出框和判断框；Python代码使用if-else实现分支。<br><br><strong>📚 知识点讲解：</strong>本题综合考查了<strong>算法描述方法</strong>（自然语言、流程图、程序代码）和<strong>分支结构</strong>的应用。求最大值是分支结构的经典案例，体现了“条件判断→路径选择”的逻辑。三种描述方法各有优势：自然语言通俗、流程图直观、代码可执行。<br><br><strong>💡 解题思路：</strong>按任务要求分三步完成：①自然语言用“输入→判断→输出”的顺序描述；②流程图注意使用正确的符号（平行四边形输入、菱形判断、平行四边形输出）；③Python代码注意input()返回字符串需转float，if-else缩进正确。<br><br><strong>🧠 记忆口诀：</strong>“两数比较求最大，输入判断再输出；if条件分两路，大于输出a否则b。”"
+        }, {
+            "type": "综合应用题",
+            "difficulty": "提高",
+            "stem": "设计一个算法，计算1到n的累加和（n为正整数）。",
+            "tasks": ["（1）用伪代码描述算法步骤；", "（2）绘制对应的流程图；", "（3）分别用while循环和for循环编写Python实现程序。"],
+            "answer": "（1）伪代码：输入n; sum=0; i=1; while i<=n: sum=sum+i; i=i+1; 输出sum。\n（2）流程图：开始→输入n→sum=0,i=1→判断i<=n?→是→sum=sum+i→i=i+1→回到判断；否→输出sum→结束。\n（3）Python程序：\n# while循环\nn=int(input('请输入正整数n：'))\nsum=0\ni=1\nwhile i<=n:\n    sum+=i\n    i+=1\nprint('1到',n,'的累加和是：',sum)\n\n# for循环\nn=int(input('请输入正整数n：'))\nsum=0\nfor i in range(1,n+1):\n    sum+=i\nprint('1到',n,'的累加和是：',sum)",
+            "keywords": ["输入", "n", "sum", "累加", "循环", "while", "for", "range", "i", "输出", "正整数", "初始化",
+                "条件"],
+            "analysis": "<strong>🎯 答案解析：</strong>该算法采用<strong>循环结构</strong>，核心是<strong>重复累加</strong>直到计数变量超过n。伪代码需体现初始化、循环条件和累加操作；流程图需包含循环回路；Python代码需展示while和for两种循环实现方式。<br><br><strong>📚 知识点讲解：</strong>本题综合考查了<strong>循环结构</strong>的应用和<strong>两种循环语句</strong>的用法。累加求和是循环结构的经典案例。while循环通过条件控制循环次数，for循环通过range()函数遍历序列。两种写法等价，但for循环在此场景更简洁。注意range(1,n+1)的终点是n+1才能包含n。<br><br><strong>💡 解题思路：</strong>①伪代码用“输入→初始化→循环条件→累加→输出”结构；②流程图注意循环回路的绘制（从i=i+1回到判断框）；③while循环需手动管理计数变量i，for循环利用range自动生成序列。注意range(1,n+1)确保包含n。<br><br><strong>🧠 记忆口诀：</strong>“累加求和用循环，初始sum为零；while条件控次数，for用range更简洁；计数变量要更新，忘记更新死循环。”"
+        }];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'info_tech_algo_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+            initAutoSaveDrafts();
+        });
+
+        function renderKnowledgePage() {
+            const title = '程序与算法基础知识精讲';
+            const content = `
+                <h3>核心定义</h3>
+                <p><strong>程序</strong>是计算机能够识别和执行的<strong>有序指令序列</strong>，它告诉计算机每一步要做什么、怎么做，是人与计算机交流的桥梁。<strong>程序设计</strong>是为了解决特定问题，设计算法、编写程序并调试运行的全过程，其核心是<strong>算法设计</strong>。<strong>算法</strong>是解决问题的<strong>明确、有限的步骤</strong>，是程序的灵魂，一个好的算法可以用不同的编程语言实现。</p>
+                <h3>核心要点拆解</h3>
+                <h3>（一）程序与程序设计基础</h3>
+                <p><strong>1. 程序的本质</strong></p>
+                <p>程序由一系列指令组成，每条指令对应计算机的一个基本操作（如运算、输入、输出）。计算机执行程序时，会按照指令的顺序依次执行，最终完成预定任务。</p>
+                <p><strong>2. 程序设计的一般过程</strong></p>
+                <p>遵循固定的逻辑顺序，环环相扣：</p>
+                <ul>
+                    <li><strong>分析问题</strong>：明确问题需求，确定输入、输出和要解决的核心问题</li>
+                    <li><strong>设计算法</strong>：设计解决问题的具体步骤，是程序设计的核心环节</li>
+                    <li><strong>编写程序</strong>：用选定的编程语言将算法转化为计算机可执行的代码</li>
+                    <li><strong>调试运行</strong>：运行程序，发现并修正语法错误和逻辑错误，直到得到正确结果</li>
+                </ul>
+                <p><strong>3. 程序设计语言的发展历程</strong></p>
+                <p>从低级到高级，逐步接近人类自然语言：</p>
+                <ul>
+                    <li><strong>机器语言</strong>：由0和1组成的二进制指令，是计算机唯一能直接识别的语言，执行速度快但可读性差、难以编写</li>
+                    <li><strong>汇编语言</strong>：用助记符代替二进制指令（如<code>ADD</code>表示加法），比机器语言易读，但仍依赖硬件，需要汇编器翻译</li>
+                    <li><strong>高级语言</strong>：接近人类自然语言和数学表达式，可读性强、易于编写和维护，需要编译或解释才能执行，如Python、C、Java</li>
+                </ul>
+                <p><strong>4. Python语言的核心特点</strong></p>
+                <ul>
+                    <li><strong>解释型</strong>：无需编译，逐行解释执行，调试方便</li>
+                    <li><strong>跨平台</strong>：可在Windows、Mac、Linux等多种操作系统上运行</li>
+                    <li><strong>简洁易读</strong>：语法简单，代码量少，适合初学者入门</li>
+                    <li><strong>开源免费</strong>：拥有丰富的第三方库，应用领域广泛</li>
+                    <li><strong>源文件扩展名</strong>：<code>.py</code></li>
+                </ul>
+                <h3>（二）算法基础</h3>
+                <p><strong>1. 算法的五大核心特征</strong></p>
+                <ul>
+                    <li><strong>有穷性</strong>：算法必须在有限步骤内结束，不能无限循环</li>
+                    <li><strong>确定性</strong>：每一步操作都有明确的定义，不能有歧义</li>
+                    <li><strong>可行性</strong>：每一步操作都能通过计算机基本运算实现</li>
+                    <li><strong>输入</strong>：算法可以有0个或多个输入</li>
+                    <li><strong>输出</strong>：算法必须有1个或多个输出，没有输出的算法没有意义</li>
+                </ul>
+                <p><strong>2. 算法的三种描述方法</strong></p>
+                <ul>
+                    <li><strong>自然语言</strong>：用人类日常语言描述算法步骤，通俗易懂但容易产生歧义</li>
+                    <li><strong>流程图</strong>：用标准图形符号和流程线表示算法逻辑，直观清晰，是教材中最常用的描述方法</li>
+                    <li><strong>伪代码</strong>：介于自然语言和编程语言之间的描述方式，结构清晰，便于转化为程序代码</li>
+                </ul>
+                <p><strong>3. 流程图基本符号</strong></p>
+                <table class="knowledge-table">
+                    <thead><tr><th>符号</th><th>名称</th><th>作用</th></tr></thead>
+                    <tbody>
+                        <tr><td>椭圆形</td><td>起止框</td><td>表示算法的开始和结束</td></tr>
+                        <tr><td>平行四边形</td><td>输入输出框</td><td>表示数据的输入或结果的输出</td></tr>
+                        <tr><td>矩形</td><td>处理框</td><td>表示具体的运算或操作步骤</td></tr>
+                        <tr><td>菱形</td><td>判断框</td><td>表示条件判断，根据条件选择不同的执行路径</td></tr>
+                        <tr><td>箭头</td><td>流程线</td><td>表示算法的执行顺序</td></tr>
+                    </tbody>
+                </table>
+                <p><strong>4. 算法的三种基本结构</strong></p>
+                <p>所有复杂算法都可以由这三种基本结构组合而成：</p>
+                <ul>
+                    <li><strong>顺序结构</strong>：按照从上到下的顺序依次执行，是最基本的结构</li>
+                    <li><strong>分支结构（选择结构）</strong>：根据条件判断结果，选择执行不同的分支，如<code>if-else</code>语句</li>
+                    <li><strong>循环结构</strong>：重复执行某一段代码，直到满足终止条件，如<code>for</code>循环、<code>while</code>循环</li>
+                </ul>
+                <h3>教材典型案例</h3>
+                <p><strong>1. 计算圆的面积（顺序结构）</strong></p>
+                <p>问题：输入圆的半径r，计算并输出圆的面积S。算法步骤：①输入半径r；②根据公式S=πr²计算面积；③输出面积S。</p>
+                <p><strong>2. 判断闰年（分支结构）</strong></p>
+                <p>问题：输入一个年份，判断该年份是否为闰年。闰年判断规则：能被4整除但不能被100整除，或者能被400整除。用<code>if-elif-else</code>语句实现分支判断。</p>
+                <p><strong>3. 计算1到100的累加和（循环结构）</strong></p>
+                <p>问题：计算1+2+3+...+100的结果。算法步骤：①初始化累加和sum=0，计数器i=1；②当i≤100时，执行sum=sum+i，i=i+1；③输出sum。</p>
+                <h3>教学重点 / 易错点</h3>
+                <p><strong>教学重点：</strong>掌握程序的定义和程序设计的一般过程；熟记程序设计语言的发展历程及各阶段特点；理解算法的五大核心特征；识别流程图基本符号；掌握算法的三种基本结构。</p>
+                <p><strong>易错点：</strong>①算法特征混淆（有穷性≠时间短）；②流程图符号错误（矩形和菱形混淆）；③结构区分错误（分支和循环混淆）；④语言发展误区（误认为高级语言执行更快）；⑤程序设计过程颠倒（先写程序再设计算法）。</p>
+                <h3>学段区分说明</h3>
+                <p><strong>初中阶段</strong>：了解程序基本概念，认识流程图基本符号，能读懂简单的顺序和分支结构流程图，会用Python编写简单的顺序和分支程序。</p>
+                <p><strong>高中阶段</strong>：理解程序与算法的关系，掌握算法五大特征，能独立设计算法解决实际问题，熟练绘制流程图，掌握三种基本结构的程序实现，了解程序设计语言发展历程。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            if (answers.every(a => a === null) && currentIndex === 0) {
+                currentIndex = 0;
+            }
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getCurrentQuestion() {
+            if (reviewMode && reviewIndices.length > 0) {
+                return questions[reviewIndices[currentIndex]];
+            }
+            return questions[currentIndex];
+        }
+
+        function getRealIndex() {
+            if (reviewMode && reviewIndices.length > 0) {
+                return reviewIndices[currentIndex];
+            }
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            if (reviewMode) return reviewIndices.length;
+            return questions.length;
+        }
+
+        function renderQuestion() {
+            const q = getCurrentQuestion();
+            const realIdx = getRealIndex();
+            const contentArea = document.getElementById('quizContent');
+            const totalInMode = getTotalInMode();
+
+            if (q.type === '简答题' || q.type === '综合应用题') {
+                renderOpenEndedQuestion(q, realIdx, contentArea, totalInMode);
+                return;
+            }
+
+            let html =
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[realIdx] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[realIdx] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[realIdx] !== null) {
+                const isCorrect = answers[realIdx] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === totalInMode - 1 && answers.filter((a, i) => {
+                    if (reviewMode && reviewIndices.length > 0) return reviewIndices.includes(i) && a !==
+                        null;
+                    return a !== null;
+                }).length >= totalInMode && totalInMode > 0) {
+                html += renderCompletionScreen();
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function renderOpenEndedQuestion(q, realIdx, contentArea, totalInMode) {
+            const userAnswer = answers[realIdx] || '';
+            const isSubmitted = answers[realIdx] !== null && typeof answers[realIdx] === 'string';
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+
+            if (q.tasks && q.tasks.length > 0) {
+                html += `<div class="task-list"><strong>📋 任务列表：</strong><ol>`;
+                q.tasks.forEach(task => { html += `<li>${task}</li>`; });
+                html += `</ol></div>`;
+            }
+
+            html +=
+                `<textarea class="textarea-answer" id="openAnswerTextarea" placeholder="请在此输入你的作答内容..." ${isSubmitted ? 'disabled' : ''}>${userAnswer}</textarea>`;
+
+            if (isSubmitted && q.keywords && q.keywords.length > 0) {
+                const matchResult = calculateKeywordMatch(userAnswer, q.keywords);
+                const hitRate = matchResult.hitRate;
+                const hitKeywords = matchResult.hitKeywords;
+                const missKeywords = matchResult.missKeywords;
+                let levelText = '';
+                let levelClass = '';
+                let barClass = '';
+                if (q.type === '简答题') {
+                    if (hitRate >= 60) { levelText = '回答较好';
+                        levelClass = 'correct';
+                        barClass = 'excellent'; } else if (hitRate >= 30) { levelText = '部分正确';
+                        levelClass = 'partial';
+                        barClass = 'pass'; } else { levelText = '需加强';
+                        levelClass = 'wrong';
+                        barClass = 'weak'; }
+                } else {
+                    if (hitRate >= 80) { levelText = '优秀';
+                        levelClass = 'correct';
+                        barClass = 'excellent'; } else if (hitRate >= 60) { levelText = '良好';
+                        levelClass = 'correct';
+                        barClass = 'good'; } else if (hitRate >= 40) { levelText = '合格';
+                        levelClass = 'partial';
+                        barClass = 'pass'; } else { levelText = '需加强';
+                        levelClass = 'wrong';
+                        barClass = 'weak'; }
+                }
+                html +=
+                    `<div style="margin-top:12px;"><strong>📊 关键词命中率：</strong><span style="font-weight:700;color:var(--primary-color);">${hitRate}%</span> <span class="result-badge ${levelClass}">${levelText}</span></div>`;
+                html +=
+                    `<div class="progress-score-bar"><div class="progress-score-fill ${barClass}" style="width:${hitRate}%;"></div></div>`;
+                html += `<div class="keyword-match-info"><strong>✅ 命中关键词：</strong>`;
+                if (hitKeywords.length > 0) {
+                    hitKeywords.forEach(kw => { html +=
+                            `<span class="match-tag hit">${kw}</span>`; });
+                } else { html += `<span style="color:var(--text-light);">无</span>`; }
+                html += `</div><div class="keyword-match-info"><strong>❌ 未命中关键词：</strong>`;
+                if (missKeywords.length > 0) {
+                    missKeywords.forEach(kw => { html +=
+                            `<span class="match-tag miss">${kw}</span>`; });
+                } else { html += `<span style="color:var(--text-light);">无</span>`; }
+                html += `</div>`;
+                html +=
+                    `<div style="margin-top:10px;"><strong>📝 你的作答：</strong><div class="user-answer-display">${highlightKeywordsInText(userAnswer, hitKeywords)}</div></div>`;
+                html +=
+                    `<div style="margin-top:8px;"><strong>📋 参考答案：</strong><div class="user-answer-display">${q.answer}</div></div>`;
+            }
+
+            html += '</div>';
+
+            if (isSubmitted) {
+                const matchResult = calculateKeywordMatch(userAnswer, q.keywords || []);
+                const hitRate = matchResult.hitRate;
+                let isWrong = hitRate < 60;
+                let levelText = hitRate >= 60 ? (hitRate >= 80 ? '优秀' : '良好') : (hitRate >= 30 ? '部分正确' : '需加强');
+                let badgeClass = isWrong ? 'wrong' : 'correct';
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${badgeClass}">命中率 ${hitRate}% · ${levelText}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            if (currentIndex === totalInMode - 1 && totalInMode > 0) {
+                const allAnswered = answers.filter((a, i) => {
+                    if (reviewMode && reviewIndices.length > 0) return reviewIndices.includes(i) && a !==
+                        null;
+                    return a !== null;
+                }).length >= totalInMode;
+                if (allAnswered) {
+                    html += renderCompletionScreen();
+                }
+            }
+            contentArea.innerHTML = html;
+
+            const textarea = document.getElementById('openAnswerTextarea');
+            if (textarea && !isSubmitted) {
+                textarea.addEventListener('input', function() {
+                    autoResizeTextarea(this);
+                    saveDraft(realIdx, this.value);
+                });
+                autoResizeTextarea(textarea);
+            }
+
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function autoResizeTextarea(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.max(120, textarea.scrollHeight) + 'px';
+        }
+
+        function calculateKeywordMatch(userText, keywords) {
+            if (!userText || !keywords || keywords.length === 0) return { hitRate: 0, hitKeywords: [],
+                missKeywords: keywords || [] };
+            const lowerText = userText.toLowerCase();
+            const hitKeywords = [];
+            const missKeywords = [];
+            keywords.forEach(kw => {
+                if (lowerText.includes(kw.toLowerCase())) {
+                    hitKeywords.push(kw);
+                } else {
+                    missKeywords.push(kw);
+                }
+            });
+            const hitRate = Math.round((hitKeywords.length / keywords.length) * 100);
+            return { hitRate, hitKeywords, missKeywords };
+        }
+
+        function highlightKeywordsInText(text, hitKeywords) {
+            if (!text || !hitKeywords || hitKeywords.length === 0) return text || '';
+            let result = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            hitKeywords.forEach(kw => {
+                const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(${escapedKw})`, 'gi');
+                result = result.replace(regex,
+                    '<span class="keyword-highlight" style="background:#ffeaa7;padding:1px 4px;border-radius:3px;font-weight:600;">$1</span>'
+                    );
+            });
+            return result;
+        }
+
+        function renderCompletionScreen() {
+            const totalInMode = getTotalInMode();
+            let correctCount = 0;
+            let totalAnswered = 0;
+            const indicesToCheck = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            indicesToCheck.forEach(i => {
+                if (answers[i] !== null) {
+                    totalAnswered++;
+                    const q = questions[i];
+                    if (q.type === '单选题' || q.type === '判断题') {
+                        if (answers[i] === q.answer) correctCount++;
+                    } else if (q.type === '简答题' || q.type === '综合应用题') {
+                        const matchResult = calculateKeywordMatch(answers[i] || '', q.keywords || []);
+                        if (matchResult.hitRate >= 60) correctCount++;
+                    }
+                }
+            });
+            const accuracy = totalAnswered > 0 ? Math.round(correctCount / totalInMode * 100) : 0;
+            if (!reviewMode) {
+                saveToHistory(correctCount, accuracy);
+            }
+            return `
+                <div class="completion-screen">
+                    <div class="completion-icon">🎉</div>
+                    <h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1>
+                    <p style="color: var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题，继续加油！' : '太棒了！你已经完成了所有题目'}</p>
+                    <div class="stats">
+                        <div class="stat-item"><div class="stat-value">${correctCount}/${totalInMode}</div><div class="stat-label">答对题数</div></div>
+                        <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                        <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                        ${!reviewMode ? '<button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()">回看错题</button>' : ''}
+                        <button class="action-btn export-btn" onclick="exportWrongQuestionsCSV()">📥 导出错题CSV</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectOption(idx) {
+            const realIdx = getRealIndex();
+            if (answers[realIdx] !== null) return;
+            answers[realIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const q = getCurrentQuestion();
+            showToast(idx === q.answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitOpenAnswer() {
+            const realIdx = getRealIndex();
+            const textarea = document.getElementById('openAnswerTextarea');
+            if (!textarea) return;
+            const userText = textarea.value.trim();
+            if (!userText) { showToast('请输入作答内容后再提交'); return; }
+            answers[realIdx] = userText;
+            saveAnswers();
+            clearDraft(realIdx);
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const q = getCurrentQuestion();
+            const matchResult = calculateKeywordMatch(userText, q.keywords || []);
+            const hitRate = matchResult.hitRate;
+            if (hitRate >= 60) {
+                showToast(`作答提交成功！关键词命中率 ${hitRate}% ✓`);
+            } else if (hitRate >= 30) {
+                showToast(`作答提交成功！命中率 ${hitRate}%，部分正确 ⚠️`);
+            } else {
+                showToast(`作答提交成功！命中率 ${hitRate}%，需加强 ✗`);
+            }
+        }
+
+        function clearOpenAnswer() {
+            const realIdx = getRealIndex();
+            const textarea = document.getElementById('openAnswerTextarea');
+            if (textarea && answers[realIdx] === null) {
+                textarea.value = '';
+                textarea.style.height = 'auto';
+                textarea.style.height = '120px';
+                clearDraft(realIdx);
+                showToast('输入已清空');
+            }
+        }
+
+        function saveDraft(index, value) {
+            const drafts = getDrafts();
+            if (value.trim()) {
+                drafts[index] = value;
+            } else {
+                delete drafts[index];
+            }
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function clearDraft(index) {
+            const drafts = getDrafts();
+            delete drafts[index];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function getDrafts() {
+            const saved = localStorage.getItem(STORAGE_KEY_DRAFTS);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function initAutoSaveDrafts() {
+            const drafts = getDrafts();
+            Object.keys(drafts).forEach(idx => {
+                const i = parseInt(idx);
+                if (answers[i] === null && drafts[i]) {
+                    answers[i] = null;
+                }
+            });
+        }
+
+        function loadDraftForIndex(index) {
+            const drafts = getDrafts();
+            return drafts[index] || '';
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            const totalInMode = getTotalInMode();
+            if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function nextQuestion() {
+            const totalInMode = getTotalInMode();
+            if (currentIndex < totalInMode - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const totalInMode = getTotalInMode();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const indicesToCheck = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            const answeredCount = indicesToCheck.filter(i => answers[i] !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = totalInMode;
+            document.getElementById('progressFill').style.width = `${totalInMode > 0 ? (answeredCount / totalInMode) * 100 : 0}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const q = getCurrentQuestion();
+            const realIdx = getRealIndex();
+            const totalInMode = getTotalInMode();
+            const isSubmitted = answers[realIdx] !== null;
+
+            if ((q.type === '简答题' || q.type === '综合应用题') && !isSubmitted) {
+                footerContent.innerHTML = `
+                    <button class="nav-btn draft-btn" onclick="saveDraft(${realIdx}, document.getElementById('openAnswerTextarea')?.value || ''); showToast('草稿已保存')"><i class="fas fa-save"></i> 保存草稿</button>
+                    <button class="nav-btn clear-btn" onclick="clearOpenAnswer()"><i class="fas fa-eraser"></i> 清空</button>
+                    <button class="nav-btn submit-btn" onclick="submitOpenAnswer()"><i class="fas fa-check-circle"></i> 提交作答</button>
+                `;
+            } else {
+                footerContent.innerHTML = `
+                    <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                    <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === totalInMode - 1 ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+                `;
+            }
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            const indicesToShow = reviewMode && reviewIndices.length > 0 ? reviewIndices : questions.map((_, i) => i);
+            let html = '';
+            indicesToShow.forEach((realIdx, displayIdx) => {
+                const q = questions[realIdx];
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[realIdx] !== null) {
+                    let isCorrect = false;
+                    if (q.type === '单选题' || q.type === '判断题') {
+                        isCorrect = answers[realIdx] === q.answer;
+                    } else if (q.type === '简答题' || q.type === '综合应用题') {
+                        const matchResult = calculateKeywordMatch(answers[realIdx] || '', q.keywords || []);
+                        isCorrect = matchResult.hitRate >= 60;
+                    }
+                    if (isCorrect) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (displayIdx === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[realIdx] !== null) return;
+                    if (currentFilter === 'correct') {
+                        let isC = false;
+                        if (q.type === '单选题' || q.type === '判断题') isC = answers[realIdx] === q.answer;
+                        else if (q.type === '简答题' || q.type === '综合应用题') {
+                            const mr = calculateKeywordMatch(answers[realIdx] || '', q.keywords || []);
+                            isC = mr.hitRate >= 60;
+                        }
+                        if (!isC) return;
+                    }
+                    if (currentFilter === 'wrong') {
+                        let isW = false;
+                        if (q.type === '单选题' || q.type === '判断题') isW = answers[realIdx] !== null && answers[
+                            realIdx] !== q.answer;
+                        else if (q.type === '简答题' || q.type === '综合应用题') {
+                            const mr = calculateKeywordMatch(answers[realIdx] || '', q.keywords || []);
+                            isW = answers[realIdx] !== null && mr.hitRate < 60;
+                        }
+                        if (!isW) return;
+                    }
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestionByDisplay(${displayIdx})"><div class="sheet-number">${displayIdx + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestionByDisplay(displayIdx) {
+            currentIndex = displayIdx;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function jumpToQuestion(index) {
+            if (reviewMode && reviewIndices.length > 0) {
+                const pos = reviewIndices.indexOf(index);
+                if (pos >= 0) { currentIndex = pos;
+                    renderQuestion();
+                    updateNavButtons();
+                    toggleSheet(); }
+            } else {
+                currentIndex = index;
+                renderQuestion();
+                updateNavButtons();
+                toggleSheet();
+            }
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`
+                    ; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            const serializableAnswers = answers.map(a => {
+                if (a === null) return null;
+                if (typeof a === 'string') return a;
+                return a;
+            });
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: serializableAnswers });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) :
+                []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                answers = [...history[index].answers];
+                currentIndex = 0;
+                reviewMode = false;
+                reviewIndices = [];
+                saveAnswers();
+                startQuiz();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            const history = getHistory();
+            if (index >= 0 && index < history.length) { history.splice(index, 1);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+                renderHistory();
+                showToast('记录已删除'); }
+        }
+
+        function clearAllHistory() {
+            if (!confirm('确定要清空所有历史记录吗？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空');
+        }
+
+        function reviewWrongQuestions() {
+            const wrongIndices = [];
+            questions.forEach((q, i) => {
+                if (answers[i] !== null) {
+                    if (q.type === '单选题' || q.type === '判断题') {
+                        if (answers[i] !== q.answer) wrongIndices.push(i);
+                    } else if (q.type === '简答题' || q.type === '综合应用题') {
+                        const matchResult = calculateKeywordMatch(answers[i] || '', q.keywords || []);
+                        if (matchResult.hitRate < 60) wrongIndices.push(i);
+                    }
+                }
+            });
+            if (wrongIndices.length === 0) {
+                showToast('没有错题，太棒了！🎉');
+                return;
+            }
+            reviewMode = true;
+            reviewIndices = wrongIndices;
+            currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongIndices.length} 道错题`);
+        }
+
+        function exportWrongQuestionsCSV() {
+            const wrongData = [];
+            questions.forEach((q, i) => {
+                if (answers[i] !== null) {
+                    let isWrong = false;
+                    let userAnswerStr = '';
+                    let correctAnswerStr = '';
+                    let hitRateStr = '';
+                    let resultStr = '';
+                    if (q.type === '单选题' || q.type === '判断题') {
+                        if (answers[i] !== q.answer) {
+                            isWrong = true;
+                            userAnswerStr = q.options[answers[i]] ? q.options[answers[i]].text : String(answers[
+                                i]);
+                            correctAnswerStr = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                            resultStr = '错误';
+                            hitRateStr = 'N/A';
+                        }
+                    } else if (q.type === '简答题' || q.type === '综合应用题') {
+                        const matchResult = calculateKeywordMatch(answers[i] || '', q.keywords || []);
+                        if (matchResult.hitRate < 60) {
+                            isWrong = true;
+                            userAnswerStr = (answers[i] || '').replace(/"/g, '""');
+                            correctAnswerStr = (q.answer || '').replace(/"/g, '""');
+                            hitRateStr = matchResult.hitRate + '%';
+                            resultStr = matchResult.hitRate >= 30 ? '部分正确' : '需加强';
+                        }
+                    }
+                    if (isWrong) {
+                        wrongData.push({
+                            type: q.type,
+                            stem: q.stem.replace(/"/g, '""'),
+                            userAnswer: userAnswerStr,
+                            correctAnswer: correctAnswerStr,
+                            hitRate: hitRateStr,
+                            result: resultStr,
+                            analysis: (q.analysis || '').replace(/<[^>]*>/g, '').replace(/"/g, '""')
+                        });
+                    }
+                }
+            });
+            if (wrongData.length === 0) {
+                showToast('没有错题可导出！🎉');
+                return;
+            }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题型,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrongData.forEach(row => {
+                csvContent +=
+                    `"${row.type}","${row.stem}","${row.userAnswer}","${row.correctAnswer}","${row.hitRate}","${row.result}","${row.analysis}"\n`;
+            });
+            const now = new Date();
+            const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate())
+                .padStart(2, '0');
+            const filename = `错题本_程序与算法基础_${dateStr}.csv`;
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`已导出 ${wrongData.length} 道错题：${filename}`);
+        }
+
+        function saveAnswers() {
+            const dataToSave = { currentIndex, answers, reviewMode, reviewIndices };
+            localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(dataToSave));
+        }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) {
+                const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null);
+                reviewMode = data.reviewMode || false;
+                reviewIndices = data.reviewIndices || [];
+            }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+            const drafts = getDrafts();
+            Object.keys(drafts).forEach(idx => {
+                const i = parseInt(idx);
+                if (answers[i] === null && drafts[i] && (questions[i].type === '简答题' || questions[i].type ===
+                        '综合应用题')) {} else if (answers[i] === null && drafts[i]) {
+                    delete drafts[idx];
+                }
+            });
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+
+        function restartQuiz() {
+            if (confirm('确定要重新开始吗？当前进度将被清除。')) {
+                currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion();
+                updateNavButtons();
+                showToast('已重新开始');
+            }
+        }
+
+        function showHome() {
+            if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; }
+        }
+
+        function showToast(message) {
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) existingToast.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500);
+        }
+    </script>
+</body>
+</html>

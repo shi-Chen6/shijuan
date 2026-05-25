@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>程序控制结构刷题练习</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 2000px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); flex-wrap: wrap; }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .result-badge.partial { background: var(--warning-light); color: var(--warning-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; flex-wrap: wrap; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 60px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .submit-btn { background: var(--success-color); color: white; flex: 2; }
+        .draft-btn { background: #f5f5f5; color: var(--text-secondary); flex: 1; }
+        .clear-btn { background: #fff2f0; color: var(--error-color); flex: 1; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; font-size: 11px; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; flex-wrap: wrap; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; justify-content: center; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; min-width: 100px; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: var(--warning-color); color: white; }
+        .export-btn { background: #52c41a; color: white; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; pointer-events: none; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">程序控制结构</div>
+                        <div class="progress-text">高中信息科技 · 必修1 · 数据与计算</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{"type":"单选题","difficulty":"基础","stem":"程序中语句按照书写顺序依次执行的结构是（）","options":[{"label":"A","text":"顺序结构"},{"label":"B","text":"分支结构"},{"label":"C","text":"循环结构"},{"label":"D","text":"嵌套结构"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 顺序结构</strong>。顺序结构按照语句书写的先后顺序依次执行，从上到下，没有分支和跳转。<br><br><strong>📚 知识点讲解：</strong>三种基本结构的执行特点：<strong>顺序结构</strong>→依次执行每条语句；<strong>分支结构</strong>→根据条件选择执行路径；<strong>循环结构</strong>→重复执行某段代码。顺序结构是所有程序的基础组成部分。<br><br><strong>💡 解题思路：</strong>题干“按照书写顺序依次执行”是顺序结构的经典定义。选项B分支结构涉及条件判断；选项C循环结构涉及重复执行；选项D嵌套结构是前三种的组合形式。因此A为正确选项。<br><br><strong>🧠 记忆口诀：</strong>“顺序一条线走到底，分支路口选方向，循环来回反复跑，三种结构建大厦。”"},{"type":"单选题","difficulty":"基础","stem":"Python中表示语句块的方式是（）","options":[{"label":"A","text":"大括号{}"},{"label":"B","text":"小括号()"},{"label":"C","text":"缩进"},{"label":"D","text":"分号;"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 缩进</strong>。Python使用缩进（通常4个空格）表示语句块，这是Python区别于C++/Java等语言的重要语法特点。<br><br><strong>📚 知识点讲解：</strong>在Python中，<strong>缩进</strong>具有语法意义，同一语句块内的代码缩进必须一致。如果缩进错误，程序会抛出<strong>IndentationError</strong>。而C/C++/Java使用大括号{}表示语句块，小括号()用于表达式或函数参数，分号;用于语句结束（Python中一般不需要）。<br><br><strong>💡 解题思路：</strong>选项A是C++/Java的方式；选项B用于函数参数或运算优先级；选项D在Python中通常不需要。只有C是Python的独特设计，强制代码整洁。<br><br><strong>🧠 记忆口诀：</strong>“Python不用大括号，缩进对齐是块号；四个空格为标准，缩进错误程序倒。”"},{"type":"单选题","difficulty":"基础","stem":"下列代码中，属于单分支结构的是（）","options":[{"label":"A","text":"if a > b: print(a)"},{"label":"B","text":"if a > b: print(a) else: print(b)"},{"label":"C","text":"if a > b: print(a) elif a < b: print(b)"},{"label":"D","text":"以上都不是"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A</strong>。单分支结构只有一个if条件，没有else或elif，满足条件执行语句块，不满足则跳过。<br><br><strong>📚 知识点讲解：</strong>分支结构的三种形式：<strong>单分支</strong>（if 条件: 语句块）、<strong>双分支</strong>（if...else...）、<strong>多分支</strong>（if...elif...else）。选项B是双分支，选项C是多分支（包含elif）。<br><br><strong>💡 解题思路：</strong>观察代码是否包含else或elif。A仅有if，没有else或elif，属于单分支。B有else，C有elif，均不属于单分支。<br><br><strong>🧠 记忆口诀：</strong>“只有if是单支，if else成双支，if elif多分支，结构清晰不迷失。”"},{"type":"单选题","difficulty":"基础","stem":"适用于循环次数已知情况的循环是（）","options":[{"label":"A","text":"for循环"},{"label":"B","text":"while循环"},{"label":"C","text":"分支循环"},{"label":"D","text":"嵌套循环"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. for循环</strong>。for循环通常用于循环次数已知的情况，通过遍历序列（如range生成的整数序列）来精确控制循环次数。<br><br><strong>📚 知识点讲解：</strong><strong>for循环</strong>（计数循环）适合已知循环次数的场景，如遍历1到100；<strong>while循环</strong>（条件循环）适合次数未知、根据条件决定是否继续的场景。两者可以相互转换，但各有适用优势。<br><br><strong>💡 解题思路：</strong>选项B while循环常用于次数未知；选项C不是标准术语；选项D嵌套循环是指循环内部还有循环，不涉及循环类型选择。for循环与range()配合可精确控制次数。<br><br><strong>🧠 记忆口诀：</strong>“for循环知次数，while循环看条件；遍历序列用for爽，条件未知while当。”"},{"type":"单选题","difficulty":"基础","stem":"range(5)生成的整数序列是（）","options":[{"label":"A","text":"0,1,2,3,4,5"},{"label":"B","text":"0,1,2,3,4"},{"label":"C","text":"1,2,3,4,5"},{"label":"D","text":"1,2,3,4"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 0,1,2,3,4</strong>。range(终值)生成从0开始到终值-1的整数序列，遵循<strong>左闭右开</strong>原则，所以range(5)包含0,1,2,3,4，共5个数。<br><br><strong>📚 知识点讲解：</strong>range()函数是Python中生成整数序列的重要工具：<strong>range(终值)</strong>→从0到终值-1；<strong>range(起始,终值)</strong>→从起始到终值-1；<strong>range(起始,终值,步长)</strong>→按步长生成。注意左闭右开，终值本身不包含在内。<br><br><strong>💡 解题思路：</strong>range(5)默认从0开始，到5结束但不包含5，所以是0,1,2,3,4。选项A多了一个5；选项C从1开始且多5；选项D从1开始但少5。B正确。<br><br><strong>🧠 记忆口诀：</strong>“range范围左闭右开，起点包含终点排；range(5)是0到4，五个数字依次来。”"},{"type":"单选题","difficulty":"基础","stem":"下列代码的运行结果是（）\nfor i in range(1, 6, 2):\n    print(i, end=\" \")","options":[{"label":"A","text":"1 2 3 4 5"},{"label":"B","text":"1 3 5"},{"label":"C","text":"2 4"},{"label":"D","text":"1 2 3"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. 1 3 5</strong>。range(1,6,2)从1开始，到5结束（不含6），步长为2，生成的序列为1,3,5。<br><br><strong>📚 知识点讲解：</strong>range(起始值,终值,步长)按步长生成序列。本例起始1，终值6（不包含），步长2，因此取1，然后1+2=3，3+2=5，5+2=7≥6停止。end=\" \"参数使得输出不换行，用空格分隔。<br><br><strong>💡 解题思路：</strong>模拟执行：i依次取1,3,5，每次打印i后跟空格，最终输出“1 3 5”。选项A是全部整数；选项C缺少1；选项D序列不对。<br><br><strong>🧠 记忆口诀：</strong>“起始步长决定数，左闭右开要记住；range(1,6,2)取奇数，1,3,5依次出。”"},{"type":"单选题","difficulty":"基础","stem":"while循环的执行条件是（）","options":[{"label":"A","text":"条件为True"},{"label":"B","text":"条件为False"},{"label":"C","text":"循环次数固定"},{"label":"D","text":"以上都不是"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. 条件为True</strong>。while循环只要条件为True就重复执行循环体，当条件变为False时退出循环。<br><br><strong>📚 知识点讲解：</strong>while循环的语法：<code>while 条件: 循环体</code>。每次执行前先检查条件，若为True则执行循环体，然后再次检查；若为False则跳出。循环体内通常包含修改条件的语句，否则可能造成无限循环。<br><br><strong>💡 解题思路：</strong>条件为True是while循环的执行前提。选项B为False时不会执行；选项C是for循环的特点；选项D错误。<br><br><strong>🧠 记忆口诀：</strong>“while循环看条件，True就执行False停；条件不改死循环，务必记得更新它。”"},{"type":"单选题","difficulty":"基础","stem":"立即退出整个循环的语句是（）","options":[{"label":"A","text":"continue"},{"label":"B","text":"break"},{"label":"C","text":"return"},{"label":"D","text":"exit"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>B. break</strong>。break语句用于立即退出当前循环，不再执行循环内剩余的语句，直接跳转到循环后面的代码。<br><br><strong>📚 知识点讲解：</strong><strong>break</strong>：立即终止整个循环；<strong>continue</strong>：跳过本次循环剩余语句，进入下一次循环；<strong>return</strong>：用于函数中返回值并结束函数；<strong>exit()</strong>：退出整个程序。在循环中常用break来提前结束循环。<br><br><strong>💡 解题思路：</strong>题干强调“退出整个循环”，break就是这个作用。continue只是跳过本次；return用于函数；exit退出程序。只有break符合。<br><br><strong>🧠 记忆口诀：</strong>“break退出整个环，continue只跳本次；return函数才用到，exit程序全停止。”"},{"type":"单选题","difficulty":"基础","stem":"跳过本次循环剩余部分，进入下一次循环的语句是（）","options":[{"label":"A","text":"continue"},{"label":"B","text":"break"},{"label":"C","text":"return"},{"label":"D","text":"exit"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A. continue</strong>。continue语句跳过本次循环中剩余的语句，直接进入下一次循环的条件判断。<br><br><strong>📚 知识点讲解：</strong>continue常用于过滤某些不需要处理的情况。例如循环输出奇数时，遇到偶数执行continue跳过打印。与break的区别：<strong>break终止整个循环</strong>，<strong>continue只结束本次迭代</strong>。<br><br><strong>💡 解题思路：</strong>“跳过本次循环剩余部分”是continue的典型描述。选项B是退出整个循环；选项C、D与循环控制无关。<br><br><strong>🧠 记忆口诀：</strong>“continue跳过这一次，下次循环继续干；break完全跳出环，两个作用记心间。”"},{"type":"单选题","difficulty":"基础","stem":"下列关于分支结构的说法错误的是（）","options":[{"label":"A","text":"单分支结构只有一个条件"},{"label":"B","text":"双分支结构有两个执行路径"},{"label":"C","text":"多分支结构可以有多个elif"},{"label":"D","text":"分支结构不需要缩进"}],"answer":3,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>D. 分支结构不需要缩进</strong>。这是错误的，Python中分支结构的语句块必须使用缩进表示，否则会引发语法错误。<br><br><strong>📚 知识点讲解：</strong>Python强制使用缩进表示代码块，所有分支结构（if/elif/else）下的语句都必须缩进。选项A、B、C的描述均正确：单分支仅if，双分支if-else，多分支可包含多个elif。<br><br><strong>💡 解题思路：</strong>题目要求选错误说法。D明显错误，因为Python严格依赖缩进。其他选项符合分支结构的定义。<br><br><strong>🧠 记忆口诀：</strong>“分支也要缩进来，否则报错程序坏；单双多支各不同，缩进统一才规范。”"},{"type":"单选题","difficulty":"中档","stem":"执行下列代码后，输出结果是（）\na = 10\nif a > 5:\n    a += 5\nelse:\n    a -= 5\nprint(a)","options":[{"label":"A","text":"5"},{"label":"B","text":"10"},{"label":"C","text":"15"},{"label":"D","text":"20"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 15</strong>。a初始为10，条件a>5成立，执行if分支a+=5，a变为15；else分支被跳过。最终输出15。<br><br><strong>📚 知识点讲解：</strong>双分支结构：当条件为True时执行if后的语句块，否则执行else后的语句块。此处10>5为True，所以执行a+=5。注意缩进，print(a)不属于分支，会被无条件执行。<br><br><strong>💡 解题思路：</strong>分析条件：10>5为真，执行a=a+5=15，跳过else。所以print输出15。选项A、B、D均不符。<br><br><strong>🧠 记忆口诀：</strong>“if条件真就执行，否则else来接手；变量变化跟程序，逐行分析不出丑。”"},{"type":"单选题","difficulty":"中档","stem":"下列代码中，会产生无限循环的是（）","options":[{"label":"A","text":"for i in range(5): print(i)"},{"label":"B","text":"i = 1; while i <= 5: print(i); i += 1"},{"label":"C","text":"i = 1; while i <= 5: print(i)"},{"label":"D","text":"i = 1; while i > 5: print(i); i += 1"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。C中while条件i<=5始终为True（因为i没有被修改），循环会无限执行，形成死循环。<br><br><strong>📚 知识点讲解：</strong>while循环必须在循环体内修改循环条件，否则条件一直满足，导致无限循环。A是有限次数的for循环；B的i每次加1，最终i=6时退出；D的条件i>5一开始就不成立，循环体不执行。<br><br><strong>💡 解题思路：</strong>检查每个选项循环变量是否改变。C中i始终为1，i<=5恒真，陷入死循环。其他选项均有退出机制。<br><br><strong>🧠 记忆口诀：</strong>“while循环要小心，条件修改不能停；若是忘了加步长，死循环里出不赢。”"},{"type":"单选题","difficulty":"中档","stem":"执行下列代码后，输出结果是（）\nsum = 0\nfor i in range(1, 11):\n    if i % 2 == 0:\n        continue\n    sum += i\nprint(sum)","options":[{"label":"A","text":"55"},{"label":"B","text":"45"},{"label":"C","text":"25"},{"label":"D","text":"15"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. 25</strong>。代码计算1到10中所有奇数的和：1+3+5+7+9=25。continue语句在i为偶数时跳过累加，实现过滤效果。<br><br><strong>📚 知识点讲解：</strong>i%2==0判断偶数，若为真执行continue跳过sum+=i，直接进入下一次循环。因此只有奇数被累加。1到10的奇数和为25。<br><br><strong>💡 解题思路：</strong>遍历1~10，偶数时continue跳过，奇数时累加。奇数有1,3,5,7,9，求和得25。选项A是全部求和55；B是45；D是15。<br><br><strong>🧠 记忆口诀：</strong>“continue遇偶跳过，奇数求和二十五；循环过滤用得妙，逻辑清晰不糊涂。”"},{"type":"单选题","difficulty":"中档","stem":"下列关于for循环和while循环的说法正确的是（）","options":[{"label":"A","text":"for循环只能用于循环次数已知的情况"},{"label":"B","text":"while循环只能用于循环次数未知的情况"},{"label":"C","text":"for循环和while循环可以相互转换"},{"label":"D","text":"while循环不需要条件"}],"answer":2,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>C. for循环和while循环可以相互转换</strong>。任何for循环都可以用while循环实现，反之亦然，只是语法形式和适用场景有差异。<br><br><strong>📚 知识点讲解：</strong>for循环适合已知次数，while适合条件控制，但两者并非绝对互斥。例如for i in range(5) 等价于 while i<5: ... i+=1。选项A、B过于绝对，D明显错误。<br><br><strong>💡 解题思路：</strong>计算机科学中，for和while在表达能力上是等价的，可以相互模拟。C正确。其他选项表述片面或错误。<br><br><strong>🧠 记忆口诀：</strong>“for和while能互转，只是语法不同般；次数已知用for便，条件未知while担。”"},{"type":"单选题","difficulty":"中档","stem":"执行下列代码后，输出结果是（）\nfor i in range(1, 4):\n    for j in range(1, 4):\n        print(i * j, end=\" \")\n    print()","options":[{"label":"A","text":"1 2 3\n2 4 6\n3 6 9"},{"label":"B","text":"1 1 1\n2 2 2\n3 3 3"},{"label":"C","text":"1 2 3 2 4 6 3 6 9"},{"label":"D","text":"1 2 3 4 5 6 7 8 9"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>正确答案是<strong>A</strong>。外层循环i从1到3，内层循环j从1到3，每次打印i*j后跟空格，内层结束后换行，输出九九乘法表前3行。<br><br><strong>📚 知识点讲解：</strong>循环嵌套：外层循环每执行一次，内层循环完整执行所有次数。i=1时，j取1,2,3，输出1 2 3并换行；i=2时输出2 4 6；i=3时输出3 6 9。end=\" \"使打印不换行。<br><br><strong>💡 解题思路：</strong>分析嵌套循环输出格式。每行对应一个i值，每列是i*j。因此输出应为三行：1 2 3 / 2 4 6 / 3 6 9。<br><br><strong>🧠 记忆口诀：</strong>“外层循环走一步，内层循环跑全程；九九乘法前三个，嵌套打印要分清。”"},{"type":"判断题","difficulty":"基础","stem":"所有程序都可以由顺序、分支、循环三种基本结构组成。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。这是结构化程序设计的基本定理，任何复杂算法都可以仅用顺序、分支、循环三种结构组合实现。<br><br><strong>📚 知识点讲解：</strong>1966年Böhm和Jacopini证明了三种基本结构的完备性，这一理论奠定了现代软件工程的基础，鼓励程序员避免使用goto等跳转语句。<br><br><strong>💡 解题思路：</strong>该结论是教材核心结论，已被数学证明。顺序、分支、循环能表达任何可计算函数。<br><br><strong>🧠 记忆口诀：</strong>“顺序分支加循环，三种结构打天下；任何程序都能写，结构化编程是王道。”"},{"type":"判断题","difficulty":"基础","stem":"Python中使用大括号{}表示语句块。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。Python使用缩进表示语句块，不使用大括号。大括号是C/C++/Java等语言的语法。<br><br><strong>📚 知识点讲解：</strong>Python的缩进强制代码整洁，同一块内缩进必须一致（通常4个空格）。缩进错误会导致IndentationError。<br><br><strong>💡 解题思路：</strong>Python与其他语言的重要区别就是缩进代替大括号。记住“缩进即块”。<br><br><strong>🧠 记忆口诀：</strong>“Python不用大括号，缩进就是语句块；四个空格为标准，格式错误程序坏。”"},{"type":"判断题","difficulty":"基础","stem":"单分支结构中，条件不满足时会执行else分支。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。单分支结构只有if，没有else分支。条件不满足时，直接跳过语句块，不执行任何操作。<br><br><strong>📚 知识点讲解：</strong>单分支：if 条件: 语句块（条件假则跳过）。双分支才有else。多分支有elif和else。<br><br><strong>💡 解题思路：</strong>单分支没有else部分，题干描述的是双分支的行为。因此错误。<br><br><strong>🧠 记忆口诀：</strong>“单支只有if没有else，条件不满足就跳过；双支才有否则分支，结构区分要记牢。”"},{"type":"判断题","difficulty":"基础","stem":"range(2, 6)生成的序列是2,3,4,5。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。range(2,6)从2开始到6-1结束，即生成2,3,4,5，符合左闭右开原则。<br><br><strong>📚 知识点讲解：</strong>range(起始,终值)包含起始值，不包含终值。range(2,6)包含2,3,4,5共4个整数。<br><br><strong>💡 解题思路：</strong>检查：起点2包含，终点6不包含，所以2,3,4,5正确。<br><br><strong>🧠 记忆口诀：</strong>“range起始包终点排，左闭右开不奇怪；2到6生成四个数，二三四五依次来。”"},{"type":"判断题","difficulty":"基础","stem":"while循环必须在循环体内修改循环条件，否则会产生无限循环。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。如果循环体内不修改条件变量，条件可能一直为True，导致死循环。<br><br><strong>📚 知识点讲解：</strong>例如 i=1; while i<=5: print(i) 中没有i+=1，i始终为1，循环永不停止。所以必须在循环体内更新条件变量。<br><br><strong>💡 解题思路：</strong>while循环依赖条件退出，不修改条件可能无法退出，这确实是必须注意的。<br><br><strong>🧠 记忆口诀：</strong>“while循环要更新，条件变量不能停；忘了修改成死循环，程序卡住真不行。”"},{"type":"判断题","difficulty":"基础","stem":"break语句会跳过本次循环，进入下一次循环。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。break语句是立即退出整个循环，而不是跳过本次。跳过本次循环的是continue语句。<br><br><strong>📚 知识点讲解：</strong>break：终止循环；continue：结束当前迭代，继续下一次迭代。二者作用不同，常被混淆。<br><br><strong>💡 解题思路：</strong>题干描述的是continue的功能。因此判断错误。<br><br><strong>🧠 记忆口诀：</strong>“break退出整个环，continue只跳本次；两个作用正相反，仔细区分莫混淆。”"},{"type":"判断题","difficulty":"基础","stem":"分支结构可以嵌套，循环结构也可以嵌套。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。分支结构中if内部可以再包含if，形成嵌套分支；循环内部也可以包含其他循环，形成嵌套循环。<br><br><strong>📚 知识点讲解：</strong>嵌套结构是实现复杂逻辑的重要方式。例如if中嵌套if-else，或者for中嵌套while。需要注意缩进层级。<br><br><strong>💡 解题思路：</strong>Python允许任意深度的嵌套，这是控制结构的基本特性。正确。<br><br><strong>🧠 记忆口诀：</strong>“分支循环都能套，嵌套层级随心调；缩进对齐是关键，逻辑清晰不混淆。”"},{"type":"判断题","difficulty":"中档","stem":"多分支结构中，多个条件的顺序不影响判断结果。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":1,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>错误（×）</strong>。多分支结构中条件按顺序判断，一旦满足某个条件就执行对应分支并跳过剩余条件。因此顺序不当可能导致逻辑错误。<br><br><strong>📚 知识点讲解：</strong>例如成绩等级判断，应先判断>=90，再判断>=80，若顺序颠倒则>=80会先拦截>=90的分数，导致结果错误。所以条件顺序需从严格到宽松排列。<br><br><strong>💡 解题思路：</strong>if-elif-else按顺序检查，因此顺序影响结果。所以题干说法错误。<br><br><strong>🧠 记忆口诀：</strong>“多支顺序很重要，严格宽松依次排；条件颠倒结果错，逻辑顺序不能歪。”"},{"type":"判断题","difficulty":"中档","stem":"for循环可以遍历字符串、列表等序列类型。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。for循环是Python中遍历序列（如字符串、列表、元组、range对象等）的主要方式。<br><br><strong>📚 知识点讲解：</strong>for c in \"Hello\": 会依次取出每个字符。for x in [1,2,3]: 遍历列表。任何可迭代对象都可以用for遍历。<br><br><strong>💡 解题思路：</strong>这是for循环的核心用途，正确。<br><br><strong>🧠 记忆口诀：</strong>“for循环遍历强，字符串列表都能扛；序列类型挨个取，代码简洁又漂亮。”"},{"type":"判断题","difficulty":"中档","stem":"循环嵌套中，内层循环执行完一次，外层循环才会执行一次。（）","options":[{"label":"A","text":"正确"},{"label":"B","text":"错误"}],"answer":0,"analysis":"<strong>🎯 答案解析：</strong>判断为<strong>正确（√）</strong>。外层循环每执行一次循环体，内层循环都会完整地执行其全部次数，然后外层循环进入下一次迭代。<br><br><strong>📚 知识点讲解：</strong>例如for i in range(3): for j in range(4): pass。外循环i=0时，内循环j从0到3全部执行；然后i=1，内循环再次全部执行。外层走一步，内层跑一圈。<br><br><strong>💡 解题思路：</strong>嵌套循环的典型行为，正确。<br><br><strong>🧠 记忆口诀：</strong>“外层一步内层全，嵌套循环这样转；外层循环走一次，内层从头跑到完。”"},{"type":"简答题","difficulty":"中档","stem":"简述顺序结构、分支结构、循环结构的执行特点。","answer":"①顺序结构：按照语句书写的先后顺序依次执行，从上到下，一条语句执行完再执行下一条，没有分支和跳转。②分支结构：根据条件判断的结果，选择执行不同的语句块，有单分支、双分支、多分支三种形式。③循环结构：重复执行某一段代码（循环体），直到满足终止条件为止，分为for循环和while循环两种。","keywords":["顺序结构","分支结构","循环结构","依次执行","条件判断","选择执行","重复执行","终止条件","从上到下"],"analysis":"<strong>🎯 答案解析：</strong>三种结构的核心特点：<strong>顺序结构</strong>→依次执行；<strong>分支结构</strong>→根据条件选择路径；<strong>循环结构</strong>→重复执行直到条件满足。<br><br><strong>📚 知识点讲解：</strong>①顺序结构是默认执行方式，每条语句只执行一次。②分支结构实现逻辑判断，Python使用if/elif/else。③循环结构用于重复任务，for适用于已知次数，while适用于条件控制。<br><br><strong>💡 解题思路：</strong>回答时需点出每种结构的核心执行逻辑，并区分它们。可用“依次”“选择”“重复”三个关键词概括。<br><br><strong>🧠 记忆口诀：</strong>“顺序一条线，分支选路线，循环来回转，三种结构记心间。”"},{"type":"简答题","difficulty":"中档","stem":"对比说明for循环和while循环的区别及适用场景。","answer":"①for循环：适用于循环次数已知的情况，用于遍历序列（如字符串、range生成的整数序列）。语法简洁，不需要手动管理循环变量。②while循环：适用于循环次数未知的情况，只要条件为True就重复执行循环体。需要手动初始化和修改循环条件，灵活性更高。③两种循环可以相互转换。","keywords":["for循环","while循环","循环次数","已知","未知","遍历","条件","相互转换","range","序列"],"analysis":"<strong>🎯 答案解析：</strong>for循环擅长<strong>已知次数</strong>的遍历，while循环擅长<strong>条件控制</strong>的重复。两者可相互转换，但适用场景不同。<br><br><strong>📚 知识点讲解：</strong>for循环通常配合range()实现计数循环，代码更简洁。while循环需要在循环体内修改条件变量，更灵活但易出错。选择哪种取决于具体需求。<br><br><strong>💡 解题思路：</strong>对比要从“循环次数确定性”“变量管理”“语法差异”等角度阐述，并说明可以互相转换。<br><br><strong>🧠 记忆口诀：</strong>“for循环知次数，while循环看条件；遍历序列用for爽，未知次数while担。”"},{"type":"简答题","difficulty":"提高","stem":"简述break和continue语句的作用及区别。","answer":"①break语句：立即退出整个循环，不再执行剩余的循环次数，直接跳转到循环后面的语句。②continue语句：跳过本次循环剩余的语句，直接进入下一次循环的条件判断。③区别：break终止整个循环，continue只终止本次循环，继续执行后续的循环。","keywords":["break","continue","退出整个循环","跳过本次循环","区别","终止","下一次"],"analysis":"<strong>🎯 答案解析：</strong>break是<strong>彻底结束</strong>循环，continue是<strong>跳过当前迭代</strong>。两者作用完全不同，常被混淆。<br><br><strong>📚 知识点讲解：</strong>例如在1~10的循环中，如果i==5时break，则只输出1~4；如果用continue，则只跳过5，输出1,2,3,4,6,7,8,9,10。<br><br><strong>💡 解题思路：</strong>回答要突出“整个循环”与“本次循环”的区别，最好举例说明。<br><br><strong>🧠 记忆口诀：</strong>“break全退出，continue跳一步；整个本次要分清，举例理解印象深。”"},{"type":"综合应用题","difficulty":"提高","stem":"编写一个Python程序，实现分段计费功能。","tasks":["（1）输入用户的用电量（单位：度）；","（2）计费规则：用电量不超过100度，每度0.5元；超过100度的部分，每度0.8元；","（3）输出用户应缴纳的电费，保留两位小数。"],"answer":"# 分段计算电费\nelectricity = float(input(\"请输入用电量（度）：\"))\nif electricity <= 100:\n    fee = electricity * 0.5\nelse:\n    fee = 100 * 0.5 + (electricity - 100) * 0.8\nprint(f\"应缴纳电费：{fee:.2f}元\")","keywords":["input","float","if","else","electricity","100","0.5","0.8","fee",".2f","print"],"analysis":"<strong>🎯 答案解析：</strong>采用<strong>双分支结构</strong>，根据用电量是否超过100度选择不同计费公式。使用f-string格式化输出保留两位小数。<br><br><strong>📚 知识点讲解：</strong>本题考察分支结构和浮点数格式化。关键点：①用电量<=100时直接乘以0.5；②超过100时，前100度按0.5算，超出部分按0.8算；③f\"{变量:.2f}\"实现保留两位小数。<br><br><strong>💡 解题思路：</strong>先输入并转为float，然后if判断，分别计算费用，最后格式化输出。注意缩进和冒号。<br><br><strong>🧠 记忆口诀：</strong>“分段计费用分支，不超百按半价乘；超过百部分八折计，格式化输出两位整。”"},{"type":"综合应用题","difficulty":"提高","stem":"编写一个Python程序，统计1到100之间所有能被3整除但不能被5整除的数的个数和总和。","tasks":["（1）使用for循环实现；","（2）输出符合条件的数的个数和总和。"],"answer":"# 统计能被3整除但不能被5整除的数\ncount = 0  # 个数\ntotal = 0  # 总和\nfor i in range(1, 101):\n    if i % 3 == 0 and i % 5 != 0:\n        count += 1\n        total += i\nprint(f\"符合条件的数的个数：{count}\")\nprint(f\"符合条件的数的总和：{total}\")","keywords":["for","range","if","%","3","5","count","total","print","整除"],"analysis":"<strong>🎯 答案解析：</strong>使用<strong>for循环遍历1~100</strong>，配合if条件过滤：i%3==0 and i%5!=0 表示能被3整除且不能被5整除。计数和累加分别用count和total变量。<br><br><strong>📚 知识点讲解：</strong>for循环与range(1,101)结合使用，range左闭右开需到101才能包含100。条件表达式用and连接。取余运算%判断整除。变量累加是常见模式。<br><br><strong>💡 解题思路：</strong>初始化两个变量，循环遍历，条件判断，成立则更新变量，最后输出。注意range的终点为101。<br><br><strong>🧠 记忆口诀：</strong>“for循环一到百，条件整除三不五；计数累加要记牢，结果输出看程序。”"}];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'control_structure_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+        const STORAGE_KEY_DRAFTS = APP_ID + '_drafts';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let reviewMode = false;
+        let reviewIndices = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function isAnswerCorrect(index) {
+            const q = questions[index];
+            const ans = answers[index];
+            if (ans === null) return false;
+            if (q.type === '单选题' || q.type === '判断题') {
+                return ans === q.answer;
+            } else if (q.type === '简答题' || q.type === '综合应用题') {
+                const match = calculateKeywordMatch(ans, q.keywords || []);
+                return match.hitRate >= 60;
+            }
+            return false;
+        }
+
+        function calculateKeywordMatch(text, keywords) {
+            if (!text || !keywords || keywords.length === 0) return { hitRate: 0, hitKeywords: [], missKeywords: keywords || [] };
+            const lowerText = text.toLowerCase();
+            const hit = [];
+            const miss = [];
+            keywords.forEach(kw => {
+                if (lowerText.includes(kw.toLowerCase())) hit.push(kw);
+                else miss.push(kw);
+            });
+            const rate = Math.round((hit.length / keywords.length) * 100);
+            return { hitRate: rate, hitKeywords: hit, missKeywords: miss };
+        }
+
+        function renderKnowledgePage() {
+            const title = '程序控制结构知识精讲';
+            const content = `<h3>核心定义</h3><p>程序控制结构是控制程序中语句执行顺序的结构，是程序设计的核心基础。所有复杂程序都可以由<strong>顺序结构、分支结构（选择结构）、循环结构</strong>三种基本结构组合而成。</p><h3>核心要点拆解</h3><h3>1. 顺序结构：最基础的执行结构</h3><ul><li><strong>执行逻辑</strong>：语句按照书写的先后顺序依次执行，从上到下，没有分支和跳转。</li><li><strong>典型应用</strong>：所有简单计算类程序，如BMI计算、圆面积计算等。</li></ul><h3>2. 分支结构（选择结构）</h3><p>根据条件选择执行路径，Python使用<strong>缩进（4个空格）</strong>表示语句块。</p><ul><li><strong>单分支</strong>：if 条件: 语句块</li><li><strong>双分支</strong>：if...else...</li><li><strong>多分支</strong>：if...elif...else</li><li><strong>分支嵌套</strong>：if内部可包含其他if</li></ul><h3>3. 循环结构</h3><ul><li><strong>for循环（计数循环）</strong>：适用于循环次数已知，遍历序列。</li><li><strong>while循环（条件循环）</strong>：适用于次数未知，条件为True时重复。</li><li><strong>range()函数</strong>：生成整数序列，左闭右开。</li><li><strong>循环控制</strong>：break退出整个循环，continue跳过本次循环。</li></ul><h3>教材典型案例</h3><p><strong>成绩等级判断（多分支）</strong>、<strong>1到100累加和（for/while）</strong></p><h3>易错点</h3><ul><li>缩进错误</li><li>条件判断逻辑错误</li><li>无限循环</li><li>range()左闭右开理解错误</li><li>break与continue混淆</li></ul>`;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            reviewMode = false;
+            reviewIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            if (answers.every(a => a === null) && currentIndex === 0) currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getCurrentQuestion() {
+            if (reviewMode && reviewIndices.length > 0) return questions[reviewIndices[currentIndex]];
+            return questions[currentIndex];
+        }
+
+        function getRealIndex() {
+            if (reviewMode && reviewIndices.length > 0) return reviewIndices[currentIndex];
+            return currentIndex;
+        }
+
+        function getTotalInMode() {
+            return reviewMode ? reviewIndices.length : questions.length;
+        }
+
+        function renderQuestion() {
+            const q = getCurrentQuestion();
+            const realIdx = getRealIndex();
+            const contentArea = document.getElementById('quizContent');
+            if (q.type === '简答题' || q.type === '综合应用题') {
+                renderOpenEndedQuestion(q, realIdx, contentArea);
+                return;
+            }
+
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) html += `<img src="${q.image}" alt="题目图片" class="question-image">`;
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[realIdx] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[realIdx] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) classes.push('selected');
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (answers[realIdx] !== null) {
+                const correct = answers[realIdx] === q.answer;
+                html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${correct ? 'correct' : 'wrong'}">${correct ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+            }
+
+            if (currentIndex === getTotalInMode() - 1 && checkAllAnswered()) {
+                html += renderCompletionScreen();
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function renderOpenEndedQuestion(q, realIdx, contentArea) {
+            const userAnswer = answers[realIdx] || '';
+            const isSubmitted = answers[realIdx] !== null && typeof answers[realIdx] === 'string';
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.tasks && q.tasks.length) {
+                html += `<div class="task-list" style="background:#fafbfc;border-radius:8px;padding:14px 18px;margin-bottom:14px;border-left:4px solid var(--primary-color);"><strong>📋 任务列表：</strong><ol style="margin:8px 0 0 18px;">`;
+                q.tasks.forEach(t => html += `<li style="margin-bottom:6px;">${t}</li>`);
+                html += `</ol></div>`;
+            }
+            html += `<textarea class="textarea-answer" id="openAnswerTextarea" placeholder="请在此输入你的作答内容..." style="width:100%;min-height:120px;padding:14px;border:2px solid var(--border-color);border-radius:8px;font-size:var(--font-size-base);font-family:inherit;line-height:1.7;resize:vertical;transition:border-color 0.3s;background:var(--bg-card);color:var(--text-primary);box-sizing:border-box;" ${isSubmitted ? 'disabled' : ''}>${userAnswer}</textarea>`;
+
+            if (isSubmitted && q.keywords && q.keywords.length) {
+                const match = calculateKeywordMatch(userAnswer, q.keywords);
+                let levelText = '', levelClass = '', barClass = '';
+                if (q.type === '简答题') {
+                    if (match.hitRate >= 60) { levelText = '回答较好';
+                        levelClass = 'correct';
+                        barClass = 'excellent'; } else if (match.hitRate >= 30) { levelText = '部分正确';
+                        levelClass = 'partial';
+                        barClass = 'pass'; } else { levelText = '需加强';
+                        levelClass = 'wrong';
+                        barClass = 'weak'; }
+                } else {
+                    if (match.hitRate >= 80) { levelText = '优秀';
+                        levelClass = 'correct';
+                        barClass = 'excellent'; } else if (match.hitRate >= 60) { levelText = '良好';
+                        levelClass = 'correct';
+                        barClass = 'good'; } else if (match.hitRate >= 40) { levelText = '合格';
+                        levelClass = 'partial';
+                        barClass = 'pass'; } else { levelText = '需加强';
+                        levelClass = 'wrong';
+                        barClass = 'weak'; }
+                }
+                html += `<div style="margin-top:12px;"><strong>📊 关键词命中率：</strong><span style="font-weight:700;color:var(--primary-color);">${match.hitRate}%</span> <span class="result-badge ${levelClass}">${levelText}</span></div>`;
+                html += `<div class="progress-score-bar" style="height:10px;background:#e8e8e8;border-radius:5px;overflow:hidden;margin:8px 0;"><div class="progress-score-fill ${barClass}" style="width:${match.hitRate}%;height:100%;border-radius:5px;transition:width 0.5s;"></div></div>`;
+                html += `<div style="margin:10px 0;"><strong>✅ 命中关键词：</strong>`;
+                match.hitKeywords.forEach(kw => html += `<span style="display:inline-block;padding:2px 10px;margin:2px;background:var(--success-light);color:var(--success-color);border-radius:16px;font-size:12px;font-weight:600;">${kw}</span>`);
+                html += `</div><div style="margin:10px 0;"><strong>❌ 未命中关键词：</strong>`;
+                match.missKeywords.forEach(kw => html += `<span style="display:inline-block;padding:2px 10px;margin:2px;background:#f5f5f5;color:var(--text-light);border-radius:16px;font-size:12px;">${kw}</span>`);
+                html += `</div><div style="margin-top:10px;"><strong>📝 你的作答：</strong><div style="background:#fafbfc;border-radius:8px;padding:14px;margin:8px 0;white-space:pre-wrap;border:1px solid var(--border-color);">${highlightKeywordsInText(userAnswer, match.hitKeywords)}</div></div>`;
+                html += `<div style="margin-top:8px;"><strong>📋 参考答案：</strong><div style="background:#fafbfc;border-radius:8px;padding:14px;white-space:pre-wrap;border:1px solid var(--border-color);">${q.answer}</div></div>`;
+            }
+            html += '</div>';
+
+            if (isSubmitted) {
+                const match = calculateKeywordMatch(userAnswer, q.keywords || []);
+                const badgeClass = match.hitRate >= 60 ? 'correct' : 'wrong';
+                html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${badgeClass}">命中率 ${match.hitRate}%</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`;
+            }
+
+            if (currentIndex === getTotalInMode() - 1 && checkAllAnswered()) {
+                html += renderCompletionScreen();
+            }
+            contentArea.innerHTML = html;
+
+            const textarea = document.getElementById('openAnswerTextarea');
+            if (textarea && !isSubmitted) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.max(120, this.scrollHeight) + 'px';
+                    saveDraft(realIdx, this.value);
+                });
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.max(120, textarea.scrollHeight) + 'px';
+            }
+            updateHeader();
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function highlightKeywordsInText(text, keywords) {
+            if (!text || !keywords.length) return text || '';
+            let result = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            keywords.forEach(kw => {
+                const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(${escaped})`, 'gi');
+                result = result.replace(regex, '<span style="background:#ffeaa7;padding:1px 4px;border-radius:3px;font-weight:600;">$1</span>');
+            });
+            return result;
+        }
+
+        function checkAllAnswered() {
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            return indices.every(i => answers[i] !== null);
+        }
+
+        function renderCompletionScreen() {
+            const total = getTotalInMode();
+            let correct = 0;
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            indices.forEach(i => { if (isAnswerCorrect(i)) correct++; });
+            const acc = total ? Math.round(correct / total * 100) : 0;
+            if (!reviewMode) saveToHistory(correct, acc);
+            return `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">${reviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color:var(--text-secondary);">${reviewMode ? '你已经回顾了所有错题' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correct}/${total}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${acc}%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>${!reviewMode ? '<button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()">回看错题</button>' : ''}<button class="action-btn export-btn" onclick="exportWrongCSV()">📥 导出错题CSV</button></div></div>`;
+        }
+
+        function selectOption(idx) {
+            const realIdx = getRealIndex();
+            if (answers[realIdx] !== null) return;
+            answers[realIdx] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === getCurrentQuestion().answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function submitOpenAnswer() {
+            const realIdx = getRealIndex();
+            const ta = document.getElementById('openAnswerTextarea');
+            if (!ta) return;
+            const text = ta.value.trim();
+            if (!text) { showToast('请输入作答内容'); return; }
+            answers[realIdx] = text;
+            clearDraft(realIdx);
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            const match = calculateKeywordMatch(text, getCurrentQuestion().keywords || []);
+            showToast(`提交成功！命中率 ${match.hitRate}%`);
+        }
+
+        function clearOpenAnswer() {
+            const realIdx = getRealIndex();
+            const ta = document.getElementById('openAnswerTextarea');
+            if (ta && answers[realIdx] === null) { ta.value = '';
+                ta.style.height = '120px';
+                clearDraft(realIdx); }
+        }
+
+        function saveDraft(idx, val) {
+            const drafts = getDrafts();
+            if (val.trim()) drafts[idx] = val; else delete drafts[idx];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(drafts));
+        }
+        function clearDraft(idx) { const d = getDrafts(); delete d[idx];
+            localStorage.setItem(STORAGE_KEY_DRAFTS, JSON.stringify(d)); }
+
+        function getDrafts() { const s = localStorage.getItem(STORAGE_KEY_DRAFTS); return s ? JSON.parse(s) : {}; }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--;
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function nextQuestion() { if (currentIndex < getTotalInMode() - 1) { currentIndex++;
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const total = getTotalInMode();
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            const answered = indices.filter(i => answers[i] !== null).length;
+            document.getElementById('answeredCount').textContent = answered;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = `${total ? (answered / total) * 100 : 0}%`;
+        }
+
+        function updateNavButtons() {
+            if (currentPage !== 'quiz') return;
+            const q = getCurrentQuestion();
+            const realIdx = getRealIndex();
+            const isSubmitted = answers[realIdx] !== null;
+            const footer = document.getElementById('footerContent');
+            if ((q.type === '简答题' || q.type === '综合应用题') && !isSubmitted) {
+                footer.innerHTML = `<button class="nav-btn draft-btn" onclick="saveDraft(${realIdx}, document.getElementById('openAnswerTextarea')?.value);showToast('草稿已保存')"><i class="fas fa-save"></i> 保存草稿</button><button class="nav-btn clear-btn" onclick="clearOpenAnswer()"><i class="fas fa-eraser"></i> 清空</button><button class="nav-btn submit-btn" onclick="submitOpenAnswer()"><i class="fas fa-check-circle"></i> 提交作答</button>`;
+            } else {
+                footer.innerHTML = `<button class="nav-btn prev-btn" ${currentIndex===0?'disabled':''} onclick="prevQuestion()"><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" ${currentIndex===getTotalInMode()-1?'disabled':''} onclick="nextQuestion()">下一题 <i class="fas fa-chevron-right"></i></button>`;
+            }
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            const indices = reviewMode && reviewIndices.length ? reviewIndices : [...Array(questions.length).keys()];
+            let html = '';
+            indices.forEach((realIdx, displayIdx) => {
+                let statusClass = 'unanswered',
+                    statusText = '未答';
+                if (answers[realIdx] !== null) {
+                    if (isAnswerCorrect(realIdx)) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (displayIdx === currentIndex) statusClass += ' current';
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[realIdx] !== null) return;
+                    if (currentFilter === 'correct' && !(answers[realIdx] !== null && isAnswerCorrect(realIdx)))
+                        return;
+                    if (currentFilter === 'wrong' && !(answers[realIdx] !== null && !isAnswerCorrect(realIdx)))
+                        return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestionByDisplay(${displayIdx})"><div class="sheet-number">${displayIdx+1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestionByDisplay(displayIdx) { currentIndex = displayIdx;
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (!history.length) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div></div>`; return; }
+            let html = '';
+            history.forEach((r, i) => {
+                const d = new Date(r.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${d}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${r.correctCount}/${r.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${r.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${i})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${i})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correct, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: Date.now(), totalCount: questions.length, correctCount: correct, accuracy,
+                answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const s = localStorage.getItem(STORAGE_KEY_HISTORY); return s ? JSON.parse(s) : []; }
+
+        function reviewHistory(index) {
+            const history = getHistory();
+            if (index >= 0 && index < history.length) {
+                answers = [...history[index].answers];
+                reviewMode = false;
+                reviewIndices = [];
+                saveAnswers();
+                startQuiz();
+                toggleHistory();
+                showToast('已加载历史记录');
+            }
+        }
+
+        function deleteHistory(index) {
+            if (!confirm('确定删除？')) return;
+            const history = getHistory();
+            history.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+            renderHistory();
+            showToast('已删除');
+        }
+
+        function clearAllHistory() {
+            if (!confirm('清空所有历史记录？')) return;
+            localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('已清空');
+        }
+
+        function reviewWrongQuestions() {
+            const wrong = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && !isAnswerCorrect(i)) wrong.push(i); });
+            if (!wrong.length) { showToast('没有错题，太棒了！🎉'); return; }
+            reviewMode = true;
+            reviewIndices = wrong;
+            currentIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            showToast(`进入错题回顾，共 ${wrong.length} 题`);
+        }
+
+        function exportWrongCSV() {
+            const wrong = [];
+            questions.forEach((q, i) => {
+                if (answers[i] !== null && !isAnswerCorrect(i)) {
+                    let userAns = '', correctAns = '', hitRate = '', result = '';
+                    if (q.type === '单选题' || q.type === '判断题') {
+                        userAns = q.options[answers[i]] ? q.options[answers[i]].text : String(answers[i]);
+                        correctAns = q.options[q.answer] ? q.options[q.answer].text : String(q.answer);
+                        hitRate = 'N/A';
+                        result = '错误';
+                    } else {
+                        userAns = (answers[i] || '').replace(/"/g, '""');
+                        correctAns = (q.answer || '').replace(/"/g, '""');
+                        const m = calculateKeywordMatch(answers[i], q.keywords || []);
+                        hitRate = m.hitRate + '%';
+                        result = m.hitRate >= 60 ? '正确' : (m.hitRate >= 30 ? '部分正确' : '需加强');
+                    }
+                    wrong.push({
+                        type: q.type,
+                        stem: q.stem.replace(/"/g, '""'),
+                        userAnswer: userAns,
+                        correctAnswer: correctAns,
+                        hitRate,
+                        result,
+                        analysis: (q.analysis || '').replace(/<[^>]*>/g, '').replace(/"/g, '""')
+                    });
+                }
+            });
+            if (!wrong.length) { showToast('没有错题可导出！'); return; }
+            const BOM = '\uFEFF';
+            let csv = BOM + '题型,题目,用户答案,正确答案,关键词命中率,结果,解析\n';
+            wrong.forEach(r => csv +=
+                `"${r.type}","${r.stem}","${r.userAnswer}","${r.correctAnswer}","${r.hitRate}","${r.result}","${r.analysis}"\n`
+                );
+            const date = new Date().toISOString().slice(0, 10);
+            const filename = `错题本_程序控制结构_${date}.csv`;
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`已导出 ${wrong.length} 道错题`);
+        }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers,
+                reviewMode, reviewIndices })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const saved = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (saved) {
+                const data = JSON.parse(saved);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null);
+                reviewMode = data.reviewMode || false;
+                reviewIndices = data.reviewIndices || [];
+            }
+            const settings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (settings) {
+                const s = JSON.parse(settings);
+                fontSize = s.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            }
+            const drafts = getDrafts();
+            Object.keys(drafts).forEach(k => { const i = parseInt(k); if (answers[i] === null && (questions[i].type ===
+                    '简答题' || questions[i].type === '综合应用题')) {} });
+        }
+
+        function restartQuiz() {
+            if (confirm('确定重新开始？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                reviewMode = false;
+                reviewIndices = [];
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                localStorage.removeItem(STORAGE_KEY_DRAFTS);
+                renderQuestion();
+                updateNavButtons(); }
+        }
+
+        function showHome() { if (confirm('返回主页将丢失进度，确定？')) window.location.href = 'index.html'; }
+
+        function showToast(msg) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 1500);
+        }
+    </script>
+</body>
+</html>
