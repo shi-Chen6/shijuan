@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>杨如萍C语言移动学习平台</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入 FontAwesome 图标库库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入 Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入 marked 用于解析 Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 引入 highlight.js 用于代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <!-- 顶部导航 -->
+        <header class="app-header">
+            <h1>{{ currentTab === 'wrong-book' ? '错题本' : modules[currentTab].title }}</h1>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="app-main">
+            <!-- 知识点模块 -->
+            <div v-if="currentTab !== 'wrong-book'" class="module-content">
+                <!-- 切换内容/刷题 -->
+                <div class="segment-control">
+                    <button :class="{ active: currentView === 'knowledge' }" @click="currentView = 'knowledge'">知识展示</button>
+                    <button :class="{ active: currentView === 'exercise' }" @click="currentView = 'exercise'">刷题练习</button>
+                </div>
+
+                <!-- 知识展示区 -->
+                <div v-show="currentView === 'knowledge'" class="knowledge-area markdown-body" v-html="parsedContent">
+                </div>
+
+                <!-- 刷题练习区 -->
+                <div v-show="currentView === 'exercise'" class="exercise-area">
+                    <div v-if="currentModuleExercises.length === 0" class="empty-state">
+                        暂无题目
+                    </div>
+                    <div v-else class="question-list">
+                        <div v-for="(q, index) in currentModuleExercises" :key="q.id" class="question-card">
+                            <div class="question-title">
+                                <span class="q-type">{{ q.type === 'single' ? '单选' : (q.type === 'multiple' ? '多选' : '判断') }}</span>
+                                {{ index + 1 }}. {{ q.question }}
+                            </div>
+                            
+                            <!-- 代码片段 -->
+                            <div v-if="q.code" class="q-code">
+                                <pre><code class="language-c" v-html="highlightCode(q.code)"></code></pre>
+                            </div>
+
+                            <div class="options-list">
+                                <label v-for="(opt, optIndex) in q.options" :key="optIndex" 
+                                    class="option-item" 
+                                    :class="{
+                                        'selected': isSelected(q.id, optIndex),
+                                        'correct': isSubmitted(q.id) && isCorrectOption(q, optIndex),
+                                        'wrong': isSubmitted(q.id) && isSelected(q.id, optIndex) && !isCorrectOption(q, optIndex)
+                                    }">
+                                    <input :type="q.type === 'multiple' ? 'checkbox' : 'radio'" 
+                                           :name="'q_'+q.id" 
+                                           :value="optIndex"
+                                           v-model="userAnswers[q.id]"
+                                           :disabled="isSubmitted(q.id)">
+                                    <span class="opt-text">{{ opt }}</span>
+                                </label>
+                            </div>
+
+                            <div class="action-bar" v-if="!isSubmitted(q.id)">
+                                <button class="btn-submit" @click="submitAnswer(q)" :disabled="!hasAnswered(q.id)">提交答案</button>
+                            </div>
+
+                            <div class="result-area" v-if="isSubmitted(q.id)">
+                                <div class="result-status" :class="isAnswerCorrect(q.id) ? 'text-green' : 'text-red'">
+                                    <i :class="isAnswerCorrect(q.id) ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+                                    {{ isAnswerCorrect(q.id) ? '回答正确' : '回答错误' }}
+                                </div>
+                                <div class="explanation" v-html="formatExplanation(q.explanation)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 错题本模块 -->
+            <div v-else class="wrong-book-module">
+                <div v-if="wrongQuestions.length === 0" class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <p>太棒了！暂无错题</p>
+                </div>
+                <div v-else class="wrong-list">
+                    <div class="filter-bar">
+                        <select v-model="wrongBookFilter">
+                            <option value="all">全部知识点</option>
+                            <option v-for="(mod, index) in modules" :key="index" :value="index">
+                                {{ mod.shortTitle }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div v-for="q in filteredWrongQuestions" :key="q.id" class="question-card">
+                        <div class="question-title">
+                            <span class="q-badge">{{ getModuleShortTitle(q.moduleId) }}</span>
+                            <span class="q-type">{{ q.type === 'single' ? '单选' : (q.type === 'multiple' ? '多选' : '判断') }}</span>
+                            {{ q.question }}
+                        </div>
+                        
+                        <div v-if="q.code" class="q-code">
+                            <pre><code class="language-c" v-html="highlightCode(q.code)"></code></pre>
+                        </div>
+
+                        <div class="options-list">
+                            <label v-for="(opt, optIndex) in q.options" :key="optIndex" 
+                                class="option-item"
+                                :class="{
+                                    'selected': isWrongBookSelected(q.id, optIndex),
+                                    'correct': isWrongBookSubmitted(q.id) && isCorrectOption(q, optIndex),
+                                    'wrong': isWrongBookSubmitted(q.id) && isWrongBookSelected(q.id, optIndex) && !isCorrectOption(q, optIndex)
+                                }">
+                                <input :type="q.type === 'multiple' ? 'checkbox' : 'radio'" 
+                                       :name="'wq_'+q.id" 
+                                       :value="optIndex"
+                                       v-model="wrongBookAnswers[q.id]"
+                                       :disabled="isWrongBookSubmitted(q.id)">
+                                <span class="opt-text">{{ opt }}</span>
+                            </label>
+                        </div>
+
+                        <div class="action-bar" v-if="!isWrongBookSubmitted(q.id)">
+                            <button class="btn-submit" @click="submitWrongBookAnswer(q)" :disabled="!hasWrongBookAnswered(q.id)">提交重做</button>
+                            <button class="btn-delete" @click="removeWrongQuestion(q.id)">
+                                <i class="fas fa-trash"></i> 移除
+                            </button>
+                        </div>
+
+                        <div class="result-area" v-if="isWrongBookSubmitted(q.id)">
+                            <div class="result-status" :class="isWrongBookAnswerCorrect(q.id) ? 'text-green' : 'text-red'">
+                                <i :class="isWrongBookAnswerCorrect(q.id) ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+                                {{ isWrongBookAnswerCorrect(q.id) ? '回答正确' : '回答错误' }}
+                            </div>
+                            <div class="explanation" v-html="formatExplanation(q.explanation)"></div>
+                            <div class="action-bar mt-10">
+                                <button class="btn-retry" @click="retryWrongQuestion(q.id)">再做一次</button>
+                                <button class="btn-delete" @click="removeWrongQuestion(q.id)" v-if="isWrongBookAnswerCorrect(q.id)">
+                                    已掌握，移除错题
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部导航栏 -->
+        <nav class="app-nav">
+            <div class="nav-item" 
+                 v-for="(mod, index) in modules" :key="index"
+                 :class="{ active: currentTab === index }"
+                 @click="switchTab(index)">
+                <i :class="mod.icon"></i>
+                <span class="nav-text">{{ mod.shortTitle }}</span>
+            </div>
+            <div class="nav-item" 
+                 :class="{ active: currentTab === 'wrong-book' }"
+                 @click="switchTab('wrong-book')">
+                <i class="fas fa-book-open"></i>
+                <span class="nav-text">错题本</span>
+                <span class="badge" v-if="wrongQuestions.length > 0">{{ wrongQuestions.length }}</span>
+            </div>
+        </nav>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
