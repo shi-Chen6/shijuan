@@ -34,6 +34,111 @@ const app = createApp({
             return yangFeedbackMessages[randomIndex];
         };
         
+        // Progress tracking
+        const progress = ref({
+            totalAnswered: 0,
+            correctAnswers: 0,
+            streak: 0,
+            bestStreak: 0,
+            completedModules: []
+        });
+        
+        const achievements = ref([
+            { id: 'first_blood', name: '初露锋芒', desc: '完成第一道题目', icon: '🌟', unlocked: false },
+            { id: 'streak_5', name: '连对五题', desc: '连续答对5道题', icon: '🔥', unlocked: false },
+            { id: 'streak_10', name: '十连胜', desc: '连续答对10道题', icon: '💯', unlocked: false },
+            { id: 'streak_20', name: '无敌连胜', desc: '连续答对20道题', icon: '👑', unlocked: false },
+            { id: 'perfect_module', name: '完美通关', desc: '完成一个模块的所有题目', icon: '🎯', unlocked: false },
+            { id: 'half_done', name: '半途而废？', desc: '完成一半的题目', icon: '📚', unlocked: false },
+            { id: 'all_done', name: '学霸诞生', desc: '完成所有题目', icon: '🏆', unlocked: false },
+            { id: 'wrong_master', name: '知错能改', desc: '错题本清零', icon: '✅', unlocked: false }
+        ]);
+        
+        const encouragementMessages = [
+            "太棒了！继续保持！",
+            "你真的很厉害！",
+            "又对了！继续！",
+            "完美！保持专注！",
+            "学霸模式开启！",
+            "杨如萍为你点赞！",
+            "这都难不倒你！",
+            "满分选手！"
+        ];
+        
+        const updateProgress = (isCorrect, moduleId) => {
+            progress.value.totalAnswered++;
+            if (isCorrect) {
+                progress.value.correctAnswers++;
+                progress.value.streak++;
+                if (progress.value.streak > progress.value.bestStreak) {
+                    progress.value.bestStreak = progress.value.streak;
+                }
+                checkAchievements();
+                if (progress.value.streak > 0 && progress.value.streak % 5 === 0) {
+                    showEncouragement();
+                }
+            } else {
+                progress.value.streak = 0;
+            }
+        };
+        
+        const checkAchievements = () => {
+            const totalQuestions = modules.value.reduce((sum, mod) => sum + (mod.exercises?.length || 0), 0);
+            
+            if (progress.value.totalAnswered === 1) {
+                unlockAchievement('first_blood');
+            }
+            if (progress.value.streak >= 5 && !achievements.value.find(a => a.id === 'streak_5')?.unlocked) {
+                unlockAchievement('streak_5');
+            }
+            if (progress.value.streak >= 10 && !achievements.value.find(a => a.id === 'streak_10')?.unlocked) {
+                unlockAchievement('streak_10');
+            }
+            if (progress.value.streak >= 20 && !achievements.value.find(a => a.id === 'streak_20')?.unlocked) {
+                unlockAchievement('streak_20');
+            }
+            if (progress.value.totalAnswered >= totalQuestions / 2 && !achievements.value.find(a => a.id === 'half_done')?.unlocked) {
+                unlockAchievement('half_done');
+            }
+            if (progress.value.totalAnswered >= totalQuestions && !achievements.value.find(a => a.id === 'all_done')?.unlocked) {
+                unlockAchievement('all_done');
+            }
+            if (wrongQuestions.value.length === 0 && progress.value.totalAnswered > 0 && !achievements.value.find(a => a.id === 'wrong_master')?.unlocked) {
+                unlockAchievement('wrong_master');
+            }
+        };
+        
+        const unlockAchievement = (achievementId) => {
+            const achievement = achievements.value.find(a => a.id === achievementId);
+            if (achievement && !achievement.unlocked) {
+                achievement.unlocked = true;
+                showAchievementNotification(achievement);
+            }
+        };
+        
+        const showAchievementNotification = (achievement) => {
+            showYangBubble.value = true;
+            yangMessage.value = `🎉 恭喜获得成就：${achievement.icon} ${achievement.name}！`;
+            yangEmoji.value = achievement.icon;
+            setTimeout(() => {
+                showYangBubble.value = false;
+            }, 3000);
+        };
+        
+        const showEncouragement = () => {
+            showYangBubble.value = true;
+            yangMessage.value = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+            yangEmoji.value = '🎉';
+            setTimeout(() => {
+                showYangBubble.value = false;
+            }, 2000);
+        };
+        
+        const getAccuracy = () => {
+            if (progress.value.totalAnswered === 0) return 0;
+            return Math.round((progress.value.correctAnswers / progress.value.totalAnswered) * 100);
+        };
+        
         // Initialize from localStorage
         onMounted(() => {
             const saved = localStorage.getItem('c_learning_wrong_book');
@@ -117,9 +222,11 @@ const app = createApp({
 
         const submitAnswer = (q) => {
             submittedQuestions.value[q.id] = true;
+            const isCorrect = userAnswers.value[q.id] === q.answer;
+            updateProgress(isCorrect, currentTab.value);
             
             // Check if wrong, add to wrong book
-            if (userAnswers.value[q.id] !== q.answer) {
+            if (!isCorrect) {
                 addToWrongBook(q, currentTab.value);
             }
         };
@@ -224,7 +331,12 @@ const app = createApp({
             retryWrongQuestion,
             removeWrongQuestion,
             getYangFeedback,
-            getYangFeedbackFromWrongBook
+            getYangFeedbackFromWrongBook,
+            
+            // Progress & Achievements
+            progress,
+            achievements,
+            getAccuracy
         };
     }
 });

@@ -32,6 +32,34 @@
                     <button :class="{ active: currentView === 'exercise' }" @click="currentView = 'exercise'">刷题练习</button>
                 </div>
 
+                <!-- 学习进度条 -->
+                <div class="progress-bar-container" v-if="currentView === 'exercise'">
+                    <div class="progress-header">
+                        <span class="progress-title">📊 学习进度</span>
+                        <span class="progress-streak" v-if="progress.streak > 0">🔥 {{ progress.streak }}连胜</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" :style="{ width: getAccuracy() + '%' }"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>正确率: {{ getAccuracy() }}%</span>
+                        <span>已做: {{ progress.totalAnswered }}题</span>
+                        <span>最佳连胜: {{ progress.bestStreak }}</span>
+                    </div>
+                </div>
+
+                <!-- 成就徽章展示 -->
+                <div class="achievements-container" v-if="currentView === 'exercise'">
+                    <div class="achievements-header">🏆 成就徽章</div>
+                    <div class="achievements-grid">
+                        <div v-for="achievement in achievements" :key="achievement.id" 
+                             class="achievement-item" :class="{ unlocked: achievement.unlocked, locked: !achievement.unlocked }">
+                            <span class="achievement-icon">{{ achievement.icon }}</span>
+                            <span class="achievement-name">{{ achievement.name }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 知识展示区 -->
                 <div v-show="currentView === 'knowledge'" class="knowledge-area markdown-body" v-html="parsedContent">
                 </div>
@@ -74,11 +102,16 @@
                                 <button class="btn-submit" @click="submitAnswer(q)" :disabled="!hasAnswered(q.id)">提交答案</button>
                             </div>
 
-                            <div class="result-area" v-if="isSubmitted(q.id)">
+                            <div class="result-area" v-if="isSubmitted(q.id)" :class="isAnswerCorrect(q.id) ? 'answer-correct' : 'answer-wrong'">
+                                <div v-if="isAnswerCorrect(q.id)" class="success-badge">
+                                    <span>🎉</span>
+                                    <span>太棒了！回答正确！</span>
+                                </div>
                                 <div class="result-status" :class="isAnswerCorrect(q.id) ? 'text-green' : 'text-red'">
                                     <i :class="isAnswerCorrect(q.id) ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
                                     {{ isAnswerCorrect(q.id) ? '回答正确' : '回答错误' }}
                                 </div>
+                                <div v-if="!isAnswerCorrect(q.id)" class="fail-emoji">😢</div>
                                 <div v-if="!isAnswerCorrect(q.id)" class="yang-feedback">
                                     <i class="fas fa-comment-dots"></i>
                                     {{ getYangFeedback(q.id) }}
@@ -141,11 +174,16 @@
                             </button>
                         </div>
 
-                        <div class="result-area" v-if="isWrongBookSubmitted(q.id)">
+                        <div class="result-area" v-if="isWrongBookSubmitted(q.id)" :class="isWrongBookAnswerCorrect(q.id) ? 'answer-correct' : 'answer-wrong'">
+                            <div v-if="isWrongBookAnswerCorrect(q.id)" class="success-badge">
+                                <span>🎉</span>
+                                <span>太棒了！回答正确！</span>
+                            </div>
                             <div class="result-status" :class="isWrongBookAnswerCorrect(q.id) ? 'text-green' : 'text-red'">
                                 <i :class="isWrongBookAnswerCorrect(q.id) ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
                                 {{ isWrongBookAnswerCorrect(q.id) ? '回答正确' : '回答错误' }}
                             </div>
+                            <div v-if="!isWrongBookAnswerCorrect(q.id)" class="fail-emoji">😢</div>
                             <div v-if="!isWrongBookAnswerCorrect(q.id)" class="yang-feedback">
                                 <i class="fas fa-comment-dots"></i>
                                 {{ getYangFeedbackFromWrongBook(q.id) }}
