@@ -16,6 +16,24 @@ const app = createApp({
         const wrongBookAnswers = ref({});
         const wrongBookSubmitted = ref({});
         
+        // Random feedback messages for wrong answers
+        const yangFeedbackMessages = [
+            "杨如萍同学，这道题的陷阱你是不是又踩进去了？",
+            "杨如萍，题目都看了三遍了吗？再仔细看看？",
+            "这一题杨如萍来了都得再读一遍题干。",
+            "杨如萍探头：这题我上周错过，你居然也错？",
+            "杨如萍叹气：审题啊审题，我当年就栽在这。",
+            "杨如萍发来一条提醒：关键字在第三行，再找找？",
+            "杨如萍警告：再错这题，今晚加练十道。",
+            "杨如萍震怒：这都能错？回去重读题目！",
+            "杨如萍的凝视.jpg —— 你真的看懂题目了吗？"
+        ];
+        
+        const getRandomFeedback = () => {
+            const randomIndex = Math.floor(Math.random() * yangFeedbackMessages.length);
+            return yangFeedbackMessages[randomIndex];
+        };
+        
         // Initialize from localStorage
         onMounted(() => {
             const saved = localStorage.getItem('c_learning_wrong_book');
@@ -113,8 +131,12 @@ const app = createApp({
                 wrongQuestions.value.unshift({
                     ...q,
                     moduleId: moduleId,
-                    addedAt: new Date().getTime()
+                    addedAt: new Date().getTime(),
+                    yangFeedback: getRandomFeedback()
                 });
+            } else {
+                // Update the existing wrong question's feedback
+                exists.yangFeedback = getRandomFeedback();
             }
         };
 
@@ -155,6 +177,17 @@ const app = createApp({
             delete wrongBookAnswers.value[qId];
             delete wrongBookSubmitted.value[qId];
         };
+        
+        // Get yang feedback for a question
+        const getYangFeedback = (qId) => {
+            const question = wrongQuestions.value.find(q => q.id === qId);
+            return question ? question.yangFeedback : '';
+        };
+        
+        // Get yang feedback from wrong book
+        const getYangFeedbackFromWrongBook = (qId) => {
+            return getYangFeedback(qId);
+        };
 
         return {
             modules,
@@ -189,7 +222,9 @@ const app = createApp({
             isWrongBookAnswerCorrect,
             submitWrongBookAnswer,
             retryWrongQuestion,
-            removeWrongQuestion
+            removeWrongQuestion,
+            getYangFeedback,
+            getYangFeedbackFromWrongBook
         };
     }
 });
