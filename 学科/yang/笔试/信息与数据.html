@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>信息与数据的概念刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">信息与数据的概念</div>
+                        <div class="progress-text">信息技术 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "计算机中处理的对象是（  ）",
+                options: [
+                    { label: "A", text: "信息" },
+                    { label: "B", text: "数据" },
+                    { label: "C", text: "程序" },
+                    { label: "D", text: "指令" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>计算机只能直接识别和处理<span style="color:#f5222d;font-weight:700;">数据</span>，即物理符号。信息是加工后的结果，程序和指令属于特殊的数据形式。</p>
+                <p><strong>📚 知识点讲解：</strong><span style="color:#4a90e2;font-weight:700;">数据</span>是客观的、原始的符号记录，本身无意义；而<span style="color:#52c41a;font-weight:700;">信息</span>是经过加工处理后有意义的产物。计算机的底层操作对象始终是数据。</p>
+                <p><strong>💡 解题思路：</strong>看到“计算机处理的对象”，直接联想到计算机只能操作二进制符号，即数据。其他选项都是基于数据的抽象或结果。</p>
+                <p><strong>🧠 记忆口诀：</strong>计算机的“粮食”是数据，信息是“做好的饭”。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "数据就是数字" },
+                    { label: "B", text: "数据本身没有意义" },
+                    { label: "C", text: "数据都是有用的" },
+                    { label: "D", text: "数据只能是客观的" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确答案是<span style="color:#f5222d;font-weight:700;">数据本身没有意义</span>，这是数据的本质特征。</p>
+                <p><strong>📚 知识点讲解：</strong>数据的表现形式丰富（数字、文字、图像等），不限于数字；数据是原始记录，<span style="color:#4a90e2;font-weight:700;">未加工前没有意义</span>；数据既可以是客观记录，也可以是主观表达。</p>
+                <p><strong>💡 解题思路：</strong>A项缩小了范围，C项过于绝对（只有加工后才可能有用），D项否认了主观数据的存在。B项精准描述了数据的核心属性。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据是原料，本身没味道。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息是经过加工处理的（  ）",
+                options: [
+                    { label: "A", text: "数字" },
+                    { label: "B", text: "文字" },
+                    { label: "C", text: "数据" },
+                    { label: "D", text: "符号" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息的定义就是“<span style="color:#f5222d;font-weight:700;">经过加工处理的有意义的数据</span>”，所以选数据。</p>
+                <p><strong>📚 知识点讲解：</strong>数字、文字、符号都只是数据的具体表现形式，而信息来源于对<span style="color:#4a90e2;font-weight:700;">数据</span>的加工。这是信息与数据关系的核心考点。</p>
+                <p><strong>💡 解题思路：</strong>题干直接考查信息的标准定义，选项中的数字、文字、符号都是子集，只有“数据”涵盖最全面。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据是爹，信息是娃，加工一下就有啦。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "数据和信息的关系是（  ）",
+                options: [
+                    { label: "A", text: "数据就是信息" },
+                    { label: "B", text: "信息就是数据" },
+                    { label: "C", text: "数据是信息的载体" },
+                    { label: "D", text: "信息是数据的载体" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>数据是信息的<span style="color:#f5222d;font-weight:700;">载体</span>，信息是数据的内涵，两者不能等同或颠倒。</p>
+                <p><strong>📚 知识点讲解：</strong>数据承载信息，信息赋予数据意义。例如书本是<span style="color:#4a90e2;font-weight:700;">数据（载体）</span>，书中的内容才是<span style="color:#52c41a;font-weight:700;">信息</span>。</p>
+                <p><strong>💡 解题思路：</strong>A和B将两者混淆；D颠倒了关系。只有C准确描述了载体与内涵的依存关系。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据是瓶，信息是酒；没瓶酒难存，没酒瓶无用。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于信息的是（  ）",
+                options: [
+                    { label: "A", text: "一张光盘" },
+                    { label: "B", text: "一段天气预报" },
+                    { label: "C", text: "一个U盘" },
+                    { label: "D", text: "一本书" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>天气预报是经过分析处理后的<span style="color:#f5222d;font-weight:700;">有意义数据</span>，属于信息；光盘、U盘、书都是存储载体。</p>
+                <p><strong>📚 知识点讲解：</strong>区分信息和载体的关键在于看它是否<span style="color:#4a90e2;font-weight:700;">提供了决策或认知价值</span>。纯粹的物理介质是载体。</p>
+                <p><strong>💡 解题思路：</strong>看到“光盘”“U盘”“书”这类实物，直接判断为载体。天气预报含有预测内容，是加工产物。</p>
+                <p><strong>🧠 记忆口诀：</strong>实物是载体，内容是信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据的是（  ）",
+                options: [
+                    { label: "A", text: "“今天气温25℃”" },
+                    { label: "B", text: "“今天很暖和”" },
+                    { label: "C", text: "数字“25”" },
+                    { label: "D", text: "“今天适合穿短袖”" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>数字“25”是<span style="color:#f5222d;font-weight:700;">原始符号</span>，没有语境和解释，属于数据。</p>
+                <p><strong>📚 知识点讲解：</strong>判断是否为数据看它是否<span style="color:#4a90e2;font-weight:700;">孤立、无加工</span>。一旦附加了含义（如气温、感觉），就变成了信息。</p>
+                <p><strong>💡 解题思路：</strong>A、B、D都包含了温度的具体解读，是信息。只有C是赤裸裸的数字符号。</p>
+                <p><strong>🧠 记忆口诀：</strong>纯符号就是数据，带含义就是信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "同一组数据对不同的人可能产生不同的信息，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "主观性" },
+                    { label: "C", text: "时效性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>不同人解读同一数据得到不同结果，体现信息<span style="color:#f5222d;font-weight:700;">主观性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>信息内容源于客观事物，但<span style="color:#4a90e2;font-weight:700;">理解因人而异</span>，所以信息兼具客观和主观属性。</p>
+                <p><strong>💡 解题思路：</strong>题干强调“不同的人”“不同的信息”，直接对应主观性。客观性强调真实，时效性强调时间，共享性强调复制不损耗。</p>
+                <p><strong>🧠 记忆口诀：</strong>千人千面看数据，主观理解各不同。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息可以被多人同时使用，而且不会因为使用而损耗，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "价值性" },
+                    { label: "B", text: "时效性" },
+                    { label: "C", text: "共享性" },
+                    { label: "D", text: "依附性" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>“多人使用且不损耗”是信息<span style="color:#f5222d;font-weight:700;">共享性</span>的典型描述，这也是信息区别于物质的最显著特征。</p>
+                <p><strong>📚 知识点讲解：</strong><span style="color:#4a90e2;font-weight:700;">共享性</span>意味着信息可以无限复制、传播，并不会因使用而减少。物质则相反。</p>
+                <p><strong>💡 解题思路：</strong>看到“不损耗”“多人同时”立刻选共享性。价值性强调有用，时效性强调过期，依附性强调依赖载体。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息像空气，越分享越多，永不损耗。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "旧的报纸新闻往往失去了价值，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "时效性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>新闻过时失去价值，体现信息<span style="color:#f5222d;font-weight:700;">时效性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>信息随<span style="color:#4a90e2;font-weight:700;">时间推移</span>其价值会降低或消失。天气预报、新闻是典型例子。</p>
+                <p><strong>💡 解题思路：</strong>“旧的”“失去价值”直接指向时间因素，对应时效性。价值性是指信息本身有用，而非随时间变化。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息如牛奶，过期就变味。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息必须依附于一定的载体才能存在和传播，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "依附性" },
+                    { label: "B", text: "可传递性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "客观性" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>“必须依附载体”就是<span style="color:#f5222d;font-weight:700;">依附性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>信息不能独立存在，必须借助文字、声音、图像等<span style="color:#4a90e2;font-weight:700;">载体</span>才能表现和传播。</p>
+                <p><strong>💡 解题思路：</strong>题干关键词“依附于”直接对应依附性。可传递性侧重能传递，而依附性强调必要条件。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息是灵魂，载体是身体，灵魂必须附体。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "信息是有价值的" },
+                    { label: "B", text: "信息可以传递" },
+                    { label: "C", text: "信息可以独立存在" },
+                    { label: "D", text: "信息可以共享" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息<span style="color:#f5222d;font-weight:700;">不能独立存在</span>，必须依附载体，所以C错误。</p>
+                <p><strong>📚 知识点讲解：</strong>信息具有依附性，脱离载体的信息无法存在。而信息有价值性、可传递性和共享性都是正确的。</p>
+                <p><strong>💡 解题思路：</strong>题目问“错误”的一项，C项明显违反依附性。其他都是信息的正确属性。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息离不开载体，就像思想离不开大脑。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "数据是客观的记录" },
+                    { label: "B", text: "数据可以是数字、文字等" },
+                    { label: "C", text: "数据本身没有意义" },
+                    { label: "D", text: "数据都是有用的" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>并非所有数据都有用，只有<span style="color:#f5222d;font-weight:700;">经过加工处理</span>的数据才可能有用，所以D错误。</p>
+                <p><strong>📚 知识点讲解：</strong>数据是原始记录，其本身<span style="color:#4a90e2;font-weight:700;">无意义</span>，需要加工才能产生价值。大量杂乱数据可能毫无用处。</p>
+                <p><strong>💡 解题思路：</strong>看到“都是”这种绝对化词语要警惕。数据有用是有条件的。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据是矿石，不炼不成金。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“一千个读者就有一千个哈姆雷特”，这句话体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "主观性" },
+                    { label: "C", text: "时效性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>同一文本（数据）产生不同理解，体现<span style="color:#f5222d;font-weight:700;">主观性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>信息的主观性表明<span style="color:#4a90e2;font-weight:700;">理解受个人背景影响</span>，即使信息源相同。</p>
+                <p><strong>💡 解题思路：</strong>“一千个”强调个体差异，对应主观性。客观性侧重事实本身，不合题意。</p>
+                <p><strong>🧠 记忆口诀：</strong>一千个读者，一千种信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列过程中，属于将数据转化为信息的是（  ）",
+                options: [
+                    { label: "A", text: "测量体温得到36.5℃" },
+                    { label: "B", text: "记录考试分数" },
+                    { label: "C", text: "根据考试分数判断成绩好坏" },
+                    { label: "D", text: "拍摄一张照片" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>“判断成绩好坏”是对分数（数据）的<span style="color:#f5222d;font-weight:700;">加工解读</span>，产生了信息。</p>
+                <p><strong>📚 知识点讲解：</strong>数据→加工→信息。测量、记录、拍摄都只是<span style="color:#4a90e2;font-weight:700;">获取原始数据</span>，只有分析判断才是加工。</p>
+                <p><strong>💡 解题思路：</strong>排除仅获取符号的选项，选中包含“判断”“分析”等加工动作的选项。</p>
+                <p><strong>🧠 记忆口诀：</strong>原始动作得数据，分析动作出信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息共享性的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "信息共享会导致信息损耗" },
+                    { label: "B", text: "信息只能被一个人使用" },
+                    { label: "C", text: "信息共享后，原有的信息会消失" },
+                    { label: "D", text: "信息可以被多人同时使用且不会损耗" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>共享性的核心是<span style="color:#f5222d;font-weight:700;">多人使用不损耗</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>信息与物质不同，<span style="color:#4a90e2;font-weight:700;">共享后不但不减少，反而可能增值</span>。</p>
+                <p><strong>💡 解题思路：</strong>A、B、C都违背共享性的基本定义，D是标准表述。</p>
+                <p><strong>🧠 记忆口诀：</strong>思想交换，越换越多。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于信息的是（  ）",
+                options: [
+                    { label: "A", text: "黑板上的数字" },
+                    { label: "B", text: "电视上播放的新闻" },
+                    { label: "C", text: "一张白纸" },
+                    { label: "D", text: "一支钢笔" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>电视新闻是<span style="color:#f5222d;font-weight:700;">加工处理后的内容</span>，属于信息。</p>
+                <p><strong>📚 知识点讲解：</strong>黑板上的数字是数据，白纸和钢笔是载体，只有新闻是有意义的内容。</p>
+                <p><strong>💡 解题思路：</strong>区分数据/载体与信息：看是否有完整的语义表达。</p>
+                <p><strong>🧠 记忆口诀：</strong>能看到内容的叫信息，空壳子是载体。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据的是（  ）",
+                options: [
+                    { label: "A", text: "“小明身高175cm”" },
+                    { label: "B", text: "“小明很高”" },
+                    { label: "C", text: "数字“175”" },
+                    { label: "D", text: "“小明适合打篮球”" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>数字“175”是<span style="color:#f5222d;font-weight:700;">原始符号</span>，没有解释，属于数据。</p>
+                <p><strong>📚 知识点讲解：</strong>一旦赋予了单位或评价，就变成了信息。纯数字是典型的数据形式。</p>
+                <p><strong>💡 解题思路：</strong>含有判断性描述的都是信息，只有纯符号是数据。</p>
+                <p><strong>🧠 记忆口诀：</strong>数字孤零零，数据；数字有话说，信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息的价值体现在它能够帮助人们（  ）",
+                options: [
+                    { label: "A", text: "存储数据" },
+                    { label: "B", text: "处理数据" },
+                    { label: "C", text: "做出决策" },
+                    { label: "D", text: "传输数据" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息的价值在于辅助<span style="color:#f5222d;font-weight:700;">决策</span>，解决问题。</p>
+                <p><strong>📚 知识点讲解：</strong><span style="color:#4a90e2;font-weight:700;">价值性</span>是信息的核心特征之一，信息的最终目的是指导行动。</p>
+                <p><strong>💡 解题思路：</strong>存储、处理、传输都是手段，做出决策才是信息的终极价值。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息就是力量，决策就是方向。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据和信息的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "所有数据都能转化为信息" },
+                    { label: "B", text: "信息是数据的载体" },
+                    { label: "C", text: "数据是信息的内涵" },
+                    { label: "D", text: "信息来源于数据" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息是从数据中提取的，<span style="color:#f5222d;font-weight:700;">信息来源于数据</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>A错在“所有”，B、C颠倒了载体与内涵的关系。正确的联系是数据→信息。</p>
+                <p><strong>💡 解题思路：</strong>排除绝对化表述和关系颠倒项，选最基本的关系描述。</p>
+                <p><strong>🧠 记忆口诀：</strong>无数据不信息，数据是源头。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“烽火连三月，家书抵万金”，这句话体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "时效性" },
+                    { label: "B", text: "价值性" },
+                    { label: "C", text: "共享性" },
+                    { label: "D", text: "依附性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>家书在战乱时极其珍贵，体现信息<span style="color:#f5222d;font-weight:700;">价值性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>信息的价值并非固定，<span style="color:#4a90e2;font-weight:700;">在特定情境下会凸显</span>。正如这句诗描述的，家书价值超过万金。</p>
+                <p><strong>💡 解题思路：</strong>“抵万金”直接表明价值巨大。虽有时效背景，但核心是价值凸显。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息如珍宝，关键时刻价更高。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息时效性的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "所有信息都具有时效性" },
+                    { label: "B", text: "信息的价值不会随时间改变" },
+                    { label: "C", text: "过时的信息仍然有价值" },
+                    { label: "D", text: "信息的时效性是绝对的" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>任何信息都有<span style="color:#f5222d;font-weight:700;">时效性</span>，只是长短不同。</p>
+                <p><strong>📚 知识点讲解：</strong>信息随时间流逝其价值可能降低或消失。历史知识时效性长，天气预报时效性短。</p>
+                <p><strong>💡 解题思路：</strong>B、D过于绝对且错误；C中过时信息可能无价值。A是正确的一般规律。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息不是老酒，越放越没味。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于信息的是（  ）",
+                options: [
+                    { label: "A", text: "一段录音" },
+                    { label: "B", text: "录音里的内容" },
+                    { label: "C", text: "一个MP3播放器" },
+                    { label: "D", text: "一张CD光盘" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>录音内容是<span style="color:#f5222d;font-weight:700;">有意义的声音表达</span>，是信息；录音本身、播放器、光盘是载体。</p>
+                <p><strong>📚 知识点讲解：</strong>载体承载信息，但本身不是信息。区分关键在于<span style="color:#4a90e2;font-weight:700;">是否传达了语义</span>。</p>
+                <p><strong>💡 解题思路：</strong>抓住“内容”二字，有内容才有信息。</p>
+                <p><strong>🧠 记忆口诀：</strong>内容才是宝，载体只是壳。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据的是（  ）",
+                options: [
+                    { label: "A", text: "“今天下雨了”" },
+                    { label: "B", text: "“今天要带伞”" },
+                    { label: "C", text: "雨滴的声音" },
+                    { label: "D", text: "“今天不宜出门”" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>雨滴的声音是<span style="color:#f5222d;font-weight:700;">原始物理信号</span>，未经加工，属于数据。</p>
+                <p><strong>📚 知识点讲解：</strong>声音可以是数据的表现形式。一旦被理解成“下雨了”等信息，就是加工后的结果。</p>
+                <p><strong>💡 解题思路：</strong>A、B、D都是对自然现象的理解和判断，是信息。C是纯自然信号。</p>
+                <p><strong>🧠 记忆口诀：</strong>自然现象是数据，人为解读是信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "数据经过加工处理后得到的是（  ）",
+                options: [
+                    { label: "A", text: "数字" },
+                    { label: "B", text: "文字" },
+                    { label: "C", text: "信息" },
+                    { label: "D", text: "符号" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>数据加工的结果就是<span style="color:#f5222d;font-weight:700;">信息</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>数据→处理→信息，这是最基本的信息处理模型。</p>
+                <p><strong>💡 解题思路：</strong>其他选项都是数据的具体形式，不是加工结果。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据加工=信息出炉。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息客观性的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "信息是客观存在的，不随人的意志改变" },
+                    { label: "B", text: "信息的内容是客观的，但理解是主观的" },
+                    { label: "C", text: "信息都是客观的，没有主观性" },
+                    { label: "D", text: "信息的客观性和主观性是矛盾的" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息源于客观事物，但<span style="color:#f5222d;font-weight:700;">理解因人而异</span>，体现了客观与主观的统一。</p>
+                <p><strong>📚 知识点讲解：</strong>信息的内容基础是客观的，但<span style="color:#4a90e2;font-weight:700;">人的认知加工赋予其主观色彩</span>。</p>
+                <p><strong>💡 解题思路：</strong>A否认了主观性，C否认了客观性，D说矛盾是片面的。B全面准确。</p>
+                <p><strong>🧠 记忆口诀：</strong>事实是客观的，看法是主观的。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据客观性的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "数据都是客观的，没有主观性" },
+                    { label: "B", text: "数据可以是客观的，也可以是主观的记录" },
+                    { label: "C", text: "数据的客观性是绝对的" },
+                    { label: "D", text: "数据的客观性与信息的客观性是一样的" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>数据可以是客观测量值，也可以是<span style="color:#f5222d;font-weight:700;">主观记录</span>（如感受、评价）。</p>
+                <p><strong>📚 知识点讲解：</strong>数据反映客观或主观事物，不能绝对化。</p>
+                <p><strong>💡 解题思路：</strong>A、C过于绝对，D混同了两者的客观性差异。B承认了多样性。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据如实记，客观主观皆可录。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息可以从一个地方传递到另一个地方，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "依附性" },
+                    { label: "B", text: "可传递性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息在空间上移动就是<span style="color:#f5222d;font-weight:700;">可传递性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>可传递性是信息的基本特征，包括空间传递（通信）和时间传递（存储）。</p>
+                <p><strong>💡 解题思路：</strong>题干描述的就是传递过程。依附性强调依赖载体，共享性强调多人使用。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息有腿，能跑能传。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列过程中，不属于数据加工的是（  ）",
+                options: [
+                    { label: "A", text: "计算考试平均分" },
+                    { label: "B", text: "统计班级人数" },
+                    { label: "C", text: "记录学生姓名" },
+                    { label: "D", text: "分析考试成绩分布" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>“记录学生姓名”是<span style="color:#f5222d;font-weight:700;">获取原始数据</span>，不是加工。</p>
+                <p><strong>📚 知识点讲解：</strong>加工意味着对已有数据进行计算、比较、归纳等操作。单纯记录属于数据采集。</p>
+                <p><strong>💡 解题思路：</strong>寻找没有处理动作的选项，记录只是录入，没有改变数据形态或产生新意义。</p>
+                <p><strong>🧠 记忆口诀：</strong>记下来是数据，算出来是信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据和信息的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "数据是信息的表现形式" },
+                    { label: "B", text: "信息是数据的语义解释" },
+                    { label: "C", text: "同一数据只能产生一种信息" },
+                    { label: "D", text: "信息可以脱离原始数据存在" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>同一数据可产生<span style="color:#f5222d;font-weight:700;">多种信息</span>，C错误。</p>
+                <p><strong>📚 知识点讲解：</strong>数据与信息非一一对应，不同加工方式或不同理解者会得到不同信息。</p>
+                <p><strong>💡 解题思路：</strong>看到“只能”就应警觉。其余选项均正确描述了二者的关系。</p>
+                <p><strong>🧠 记忆口诀：</strong>一数多意，加工决定信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "信息只能通过文字传递" },
+                    { label: "B", text: "信息不能被存储" },
+                    { label: "C", text: "信息是有意义的数据" },
+                    { label: "D", text: "信息都是有用的" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息是<span style="color:#f5222d;font-weight:700;">有意义的数据</span>，这是信息的基本定义。</p>
+                <p><strong>📚 知识点讲解：</strong>信息可通过多种形式传递（声音、图像等），可存储，但并非所有信息都有用（如虚假信息）。</p>
+                <p><strong>💡 解题思路：</strong>A限制形式，B错误，D绝对化。只有C是标准定义。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息=数据+意义。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "数据就是信息，信息就是数据。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>说法错误。数据和信息是两个不同的概念。</p>
+                <p><strong>📚 知识点讲解：</strong>数据是原始符号，<span style="color:#4a90e2;font-weight:700;">本身无意义</span>；信息是加工后有意义的数据。两者不能等同。</p>
+                <p><strong>💡 解题思路：</strong>牢记“数据是原料，信息是成品”，二者混淆是常见错误。</p>
+                <p><strong>🧠 记忆口诀：</strong>原料不是成品，数据不是信息。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息可以被多人同时使用，而且不会因为使用而损耗。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确，体现信息<span style="color:#f5222d;font-weight:700;">共享性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>共享性是信息区别于物质的最显著特征，信息不会因使用而减少。</p>
+                <p><strong>💡 解题思路：</strong>物质有损耗，信息无损耗。题干描述完全符合共享性。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息共享不折旧，越用越有价值。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "所有数据都能转化为信息。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。只有<span style="color:#f5222d;font-weight:700;">经过加工且有意义</span>的数据才能转化为信息。</p>
+                <p><strong>📚 知识点讲解：</strong>杂乱无章、无法解读的数据不能成为信息。“所有”一词过于绝对。</p>
+                <p><strong>💡 解题思路：</strong>看到“所有”要小心，转化是有条件的。</p>
+                <p><strong>🧠 记忆口诀：</strong>不是每块石头都含玉，不是每个数据都有用。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息可以独立存在，不需要依附于任何载体。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。信息必须依附于载体，具有<span style="color:#f5222d;font-weight:700;">依附性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>没有载体的信息无法存在和传播，这是信息的基本特征。</p>
+                <p><strong>💡 解题思路：</strong>任何信息都需要媒介（如声音、纸张、电磁波）。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息无体不立，必须寄居载体。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "同一组数据对不同的人可能产生不同的信息。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确，体现信息<span style="color:#f5222d;font-weight:700;">主观性</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>人的知识背景不同，对同一数据的解读可以大相径庭。</p>
+                <p><strong>💡 解题思路：</strong>如“37”可以是体温，也可以是鞋码。</p>
+                <p><strong>🧠 记忆口诀：</strong>一样的数据，不一样的解读。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "数据本身没有意义，只有经过加工后才可能有意义。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确，这是数据的<span style="color:#f5222d;font-weight:700;">本质特征</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>数据是客观记录，意义是人为赋予的。</p>
+                <p><strong>💡 解题思路：</strong>牢记“数据是原料”，原料本身无成品功能。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据无意义，加工出价值。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "过时的信息仍然具有价值。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。信息具有<span style="color:#f5222d;font-weight:700;">时效性</span>，过时后通常失去原有价值。</p>
+                <p><strong>📚 知识点讲解：</strong>虽然有些历史信息有研究价值，但题干意指普遍情况，过时的信息其决策价值已消失。</p>
+                <p><strong>💡 解题思路：</strong>判断题中如未特指历史资料，一般按常规理解。</p>
+                <p><strong>🧠 记忆口诀：</strong>昨天的天气预报，今天就是废纸。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息的价值是绝对的，对所有人都一样。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。信息价值是<span style="color:#f5222d;font-weight:700;">相对的</span>，因人而异。</p>
+                <p><strong>📚 知识点讲解：</strong>同一信息对急需者价值连城，对无关者一文不值。</p>
+                <p><strong>💡 解题思路：</strong>看到“绝对”“都一样”要警惕。</p>
+                <p><strong>🧠 记忆口诀：</strong>价值在人心，信息无绝对。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "数据的表现形式只有数字和文字。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。表现形式还包括图形、图像、声音、视频、符号等。</p>
+                <p><strong>📚 知识点讲解：</strong>数据的表现形式丰富多样，不止数字和文字。</p>
+                <p><strong>💡 解题思路：</strong>常识判断，声音、图像都是数据。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据七兄弟，数文图声视符形。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息来源于数据，数据是信息的载体。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确，这是数据和信息的基本联系。</p>
+                <p><strong>📚 知识点讲解：</strong>数据承载信息，信息从数据中提取。</p>
+                <p><strong>💡 解题思路：</strong>经典表述，必须牢记。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据是载体，信息是灵魂。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列不属于数据表现形式的是（  ）",
+                options: [
+                    { label: "A", text: "数字" },
+                    { label: "B", text: "文字" },
+                    { label: "C", text: "知识" },
+                    { label: "D", text: "声音" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>知识是系统化的信息，不是数据表现形式。</p>
+                <p><strong>📚 知识点讲解：</strong>数据的七种表现形式：数字、文字、图形、图像、声音、视频、符号。</p>
+                <p><strong>💡 解题思路：</strong>知识属于更高层次的信息加工产物。</p>
+                <p><strong>🧠 记忆口诀：</strong>知识是信息的高级版，不属于原始数据。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“符号”的是（  ）",
+                options: [
+                    { label: "A", text: "3.14" },
+                    { label: "B", text: "“你好”" },
+                    { label: "C", text: "$" },
+                    { label: "D", text: "一张照片" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>$是货币符号，属于符号类数据。</p>
+                <p><strong>📚 知识点讲解：</strong>符号包括各种标志、图标、特殊字符等。</p>
+                <p><strong>💡 解题思路：</strong>3.14是数字，“你好”是文字，照片是图像。</p>
+                <p><strong>🧠 记忆口诀：</strong>符号是标记，$%&@#。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息区别于物质的最显著特征是（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "价值性" },
+                    { label: "C", text: "共享性" },
+                    { label: "D", text: "时效性" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>共享性是信息区别于物质的最显著特征。</p>
+                <p><strong>📚 知识点讲解：</strong>物质会消耗，信息可无限共享而不损耗。</p>
+                <p><strong>💡 解题思路：</strong>高频考点，必须牢记。</p>
+                <p><strong>🧠 记忆口诀：</strong>物质越分越少，信息越享越多。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“过期的新闻没有价值”，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "时效性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>过期失去价值，体现时效性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息的价值随时间变化。</p>
+                <p><strong>💡 解题思路：</strong>关键词“过期”。</p>
+                <p><strong>🧠 记忆口诀：</strong>新闻变旧闻，价值归零。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "信息必须依附于一定的载体才能存在，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "依附性" },
+                    { label: "B", text: "可传递性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "客观性" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>“必须依附”即依附性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息不能独立存在，这是依附性的核心。</p>
+                <p><strong>💡 解题思路：</strong>抓住题干中的“依附”二字。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息如影，随载体而行。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据与信息联系的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "信息是数据的载体" },
+                    { label: "B", text: "数据是信息的内涵" },
+                    { label: "C", text: "信息来源于数据" },
+                    { label: "D", text: "数据来源于信息" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息来源于数据，数据是载体，信息是内涵。</p>
+                <p><strong>📚 知识点讲解：</strong>A、B颠倒关系，D错误。</p>
+                <p><strong>💡 解题思路：</strong>排除关系颠倒项。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据生信息，信息依赖数据。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“图像”的是（  ）",
+                options: [
+                    { label: "A", text: "一段音乐" },
+                    { label: "B", text: "一张风景照" },
+                    { label: "C", text: "一个流程图" },
+                    { label: "D", text: "一段视频" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>风景照是图像，流程图是图形，视频是单独形式。</p>
+                <p><strong>📚 知识点讲解：</strong>图像通常指静态的位图，图形是矢量图。</p>
+                <p><strong>💡 解题思路：</strong>照片是典型的图像。</p>
+                <p><strong>🧠 记忆口诀：</strong>照片图像，图形画画。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“萧伯纳说：你有一个苹果，我有一个苹果，交换后我们各有一个苹果；你有一种思想，我有一种思想，交换后我们各有两种思想。”这句话体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "价值性" },
+                    { label: "B", text: "时效性" },
+                    { label: "C", text: "共享性" },
+                    { label: "D", text: "依附性" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>思想交换后双方都增加，体现共享性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息共享不会减少原有信息，反而可能增值。</p>
+                <p><strong>💡 解题思路：</strong>苹果代表物质，思想代表信息，物质交换不增值，信息交换增值。</p>
+                <p><strong>🧠 记忆口诀：</strong>交换思想，双赢共享。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息时效性的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "所有信息都具有时效性" },
+                    { label: "B", text: "不同信息的时效性长短不同" },
+                    { label: "C", text: "过时的信息完全没有价值" },
+                    { label: "D", text: "天气预报的时效性很短" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>过时的信息可能有历史价值，并非完全没有价值。</p>
+                <p><strong>📚 知识点讲解：</strong>C项过于绝对，错误。</p>
+                <p><strong>💡 解题思路：</strong>看到“完全”要警惕。</p>
+                <p><strong>🧠 记忆口诀：</strong>过时信息或有用，历史研究就靠它。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“视频”的是（  ）",
+                options: [
+                    { label: "A", text: "一首歌曲" },
+                    { label: "B", text: "一部电影" },
+                    { label: "C", text: "一幅画" },
+                    { label: "D", text: "一篇文章" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>电影是动态图像和声音的组合，属于视频数据。</p>
+                <p><strong>📚 知识点讲解：</strong>视频是连续动态画面。</p>
+                <p><strong>💡 解题思路：</strong>歌曲是声音，画是图像，文章是文字。</p>
+                <p><strong>🧠 记忆口诀：</strong>电影视频，动静结合。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“信息可以通过网络从北京传到上海”，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "依附性" },
+                    { label: "B", text: "可传递性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息在空间上移动，体现可传递性。</p>
+                <p><strong>📚 知识点讲解：</strong>可传递性是信息的基本特征。</p>
+                <p><strong>💡 解题思路：</strong>“从北京到上海”强调传递过程。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息插上翅膀，飞越千山万水。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据与信息的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "数据就是信息" },
+                    { label: "B", text: "信息可以转化为数据" },
+                    { label: "C", text: "数据不能转化为信息" },
+                    { label: "D", text: "数据和信息没有关系" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息可以记录下来成为数据，二者可相互转化。</p>
+                <p><strong>📚 知识点讲解：</strong>信息记录后又变成新的数据源。</p>
+                <p><strong>💡 解题思路：</strong>转化是双向的，B正确。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据信息互相转，循环往复不停息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“图形”的是（  ）",
+                options: [
+                    { label: "A", text: "一张照片" },
+                    { label: "B", text: "一个圆形" },
+                    { label: "C", text: "一段录音" },
+                    { label: "D", text: "一个数字" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>圆形是几何图形，属于图形类数据。</p>
+                <p><strong>📚 知识点讲解：</strong>图形是矢量化的形状。</p>
+                <p><strong>💡 解题思路：</strong>照片是图像，圆形是图形。</p>
+                <p><strong>🧠 记忆口诀：</strong>图形是画出来的，图像是拍出来的。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“盲人摸象”的故事说明，同一事物不同的人会有不同的认识，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "主观性" },
+                    { label: "C", text: "时效性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>不同人得到不同认识，体现主观性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息理解因人而异。</p>
+                <p><strong>💡 解题思路：</strong>盲人各执一词，正是主观性体现。</p>
+                <p><strong>🧠 记忆口诀：</strong>盲人摸象，各有解读。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息共享性的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "信息可以被多人同时使用" },
+                    { label: "B", text: "信息共享不会导致信息损耗" },
+                    { label: "C", text: "信息共享后原有的信息会消失" },
+                    { label: "D", text: "信息共享可以产生更大的价值" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息共享后原有信息不会消失，C错误。</p>
+                <p><strong>📚 知识点讲解：</strong>共享性是信息区别于物质的重要特征。</p>
+                <p><strong>💡 解题思路：</strong>抓住共享不损耗不消失的特点。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息共享，原版不丢。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“声音”的是（  ）",
+                options: [
+                    { label: "A", text: "电话铃声" },
+                    { label: "B", text: "红绿灯" },
+                    { label: "C", text: "一张地图" },
+                    { label: "D", text: "一段文字" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>电话铃声是声音数据。</p>
+                <p><strong>📚 知识点讲解：</strong>声音是数据的重要形式之一。</p>
+                <p><strong>💡 解题思路：</strong>红绿灯是符号，地图是图形，文字是文字。</p>
+                <p><strong>🧠 记忆口诀：</strong>铃声一响，数据报到。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“知识就是力量”，这句话体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "时效性" },
+                    { label: "B", text: "价值性" },
+                    { label: "C", text: "共享性" },
+                    { label: "D", text: "依附性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>知识即信息，力量体现价值性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息的价值在于指导实践。</p>
+                <p><strong>💡 解题思路：</strong>“力量”对应价值。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息是力量，价值不可量。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "数据与信息的关系是（  ）",
+                options: [
+                    { label: "A", text: "整体与部分的关系" },
+                    { label: "B", text: "载体与内涵的关系" },
+                    { label: "C", text: "原因与结果的关系" },
+                    { label: "D", text: "现象与本质的关系" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>数据是载体，信息是内涵，即载体与内涵关系。</p>
+                <p><strong>📚 知识点讲解：</strong>最准确的比喻是瓶与酒。</p>
+                <p><strong>💡 解题思路：</strong>其他关系都不贴切。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据是瓶，信息是酒。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列不属于信息基本特征的是（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "独占性" },
+                    { label: "C", text: "时效性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息具有共享性，不具有独占性。</p>
+                <p><strong>📚 知识点讲解：</strong>独占性是物质的特征。</p>
+                <p><strong>💡 解题思路：</strong>信息可以共享，所以不能独占。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息不独占，大家都能用。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“文字”的是（  ）",
+                options: [
+                    { label: "A", text: "123" },
+                    { label: "B", text: "“计算机”" },
+                    { label: "C", text: "一张照片" },
+                    { label: "D", text: "一段音乐" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>“计算机”是汉字，属于文字数据。</p>
+                <p><strong>📚 知识点讲解：</strong>文字是记录语言的符号。</p>
+                <p><strong>💡 解题思路：</strong>123是数字，照片图像，音乐声音。</p>
+                <p><strong>🧠 记忆口诀：</strong>文字写出来，信息传下去。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“没有载体的信息是不存在的”，这句话体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "依附性" },
+                    { label: "B", text: "可传递性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "客观性" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>必须依赖载体，即依附性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息与载体不可分割。</p>
+                <p><strong>💡 解题思路：</strong>“没有载体”对应依附性。</p>
+                <p><strong>🧠 记忆口诀：</strong>皮之不存，毛将焉附。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据与信息联系的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "信息是数据加工的结果" },
+                    { label: "B", text: "数据是信息的表现形式" },
+                    { label: "C", text: "所有数据都能转化为信息" },
+                    { label: "D", text: "同一数据可以产生不同的信息" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>并非所有数据都能转化为信息，C错误。</p>
+                <p><strong>📚 知识点讲解：</strong>转化需要条件。</p>
+                <p><strong>💡 解题思路：</strong>“所有”绝对化。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据如沙，淘金才得信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“数字”的是（  ）",
+                options: [
+                    { label: "A", text: "“你好”" },
+                    { label: "B", text: "3.14" },
+                    { label: "C", text: "$" },
+                    { label: "D", text: "一张画" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>3.14是数字符号。</p>
+                <p><strong>📚 知识点讲解：</strong>数字是最常见的数据形式。</p>
+                <p><strong>💡 解题思路：</strong>其他选项分属文字、符号、图像。</p>
+                <p><strong>🧠 记忆口诀：</strong>一二三四五，数字最清楚。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“天气预报只能预报未来几天的天气”，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "客观性" },
+                    { label: "B", text: "时效性" },
+                    { label: "C", text: "价值性" },
+                    { label: "D", text: "共享性" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>预报时间段有限，体现时效性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息的价值随时间减弱。</p>
+                <p><strong>💡 解题思路：</strong>“未来几天”强调时间限制。</p>
+                <p><strong>🧠 记忆口诀：</strong>天气预报有时效，过期参考不可靠。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息客观性的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "信息是完全客观的，没有主观性" },
+                    { label: "B", text: "信息的内容是客观的，但理解是主观的" },
+                    { label: "C", text: "信息都是主观的，没有客观性" },
+                    { label: "D", text: "信息的客观性和主观性是矛盾的" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息是客观内容与主观理解的统一。</p>
+                <p><strong>📚 知识点讲解：</strong>客观与主观并存。</p>
+                <p><strong>💡 解题思路：</strong>全面考虑二者关系。</p>
+                <p><strong>🧠 记忆口诀：</strong>事实客观，解读主观。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于数据表现形式中“符号”的是（  ）",
+                options: [
+                    { label: "A", text: "红灯" },
+                    { label: "B", text: "一段视频" },
+                    { label: "C", text: "一篇文章" },
+                    { label: "D", text: "一首歌曲" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>红灯是交通符号。</p>
+                <p><strong>📚 知识点讲解：</strong>符号是具有约定意义的数据。</p>
+                <p><strong>💡 解题思路：</strong>红灯代表停止，是典型符号。</p>
+                <p><strong>🧠 记忆口诀：</strong>红灯停，绿灯行，符号意思要记清。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“把一本书的内容复制给100个人，书的内容没有减少”，这体现了信息的（  ）",
+                options: [
+                    { label: "A", text: "价值性" },
+                    { label: "B", text: "时效性" },
+                    { label: "C", text: "共享性" },
+                    { label: "D", text: "依附性" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>复制后内容不减少，体现共享性。</p>
+                <p><strong>📚 知识点讲解：</strong>信息可无限复制且不损耗。</p>
+                <p><strong>💡 解题思路：</strong>关键词“没有减少”。</p>
+                <p><strong>🧠 记忆口诀：</strong>复制粘贴不消失，共享特性最明显。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "数据转化为信息的关键是（  ）",
+                options: [
+                    { label: "A", text: "存储" },
+                    { label: "B", text: "传输" },
+                    { label: "C", text: "加工处理" },
+                    { label: "D", text: "显示" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>加工处理赋予数据意义，是关键步骤。</p>
+                <p><strong>📚 知识点讲解：</strong>数据+加工=信息。</p>
+                <p><strong>💡 解题思路：</strong>存储、传输、显示不改变数据本质。</p>
+                <p><strong>🧠 记忆口诀：</strong>加工是魔法，数据变信息。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于信息可传递性的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "信息可以在空间上传递" },
+                    { label: "B", text: "信息可以在时间上传递" },
+                    { label: "C", text: "信息传递过程中不会失真" },
+                    { label: "D", text: "信息可以通过多种载体传递" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>信息传递可能失真，C错误。</p>
+                <p><strong>📚 知识点讲解：</strong>噪声干扰会导致信息失真。</p>
+                <p><strong>💡 解题思路：</strong>口口相传会走样。</p>
+                <p><strong>🧠 记忆口诀：</strong>传话游戏会变形，信息传递怕失真。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于数据与信息的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "数据有意义，信息没有意义" },
+                    { label: "B", text: "信息有意义，数据没有意义" },
+                    { label: "C", text: "数据和信息都没有意义" },
+                    { label: "D", text: "数据和信息都有意义" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>数据本身无意义，信息有意义。</p>
+                <p><strong>📚 知识点讲解：</strong>这是二者最本质的区别。</p>
+                <p><strong>💡 解题思路：</strong>牢记数据无意义，信息有意义。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据无魂，信息有心。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "数据的表现形式只有数字和文字。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。还有图形、图像、声音、视频、符号等。</p>
+                <p><strong>📚 知识点讲解：</strong>数据表现形式丰富。</p>
+                <p><strong>💡 解题思路：</strong>常见误区，务必记住七种。</p>
+                <p><strong>🧠 记忆口诀：</strong>数文图声视符形，数据七兄要记清。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息可以脱离载体独立存在。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。信息必须依附载体。</p>
+                <p><strong>📚 知识点讲解：</strong>依附性是信息的固有属性。</p>
+                <p><strong>💡 解题思路：</strong>无载体则信息消失。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息无体，必附载体。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息共享会导致信息损耗，原有的信息会减少。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。共享不损耗，反而增值。</p>
+                <p><strong>📚 知识点讲解：</strong>信息共享性特征。</p>
+                <p><strong>💡 解题思路：</strong>物质会损耗，信息不会。</p>
+                <p><strong>🧠 记忆口诀：</strong>信息分享不减反增。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "所有信息都具有时效性，只是时效性长短不同。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。任何信息都受时间影响。</p>
+                <p><strong>📚 知识点讲解：</strong>时效性是普遍特性。</p>
+                <p><strong>💡 解题思路：</strong>没有永恒不变的信息价值。</p>
+                <p><strong>🧠 记忆口诀：</strong>时间是把杀猪刀，信息价值会变少。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "数据和信息可以相互转化。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。数据加工成信息，信息记录成数据。</p>
+                <p><strong>📚 知识点讲解：</strong>转化是双向的。</p>
+                <p><strong>💡 解题思路：</strong>信息被记录下来又成为新的数据源。</p>
+                <p><strong>🧠 记忆口诀：</strong>数据信息转圈圈，循环往复永不断。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "图形和图像是同一种数据表现形式。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。图形是矢量图，图像是位图，不同。</p>
+                <p><strong>📚 知识点讲解：</strong>图形由几何元素构成，图像由像素构成。</p>
+                <p><strong>💡 解题思路：</strong>画出来vs拍出来。</p>
+                <p><strong>🧠 记忆口诀：</strong>图形画，图像拍，二者区分开。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息的价值是绝对的，对所有人都一样。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。信息价值相对，因人而异。</p>
+                <p><strong>📚 知识点讲解：</strong>价值性具有主观性。</p>
+                <p><strong>💡 解题思路：</strong>不同需求导致不同价值。</p>
+                <p><strong>🧠 记忆口诀：</strong>情人眼里出西施，信息价值看需求。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息只能在空间上传递，不能在时间上传递。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。信息可在时间上传递（如存储、石刻）。</p>
+                <p><strong>📚 知识点讲解：</strong>时间传递是指信息跨越时间留存。</p>
+                <p><strong>💡 解题思路：</strong>历史文献就是时间传递。</p>
+                <p><strong>🧠 记忆口诀：</strong>刻石留书，信息穿越时空。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "同一数据只能产生一种信息。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。同一数据可产生多种信息。</p>
+                <p><strong>📚 知识点讲解：</strong>数据与信息非一一对应。</p>
+                <p><strong>💡 解题思路：</strong>数字“100”可表示分数、价格、温度等。</p>
+                <p><strong>🧠 记忆口诀：</strong>一数多义，加工各异。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "信息来源于数据，没有数据就没有信息。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。信息必须以数据为基础。</p>
+                <p><strong>📚 知识点讲解：</strong>数据是信息的唯一来源。</p>
+                <p><strong>💡 解题思路：</strong>无源之水不存在。</p>
+                <p><strong>🧠 记忆口诀：</strong>无数据不信息。</p>`
+            }
+        ];
+
+        const APP_ID = 'info_data_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let isReviewMode = false;
+        let wrongQuestionIndices = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '信息与数据的概念及特征';
+            const content = `
+                <h3>📘 信息与数据的概念</h3>
+                <p><strong>数据（Data）</strong>是对客观事物的性质、状态以及相互关系等进行记载的<strong>物理符号</strong>或这些物理符号的组合，是可识别的、抽象的符号系统。数据本身没有意义，只是客观存在的原始记录。</p>
+                <p><strong>信息（Information）</strong>是<strong>经过加工处理</strong>的、对人类社会实践和生产活动产生决策影响的<strong>有意义的数据</strong>。信息是数据的内涵，是数据的语义解释。</p>
+                <p><strong>通俗理解：</strong></p>
+                <ul>
+                    <li><strong>数据</strong>：就像工厂里的<strong>原材料</strong>（铁矿石、棉花、沙子），只是一堆没有经过任何加工的东西，单独看不知道它能用来做什么。</li>
+                    <li><strong>信息</strong>：就像工厂用原材料加工出来的<strong>成品</strong>（汽车、衣服、房子），经过加工后有了明确的用途和价值。</li>
+                </ul>
+                <p><strong>数据是信息的载体，信息是数据的灵魂</strong>。没有数据，信息就无法存在；没有信息，数据就只是一堆无用的符号。</p>
+                <table class="knowledge-table">
+                    <thead><tr><th>数据（原始符号）</th><th>信息（加工后有意义）</th></tr></thead>
+                    <tbody>
+                        <tr><td>数字"37.5"</td><td>"小明体温37.5℃，发烧了"</td></tr>
+                        <tr><td>文字"90"</td><td>"小红数学考试得了90分，成绩优秀"</td></tr>
+                        <tr><td>一张下雨的照片</td><td>"今天下午会下雨，出门要带伞"</td></tr>
+                        <tr><td>声音"嘀嘀嘀"</td><td>"汽车在倒车，请注意避让"</td></tr>
+                        <tr><td>符号"$100"</td><td>"这件商品售价100美元"</td></tr>
+                    </tbody>
+                </table>
+                <h3>📊 数据的表现形式、信息的基本特征及联系</h3>
+                <p><strong>数据的表现形式：</strong>数字、文字、图形、图像、声音、视频、符号等。</p>
+                <p><strong>信息的基本特征：</strong></p>
+                <ul>
+                    <li><strong>客观性</strong>：信息说的是真实存在的事情。</li>
+                    <li><strong>时效性</strong>：信息就像牛奶，有保质期。</li>
+                    <li><strong>价值性</strong>：信息能帮我们解决问题。</li>
+                    <li><strong>共享性</strong>：信息像空气，越分享越多，不会损耗。</li>
+                    <li><strong>依附性</strong>：信息必须依附在载体上。</li>
+                    <li><strong>可传递性</strong>：信息可以在空间和时间上传递。</li>
+                </ul>
+                <p><strong>数据与信息的联系：</strong>数据是载体，信息是内涵；信息来源于数据，经过加工处理赋予语义。</p>
+                <p><strong>记忆口诀：</strong>数据是原料，信息是成品；加工出意义，区别看价值；共享不损耗，时效要牢记。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            isReviewMode = false;
+            wrongQuestionIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const contentArea = document.getElementById('quizContent');
+            if (isReviewMode && wrongQuestionIndices.length === 0) {
+                contentArea.innerHTML = `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">没有错题！</h1><p style="color: var(--text-secondary);">太厉害了，全部正确！</p><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button></div></div>`;
+                return;
+            }
+            const actualIndex = isReviewMode ? wrongQuestionIndices[currentIndex] : currentIndex;
+            const q = questions[actualIndex];
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[actualIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[actualIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+            if (answers[actualIndex] !== null) {
+                const isCorrect = answers[actualIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+            if (!isReviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                const wrongCount = questions.length - correctCount;
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            ${wrongCount > 0 ? '<button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" style="background:#faad14;color:white;">回看错题 ('+wrongCount+')</button>' : ''}
+                            ${wrongCount > 0 ? '<button class="action-btn export-wrong-btn" onclick="exportWrongCSV()" style="background:#f5222d;color:white;">导出错题</button>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < (isReviewMode ? wrongQuestionIndices.length : questions.length) - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const total = isReviewMode ? wrongQuestionIndices.length : questions.length;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = isReviewMode ? wrongQuestionIndices.filter(i => answers[i] !== null).length : answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = `${(answeredCount / total) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const total = isReviewMode ? wrongQuestionIndices.length : questions.length;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === total - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); isReviewMode = false; wrongQuestionIndices = []; localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function reviewWrongQuestions() {
+            wrongQuestionIndices = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && answers[i] !== q.answer) wrongQuestionIndices.push(i); });
+            if (wrongQuestionIndices.length === 0) { showToast('没有错题，太棒了！'); return; }
+            isReviewMode = true;
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            showToast(`进入错题回顾，共${wrongQuestionIndices.length}题`);
+        }
+
+        function exportWrongCSV() {
+            const wrongItems = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && answers[i] !== q.answer) wrongItems.push({index:i+1, q}); });
+            if (wrongItems.length === 0) { showToast('没有错题可导出'); return; }
+            let csv = '\uFEFF题目编号,题型,题目,选项,正确答案,用户答案,解析\n';
+            wrongItems.forEach(item => {
+                const q = item.q;
+                const optionStr = q.options.map(o=>`${o.label}.${o.text}`).join('；');
+                const correctAns = q.options[q.answer].label + '.' + q.options[q.answer].text;
+                const userAns = q.options[answers[item.index-1]].label + '.' + q.options[answers[item.index-1]].text;
+                const analysisText = q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""');
+                csv += `"${item.index}","${q.type}","${q.stem}","${optionStr}","${correctAns}","${userAns}","${analysisText}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '错题记录.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('错题已导出');
+        }
+    </script>
+</body>
+</html>

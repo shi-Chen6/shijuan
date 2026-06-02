@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>计算机应用领域刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .wrong-review-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-csv-btn {
+            background: linear-gradient(135deg, #52c41a, #73d13d);
+            color: white;
+        }
+        .exit-review-btn {
+            background: #fff2f0;
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" id="backBtn" onclick="handleBack()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">计算机应用领域</div>
+                        <div class="progress-text">信息技术基础 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "计算机最早的应用领域是（  ）",
+            "options": [{ "label": "A", "text": "数据处理" }, { "label": "B", "text": "科学计算" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>科学计算</strong>。科学计算是计算机<strong>最早</strong>也是<strong>最基本</strong>的应用领域，最初计算机就是为了解决军事和科学研究中的复杂计算问题而发明的。<br><br><strong>📚 知识点讲解：</strong>科学计算又称<strong>数值计算</strong>，是指利用计算机来完成科学研究和工程技术中提出的数学问题的计算。1946年世界上第一台电子计算机ENIAC就是为了计算弹道轨迹而研制的。科学计算是计算机的<span style=\"color:#4a90e2;\">\"诞生之源\"</span>。<br><br><strong>💡 解题思路：</strong>看到题干中的<span style=\"color:#f5222d;\">\"最早\"</span>关键词，直接锁定<strong>科学计算</strong>。干扰项中数据处理是<strong>最广泛</strong>的应用（非最早），过程控制和人工智能都是后来才发展起来的应用领域。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">最早科学算，最广数据处。计算机诞生为计算，弹道轨迹是源头。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "计算机应用最广泛的领域是（  ）",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>数据处理</strong>。数据处理是目前计算机应用<strong>最广泛</strong>的领域，约占计算机应用的80%以上，广泛应用于企业管理、金融、教育等各个行业。<br><br><strong>📚 知识点讲解：</strong>数据处理又称<strong>信息处理</strong>，是指对各种数据进行收集、存储、整理、分类、统计、加工、利用和传播等一系列活动的总称。与科学计算不同，数据处理的重点在于<span style=\"color:#4a90e2;\">数据的管理和分析</span>，而非复杂的数学运算。<br><br><strong>💡 解题思路：</strong>题干中的<span style=\"color:#f5222d;\">\"最广泛\"</span>是核心关键词。科学计算是\"最早\"而非\"最广\"，过程控制和人工智能的应用范围都远不及数据处理广泛。看到\"最广泛\"直接选数据处理。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">最广数据处，八成靠它撑。银行财务和库存，都是数据在帮忙。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "天气预报属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>科学计算</strong>。天气预报需要对海量的气象数据进行<strong>复杂的数学计算和模拟</strong>，属于科学计算领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>科学计算的核心特征是涉及<span style=\"color:#4a90e2;\">大量复杂的数学模型和数值运算</span>。天气预报需要求解大气动力学方程、热力学方程等，计算量极其庞大，必须依靠超级计算机才能完成。<br><br><strong>💡 解题思路：</strong>看到\"天气预报\"要联想到<span style=\"color:#f5222d;\">\"复杂数学计算\"</span>，这正符合科学计算的定义。虽然天气预报也涉及数据处理，但其核心是数值模拟和计算，因此归类为科学计算而非数据处理。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">天气桥梁核模拟，复杂计算科学算。卫星轨道基因测，超级计算机来帮忙。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "银行处理客户存款取款业务属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>数据处理</strong>。银行处理存款取款业务是对客户账户数据进行<strong>收集、存储、修改和查询</strong>，属于典型的数据处理领域。<br><br><strong>📚 知识点讲解：</strong>数据处理的关键特征是<span style=\"color:#4a90e2;\">对大量数据进行CRUD操作（增删改查）</span>。银行系统的核心就是账户数据的管理——存款是增加余额记录，取款是减少余额记录，查询是检索数据。<br><br><strong>💡 解题思路：</strong>\"银行存款取款\"不涉及复杂数学计算（排除科学计算），不需要实时自动控制设备（排除过程控制），也不涉及智能模拟（排除人工智能）。它就是对数据的增删改查，属于数据处理。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">银行存取是数据，增删改查最典型。财务库存和普查，数据管理归此类。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "工厂的自动化生产线属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>过程控制</strong>。自动化生产线利用计算机<strong>实时采集生产数据</strong>并<strong>自动控制机器设备</strong>的运行，属于过程控制领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>过程控制又称<strong>实时控制</strong>，核心特点是<span style=\"color:#4a90e2;\">\"实时\"+\"自动\"+\"无需人工干预\"</span>。计算机通过传感器采集数据，按最优值迅速地对控制对象进行自动调节。<br><br><strong>💡 解题思路：</strong>题干中<span style=\"color:#f5222d;\">\"自动化\"+\"生产线\"</span>直接指向过程控制。自动化意味着不需要人工干预，生产线意味着实时控制设备运行。这是过程控制的标志性场景。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">自动生产是过程，实时控制不用人。电梯空调生产线，自动管家24小时。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "CAD是指（  ）",
+            "options": [{ "label": "A", "text": "计算机辅助设计" }, { "label": "B", "text": "计算机辅助制造" }, { "label": "C",
+                "text": "计算机辅助教学" }, { "label": "D", "text": "计算机辅助测试" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>计算机辅助设计</strong>。CAD全称是<span style=\"color:#4a90e2;\">Computer Aided Design</span>，D代表Design（设计）。<br><br><strong>📚 知识点讲解：</strong>计算机辅助系统四大缩写：<strong>CAD-设计、CAM-制造、CAI-教学、CAT-测试</strong>。关键记忆点：D=Design（设计），M=Manufacturing（制造），I=Instruction（教学），T=Testing（测试）。<br><br><strong>💡 解题思路：</strong>通过英文全称来记忆：CAD中D是Design（设计），所以CAD是计算机辅助设计。CAM中M是Manufacturing（制造），CAI中I是Instruction（教学），CAT中T是Testing（测试）。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">CAD是设计（D=Design），CAM是制造（M=Manufacturing）。CAI教学习（I=Instruction），CAT做测试（T=Testing）。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "CAM是指（  ）",
+            "options": [{ "label": "A", "text": "计算机辅助设计" }, { "label": "B", "text": "计算机辅助制造" }, { "label": "C",
+                "text": "计算机辅助教学" }, { "label": "D", "text": "计算机辅助测试" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>计算机辅助制造</strong>。CAM全称是<span style=\"color:#4a90e2;\">Computer Aided Manufacturing</span>，M代表Manufacturing（制造）。<br><br><strong>📚 知识点讲解：</strong>CAM与CAD通常配合使用——<strong>先用CAD设计产品图纸，再用CAM控制设备制造产品</strong>。典型的CAM应用包括数控机床加工、3D打印、机器人组装汽车等。<br><br><strong>💡 解题思路：</strong>M=Manufacturing=制造，所以CAM就是计算机辅助制造。看到\"加工\"\"制造\"\"3D打印\"等关键词，直接选CAM。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">CAM制造靠M记，数控机床3D打印。CAD画图CAM造，设计制造一条龙。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "CAI是指（  ）",
+            "options": [{ "label": "A", "text": "计算机辅助设计" }, { "label": "B", "text": "计算机辅助制造" }, { "label": "C",
+                "text": "计算机辅助教学" }, { "label": "D", "text": "计算机辅助测试" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>计算机辅助教学</strong>。CAI全称是<span style=\"color:#4a90e2;\">Computer Aided Instruction</span>，I代表Instruction（教学）。<br><br><strong>📚 知识点讲解：</strong>CAI是利用计算机帮助人们进行教学和学习活动。典型应用包括<strong>在线学习平台、教学课件、模拟考试系统、虚拟实验室</strong>等。疫情期间广泛使用的网课平台就是CAI的典型代表。<br><br><strong>💡 解题思路：</strong>I=Instruction=教学/指导，所以CAI就是计算机辅助教学。看到\"学习\"\"教学\"\"课件\"\"网课\"等关键词，选CAI。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">CAI教学I来记，在线学习网课平台。课件考试虚拟实验室，计算机来当老师。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "CAT是指（  ）",
+            "options": [{ "label": "A", "text": "计算机辅助设计" }, { "label": "B", "text": "计算机辅助制造" }, { "label": "C",
+                "text": "计算机辅助教学" }, { "label": "D", "text": "计算机辅助测试" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>计算机辅助测试</strong>。CAT全称是<span style=\"color:#4a90e2;\">Computer Aided Testing</span>，T代表Testing（测试）。<br><br><strong>📚 知识点讲解：</strong>CAT利用计算机对产品、软件或系统进行<strong>自动化测试</strong>。典型应用包括汽车碰撞测试的计算机模拟、电子产品性能测试、软件自动化测试等。<br><br><strong>💡 解题思路：</strong>T=Testing=测试，所以CAT就是计算机辅助测试。看到\"测试\"\"检测\"\"性能评估\"等关键词，选CAT。注意与CAI区分：CAI是教学（学习），CAT是测试（考试检测）。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">CAT测试T来记，软件自动化测性能。汽车碰撞电子测，计算机来当检测员。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "利用计算机设计建筑图纸属于（  ）的应用",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAD（计算机辅助设计）</strong>。设计建筑图纸是计算机辅助设计的<strong>最典型应用</strong>之一。<br><br><strong>📚 知识点讲解：</strong>CAD广泛应用于<strong>建筑、汽车、服装、机械零件</strong>等领域的设计工作。建筑师使用AutoCAD等软件绘制建筑图纸，可以大幅提高设计效率和精度。<br><br><strong>💡 解题思路：</strong>题干中的<span style=\"color:#f5222d;\">\"设计\"</span>是核心关键词。看到\"设计图纸\"直接对应CAD。CAM是制造（设计之后的生产环节），CAI是教学，CAT是测试，都与\"设计\"无关。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">设计图纸找CAD，建筑设计是典型。汽车外形服装款，机械零件都能画。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "利用数控机床加工零件属于（  ）的应用",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAM（计算机辅助制造）</strong>。数控机床加工零件是利用计算机控制机床进行<strong>制造加工</strong>，属于CAM的典型应用。<br><br><strong>📚 知识点讲解：</strong>CAM的核心是<strong>利用计算机控制生产设备进行制造</strong>。数控机床（CNC）通过计算机程序控制刀具的移动路径、速度和深度，实现高精度零件加工。<br><br><strong>💡 解题思路：</strong>题干中的<span style=\"color:#f5222d;\">\"加工\"+\"制造\"</span>直接指向CAM。CAD是设计（画图），CAM是制造（生产）。数控机床是在\"做\"产品，而不是\"画\"图纸。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">加工制造找CAM，数控机床3D打印。机器人组装汽车，计算机来当工人。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "在线学习平台属于（  ）的应用",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAI（计算机辅助教学）</strong>。在线学习平台是利用计算机帮助人们<strong>学习知识</strong>，属于CAI的典型应用。<br><br><strong>📚 知识点讲解：</strong>CAI的核心是<span style=\"color:#4a90e2;\">\"辅助教学\"</span>——利用计算机技术辅助教师教学和学生学习的全过程。包括在线课程、互动课件、模拟考试、虚拟实验等。<br><br><strong>💡 解题思路：</strong>\"学习\"是CAI的关键词。看到\"在线学习\"\"网课\"\"教学平台\"等，直接选CAI。注意与CAT区分：CAI是学习过程，CAT是测试评估过程。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">在线学习是CAI，教学辅助好帮手。课件网课模拟考，计算机来当老师。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "软件自动化测试属于（  ）的应用",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAT（计算机辅助测试）</strong>。软件自动化测试是利用计算机<strong>自动执行测试用例</strong>并检查结果，属于CAT的典型应用。<br><br><strong>📚 知识点讲解：</strong>CAT的核心是<span style=\"color:#4a90e2;\">\"测试\"+\"检测\"</span>。软件自动化测试工具（如Selenium、JMeter）可以自动运行测试脚本，大幅提高测试效率和覆盖率。<br><br><strong>💡 解题思路：</strong>题干中的<span style=\"color:#f5222d;\">\"测试\"</span>直接指向CAT。T=Testing=测试。注意与CAI区分：CAI是教学/学习，CAT是测试/检测。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">测试检测找CAT，自动化测试是典型。汽车碰撞性能测，计算机来当裁判。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "人脸识别属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>人工智能</strong>。人脸识别是利用计算机<strong>模拟人类的视觉识别能力</strong>，是人工智能领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>人工智能（AI）的核心是<span style=\"color:#4a90e2;\">模拟人类智能活动</span>，包括感知、推理、学习、理解等。人脸识别属于计算机视觉领域，是AI的重要分支，广泛应用于安防、支付、考勤等场景。<br><br><strong>💡 解题思路：</strong>\"识别\"是AI的关键词。看到\"人脸识别\"\"语音识别\"\"图像识别\"\"智能机器人\"等，直接选人工智能。这些都需要计算机模拟人类的感知和认知能力。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">人工智能模拟人，识别推理和学习。人脸语音和图像，ChatGPT是代表。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "语音助手（如Siri、小爱同学）属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>人工智能</strong>。语音助手利用计算机<strong>模拟人类的语言理解和表达能力</strong>，是人工智能领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>语音助手涉及AI的多个子领域：<strong>语音识别</strong>（将语音转为文字）、<strong>自然语言处理</strong>（理解语义）、<strong>语音合成</strong>（将文字转为语音）。Siri、小爱同学、天猫精灵等都是典型代表。<br><br><strong>💡 解题思路：</strong>\"语音助手\"需要\"理解\"人类语言并\"智能\"回复，这需要模拟人类智能。数据处理无法解释其智能交互能力，因此属于人工智能。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Siri小爱是AI，语音识别加理解。自然语言来处理，智能对话像人类。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "网上购物属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "网络通信" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>网络通信</strong>。网上购物是利用<strong>计算机网络</strong>实现商品交易和信息交流，属于网络通信领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>网络通信的核心是<span style=\"color:#4a90e2;\">信息的传输、交换和共享</span>。网上购物涉及买家与卖家之间的信息传递、支付信息的网络传输、订单数据的网络交换等，底层都依赖计算机网络通信技术。<br><br><strong>💡 解题思路：</strong>\"网上\"是关键词，强调通过网络进行活动。虽然购物过程也涉及数据处理，但其核心特征是<span style=\"color:#f5222d;\">\"通过网络进行信息传输和交换\"</span>，因此归类为网络通信。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">网上购物是网络，信息传输靠通信。聊天邮件视频通话，移动支付网上行。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "视频通话属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "网络通信" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "多媒体应用" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>网络通信</strong>。视频通话是利用计算机网络实现<strong>实时的音视频通信</strong>，核心在于信息的网络传输。<br><br><strong>📚 知识点讲解：</strong>视频通话的底层技术是<strong>网络通信协议</strong>（如WebRTC、VoIP）。虽然也涉及多媒体的音视频处理，但其本质是\"通信\"——将音视频数据通过网络实时传输到对方。<br><br><strong>💡 解题思路：</strong>\"通话\"强调的是<span style=\"color:#f5222d;\">\"通信\"</span>而非\"娱乐\"。视频通话的核心价值在于人与人之间的远程通信，因此属于网络通信。如果只看\"视频\"可能误选多媒体应用，但\"通话\"才是关键词。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">通话聊天是网络，信息传输是核心。视频音频网上传，通信领域不含糊。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "看电影、听音乐属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "网络通信" }, { "label": "D", "text": "多媒体应用" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>多媒体应用</strong>。看电影、听音乐是计算机对<strong>视频、音频等多媒体信息</strong>的处理和播放，属于多媒体应用领域。<br><br><strong>📚 知识点讲解：</strong>多媒体应用的核心是<span style=\"color:#4a90e2;\">综合处理文字、图形、图像、声音、视频等多种媒体信息</span>，并实现交互处理。看电影涉及视频解码播放，听音乐涉及音频解码播放，都是典型的多媒体应用。<br><br><strong>💡 解题思路：</strong>\"看电影\"\"听音乐\"属于<span style=\"color:#f5222d;\">\"娱乐消费\"</span>场景，核心是媒体信息的处理和呈现。虽然可能需要网络传输（在线观看），但本质是多媒体内容的播放。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">多媒体来多娱乐，电影音乐和游戏。PPT和数字电视，视频编辑都归它。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "人口普查数据统计属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "过程控制" }, { "label": "D", "text": "人工智能" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>数据处理</strong>。人口普查数据统计是对大量人口数据进行<strong>收集、整理、分类和分析</strong>，属于数据处理领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>数据处理的核心操作包括<span style=\"color:#4a90e2;\">收集、存储、整理、分类、统计、分析</span>。人口普查正是对这些操作的完美体现——收集全国人口信息，整理分类后统计分析。<br><br><strong>💡 解题思路：</strong>\"数据统计\"直接指向数据处理。虽然人口普查数据量大，但核心是<span style=\"color:#f5222d;\">\"管理和分析数据\"</span>而非\"复杂数学计算\"，所以不是科学计算。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">普查统计是数据，收集整理和分析。财务库存成绩单，数据管理归此类。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "汽车自动驾驶属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算和过程控制" }, { "label": "B", "text": "人工智能和过程控制" },
+            { "label": "C", "text": "数据处理和人工智能" }, { "label": "D", "text": "网络通信和多媒体应用" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>人工智能和过程控制</strong>。汽车自动驾驶既需要<strong>人工智能</strong>技术识别道路、车辆和行人，又需要<strong>过程控制</strong>技术实时控制汽车的行驶。<br><br><strong>📚 知识点讲解：</strong>这是一个<span style=\"color:#4a90e2;\">多领域结合的典型案例</span>。AI负责\"感知和决策\"（识别路况、规划路径），过程控制负责\"执行\"（控制方向盘、油门、刹车）。现代复杂应用往往涉及多个领域的交叉融合。<br><br><strong>💡 解题思路：</strong>\"自动驾驶\"包含两个核心能力：<span style=\"color:#f5222d;\">\"智能识别\"</span>（AI）和<span style=\"color:#f5222d;\">\"自动控制\"</span>（过程控制）。A选项中的科学计算不是核心，C缺少过程控制，D完全不相关。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">自动驾驶双结合，AI识别过程控。智能眼睛看路况，自动手脚控方向。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列不属于计算机辅助系统的是（  ）",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CPU" },
+            { "label": "D", "text": "CAI" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CPU</strong>。CPU是<strong>中央处理器</strong>，属于计算机<strong>硬件</strong>，不是计算机辅助系统。<br><br><strong>📚 知识点讲解：</strong>计算机辅助系统特指以<span style=\"color:#4a90e2;\">\"CA\"（Computer Aided）开头</span>的系统，用于辅助人类完成设计、制造、教学、测试等工作。CPU（Central Processing Unit）是计算机的核心硬件部件，与\"辅助系统\"概念完全不同。<br><br><strong>💡 解题思路：</strong>注意题干问的是<span style=\"color:#f5222d;\">\"不属于\"</span>。CAD/CAM/CAI都是CA系列（计算机辅助XX），只有CPU是硬件名称。看到\"CPU\"直接判定不属于辅助系统。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">CA系列是辅助，CPU是硬件。CAD/CAM/CAI/CAT，四大辅助要记清。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于人工智能应用的是（  ）",
+            "options": [{ "label": "A", "text": "制作PPT" }, { "label": "B", "text": "人脸识别" }, { "label": "C",
+                "text": "网上购物" }, { "label": "D", "text": "打印文件" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>人脸识别</strong>。人脸识别是人工智能的典型应用，其他选项分别属于多媒体应用、网络通信和输出设备的使用。<br><br><strong>📚 知识点讲解：</strong>AI的核心判断标准是<span style=\"color:#4a90e2;\">是否模拟了人类智能</span>。人脸识别模拟了人类的视觉识别能力，需要深度学习等AI技术。制作PPT是多媒体应用，网上购物是网络通信，打印是输出操作。<br><br><strong>💡 解题思路：</strong>逐一分析：制作PPT→多媒体应用；人脸识别→AI（模拟视觉）；网上购物→网络通信；打印文件→常规操作。只有人脸识别需要\"智能\"。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">识别判断是AI，人脸语音和图像。智能机器ChatGPT，模拟人类最在行。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于过程控制应用的是（  ）",
+            "options": [{ "label": "A", "text": "天气预报" }, { "label": "B", "text": "学生成绩管理" }, { "label": "C",
+                "text": "电梯运行控制" }, { "label": "D", "text": "在线学习" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>电梯运行控制</strong>。电梯运行控制是利用计算机<strong>实时控制</strong>电梯的运行，属于过程控制领域。<br><br><strong>📚 知识点讲解：</strong>过程控制的判断标准：<span style=\"color:#4a90e2;\">实时采集数据+自动调节控制+无需人工干预</span>。电梯控制系统实时检测楼层呼叫、门状态、载重等数据，自动控制电梯的启动、停止和开关门。<br><br><strong>💡 解题思路：</strong>逐一分析：天气预报→科学计算（复杂计算）；成绩管理→数据处理（数据管理）；电梯控制→过程控制（实时自动控制）；在线学习→CAI（教学）。\"控制\"+自动化=过程控制。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">电梯空调是过程，实时自动不靠人。采集数据自动调，控制设备稳稳跑。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于数据处理应用的是（  ）",
+            "options": [{ "label": "A", "text": "卫星轨道计算" }, { "label": "B", "text": "企业财务报表" }, { "label": "C",
+                "text": "数控机床" }, { "label": "D", "text": "语音识别" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>企业财务报表</strong>。企业财务报表是对企业财务数据进行<strong>整理、统计和分析</strong>，属于数据处理领域。<br><br><strong>📚 知识点讲解：</strong>数据处理的核心是<span style=\"color:#4a90e2;\">对业务数据进行管理</span>。财务报表涉及数据的收集（各业务数据）、整理（分类汇总）、计算（求和统计）和呈现（报表展示），是数据处理的典型场景。<br><br><strong>💡 解题思路：</strong>逐一分析：卫星轨道→科学计算（复杂数学）；财务报表→数据处理（数据管理统计）；数控机床→CAM（制造加工）；语音识别→人工智能（模拟人类）。\"报表\"\"统计\"=数据处理。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">财务报表是数据，整理统计和分析。银行超市成绩单，数据管理归此类。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于科学计算应用的是（  ）",
+            "options": [{ "label": "A", "text": "银行存款取款" }, { "label": "B", "text": "超市商品库存" }, { "label": "C",
+                "text": "核武器模拟" }, { "label": "D", "text": "网上聊天" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>核武器模拟</strong>。核武器模拟需要进行<strong>大量复杂的数学计算</strong>，属于科学计算领域。<br><br><strong>📚 知识点讲解：</strong>科学计算的特征是<span style=\"color:#4a90e2;\">涉及复杂数学模型和大量数值运算</span>。核武器模拟需要求解核物理方程、流体力学方程等，计算量极其庞大，是超级计算机的典型应用场景。<br><br><strong>💡 解题思路：</strong>逐一分析：银行存款→数据处理；超市库存→数据处理；核武器模拟→科学计算（复杂计算模拟）；网上聊天→网络通信。\"模拟\"+\"复杂计算\"=科学计算。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">核武模拟科学算，复杂方程超级算。天气桥梁基因测，数值计算是核心。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "计算机辅助制造的英文缩写是（  ）",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAM</strong>。计算机辅助制造的英文是<span style=\"color:#4a90e2;\">Computer Aided Manufacturing</span>，缩写为CAM。<br><br><strong>📚 知识点讲解：</strong>四个缩写的英文全称：<strong>CAD=Computer Aided Design（设计）、CAM=Computer Aided Manufacturing（制造）、CAI=Computer Aided Instruction（教学）、CAT=Computer Aided Testing（测试）</strong>。<br><br><strong>💡 解题思路：</strong>M=Manufacturing（制造），所以CAM=计算机辅助制造。记英文全称是区分四个缩写的最可靠方法。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">M是制造Manufacturing，CAM制造记心间。D设计I教学T测试，英文全称不混淆。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "计算机辅助教学的英文缩写是（  ）",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAI</strong>。计算机辅助教学的英文是<span style=\"color:#4a90e2;\">Computer Aided Instruction</span>，缩写为CAI。<br><br><strong>📚 知识点讲解：</strong>I=Instruction（教学/指导），所以CAI=计算机辅助教学。注意区分：<strong>CAI是教学（学习过程），CAT是测试（评估过程）</strong>，两者容易混淆。<br><br><strong>💡 解题思路：</strong>I=Instruction=教学指导。看到\"教学\"选CAI，看到\"测试\"选CAT。记住：<span style=\"color:#f5222d;\">老师教学用I（Instruction），考试检测用T（Testing）</span>。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">I是教学Instruction，CAI教学记心间。在线学习网络课，计算机来当老师。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于计算机应用领域的说法，错误的是（  ）",
+            "options": [{ "label": "A", "text": "科学计算是计算机最早的应用领域" }, { "label": "B",
+                "text": "数据处理是计算机应用最广泛的领域" }, { "label": "C", "text": "过程控制不需要人工干预" }, { "label": "D",
+                "text": "人工智能已经完全取代了人类" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>D选项</strong>。人工智能目前只能<strong>模拟人类的部分智能活动</strong>，还不能完全取代人类。该说法过于夸大。<br><br><strong>📚 知识点讲解：</strong>当前AI的能力边界：<strong>可以模拟感知、推理、学习等部分智能活动</strong>，但无法模拟人类的情感、意识、创造力等高级智能。AI是\"辅助工具\"而非\"替代品\"。A、B、C三个选项都是正确的知识点。<br><br><strong>💡 解题思路：</strong>题干问<span style=\"color:#f5222d;\">\"错误的是\"</span>。A是正确的高频考点（最早=科学计算），B也是正确的（最广=数据处理），C正确（过程控制自动进行），D明显夸大其词——AI远未达到完全取代人类的水平。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">AI模拟部分人，完全取代是夸大。最早科学最广数据，过程控制自动跑。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "3D打印技术属于（  ）的应用",
+            "options": [{ "label": "A", "text": "CAD" }, { "label": "B", "text": "CAM" }, { "label": "C", "text": "CAI" },
+            { "label": "D", "text": "CAT" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>CAM（计算机辅助制造）</strong>。3D打印是利用计算机<strong>控制打印机逐层制造产品</strong>，属于计算机辅助制造领域。<br><br><strong>📚 知识点讲解：</strong>3D打印是<strong>增材制造</strong>技术的典型代表。计算机将三维模型切片后，控制打印机逐层堆积材料，最终制造出实体产品。整个过程是\"制造\"而非\"设计\"——设计用CAD，制造用CAM。<br><br><strong>💡 解题思路：</strong>\"打印\"产品的过程是<span style=\"color:#f5222d;\">\"制造\"</span>而非\"设计\"。虽然3D打印前需要CAD设计模型，但打印本身属于CAM。就像数控机床加工零件一样，3D打印也是CAM。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">3D打印是制造，CAM控制层层堆。数控机床和打印，制造加工都归CAM。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "数字电视属于计算机的（  ）应用领域",
+            "options": [{ "label": "A", "text": "科学计算" }, { "label": "B", "text": "数据处理" }, { "label": "C",
+                "text": "网络通信" }, { "label": "D", "text": "多媒体应用" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>多媒体应用</strong>。数字电视是对<strong>视频、音频等多媒体信息</strong>的处理和传输，属于多媒体应用领域。<br><br><strong>📚 知识点讲解：</strong>数字电视技术涉及<strong>视频编码解码、音频处理、图像显示</strong>等多种媒体技术的综合应用。其核心是对多媒体内容的处理和呈现，而非单纯的网络传输。<br><br><strong>💡 解题思路：</strong>\"电视\"的核心功能是<span style=\"color:#f5222d;\">播放视频和音频内容</span>，属于多媒体信息的处理与呈现。虽然信号传输可能用到网络，但本质是多媒体应用。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">数字电视多媒体，视频音频综合处理。电影音乐和游戏，娱乐消遣都归它。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "科学计算是计算机应用最广泛的领域。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。数据处理是计算机应用<strong>最广泛</strong>的领域，科学计算是计算机<strong>最早</strong>的应用领域。这是最容易混淆的两个知识点。<br><br><strong>📚 知识点讲解：</strong>两个关键结论必须分清：<span style=\"color:#4a90e2;\">①科学计算=最早+最基本；②数据处理=最广泛（约占80%以上）</span>。科学计算解决复杂数学问题，数据处理管理海量业务数据。<br><br><strong>💡 解题思路：</strong>看到\"最广泛\"要想到数据处理，看到\"最早\"要想到科学计算。本题把\"最广泛\"错误地安在了科学计算头上，因此判断为错误。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">最早科学算，最广数据处。千万不要搞混了，考试常考这个点！</span>"
+        }, {
+            "type": "判断题",
+            "stem": "银行处理存款取款业务属于科学计算领域。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。银行处理存款取款业务是对数据的<strong>处理和管理</strong>，属于<strong>数据处理</strong>领域，而非科学计算。<br><br><strong>📚 知识点讲解：</strong>科学计算与数据处理的关键区别：<span style=\"color:#4a90e2;\">科学计算=复杂数学运算（如解方程、模拟计算）；数据处理=数据的增删改查（如记账、查询、统计）</span>。银行业务是典型的CRUD操作。<br><br><strong>💡 解题思路：</strong>银行存款取款不涉及复杂数学计算（不需要解微分方程），只是对账户余额数据的修改和记录。因此不是科学计算而是数据处理。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">银行存取是数据，不是科学计算题。复杂数学才科学，增删改查是数据。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "CAD是计算机辅助制造的缩写。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。CAD是计算机辅助<strong>设计</strong>的缩写（Design），计算机辅助制造的缩写是<strong>CAM</strong>（Manufacturing）。<br><br><strong>📚 知识点讲解：</strong>四个缩写必须准确记忆：<span style=\"color:#4a90e2;\">CAD=设计（Design）、CAM=制造（Manufacturing）、CAI=教学（Instruction）、CAT=测试（Testing）</span>。D≠制造，M才=制造。<br><br><strong>💡 解题思路：</strong>CAD中的D是Design（设计），不是Manufacturing（制造）。本题张冠李戴，把CAD说成制造是错误的。正确配对：CAD-设计，CAM-制造。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">CAD是设计（D=Design），CAM是制造（M=Manufacturing）。CAI教学习，CAT做测试。四个缩写要记牢！</span>"
+        }, {
+            "type": "判断题",
+            "stem": "人脸识别属于人工智能领域。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。人脸识别是利用计算机<strong>模拟人类的视觉识别能力</strong>，是人工智能领域的典型应用。<br><br><strong>📚 知识点讲解：</strong>人脸识别属于AI的<strong>计算机视觉</strong>分支，使用深度学习等技术来检测和识别人脸特征。典型AI应用包括：<span style=\"color:#4a90e2;\">语音识别、图像识别、人脸识别、智能机器人、ChatGPT等</span>。<br><br><strong>💡 解题思路：</strong>\"识别\"需要\"智能\"——计算机需要像人一样\"看\"和\"辨认\"。这需要模拟人类的视觉感知能力，属于人工智能范畴。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">人脸识别是AI，模拟人类视觉能力。语音图像智能机，人工智能最前沿。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "工厂的自动化生产线属于过程控制领域。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。过程控制是指利用计算机<strong>实时控制对象</strong>的运行，自动化生产线是过程控制的典型应用。<br><br><strong>📚 知识点讲解：</strong>过程控制的三大特征：<span style=\"color:#4a90e2;\">①实时采集检测数据；②按最优值自动调节；③无需人工干预</span>。自动化生产线完全符合这三个特征。<br><br><strong>💡 解题思路：</strong>\"自动化\"+\"生产线\"=\">过程控制。计算机实时监控生产数据并自动调节设备运行，这正是过程控制的定义。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">自动生产是过程，实时控制不用人。三大特征要记牢：实时+自动+无干预。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "在线学习属于计算机辅助教学（CAI）的应用。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。计算机辅助教学（CAI）是利用计算机帮助人们<strong>学习</strong>，在线学习平台是CAI的典型应用。<br><br><strong>📚 知识点讲解：</strong>CAI的应用范围包括：<span style=\"color:#4a90e2;\">教学课件、模拟考试系统、虚拟实验室、在线学习平台</span>等。核心是\"辅助教学\"——用计算机技术辅助教与学的过程。<br><br><strong>💡 解题思路：</strong>\"在线学习\"=通过计算机进行学习活动=CAI。I=Instruction（教学），学习是教学的一环，因此在线学习属于CAI。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">在线学习是CAI，教学辅助好帮手。课件网课模拟考，I是教学记心间。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "网上购物属于数据处理领域。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。网上购物是利用<strong>计算机网络</strong>实现商品交易，属于<strong>网络通信</strong>领域，而非数据处理。<br><br><strong>📚 知识点讲解：</strong>网络通信与数据处理的关键区别：<span style=\"color:#4a90e2;\">网络通信核心=信息的传输和共享（跨地域）；数据处理核心=数据的管理和分析（不强调网络传输）</span>。网上购物的核心价值在于通过网络连接买卖双方。<br><br><strong>💡 解题思路：</strong>\"网上\"强调通过网络进行。虽然购物过程涉及订单数据处理，但其本质特征是<span style=\"color:#f5222d;\">\"网络传输和通信\"</span>，因此属于网络通信。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">网上购物是网络，信息传输靠通信。数据处理管数据，网络通信传信息。不要混淆！</span>"
+        }, {
+            "type": "判断题",
+            "stem": "过程控制需要人工干预才能进行。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。过程控制是<strong>自动进行</strong>的，<strong>不需要人工干预</strong>。计算机能够根据实时采集的数据自动调节控制对象。<br><br><strong>📚 知识点讲解：</strong>过程控制的核心特征之一就是<span style=\"color:#4a90e2;\">\"无需人工干预\"</span>。系统通过传感器自动采集数据，按预设算法自动计算最优调节值，自动执行控制操作。人工干预反而违背了过程控制的自动化本质。<br><br><strong>💡 解题思路：</strong>题干说\"需要人工干预\"，这与过程控制的定义完全相反。过程控制追求的就是\"自动化\"，减少人工参与。因此判断为错误。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">过程控制自动化，不需人工来干预。实时采集自动调，24小时不间断。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "多媒体应用只能处理视频和音频信息。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。多媒体应用可以综合处理<strong>文字、图形、图像、声音、视频</strong>等多种媒体信息，不只是视频和音频。<br><br><strong>📚 知识点讲解：</strong>\"多媒体\"的<span style=\"color:#4a90e2;\">\"多\"</span>就是指多种媒体类型：文字、图形、静态图像、动态视频、音频、动画等。PPT就是一个典型的多媒体应用——它同时包含文字、图片、音频和视频。<br><br><strong>💡 解题思路：</strong>题干说\"只能处理视频和音频\"，范围太窄了。多媒体=多种媒体，至少包括文字、图形、图像等。\"只能\"这个绝对化表述是错误的。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">多媒体\"多\"种媒体，文字图形和图像。声音视频加动画，不只视频和音频。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "人工智能可以模拟人类的所有智能活动。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。目前的人工智能只能模拟人类的<strong>部分</strong>智能活动，如感知、推理、学习等，还不能模拟人类的情感、意识等高级智能活动。<br><br><strong>📚 知识点讲解：</strong>当前AI的能力边界：<span style=\"color:#4a90e2;\">强项=模式识别、数据分析、规则推理；弱项=情感理解、意识、创造力、通用智能</span>。AI是\"弱人工智能\"，远未达到\"强人工智能\"（能完全模拟人类）的水平。<br><br><strong>💡 解题思路：</strong>题干中\"所有\"一词过于绝对。AI目前只能模拟部分智能，情感、意识等高级智能还无法被模拟。绝对化表述通常是错误的。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">AI模拟部分人，不是所有都能行。感知推理和学习，情感意识还不行。</span>"
+        }];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'computer_app_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        // 错题回顾模式状态
+        let wrongReviewMode = false;
+        let wrongQuestionIndices = [];
+        let wrongReviewIndex = 0;
+        let completionData = null; // 保存完成界面的数据用于错题回看
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '计算机的应用领域 · 七大领域详解';
+            const content = `
+                <h3>1. 标准定义</h3>
+                <p>计算机的应用领域是指计算机技术在人类社会各个方面的具体应用范围。随着计算机技术的不断发展，计算机已经渗透到社会的各行各业，成为人们工作、学习和生活中不可或缺的工具。其主要应用领域包括：</p>
+                <h3>科学计算（数值计算）</h3>
+                <p>是指利用计算机来完成科学研究和工程技术中提出的数学问题的计算，是计算机<strong>最早</strong>也是<strong>最基本</strong>的应用领域。</p>
+                <h3>数据处理（信息处理）</h3>
+                <p>是指对各种数据进行收集、存储、整理、分类、统计、加工、利用和传播等一系列活动的总称，是目前计算机应用<strong>最广泛</strong>的领域。</p>
+                <h3>过程控制（实时控制）</h3>
+                <p>是指利用计算机实时采集检测数据，按最优值迅速地对控制对象进行自动调节或自动控制，<strong>无需人工干预</strong>。</p>
+                <h3>计算机辅助系统</h3>
+                <p>是指利用计算机帮助人们完成各种相关工作的系统，主要包括：</p>
+                <ul>
+                    <li><strong>CAD（Computer Aided Design）</strong>：计算机辅助设计</li>
+                    <li><strong>CAM（Computer Aided Manufacturing）</strong>：计算机辅助制造</li>
+                    <li><strong>CAI（Computer Aided Instruction）</strong>：计算机辅助教学</li>
+                    <li><strong>CAT（Computer Aided Testing）</strong>：计算机辅助测试</li>
+                </ul>
+                <h3>人工智能（AI，Artificial Intelligence）</h3>
+                <p>是指利用计算机模拟人类的智能活动，如感知、推理、学习、理解等，使计算机具有能够模拟人类思维和行为的能力。</p>
+                <h3>网络通信</h3>
+                <p>是指利用计算机技术和通信技术，实现信息的传输、交换、共享和处理，是现代信息社会的基础。</p>
+                <h3>多媒体应用</h3>
+                <p>是指利用计算机技术综合处理文字、图形、图像、声音、视频等多种媒体信息，使它们建立起逻辑联系，并能进行交互处理的技术。</p>
+                <h3>2. 通俗理解</h3>
+                <ul>
+                    <li><strong>科学计算</strong>：计算机当"超级计算器"，解决那些人算一辈子也算不完的复杂数学问题</li>
+                    <li><strong>数据处理</strong>：计算机当"超级秘书"，帮你整理、统计、分析各种杂乱无章的数据</li>
+                    <li><strong>过程控制</strong>：计算机当"自动管家"，24小时不间断地监控和控制机器设备的运行</li>
+                    <li><strong>计算机辅助系统</strong>：计算机当"得力助手"，帮你设计图纸、制造产品、学习知识、测试性能</li>
+                    <li><strong>人工智能</strong>：计算机当"智能机器人"，像人一样思考、学习、说话、识别图像</li>
+                    <li><strong>网络通信</strong>：计算机当"超级邮递员"，把信息瞬间传到世界上任何一个地方</li>
+                    <li><strong>多媒体应用</strong>：计算机当"超级娱乐中心"，让你看电影、听音乐、玩游戏、做动画</li>
+                </ul>
+                <h3>3. 生活/实操举例</h3>
+                <table class="knowledge-table">
+                    <tr><th>应用领域</th><th>具体例子</th></tr>
+                    <tr><td>科学计算</td><td>天气预报、卫星轨道计算、桥梁设计、核武器模拟、基因测序</td></tr>
+                    <tr><td>数据处理</td><td>银行存款取款、学生成绩管理、超市商品库存、企业财务报表、人口普查</td></tr>
+                    <tr><td>过程控制</td><td>工厂自动化生产线、汽车自动驾驶、空调温度控制、电梯运行控制、核电站控制</td></tr>
+                    <tr><td>CAD</td><td>建筑图纸设计、汽车外形设计、服装款式设计、机械零件设计</td></tr>
+                    <tr><td>CAM</td><td>数控机床加工零件、3D打印产品、机器人组装汽车</td></tr>
+                    <tr><td>CAI</td><td>在线学习平台、教学课件、模拟考试系统、虚拟实验室</td></tr>
+                    <tr><td>CAT</td><td>汽车碰撞测试、电子产品性能测试、软件自动化测试</td></tr>
+                    <tr><td>人工智能</td><td>语音识别（Siri、小爱同学）、图像识别（人脸识别、车牌识别）、智能机器人、ChatGPT、自动驾驶</td></tr>
+                    <tr><td>网络通信</td><td>上网聊天、发电子邮件、视频通话、网上购物、移动支付</td></tr>
+                    <tr><td>多媒体应用</td><td>看电影、听音乐、玩游戏、制作PPT、编辑视频、数字电视</td></tr>
+                </table>
+                <h3>4. 高频考点速记</h3>
+                <ul>
+                    <li><strong>最早应用</strong>：科学计算</li>
+                    <li><strong>最广泛应用</strong>：数据处理</li>
+                    <li><strong>CAD-设计、CAM-制造、CAI-教学、CAT-测试</strong></li>
+                    <li><strong>人工智能</strong>：模拟人类智能活动</li>
+                    <li><strong>过程控制</strong>：实时自动控制，无需人工干预</li>
+                    <li><strong>网络通信</strong>：信息传输与共享</li>
+                </ul>
+                <h3>5. 应试得分要点</h3>
+                <ul>
+                    <li>看到"最早、数学问题、复杂计算"→选<strong>科学计算</strong></li>
+                    <li>看到"最广泛、数据统计、信息处理、财务、库存"→选<strong>数据处理</strong></li>
+                    <li>看到"自动控制、实时、生产线、无人驾驶"→选<strong>过程控制</strong></li>
+                    <li>看到"设计图纸"→选<strong>CAD</strong>；"制造加工"→选<strong>CAM</strong>；"教学学习"→选<strong>CAI</strong>；"测试"→选<strong>CAT</strong></li>
+                    <li>看到"智能、识别、机器人、ChatGPT"→选<strong>人工智能</strong></li>
+                    <li>看到"上网、聊天、购物、支付"→选<strong>网络通信</strong></li>
+                </ul>
+                <h3>6. 记忆口诀</h3>
+                <p style="text-align:center;font-weight:700;color:#fa8c16;font-size:17px;">
+                    科数过辅人网多，七大领域要记牢<br>
+                    最早科学算，最广数据处<br>
+                    CAD是设计，CAM是制造<br>
+                    CAI教学习，CAT做测试<br>
+                    人工智能模拟人，网络通信传信息<br>
+                    多媒体来多娱乐，生活处处有计算机
+                </p>
+            `;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+            wrongReviewMode = false;
+            completionData = null;
+            updateBackBtnBehavior();
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            completionData = null;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            updateBackBtnBehavior();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveQuestionIndex() {
+            if (wrongReviewMode && wrongQuestionIndices.length > 0) {
+                return wrongQuestionIndices[wrongReviewIndex];
+            }
+            return currentIndex;
+        }
+
+        function getEffectiveAnswers() {
+            return answers;
+        }
+
+        function renderQuestion() {
+            const effectiveIndex = getEffectiveQuestionIndex();
+            const q = questions[effectiveIndex];
+            const contentArea = document.getElementById('quizContent');
+            const effAnswers = getEffectiveAnswers();
+            const userAnswer = effAnswers[effectiveIndex];
+
+            let html = '';
+            if (wrongReviewMode) {
+                html +=
+                    `<div style="background:#fff2f0;border:1px solid #f5222d;border-radius:8px;padding:12px 16px;margin-bottom:12px;text-align:center;color:#f5222d;font-weight:600;">🔴 错题回顾模式 · 第 <span id="wrongReviewPos">${wrongReviewIndex + 1}</span>/${wrongQuestionIndices.length} 题（原第 ${effectiveIndex + 1} 题）</div>`;
+            }
+
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswer === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (userAnswer !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (userAnswer !== null) {
+                const isCorrect = userAnswer === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            // 判断是否全部完成
+            const allAnswered = effAnswers.every(a => a !== null);
+            const isLastInMode = wrongReviewMode ?
+                (wrongReviewIndex === wrongQuestionIndices.length - 1) :
+                (effectiveIndex === questions.length - 1);
+
+            if (isLastInMode && allAnswered && !wrongReviewMode) {
+                const correctCount = effAnswers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                saveToHistory(correctCount, accuracy);
+                completionData = { correctCount, accuracy };
+                const wrongCount = questions.length - correctCount;
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            ${wrongCount > 0 ? `<button class="action-btn wrong-review-btn" onclick="startWrongReview()">回看错题 (${wrongCount}题)</button>` : ''}
+                            ${wrongCount > 0 ? `<button class="action-btn export-csv-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题CSV</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            if (wrongReviewMode && isLastInMode && allAnswered) {
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🔍</div>
+                        <h1 class="completion-title">错题回顾完成！</h1>
+                        <p style="color: var(--text-secondary);">已回顾全部 ${wrongQuestionIndices.length} 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitWrongReview()">返回完成界面</button>
+                            <button class="action-btn export-csv-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题CSV</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effectiveIndex = getEffectiveQuestionIndex();
+            if (answers[effectiveIndex] !== null) return;
+            answers[effectiveIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[effectiveIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (wrongReviewMode) {
+                if (wrongReviewIndex > 0) { wrongReviewIndex--;
+                    renderQuestion();
+                    updateNavButtons(); }
+            } else {
+                if (currentIndex > 0) { currentIndex--;
+                    renderQuestion();
+                    updateNavButtons(); }
+            }
+        }
+
+        function nextQuestion() {
+            if (wrongReviewMode) {
+                if (wrongReviewIndex < wrongQuestionIndices.length - 1) { wrongReviewIndex++;
+                    renderQuestion();
+                    updateNavButtons(); }
+            } else {
+                if (currentIndex < questions.length - 1) { currentIndex++;
+                    renderQuestion();
+                    updateNavButtons(); }
+            }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            if (wrongReviewMode) {
+                document.getElementById('currentNum').textContent = wrongReviewIndex + 1;
+                document.getElementById('answeredCount').textContent = wrongQuestionIndices.length;
+                document.getElementById('totalCount').textContent = wrongQuestionIndices.length;
+                document.getElementById('progressFill').style.width = `${((wrongReviewIndex + 1) / wrongQuestionIndices.length) * 100}%`;
+            } else {
+                document.getElementById('currentNum').textContent = currentIndex + 1;
+                const answeredCount = answers.filter(a => a !== null).length;
+                document.getElementById('answeredCount').textContent = answeredCount;
+                document.getElementById('totalCount').textContent = questions.length;
+                document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+            }
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (wrongReviewMode) {
+                const isLastWrong = wrongReviewIndex === wrongQuestionIndices.length - 1;
+                footerContent.innerHTML = `
+                    <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${wrongReviewIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                    <button class="nav-btn exit-review-btn" onclick="exitWrongReview()">退出回顾</button>
+                    <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+                `;
+            } else {
+                const isLast = currentIndex === questions.length - 1 && answers.every(a => a !== null);
+                footerContent.innerHTML = `
+                    <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                    <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+                `;
+            }
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex && !wrongReviewMode) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q
+                            .answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q
+                        .answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            completionData = null;
+            currentIndex = index;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            updateBackBtnBehavior();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`
+                    ; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(
+            saved) : []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                wrongReviewMode = false;
+                wrongQuestionIndices = [];
+                wrongReviewIndex = 0;
+                completionData = null;
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                updateBackBtnBehavior();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+            index < history.length) { history.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+            renderHistory();
+            showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+        localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                wrongReviewMode = false;
+                wrongQuestionIndices = [];
+                wrongReviewIndex = 0;
+                completionData = null;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion();
+                updateNavButtons();
+                updateBackBtnBehavior(); } }
+
+        function handleBack() {
+            if (wrongReviewMode) {
+                exitWrongReview();
+            } else if (currentPage === 'quiz') {
+                if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                    switchToKnowledgePage();
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function updateBackBtnBehavior() {
+            // back-btn的onclick已在HTML中设置为handleBack()，此处无需额外操作
+        }
+
+        function startWrongReview() {
+            wrongQuestionIndices = [];
+            answers.forEach((a, i) => {
+                if (a !== null && a !== questions[i].answer) {
+                    wrongQuestionIndices.push(i);
+                }
+            });
+            if (wrongQuestionIndices.length === 0) {
+                showToast('没有错题，太棒了！');
+                return;
+            }
+            wrongReviewMode = true;
+            wrongReviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            updateBackBtnBehavior();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongQuestionIndices.length} 道错题`);
+        }
+
+        function exitWrongReview() {
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            currentIndex = questions.length - 1;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            updateBackBtnBehavior();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function exportWrongCSV() {
+            const wrongData = [];
+            questions.forEach((q, i) => {
+                if (answers[i] !== null && answers[i] !== q.answer) {
+                    const userOpt = q.options[answers[i]];
+                    const correctOpt = q.options[q.answer];
+                    const analysisPlain = q.analysis.replace(/<[^>]+>/g, '').replace(/"/g,
+                        '\u201C').replace(/"/g, '\u201D').replace(/\n/g, ' ').replace(/\s+/g,
+                        ' ').trim();
+                    wrongData.push({
+                        number: i + 1,
+                        type: q.type,
+                        stem: q.stem.replace(/"/g, '\u201C').replace(/"/g, '\u201D'),
+                        userChoice: userOpt ? (userOpt.label + '. ' + userOpt.text) : '',
+                        correctAnswer: correctOpt ? (correctOpt.label + '. ' + correctOpt.text) :
+                            '',
+                        analysis: analysisPlain
+                    });
+                }
+            });
+            if (wrongData.length === 0) {
+                showToast('没有错题可导出！');
+                return;
+            }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题号,类型,题干,你的选择,正确答案,解析\n';
+            wrongData.forEach(row => {
+                const escapedStem = '"' + (row.stem || '').replace(/"/g, '""') + '"';
+                const escapedUser = '"' + (row.userChoice || '').replace(/"/g, '""') + '"';
+                const escapedCorrect = '"' + (row.correctAnswer || '').replace(/"/g, '""') + '"';
+                const escapedAnalysis = '"' + (row.analysis || '').replace(/"/g, '""') + '"';
+                csvContent +=
+                    `${row.number},${row.type},${escapedStem},${escapedUser},${escapedCorrect},${escapedAnalysis}\n`;
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '错题导出_' + new Date().toISOString().slice(0, 10) + '.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('错题CSV已导出！');
+        }
+
+        function showHome() { handleBack(); }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

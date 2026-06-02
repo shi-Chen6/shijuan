@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>计算机定义与发展刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">计算机定义与发展</div>
+                        <div class="progress-text">信息技术 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "世界上第一台电子数字计算机诞生于（  ）",
+                options: [
+                    { label: "A", text: "1945年" },
+                    { label: "B", text: "1946年" },
+                    { label: "C", text: "1947年" },
+                    { label: "D", text: "1948年" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>世界上第一台电子数字计算机ENIAC于<span style="color:#f5222d;font-weight:700;">1946年</span>2月14日在美国宾夕法尼亚大学诞生。</p>
+                <p><strong>📚 知识点讲解：</strong>ENIAC的全称是Electronic Numerical Integrator And Computer，是计算机发展史上的里程碑，使用了约18000个电子管。</p>
+                <p><strong>💡 解题思路：</strong>记住关键年份“1946”，排除其他选项。口诀：一九四六美宾大，埃尼阿克第一家。</p>
+                <p><strong>🧠 记忆口诀：</strong>一九四六美宾大，埃尼阿克第一家。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "世界上第一台电子数字计算机的名称是（  ）",
+                options: [
+                    { label: "A", text: "ENIAC" },
+                    { label: "B", text: "EDVAC" },
+                    { label: "C", text: "EDSAC" },
+                    { label: "D", text: "UNIVAC" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>世界上第一台电子数字计算机的名称是<span style="color:#f5222d;font-weight:700;">ENIAC</span>（埃尼阿克）。</p>
+                <p><strong>📚 知识点讲解：</strong>ENIAC代表“电子数字积分计算机”，其他选项EDVAC、EDSAC等都是后续机型。</p>
+                <p><strong>💡 解题思路：</strong>直接记忆ENIAC为第一台，常考名称。</p>
+                <p><strong>🧠 记忆口诀：</strong>ENIAC是老大，其他都是后来者。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "世界上第一台电子数字计算机诞生在（  ）",
+                options: [
+                    { label: "A", text: "英国" },
+                    { label: "B", text: "美国" },
+                    { label: "C", text: "德国" },
+                    { label: "D", text: "法国" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>ENIAC诞生于<span style="color:#f5222d;font-weight:700;">美国</span>宾夕法尼亚大学。</p>
+                <p><strong>📚 知识点讲解：</strong>计算机的诞生地是美国，这是基本常识。</p>
+                <p><strong>💡 解题思路：</strong>记住“美宾大”，直接选美国。</p>
+                <p><strong>🧠 记忆口诀：</strong>第一台计算机，美国宾大造。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机的发展按照（  ）划分为四代",
+                options: [
+                    { label: "A", text: "体积大小" },
+                    { label: "B", text: "运算速度" },
+                    { label: "C", text: "核心电子元件" },
+                    { label: "D", text: "应用领域" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>计算机的发展是按照所使用的<span style="color:#f5222d;font-weight:700;">核心电子元件</span>来划分的，共经历了四代。</p>
+                <p><strong>📚 知识点讲解：</strong>电子管→晶体管→中小规模集成电路→大规模/超大规模集成电路，元件是划分的根本依据。</p>
+                <p><strong>💡 解题思路：</strong>排除体积、速度、领域，这些是结果而非划分标准。</p>
+                <p><strong>🧠 记忆口诀：</strong>元件代代换，计算机步步高。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "第一代计算机使用的核心电子元件是（  ）",
+                options: [
+                    { label: "A", text: "电子管" },
+                    { label: "B", text: "晶体管" },
+                    { label: "C", text: "集成电路" },
+                    { label: "D", text: "超大规模集成电路" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>第一代计算机（1946-1958年）使用的核心元件是<span style="color:#f5222d;font-weight:700;">电子管</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>电子管计算机体积庞大、耗电多、可靠性差，ENIAC就是典型。</p>
+                <p><strong>💡 解题思路：</strong>按顺序记忆：电→晶→集→超，第一代是“电”。</p>
+                <p><strong>🧠 记忆口诀：</strong>电晶集超四代变，电子管打头阵。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "第二代计算机使用的核心电子元件是（  ）",
+                options: [
+                    { label: "A", text: "电子管" },
+                    { label: "B", text: "晶体管" },
+                    { label: "C", text: "集成电路" },
+                    { label: "D", text: "超大规模集成电路" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>第二代计算机（1959-1964年）使用的核心元件是<span style="color:#f5222d;font-weight:700;">晶体管</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>晶体管取代电子管，使计算机体积缩小、功耗降低、可靠性提高。</p>
+                <p><strong>💡 解题思路：</strong>第二代对应“晶”，按顺序记忆。</p>
+                <p><strong>🧠 记忆口诀：</strong>电子管退场，晶体管上场。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "第三代计算机使用的核心电子元件是（  ）",
+                options: [
+                    { label: "A", text: "电子管" },
+                    { label: "B", text: "晶体管" },
+                    { label: "C", text: "中小规模集成电路" },
+                    { label: "D", text: "超大规模集成电路" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>第三代计算机（1965-1970年）使用的核心元件是<span style="color:#f5222d;font-weight:700;">中小规模集成电路</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>集成电路将多个晶体管集成在一块芯片上，进一步减小体积，提高性能。</p>
+                <p><strong>💡 解题思路：</strong>第三代是“集”，注意是中小规模。</p>
+                <p><strong>🧠 记忆口诀：</strong>集成一小步，计算机一大步。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "第四代计算机使用的核心电子元件是（  ）",
+                options: [
+                    { label: "A", text: "电子管" },
+                    { label: "B", text: "晶体管" },
+                    { label: "C", text: "集成电路" },
+                    { label: "D", text: "大规模/超大规模集成电路" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>第四代计算机（1971年至今）使用<span style="color:#f5222d;font-weight:700;">大规模和超大规模集成电路</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>这种元件使得个人计算机（PC）普及成为可能，我们今天的电脑、手机都属于这一代。</p>
+                <p><strong>💡 解题思路：</strong>第四代是“超”，当前时代。</p>
+                <p><strong>🧠 记忆口诀：</strong>超大规模，微机遍地开花。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "我们现在使用的计算机属于（  ）",
+                options: [
+                    { label: "A", text: "第一代计算机" },
+                    { label: "B", text: "第二代计算机" },
+                    { label: "C", text: "第三代计算机" },
+                    { label: "D", text: "第四代计算机" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>我们现在使用的个人计算机属于<span style="color:#f5222d;font-weight:700;">第四代计算机</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>第四代始于1971年，延续至今，以微处理器为核心。</p>
+                <p><strong>💡 解题思路：</strong>排除前代，日常设备都是第四代产物。</p>
+                <p><strong>🧠 记忆口诀：</strong>今天用的电脑，都是第四代。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机区别于普通计算器的最主要特点是（  ）",
+                options: [
+                    { label: "A", text: "运算速度快" },
+                    { label: "B", text: "计算精度高" },
+                    { label: "C", text: "具有逻辑判断能力" },
+                    { label: "D", text: "存储容量大" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>计算机区别于普通计算器的最主要特点是<span style="color:#f5222d;font-weight:700;">具有逻辑判断能力</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>普通计算器只能进行数值计算，而计算机能进行“如果…就…”的逻辑判断，这是根本区别。</p>
+                <p><strong>💡 解题思路：</strong>速度和精度计算器也有，但逻辑判断是计算机独有的智能特征。</p>
+                <p><strong>🧠 记忆口诀：</strong>计算器只会算，计算机会判断。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列不属于计算机特点的是（  ）",
+                options: [
+                    { label: "A", text: "运算速度快" },
+                    { label: "B", text: "计算精度高" },
+                    { label: "C", text: "具有逻辑判断能力" },
+                    { label: "D", text: "具有思维能力" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>计算机不具有<span style="color:#f5222d;font-weight:700;">思维能力</span>，它只能按程序执行指令。</p>
+                <p><strong>📚 知识点讲解：</strong>计算机的“逻辑判断”是执行预设规则，并非真正的思维。它是工具，没有意识。</p>
+                <p><strong>💡 解题思路：</strong>“思维能力”是人类独有的，计算机没有。</p>
+                <p><strong>🧠 记忆口诀：</strong>计算机有逻辑，但没思想。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机能够自动执行程序，主要是因为它具有（  ）的特点",
+                options: [
+                    { label: "A", text: "运算速度快" },
+                    { label: "B", text: "存储容量大" },
+                    { label: "C", text: "自动化程度高" },
+                    { label: "D", text: "通用性强" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>计算机能够自动执行程序，体现了<span style="color:#f5222d;font-weight:700;">自动化程度高</span>的特点。</p>
+                <p><strong>📚 知识点讲解：</strong>一旦程序启动，计算机可以自动运行，无需人工干预，这是其重要特征。</p>
+                <p><strong>💡 解题思路：</strong>题干“自动执行”直接对应“自动化”。</p>
+                <p><strong>🧠 记忆口诀：</strong>自动化让计算机不知疲倦。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机能够应用于各个领域，这体现了它的（  ）特点",
+                options: [
+                    { label: "A", text: "运算速度快" },
+                    { label: "B", text: "计算精度高" },
+                    { label: "C", text: "自动化程度高" },
+                    { label: "D", text: "通用性强" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>应用于各个领域体现了计算机<span style="color:#f5222d;font-weight:700;">通用性强</span>的特点。</p>
+                <p><strong>📚 知识点讲解：</strong>通用性指计算机能适应多种不同的任务，从办公到娱乐到科研。</p>
+                <p><strong>💡 解题思路：</strong>“各个领域”对应通用。</p>
+                <p><strong>🧠 记忆口诀：</strong>计算机是万能工具，通用性强。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机按（  ）可以分为巨型机、大型机、中型机、小型机和微型机",
+                options: [
+                    { label: "A", text: "规模和性能" },
+                    { label: "B", text: "用途" },
+                    { label: "C", text: "工作原理" },
+                    { label: "D", text: "数据处理方式" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>按<span style="color:#f5222d;font-weight:700;">规模和性能</span>分为巨、大、中、小、微五类。</p>
+                <p><strong>📚 知识点讲解：</strong>这是最常见的分类方式，规模越大性能越强。</p>
+                <p><strong>💡 解题思路：</strong>记住口诀“巨大中小微按规”，规模性能是关键。</p>
+                <p><strong>🧠 记忆口诀：</strong>巨大中小微，规模和性能来分类。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "我们日常使用的台式电脑和笔记本电脑属于（  ）",
+                options: [
+                    { label: "A", text: "巨型机" },
+                    { label: "B", text: "大型机" },
+                    { label: "C", text: "小型机" },
+                    { label: "D", text: "微型机" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>台式电脑和笔记本电脑都属于<span style="color:#f5222d;font-weight:700;">微型机</span>，也叫个人计算机（PC）。</p>
+                <p><strong>📚 知识点讲解：</strong>微型机是最普及的类型，包括台式机、笔记本、平板等。</p>
+                <p><strong>💡 解题思路：</strong>个人使用的小型设备都是微型机。</p>
+                <p><strong>🧠 记忆口诀：</strong>微机就是个人机，笔记本台式一家亲。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "微型机也称为（  ）",
+                options: [
+                    { label: "A", text: "个人计算机" },
+                    { label: "B", text: "服务器" },
+                    { label: "C", text: "工作站" },
+                    { label: "D", text: "超级计算机" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>微型机（Microcomputer）也称为<span style="color:#f5222d;font-weight:700;">个人计算机</span>（Personal Computer，简称PC）。</p>
+                <p><strong>📚 知识点讲解：</strong>PC是微型机的通俗叫法。</p>
+                <p><strong>💡 解题思路：</strong>微型机=个人计算机，一对一关系。</p>
+                <p><strong>🧠 记忆口诀：</strong>Micro就是PC，个人计算机。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "用来进行天气预报、核武器模拟等复杂计算的计算机是（  ）",
+                options: [
+                    { label: "A", text: "巨型机" },
+                    { label: "B", text: "大型机" },
+                    { label: "C", text: "小型机" },
+                    { label: "D", text: "微型机" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>巨型机用于超复杂科学计算，如<span style="color:#f5222d;font-weight:700;">天气预报、核模拟</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>巨型机（超级计算机）性能最强，处理国家级重大项目。</p>
+                <p><strong>💡 解题思路：</strong>需要超强算力的领域必用巨型机。</p>
+                <p><strong>🧠 记忆口诀：</strong>天气预报核模拟，超级电脑（巨型机）来处理。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "银行总行用来处理全国客户存款取款业务的计算机是（  ）",
+                options: [
+                    { label: "A", text: "巨型机" },
+                    { label: "B", text: "大型机" },
+                    { label: "C", text: "小型机" },
+                    { label: "D", text: "微型机" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>银行全国业务处理使用<span style="color:#f5222d;font-weight:700;">大型机</span>，要求高可靠性、大吞吐量。</p>
+                <p><strong>📚 知识点讲解：</strong>大型机用于大型企业核心业务，如银行、航空订座系统。</p>
+                <p><strong>💡 解题思路：</strong>全国性业务处理不是微型机能胜任的，而是大型机。</p>
+                <p><strong>🧠 记忆口诀：</strong>银行总行的管家，大型机来当家。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机按（  ）可以分为通用计算机和专用计算机",
+                options: [
+                    { label: "A", text: "规模和性能" },
+                    { label: "B", text: "用途" },
+                    { label: "C", text: "工作原理" },
+                    { label: "D", text: "数据处理方式" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>按<span style="color:#f5222d;font-weight:700;">用途</span>分为通用和专用计算机。</p>
+                <p><strong>📚 知识点讲解：</strong>通用机能做各种任务，专用机只针对特定任务。</p>
+                <p><strong>💡 解题思路：</strong>记住口诀“通用专用按用分”。</p>
+                <p><strong>🧠 记忆口诀：</strong>用途分两类，通用和专用。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于专用计算机的是（  ）",
+                options: [
+                    { label: "A", text: "台式电脑" },
+                    { label: "B", text: "笔记本电脑" },
+                    { label: "C", text: "ATM机" },
+                    { label: "D", text: "平板电脑" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">ATM机</span>是专门用来处理银行业务的，属于专用计算机。</p>
+                <p><strong>📚 知识点讲解：</strong>专用计算机功能单一但效率极高，ATM、自动售票机、行车电脑等都是例子。</p>
+                <p><strong>💡 解题思路：</strong>台式机、笔记本、平板都能装多种软件，是通用机。ATM只能取款转账，是专用机。</p>
+                <p><strong>🧠 记忆口诀：</strong>ATM专用，只干银行活。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于通用计算机的是（  ）",
+                options: [
+                    { label: "A", text: "自动售票机" },
+                    { label: "B", text: "行车电脑" },
+                    { label: "C", text: "游戏机" },
+                    { label: "D", text: "笔记本电脑" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">笔记本电脑</span>可以安装各种软件，完成多种任务，属于通用计算机。</p>
+                <p><strong>📚 知识点讲解：</strong>通用计算机功能多样，应用范围广。</p>
+                <p><strong>💡 解题思路：</strong>自动售票机、行车电脑、游戏机都只能做特定任务，是专用机。</p>
+                <p><strong>🧠 记忆口诀：</strong>笔记本啥都能干，通用计算机。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "关于专用计算机的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "功能强大，什么都能做" },
+                    { label: "B", text: "只能完成特定的任务" },
+                    { label: "C", text: "体积大，价格昂贵" },
+                    { label: "D", text: "应用范围广泛" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>专用计算机<span style="color:#f5222d;font-weight:700;">只能完成特定的任务</span>，功能单一。</p>
+                <p><strong>📚 知识点讲解：</strong>专用机针对特定需求设计，效率高，但用途窄。</p>
+                <p><strong>💡 解题思路：</strong>排除A、D，它们描述的是通用机；C不准确，很多专用机体积小。</p>
+                <p><strong>🧠 记忆口诀：</strong>专用机，专干一样活。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "关于通用计算机的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "可以应用于多个领域" },
+                    { label: "B", text: "功能多样" },
+                    { label: "C", text: "我们日常使用的电脑大多是通用计算机" },
+                    { label: "D", text: "只能完成特定的任务" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>“只能完成特定的任务”是专用计算机的特点，不是通用计算机的，所以D错误。</p>
+                <p><strong>📚 知识点讲解：</strong>通用计算机功能多样，应用广泛，如个人电脑。</p>
+                <p><strong>💡 解题思路：</strong>找出与通用计算机定义相反的选项。</p>
+                <p><strong>🧠 记忆口诀：</strong>通用机不“专一”，十八般武艺样样通。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "第一代计算机的主要应用领域是（  ）",
+                options: [
+                    { label: "A", text: "科学计算" },
+                    { label: "B", text: "数据处理" },
+                    { label: "C", text: "过程控制" },
+                    { label: "D", text: "人工智能" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>第一代计算机主要用于<span style="color:#f5222d;font-weight:700;">科学计算</span>，如军事、科研中的数值运算。</p>
+                <p><strong>📚 知识点讲解：</strong>当时的计算机昂贵且专用于高精尖计算。</p>
+                <p><strong>💡 解题思路：</strong>数据处理、过程控制、人工智能都是后来才发展的。</p>
+                <p><strong>🧠 记忆口诀：</strong>第一代算数，科学计算起步。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "随着计算机技术的发展，计算机的（  ）",
+                options: [
+                    { label: "A", text: "体积越来越大" },
+                    { label: "B", text: "价格越来越高" },
+                    { label: "C", text: "性能越来越强" },
+                    { label: "D", text: "操作越来越复杂" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>发展趋势是体积变小、价格降低、<span style="color:#f5222d;font-weight:700;">性能越来越强</span>、操作越来越简单。</p>
+                <p><strong>📚 知识点讲解：</strong>遵循摩尔定律，性能不断提升，其他方向与题干相反。</p>
+                <p><strong>💡 解题思路：</strong>A、B、D都与事实相反。</p>
+                <p><strong>🧠 记忆口诀：</strong>性能更强，体积更小，价格更低。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于ENIAC的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "诞生于1946年" },
+                    { label: "B", text: "诞生于美国" },
+                    { label: "C", text: "是世界上第一台电子数字计算机" },
+                    { label: "D", text: "使用晶体管作为核心元件" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong>ENIAC使用的是<span style="color:#f5222d;font-weight:700;">电子管</span>，不是晶体管，所以D错误。</p>
+                <p><strong>📚 知识点讲解：</strong>晶体管是第二代的核心元件。</p>
+                <p><strong>💡 解题思路：</strong>ENIAC是第一代，必然用电子管。</p>
+                <p><strong>🧠 记忆口诀：</strong>ENIAC电子管，晶体管是第二代。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列计算机类型中，性能最强的是（  ）",
+                options: [
+                    { label: "A", text: "巨型机" },
+                    { label: "B", text: "大型机" },
+                    { label: "C", text: "小型机" },
+                    { label: "D", text: "微型机" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">巨型机</span>性能最强，运算速度最快。</p>
+                <p><strong>📚 知识点讲解：</strong>按规模性能排序：巨>大>中>小>微。</p>
+                <p><strong>💡 解题思路：</strong>超级计算机就是巨型机，性能巅峰。</p>
+                <p><strong>🧠 记忆口诀：</strong>巨大中小微，性能依次降。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列计算机类型中，体积最小的是（  ）",
+                options: [
+                    { label: "A", text: "巨型机" },
+                    { label: "B", text: "大型机" },
+                    { label: "C", text: "小型机" },
+                    { label: "D", text: "微型机" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">微型机</span>体积最小，可随身携带。</p>
+                <p><strong>📚 知识点讲解：</strong>手机、笔记本都属于微型机，体积远小于其他类型。</p>
+                <p><strong>💡 解题思路：</strong>微型机就是个人设备，体积最小。</p>
+                <p><strong>🧠 记忆口诀：</strong>微机小巧便携，微型体积最小。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "“神威·太湖之光”属于（  ）",
+                options: [
+                    { label: "A", text: "巨型机" },
+                    { label: "B", text: "大型机" },
+                    { label: "C", text: "小型机" },
+                    { label: "D", text: "微型机" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>“神威·太湖之光”是我国自主研发的<span style="color:#f5222d;font-weight:700;">超级计算机</span>，属于巨型机。</p>
+                <p><strong>📚 知识点讲解：</strong>超级计算机都是巨型机，用于尖端科学计算。</p>
+                <p><strong>💡 解题思路：</strong>著名超级计算机必是巨型机。</p>
+                <p><strong>🧠 记忆口诀：</strong>神威太湖之光，巨型机中称王。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "汽车上的行车电脑属于（  ）",
+                options: [
+                    { label: "A", text: "通用计算机" },
+                    { label: "B", text: "专用计算机" },
+                    { label: "C", text: "巨型机" },
+                    { label: "D", text: "大型机" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>行车电脑是专门为汽车控制设计的，属于<span style="color:#f5222d;font-weight:700;">专用计算机</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>专用计算机嵌入在设备中，完成特定功能。</p>
+                <p><strong>💡 解题思路：</strong>不能用来办公娱乐，只能管汽车，自然是专用。</p>
+                <p><strong>🧠 记忆口诀：</strong>行车电脑专用，只为汽车服务。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "世界上第一台电子计算机诞生于1945年。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。ENIAC诞生于<span style="color:#f5222d;font-weight:700;">1946年</span>，不是1945年。</p>
+                <p><strong>📚 知识点讲解：</strong>关键年份1946，常考易错点。</p>
+                <p><strong>💡 解题思路：</strong>牢记“一九四六美宾大”。</p>
+                <p><strong>🧠 记忆口诀：</strong>一九四六美宾大，埃尼阿克第一家。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "第一代计算机使用的核心电子元件是晶体管。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。第一代用<span style="color:#f5222d;font-weight:700;">电子管</span>，第二代才是晶体管。</p>
+                <p><strong>📚 知识点讲解：</strong>元件顺序：电→晶→集→超。</p>
+                <p><strong>💡 解题思路：</strong>不要混淆各代元件。</p>
+                <p><strong>🧠 记忆口诀：</strong>电晶集超四代变，电子管是老大。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "我们现在使用的计算机属于第三代计算机。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。现在使用的是<span style="color:#f5222d;font-weight:700;">第四代</span>，以超大规模集成电路为核心。</p>
+                <p><strong>📚 知识点讲解：</strong>第四代始于1971年，延续至今。</p>
+                <p><strong>💡 解题思路：</strong>第三代已经过去，现在是第四代。</p>
+                <p><strong>🧠 记忆口诀：</strong>今日电脑第四代，超大规模集成来。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "计算机和普通计算器没有区别。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。计算机具有<span style="color:#f5222d;font-weight:700;">逻辑判断能力</span>，计算器没有。</p>
+                <p><strong>📚 知识点讲解：</strong>计算机能进行“如果…就…”的逻辑判断，这是本质区别。</p>
+                <p><strong>💡 解题思路：</strong>计算器只会算术，计算机会判断。</p>
+                <p><strong>🧠 记忆口诀：</strong>计算器只算数，计算机有大脑（逻辑）。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "计算机的自动化程度高，能够自动执行程序。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。计算机能够按照预先存储的程序自动执行，是重要特点。</p>
+                <p><strong>📚 知识点讲解：</strong>自动化是计算机区别于以往计算工具的关键。</p>
+                <p><strong>💡 解题思路：</strong>只要程序启动，计算机就能自动运行。</p>
+                <p><strong>🧠 记忆口诀：</strong>程序启动，自动运行，无需人工。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "计算机按用途可以分为巨型机、大型机、中型机、小型机和微型机。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。按<span style="color:#f5222d;font-weight:700;">规模和性能</span>才这样分，按用途分为通用和专用。</p>
+                <p><strong>📚 知识点讲解：</strong>两种分类方式不能混淆。</p>
+                <p><strong>💡 解题思路：</strong>看到“巨型机”等词，想到规模和性能；看到“通用”“专用”想到用途。</p>
+                <p><strong>🧠 记忆口诀：</strong>巨大中小微按规，通用专用按用分。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "我们日常使用的笔记本电脑属于微型机。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。笔记本电脑、台式机等都是<span style="color:#f5222d;font-weight:700;">微型机</span>，即个人计算机。</p>
+                <p><strong>📚 知识点讲解：</strong>微型机是最常见的计算机类型。</p>
+                <p><strong>💡 解题思路：</strong>个人使用的电脑都属于微型机。</p>
+                <p><strong>🧠 记忆口诀：</strong>笔记本、台式机，统统都是微型机。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "ATM机属于通用计算机。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。ATM机是专门处理银行业务的<span style="color:#f5222d;font-weight:700;">专用计算机</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>ATM机不能用来做其他事情，功能单一。</p>
+                <p><strong>💡 解题思路：</strong>专用计算机只完成特定任务。</p>
+                <p><strong>🧠 记忆口诀：</strong>ATM专用，银行专用机。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "专用计算机的功能单一，但在特定领域效率很高。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。专用计算机为特定任务优化，<span style="color:#f5222d;font-weight:700;">效率高、可靠性强</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>虽然功能单一，但在自己领域表现优秀。</p>
+                <p><strong>💡 解题思路：</strong>专用不代表差，而是专精。</p>
+                <p><strong>🧠 记忆口诀：</strong>专用机，专而精。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "计算机的发展趋势是体积越来越大，性能越来越强。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。发展趋势是体积<span style="color:#f5222d;font-weight:700;">越来越小</span>，性能越来越强。</p>
+                <p><strong>📚 知识点讲解：</strong>从ENIAC的庞然大物到现在的手机，体积显著缩小。</p>
+                <p><strong>💡 解题思路：</strong>日常经验也能判断，电脑越来越轻薄。</p>
+                <p><strong>🧠 记忆口诀：</strong>性能向上，体积向下。</p>`
+            }
+        ];
+
+        const APP_ID = 'computer_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let isReviewMode = false;
+        let wrongQuestionIndices = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '计算机定义、发展历程、特点与分类';
+            const content = `
+                <h3>📘 计算机的定义与发展</h3>
+                <p><strong>计算机（Computer）</strong>是一种能够按照预先存储的程序，自动、高速地进行数值计算和信息处理的现代化智能电子设备。</p>
+                <p>世界上第一台电子数字计算机<strong>ENIAC（埃尼阿克）</strong>于<strong>1946年2月14日</strong>在美国宾夕法尼亚大学诞生。</p>
+                <p><strong>四代计算机核心元件：</strong></p>
+                <ul>
+                    <li>第一代（1946-1958）：<strong>电子管</strong></li>
+                    <li>第二代（1959-1964）：<strong>晶体管</strong></li>
+                    <li>第三代（1965-1970）：<strong>中小规模集成电路</strong></li>
+                    <li>第四代（1971-今）：<strong>大规模/超大规模集成电路</strong></li>
+                </ul>
+                <h3>⚙️ 计算机的特点</h3>
+                <p>运算速度快、计算精度高、存储容量大、<strong>具有逻辑判断能力</strong>、自动化程度高、通用性强。</p>
+                <p><span style="color:#f5222d;">★ 区别于普通计算器的关键：具有逻辑判断能力。</span></p>
+                <h3>📊 计算机的分类</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>分类方式</th><th>类型</th><th>例子</th></tr></thead>
+                    <tbody>
+                        <tr><td>按规模和性能</td><td>巨型机、大型机、中型机、小型机、微型机</td><td>天河二号（巨）、银行大型机、个人电脑（微）</td></tr>
+                        <tr><td>按用途</td><td>通用计算机、专用计算机</td><td>笔记本电脑（通用）、ATM机（专用）</td></tr>
+                    </tbody>
+                </table>
+                <p><strong>微型机又称个人计算机（PC）。</strong></p>
+                <p><strong>记忆口诀：</strong>一九四六美宾大，埃尼阿克第一家；电晶集超四代变，元件更新性能佳；六大特点快准大判自通全；巨大中小微按规，通用专用按用分。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            isReviewMode = false;
+            wrongQuestionIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const contentArea = document.getElementById('quizContent');
+            if (isReviewMode && wrongQuestionIndices.length === 0) {
+                contentArea.innerHTML = `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">没有错题！</h1><p style="color: var(--text-secondary);">太厉害了，全部正确！</p><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button></div></div>`;
+                return;
+            }
+            const actualIndex = isReviewMode ? wrongQuestionIndices[currentIndex] : currentIndex;
+            const q = questions[actualIndex];
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[actualIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[actualIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+            if (answers[actualIndex] !== null) {
+                const isCorrect = answers[actualIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+            if (!isReviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                const wrongCount = questions.length - correctCount;
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            ${wrongCount > 0 ? '<button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()" style="background:#faad14;color:white;">回看错题 ('+wrongCount+')</button>' : ''}
+                            ${wrongCount > 0 ? '<button class="action-btn export-wrong-btn" onclick="exportWrongCSV()" style="background:#f5222d;color:white;">导出错题</button>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < (isReviewMode ? wrongQuestionIndices.length : questions.length) - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const total = isReviewMode ? wrongQuestionIndices.length : questions.length;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = isReviewMode ? wrongQuestionIndices.filter(i => answers[i] !== null).length : answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = `${(answeredCount / total) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const total = isReviewMode ? wrongQuestionIndices.length : questions.length;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === total - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); isReviewMode = false; wrongQuestionIndices = []; localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function reviewWrongQuestions() {
+            wrongQuestionIndices = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && answers[i] !== q.answer) wrongQuestionIndices.push(i); });
+            if (wrongQuestionIndices.length === 0) { showToast('没有错题，太棒了！'); return; }
+            isReviewMode = true;
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            showToast(`进入错题回顾，共${wrongQuestionIndices.length}题`);
+        }
+
+        function exportWrongCSV() {
+            const wrongItems = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && answers[i] !== q.answer) wrongItems.push({index:i+1, q}); });
+            if (wrongItems.length === 0) { showToast('没有错题可导出'); return; }
+            let csv = '\uFEFF题目编号,题型,题目,选项,正确答案,用户答案,解析\n';
+            wrongItems.forEach(item => {
+                const q = item.q;
+                const optionStr = q.options.map(o=>`${o.label}.${o.text}`).join('；');
+                const correctAns = q.options[q.answer].label + '.' + q.options[q.answer].text;
+                const userAns = q.options[answers[item.index-1]].label + '.' + q.options[answers[item.index-1]].text;
+                const analysisText = q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""');
+                csv += `"${item.index}","${q.type}","${q.stem}","${optionStr}","${correctAns}","${userAns}","${analysisText}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '错题记录.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('错题已导出');
+        }
+    </script>
+</body>
+</html>

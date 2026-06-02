@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>计算机软件系统刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6">
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">计算机软件系统</div>
+                        <div class="progress-text">信息技术基础 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "计算机软件系统的核心是（  ）",
+            "options": [{ "label": "A", "text": "操作系统" }, { "label": "B", "text": "语言处理程序" }, { "label": "C",
+                "text": "数据库管理系统" }, { "label": "D", "text": "应用软件" }
+            ],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>操作系统</strong>。操作系统是<span style=\"color:#f5222d;\">系统软件的核心</span>，也是整个计算机软件系统的核心，负责管理计算机的所有硬件和软件资源。<br><br><strong>📚 知识点讲解：</strong>操作系统是用户和计算机之间的接口，是计算机中最基本、最重要的系统软件。所有其他软件都必须在操作系统的支持下才能运行。<br><br><strong>💡 解题思路：</strong>题干问的是\u201C软件系统的核心\u201D，直接对应操作系统。B、C都是系统软件的子类，D是应用软件，都不具备\u201C核心\u201D地位。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">系统核心是操作，Windows安卓和苹果。管理所有软硬件，没有它电脑不能活。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "计算机软件系统分为（  ）两大类",
+            "options": [{ "label": "A", "text": "系统软件和应用软件" }, { "label": "B",
+                "text": "操作系统和语言处理程序" }, { "label": "C", "text": "办公软件和游戏软件" }, { "label": "D",
+                "text": "通用软件和专用软件" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>系统软件和应用软件</strong>。这是软件系统<span style=\"color:#f5222d;\">最基本</span>的分类方式，按照功能和用途划分。<br><br><strong>📚 知识点讲解：</strong>系统软件管理计算机本身，应用软件服务用户。B是系统软件的子类，C是应用软件的子类，D不是标准分类。<br><br><strong>💡 解题思路：</strong>\u201C两大类\u201D直接指向\u201C系统软件和应用软件\u201D。其他选项都是更细分的子类或非标准分类。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">软件分两类，系统和应用。系统管电脑，应用服务人。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于系统软件的是（  ）",
+            "options": [{ "label": "A", "text": "Word" }, { "label": "B", "text": "Windows" }, { "label": "C",
+                "text": "微信" }, { "label": "D", "text": "Photoshop" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>Windows</strong>。Windows是操作系统，属于<span style=\"color:#4a90e2;\">系统软件</span>；其他选项都是为解决特定问题开发的应用软件。<br><br><strong>📚 知识点讲解：</strong>判断标准：系统软件管理计算机本身，应用软件服务用户。Windows管理电脑资源，是系统软件；Word处理文字、微信聊天、Photoshop修图，都是应用软件。<br><br><strong>💡 解题思路：</strong>看到操作系统名称（Windows、macOS、Linux等）直接选系统软件。看到办公、聊天、修图等具体应用，都是应用软件。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Windows是系统，办公聊天是应用。系统管理计算机，应用服务为用户。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于应用软件的是（  ）",
+            "options": [{ "label": "A", "text": "macOS" }, { "label": "B", "text": "Linux" }, { "label": "C",
+                "text": "Android" }, { "label": "D", "text": "Excel" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>Excel</strong>。Excel是电子表格软件，用于处理数据，属于<span style=\"color:#4a90e2;\">应用软件</span>；其他选项都是操作系统，属于系统软件。<br><br><strong>📚 知识点讲解：</strong>macOS、Linux、Android都是操作系统，管理硬件资源；Excel直接帮助用户制作表格、处理数据，是典型的应用软件。<br><br><strong>💡 解题思路：</strong>三个操作系统对一道办公软件。看到Excel、Word、PPT等办公软件，直接选应用软件。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Excel做表格，应用软件为用户。macOS和Linux，系统软件管底层。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "没有安装任何软件的计算机被称为（  ）",
+            "options": [{ "label": "A", "text": "主机" }, { "label": "B", "text": "裸机" }, { "label": "C",
+            "text": "个人计算机" }, { "label": "D", "text": "微型机" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>裸机</strong>。\u201C裸机\u201D是指<span style=\"color:#f5222d;\">没有安装任何软件</span>的计算机，只能识别机器语言，无法完成任何有意义的工作。<br><br><strong>📚 知识点讲解：</strong>硬件是躯体，软件是灵魂。没有软件的硬件就是\u201C裸机\u201D，就像没有灵魂的躯体。<br><br><strong>💡 解题思路：</strong>\u201C没有安装任何软件\u201D是裸机的标准定义。A、C、D都是通用称呼，不特指无软件状态。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">没装软件是裸机，光有硬件干着急。软硬结合才运转，一个不能少牢记。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "操作系统的主要功能是（  ）",
+            "options": [{ "label": "A", "text": "管理计算机的硬件和软件资源" }, { "label": "B",
+                "text": "处理文字和表格" }, { "label": "C", "text": "编辑图片和视频" }, { "label": "D",
+                "text": "浏览网页和聊天" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>管理计算机的硬件和软件资源</strong>。这是操作系统的<span style=\"color:#f5222d;\">核心功能</span>。<br><br><strong>📚 知识点讲解：</strong>操作系统是计算机的大管家，管理CPU、内存、文件系统、外部设备等所有资源。B、C、D都是应用软件的功能。<br><br><strong>💡 解题思路：</strong>\u201C管理资源\u201D是操作系统的标志性描述。其他选项都是具体应用软件的功能。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">操作系统像管家，管理所有软硬件。CPU内存和硬盘，都由它来统一管。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于操作系统的是（  ）",
+            "options": [{ "label": "A", "text": "MySQL" }, { "label": "B", "text": "Python" }, { "label": "C",
+                "text": "iOS" }, { "label": "D", "text": "Chrome" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>iOS</strong>。iOS是苹果公司开发的移动操作系统，属于<span style=\"color:#4a90e2;\">系统软件</span>。<br><br><strong>📚 知识点讲解：</strong>常见操作系统：Windows、macOS、Linux、Android、iOS。MySQL是数据库管理系统，Python是编程语言，Chrome是浏览器。<br><br><strong>💡 解题思路：</strong>操作系统管理硬件平台。iOS管理iPhone的硬件，是操作系统。其他选项都是工具或应用。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">iOS和Android，手机平板操作系统。Windows和macOS，电脑操作系统名。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于语言处理程序的是（  ）",
+            "options": [{ "label": "A", "text": "Windows" }, { "label": "B", "text": "C语言编译器" }, { "label": "C",
+                "text": "Word" }, { "label": "D", "text": "QQ" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C语言编译器</strong>。编译器是将高级语言翻译成机器语言的程序，属于<span style=\"color:#4a90e2;\">语言处理程序</span>。<br><br><strong>📚 知识点讲解：</strong>语言处理程序包括编译器、解释器等，是系统软件的一类。Windows是操作系统，Word是办公软件，QQ是聊天软件。<br><br><strong>💡 解题思路：</strong>\u201C翻译\u201D是语言处理程序的核心功能。C语言编译器把C代码翻译成机器码。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">编译器解释器，语言处理程序。翻译代码成机器语，系统软件一成员。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于数据库管理系统的是（  ）",
+            "options": [{ "label": "A", "text": "Linux" }, { "label": "B", "text": "MySQL" }, { "label": "C",
+                "text": "Photoshop" }, { "label": "D", "text": "微信" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>MySQL</strong>。MySQL是常用的关系型数据库管理系统，用于建立和管理数据库，属于<span style=\"color:#4a90e2;\">系统软件</span>。<br><br><strong>📚 知识点讲解：</strong>数据库管理系统（DBMS）管理数据，属于系统软件。常见的有MySQL、Oracle、SQL Server等。<br><br><strong>💡 解题思路：</strong>Linux是操作系统，Photoshop是图像处理软件，微信是聊天软件。MySQL专门管理数据库，是系统软件中的数据库管理类。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">MySQL和Oracle，数据库里称大王。系统软件管数据，不是应用记心上。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于驱动程序的是（  ）",
+            "options": [{ "label": "A", "text": "显卡驱动" }, { "label": "B", "text": "操作系统" }, { "label": "C",
+                "text": "办公软件" }, { "label": "D", "text": "浏览器" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>显卡驱动</strong>。显卡驱动是控制显卡工作的软件，属于<span style=\"color:#4a90e2;\">驱动程序</span>，是系统软件的一种。<br><br><strong>📚 知识点讲解：</strong>驱动程序是硬件设备与操作系统之间的桥梁，没有驱动，硬件无法正常工作。常见的有显卡驱动、声卡驱动、打印机驱动等。<br><br><strong>💡 解题思路：</strong>驱动程序的命名规则是\u201C硬件名+驱动\u201D。显卡驱动直接对应。B、C、D都不属于驱动。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">驱动程序控硬件，显卡声卡打印机。没有驱动硬件废，系统软件不能少。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于系统软件的说法，错误的是（  ）",
+            "options": [{ "label": "A", "text": "是计算机正常运行的基础" }, { "label": "B",
+                "text": "管理计算机的硬件和软件资源" }, { "label": "C", "text": "为解决特定问题而开发" }, { "label": "D",
+                "text": "包括操作系统、语言处理程序等" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C选项</strong>。为解决特定问题而开发的是<span style=\"color:#f5222d;\">应用软件</span>，不是系统软件。<br><br><strong>📚 知识点讲解：</strong>系统软件管理计算机本身，应用软件解决用户特定问题。A、B、D都是系统软件的正确描述。<br><br><strong>💡 解题思路：</strong>题干问\u201C错误的是\u201D。C描述的是应用软件的特征，因此错误。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">系统软件为管理，应用软件为用户。C选项说反了，此题错误要记牢。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于应用软件的说法，正确的是（  ）",
+            "options": [{ "label": "A", "text": "是计算机正常运行的基础" }, { "label": "B",
+                "text": "管理计算机的硬件资源" }, { "label": "C", "text": "为解决特定问题而开发" }, { "label": "D",
+                "text": "包括操作系统" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C选项</strong>。应用软件是为解决<span style=\"color:#4a90e2;\">特定领域的实际问题</span>而开发的软件，直接服务于用户。<br><br><strong>📚 知识点讲解：</strong>A、B、D都是系统软件的特点。应用软件是\u201C上层建筑\u201D，依赖系统软件提供的环境运行。<br><br><strong>💡 解题思路：</strong>应用软件的关键词是\u201C特定问题\u201D和\u201C用户\u201D。A和B是系统软件的职责，D明显错误。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">应用软件为用户，解决特定问题用。办公聊天和修图，都是应用在服务。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于办公软件的是（  ）",
+            "options": [{ "label": "A", "text": "微信" }, { "label": "B", "text": "WPS Office" }, { "label": "C",
+                "text": "腾讯视频" }, { "label": "D", "text": "王者荣耀" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>WPS Office</strong>。WPS Office是办公软件套装，包括文字处理、表格制作、演示文稿等功能。<br><br><strong>📚 知识点讲解：</strong>办公软件用于日常办公，常见的有Microsoft Office和WPS Office。微信是聊天软件，腾讯视频是多媒体，王者荣耀是游戏。<br><br><strong>💡 解题思路：</strong>办公软件用于文字、表格、演示等办公场景。WPS直接对应。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">WPS和Office，办公软件两大家。写文档做表格，办公必备它。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于浏览器的是（  ）",
+            "options": [{ "label": "A", "text": "Edge" }, { "label": "B", "text": "QQ" }, { "label": "C",
+                "text": "剪映" }, { "label": "D", "text": "美图秀秀" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>Edge</strong>。Edge是微软公司开发的网页浏览器，用于浏览互联网上的信息。<br><br><strong>📚 知识点讲解：</strong>常见浏览器有Chrome、Edge、Firefox、Safari等。QQ是聊天软件，剪映是视频编辑，美图秀秀是修图软件。<br><br><strong>💡 解题思路：</strong>浏览器的功能是\u201C浏览网页\u201D。Edge直接对应。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Edge和Chrome，上网浏览全靠它。QQ聊天剪映剪，功能不同要分清。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于多媒体软件的是（  ）",
+            "options": [{ "label": "A", "text": "钉钉" }, { "label": "B", "text": "网易云音乐" }, { "label": "C",
+                "text": "360安全卫士" }, { "label": "D", "text": "MySQL" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>网易云音乐</strong>。网易云音乐是音乐播放软件，属于<span style=\"color:#4a90e2;\">多媒体软件</span>。<br><br><strong>📚 知识点讲解：</strong>多媒体软件处理音频、视频、图像等。钉钉是办公通信软件，360安全卫士是系统工具，MySQL是数据库。<br><br><strong>💡 解题思路：</strong>\u201C音乐\u201D属于多媒体内容。网易云音乐直接对应多媒体软件。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">多媒体软件娱乐多，音乐视频和游戏。网易云音乐腾讯视频，休闲娱乐少不了。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于系统工具软件的是（  ）",
+            "options": [{ "label": "A", "text": "腾讯电脑管家" }, { "label": "B", "text": "Photoshop" }, { "label": "C",
+                "text": "AutoCAD" }, { "label": "D", "text": "Premiere" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>腾讯电脑管家</strong>。腾讯电脑管家是用于系统维护和优化的软件，属于<span style=\"color:#4a90e2;\">系统工具软件</span>。<br><br><strong>📚 知识点讲解：</strong>系统工具软件属于系统软件，用于维护计算机。B、C、D都是专业应用软件。<br><br><strong>💡 解题思路：</strong>系统工具软件的功能是\u201C维护系统\u201D。杀毒、清理垃圾、优化性能等都是系统工具。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">电脑管家和安全卫士，系统工具保平安。杀毒清理和优化，系统软件一成员。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于\u201C裸机\u201D的说法，正确的是（  ）",
+            "options": [{ "label": "A", "text": "没有主机的计算机" }, { "label": "B",
+                "text": "没有显示器的计算机" }, { "label": "C", "text": "没有安装任何软件的计算机" }, { "label": "D",
+                "text": "没有CPU的计算机" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。\u201C裸机\u201D的标准定义就是<span style=\"color:#f5222d;\">没有安装任何软件</span>的计算机。<br><br><strong>📚 知识点讲解：</strong>裸机只能识别机器语言，无法完成任何有意义的工作。A、B、D描述的是缺少硬件的状态，都不叫裸机。<br><br><strong>💡 解题思路：</strong>\u201C裸\u201D指的是没有软件的\u201C衣服\u201D。缺少软件叫裸机，缺少硬件叫故障。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">裸机没软件，不是没硬件。硬件齐全软件无，才是裸机真定义。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "应用软件运行的基础是（  ）",
+            "options": [{ "label": "A", "text": "硬件" }, { "label": "B", "text": "系统软件" }, { "label": "C",
+                "text": "数据库管理系统" }, { "label": "D", "text": "语言处理程序" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>系统软件</strong>。应用软件必须在<span style=\"color:#f5222d;\">系统软件</span>的支持下才能运行，系统软件为应用软件提供运行环境。<br><br><strong>📚 知识点讲解：</strong>系统软件是基础，应用软件是上层建筑。没有操作系统，Word等应用软件根本无法启动。<br><br><strong>💡 解题思路：</strong>\u201C运行的基础\u201D指向系统软件。硬件也是基础，但更直接的是系统软件（尤其是操作系统）。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">系统软件打地基，应用软件盖高楼。没有地基楼不稳，依赖关系要搞清。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，既是系统软件又是应用软件的是（  ）",
+            "options": [{ "label": "A", "text": "Windows" }, { "label": "B", "text": "Word" }, { "label": "C",
+                "text": "杀毒软件" }, { "label": "D", "text": "没有这样的软件" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>D</strong>。系统软件和应用软件是按照功能划分的，一个软件<span style=\"color:#f5222d;\">只能属于其中一类</span>，不能同时属于两类。<br><br><strong>📚 知识点讲解：</strong>软件分类是互斥的。虽然有些软件功能接近边界（如杀毒软件常被讨论），但分类上杀毒软件属于系统工具软件（系统软件）。<br><br><strong>💡 解题思路：</strong>分类是互斥的，不可能一个软件同时属于两类。这是逻辑判断题。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">系统应用二选一，不能同时两边占。就像人分男和女，非此即彼界限清。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于软件的说法，正确的是（  ）",
+            "options": [{ "label": "A", "text": "软件就是程序" }, { "label": "B", "text": "软件包括程序和数据" },
+            { "label": "C", "text": "软件包括程序、数据和相关文档" }, { "label": "D", "text": "软件就是文档" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。计算机软件是<span style=\"color:#4a90e2;\">程序、数据和相关文档</span>的总称，不仅仅是程序。<br><br><strong>📚 知识点讲解：</strong>软件的完整定义包含三个要素：程序（指令序列）、数据（程序处理的对象）、文档（说明资料）。<br><br><strong>💡 解题思路：</strong>A和D都太狭隘，B缺少文档。C是软件的完整定义。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">程序数据加文档，构成软件全内容。三要素缺一不可，完整定义要记清。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于移动操作系统的是（  ）",
+            "options": [{ "label": "A", "text": "Windows 11" }, { "label": "B", "text": "macOS" }, { "label": "C",
+                "text": "Android" }, { "label": "D", "text": "Linux" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>Android</strong>。Android是谷歌公司开发的<span style=\"color:#4a90e2;\">移动操作系统</span>，主要用于手机和平板电脑。<br><br><strong>📚 知识点讲解：</strong>移动操作系统包括Android和iOS。Windows 11和macOS是桌面操作系统，Linux主要用于服务器。<br><br><strong>💡 解题思路：</strong>\u201C移动\u201D指手机平板。Android和iOS是两大移动操作系统。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">安卓苹果移动端，Windows电脑桌面版。操作系统分平台，各司其职不乱串。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，用于视频剪辑的是（  ）",
+            "options": [{ "label": "A", "text": "Photoshop" }, { "label": "B", "text": "Premiere" }, { "label": "C",
+                "text": "AutoCAD" }, { "label": "D", "text": "MATLAB" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>Premiere</strong>。Premiere是Adobe公司开发的专业<span style=\"color:#4a90e2;\">视频剪辑软件</span>，属于应用软件。<br><br><strong>📚 知识点讲解：</strong>Photoshop修图，Premiere剪视频，AutoCAD做建筑设计，MATLAB做科学计算。各有专长。<br><br><strong>💡 解题思路：</strong>\u201C视频剪辑\u201D直接对应Premiere。Photoshop是图像处理，AutoCAD是设计，MATLAB是计算。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Premiere剪视频，Photoshop修图片。AutoCAD画建筑，MATLAB算科学。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，用于建筑设计的是（  ）",
+            "options": [{ "label": "A", "text": "Photoshop" }, { "label": "B", "text": "Premiere" }, { "label": "C",
+                "text": "AutoCAD" }, { "label": "D", "text": "MATLAB" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>AutoCAD</strong>。AutoCAD是专业的<span style=\"color:#4a90e2;\">计算机辅助设计软件</span>，广泛应用于建筑、机械等领域。<br><br><strong>📚 知识点讲解：</strong>AutoCAD是CAD（计算机辅助设计）的代表软件。Photoshop修图，Premiere剪视频，MATLAB做科学计算。<br><br><strong>💡 解题思路：</strong>\u201C建筑设计\u201D对应CAD类软件。AutoCAD中的CAD就是Computer Aided Design。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">AutoCAD是设计，建筑机械都靠它。CAD设计CAM制造，专业软件各有所长。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于操作系统的说法，错误的是（  ）",
+            "options": [{ "label": "A", "text": "是用户和计算机之间的接口" }, { "label": "B",
+                "text": "管理计算机的硬件资源" }, { "label": "C", "text": "管理计算机的软件资源" }, { "label": "D",
+                "text": "是应用软件的一种" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>D</strong>。操作系统是<span style=\"color:#f5222d;\">系统软件的核心</span>，不是应用软件。<br><br><strong>📚 知识点讲解：</strong>A、B、C都是操作系统的正确描述。D将操作系统错误地归类为应用软件。<br><br><strong>💡 解题思路：</strong>题干问\u201C错误的是\u201D。操作系统是系统软件，不是应用软件。这是最常见的混淆点。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">操作系统是系统，不是应用要分清。管理接口它都做，应用软件靠它行。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "计算机能够完成各种不同的任务，主要是因为（  ）",
+            "options": [{ "label": "A", "text": "硬件性能强大" }, { "label": "B",
+                "text": "安装了不同的应用软件" }, { "label": "C", "text": "有CPU" }, { "label": "D",
+                "text": "有大容量硬盘" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B</strong>。硬件只是提供了物质基础，计算机能够完成各种不同任务，主要是因为安装了各种不同功能的<span style=\"color:#4a90e2;\">应用软件</span>。<br><br><strong>📚 知识点讲解：</strong>同一台电脑，装上Word可以写文档，装上游戏可以娱乐。硬件决定性能上限，软件决定能做什么。<br><br><strong>💡 解题思路：</strong>多样性来自软件。A、C、D都是硬件因素，不能解释功能多样性。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">硬件是身体，软件是灵魂。不同软件装进去，各种工作都能干。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于即时通信软件的是（  ）",
+            "options": [{ "label": "A", "text": "Chrome" }, { "label": "B", "text": "微信" }, { "label": "C",
+                "text": "网易云音乐" }, { "label": "D", "text": "WPS" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>微信</strong>。微信是常用的<span style=\"color:#4a90e2;\">即时通信软件</span>，用于文字聊天、语音通话、视频通话等。<br><br><strong>📚 知识点讲解：</strong>即时通信软件实现实时信息交流。Chrome是浏览器，网易云音乐是音乐播放器，WPS是办公软件。<br><br><strong>💡 解题思路：</strong>\u201C聊天\u201D\u201C通信\u201D是即时通信软件的核心特征。微信直接对应。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">微信QQ和钉钉，即时通信好帮手。文字语音和视频，随时随地能沟通。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于杀毒软件的是（  ）",
+            "options": [{ "label": "A", "text": "360安全卫士" }, { "label": "B", "text": "腾讯视频" }, { "label": "C",
+                "text": "钉钉" }, { "label": "D", "text": "剪映" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>360安全卫士</strong>。360安全卫士是常用的杀毒软件和系统工具软件，属于<span style=\"color:#4a90e2;\">系统软件</span>。<br><br><strong>📚 知识点讲解：</strong>杀毒软件属于系统工具软件（系统软件）。腾讯视频是多媒体，钉钉是通信，剪映是视频编辑。<br><br><strong>💡 解题思路：</strong>杀毒=系统安全维护=系统软件。360安全卫士直接对应。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">360安全卫士，杀毒防护保平安。系统工具属系统，不是应用要分清。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于系统软件和应用软件关系的说法，错误的是（  ）",
+            "options": [{ "label": "A", "text": "系统软件是应用软件运行的基础" }, { "label": "B",
+                "text": "应用软件可以脱离系统软件独立运行" }, { "label": "C",
+                "text": "没有系统软件，应用软件无法运行" }, { "label": "D",
+            "text": "两者相互配合，共同完成计算机的功能" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>B</strong>。应用软件<span style=\"color:#f5222d;\">必须依赖</span>系统软件才能运行，不能脱离系统软件独立存在。<br><br><strong>📚 知识点讲解：</strong>A、C、D都是正确的描述。B说反了，应用软件不能脱离系统软件。<br><br><strong>💡 解题思路：</strong>\u201C脱离\u201D是错误的。就像没有操作系统，任何应用都无法启动。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">应用不能离系统，就像高楼靠地基。B选项说反了，此题错误要牢记。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列软件中，属于文字处理软件的是（  ）",
+            "options": [{ "label": "A", "text": "Excel" }, { "label": "B", "text": "Word" }, { "label": "C",
+                "text": "PowerPoint" }, { "label": "D", "text": "Access" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>Word</strong>。Word是专门用于<span style=\"color:#4a90e2;\">文字处理</span>的软件。<br><br><strong>📚 知识点讲解：</strong>Office套件各司其职：Word文字处理，Excel电子表格，PowerPoint演示文稿，Access数据库。<br><br><strong>💡 解题思路：</strong>\u201C文字处理\u201D=Word。Excel处理数据，PPT做幻灯片，Access管数据库。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Word写文档，Excel做表格。PPT做演示，Access管数据。办公四兄弟，功能各不同。</span>"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于软件的说法，错误的是（  ）",
+            "options": [{ "label": "A", "text": "是计算机的灵魂" }, { "label": "B",
+                "text": "没有软件的计算机无法工作" }, { "label": "C", "text": "软件是看得见摸得着的" }, { "label": "D",
+                "text": "分为系统软件和应用软件" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案是<strong>C</strong>。软件是程序、数据和文档的总称，是<span style=\"color:#f5222d;\">无形的</span>，看不见摸不着；硬件才是看得见摸得着的物理设备。<br><br><strong>📚 知识点讲解：</strong>软件是逻辑产品，存储在介质上但本身无形。A、B、D都是正确的描述。<br><br><strong>💡 解题思路：</strong>题干问\u201C错误的是\u201D。C将软件说成有形的，这是错误的。软件无形，硬件有形。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">软件无形看不见，硬件有形摸得着。C选项说反了，软件性质要搞清。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "操作系统是应用软件的一种。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。操作系统是<span style=\"color:#f5222d;\">系统软件的核心</span>，不是应用软件。系统软件是管理计算机的，应用软件是给用户用的。<br><br><strong>📚 知识点讲解：</strong>这是最常见的错误之一。操作系统管理硬件资源，是系统软件；Word等直接服务用户的才是应用软件。<br><br><strong>💡 解题思路：</strong>Windows、macOS都是操作系统，它们管理电脑，不是直接帮用户写文档的。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">系统是基管电脑，应用服务解问题。操作系统是系统，不是应用要牢记。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "没有软件的计算机也能正常工作。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。没有安装任何软件的计算机被称为<span style=\"color:#f5222d;\">\u201C裸机\u201D</span>，只能识别机器语言，无法完成任何有意义的工作。<br><br><strong>📚 知识点讲解：</strong>硬件是躯体，软件是灵魂。没有灵魂的躯体只是一堆废铁。<br><br><strong>💡 解题思路：</strong>\u201C也能\u201D是错误的。裸机无法使用，必须安装软件。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">没软件是裸机，啥也干不了着急。硬件身体软件魂，两者结合才运转。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "软件就是指计算机程序。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。计算机软件是<span style=\"color:#4a90e2;\">程序、数据和相关文档</span>的总称，不仅仅是程序。文档也是软件的重要组成部分。<br><br><strong>📚 知识点讲解：</strong>软件的完整定义包含三要素：程序+数据+文档。不要狭隘地理解为只有程序。<br><br><strong>💡 解题思路：</strong>\u201C就是指\u201D过于绝对。软件范围大于程序。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">程序数据加文档，构成软件全内容。软件不只是程序，三要素缺一不可。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "应用软件可以脱离系统软件独立运行。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。应用软件<span style=\"color:#f5222d;\">必须</span>在系统软件的支持下才能运行，系统软件为应用软件提供运行环境。<br><br><strong>📚 知识点讲解：</strong>就像没有公司的管理体系，各个业务部门无法正常工作一样，没有系统软件，应用软件也无法运行。<br><br><strong>💡 解题思路：</strong>\u201C脱离\u201D是错误的。Word必须在Windows或macOS上运行。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">应用不能离系统，就像高楼靠地基。脱离系统无法跑，依赖关系要搞清。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "Windows、macOS、Linux都是操作系统。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。这三个都是常用的桌面操作系统，属于<span style=\"color:#4a90e2;\">系统软件的核心</span>。<br><br><strong>📚 知识点讲解：</strong>常见操作系统还有Android（安卓）、iOS（苹果手机系统）等。它们都是系统软件。<br><br><strong>💡 解题思路：</strong>这三个名称都是操作系统的典型代表，描述完全正确。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Windows、macOS、Linux，三大桌面操作系统。安卓苹果移动端，操作系统家族大。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "杀毒软件属于应用软件。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。杀毒软件是用于系统维护和安全防护的软件，属于<span style=\"color:#4a90e2;\">系统工具软件</span>，是系统软件的一种。<br><br><strong>📚 知识点讲解：</strong>不要认为所有给用户用的软件都是应用软件。系统工具软件虽然也由用户使用，但它的功能是管理和维护计算机本身，属于系统软件。<br><br><strong>💡 解题思路：</strong>杀毒软件维护的是系统安全，而不是解决用户的特定业务问题。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">杀毒防护是系统，不是应用要分清。维护电脑保安全，系统工具属系统。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "所有的计算机都必须安装操作系统才能使用。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。操作系统是计算机正常运行的基础，没有操作系统，其他软件都无法运行。<br><br><strong>📚 知识点讲解：</strong>即使是手机、平板、智能手表等设备，也需要安装操作系统（如Android、iOS等）才能使用。<br><br><strong>💡 解题思路：</strong>这是基本常识。裸机无法使用，必须安装操作系统。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">电脑必须装系统，Windows或macOS。没有系统是裸机，啥也干不了干瞪眼。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "Word、Excel、PowerPoint都属于系统软件。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。这三个都是Microsoft Office办公软件套装的组成部分，属于<span style=\"color:#4a90e2;\">应用软件</span>，用于解决办公领域的特定问题。<br><br><strong>📚 知识点讲解：</strong>办公软件是最典型的应用软件，考试经常考。它们直接服务于用户的办公需求。<br><br><strong>💡 解题思路：</strong>Office套件=应用软件。它们不管理计算机，而是帮用户完成文档、表格、演示等工作。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">Word、Excel、PPT，办公软件三剑客。应用软件为用户，不是系统要分清。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "驱动程序属于系统软件。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>正确</strong>。驱动程序是控制硬件设备工作的软件，没有驱动程序，硬件设备无法正常工作，属于<span style=\"color:#4a90e2;\">系统软件</span>的一种。<br><br><strong>📚 知识点讲解：</strong>常见的驱动程序有显卡驱动、声卡驱动、打印机驱动等。它们是硬件和操作系统之间的桥梁。<br><br><strong>💡 解题思路：</strong>驱动管理硬件，是系统软件的职责范畴。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">驱动程序属系统，控制硬件靠它行。显卡声卡打印机，没有驱动不能动。</span>"
+        }, {
+            "type": "判断题",
+            "stem": "软件和硬件是相互独立的，没有关系。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>本题说法<strong>错误</strong>。软件和硬件是计算机系统<span style=\"color:#f5222d;\">不可分割</span>的两个部分，相互依存，缺一不可。<br><br><strong>📚 知识点讲解：</strong>硬件是软件运行的基础，软件是硬件功能的扩展。两者必须结合起来才能发挥作用。<br><br><strong>💡 解题思路：</strong>\u201C相互独立\u201D\u201C没有关系\u201D都是错误的。软硬件紧密关联。<br><br><strong>🧠 记忆口诀：</strong><span style=\"color:#fa8c16;\">软硬相辅相成，缺一不可运转。硬件身体软件魂，紧密结合才神奇。</span>"
+        }];
+
+        const APP_ID = 'computer_software_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+
+        let wrongReviewMode = false;
+        let wrongQuestionIndices = [];
+        let wrongReviewIndex = 0;
+        let completionData = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '计算机软件系统 · 系统软件与应用软件';
+            const content = `
+                <h3>1. 标准定义</h3>
+                <p>计算机软件系统是指运行在计算机硬件之上的<strong>程序、数据和相关文档</strong>的总称，是计算机的<strong>灵魂</strong>。没有软件的计算机被称为\u201C裸机\u201D，无法完成任何有意义的工作。软件系统按照功能和用途分为<strong>系统软件</strong>和<strong>应用软件</strong>两大类。</p>
+                <h3>系统软件</h3>
+                <p>是管理、控制和维护计算机硬件和软件资源的软件，是计算机正常运行的<strong>基础</strong>，为应用软件提供运行环境。系统软件主要包括：</p>
+                <ul>
+                    <li><strong>操作系统</strong>：系统软件的核心，是用户和计算机之间的接口</li>
+                    <li>语言处理程序：如C语言编译器、Python解释器</li>
+                    <li>数据库管理系统：如MySQL、Oracle</li>
+                    <li>驱动程序：如显卡驱动、打印机驱动</li>
+                    <li>系统工具软件：如磁盘清理工具、杀毒软件</li>
+                </ul>
+                <h3>应用软件</h3>
+                <p>是为解决<strong>特定领域的实际问题</strong>而开发的软件，直接服务于用户。常见的有办公软件、互联网软件、多媒体软件、专业设计软件等。</p>
+                <h3>2. 通俗理解</h3>
+                <p>继续用<strong>公司</strong>的类比来理解软件系统：</p>
+                <ul>
+                    <li><strong>系统软件</strong>：公司的管理体系和基础设施。操作系统是总经理，驱动程序是设备管理员，杀毒软件是保安。</li>
+                    <li><strong>应用软件</strong>：公司的各个业务部门。财务部用财务软件，设计部用设计软件。</li>
+                </ul>
+                <p>简单说：<strong>系统软件是管电脑的，应用软件是给人用的</strong>。</p>
+                <h3>3. 生活/实操举例</h3>
+                <table class="knowledge-table">
+                    <tr><th>软件类型</th><th>分类</th><th>具体例子</th><th>用途</th></tr>
+                    <tr><td rowspan="5"><strong>系统软件</strong></td><td>操作系统</td><td>Windows 11、macOS、Linux、Android、iOS</td><td>管理计算机资源</td></tr>
+                    <tr><td>语言处理程序</td><td>C语言编译器、Python解释器</td><td>翻译高级语言</td></tr>
+                    <tr><td>数据库管理系统</td><td>MySQL、Oracle、SQL Server</td><td>管理和维护数据库</td></tr>
+                    <tr><td>驱动程序</td><td>显卡驱动、声卡驱动、打印机驱动</td><td>控制硬件设备</td></tr>
+                    <tr><td>系统工具软件</td><td>360安全卫士、腾讯电脑管家</td><td>系统维护和优化</td></tr>
+                    <tr><td rowspan="5"><strong>应用软件</strong></td><td>办公软件</td><td>Microsoft Office、WPS Office</td><td>文字处理、表格制作</td></tr>
+                    <tr><td>互联网软件</td><td>Chrome、微信、QQ、钉钉</td><td>浏览网页、即时通信</td></tr>
+                    <tr><td>多媒体软件</td><td>腾讯视频、网易云音乐、剪映、Photoshop</td><td>看视频、听音乐、编辑</td></tr>
+                    <tr><td>游戏软件</td><td>王者荣耀、原神、我的世界</td><td>娱乐休闲</td></tr>
+                    <tr><td>专业软件</td><td>AutoCAD、Premiere、MATLAB</td><td>特定专业领域工作</td></tr>
+                </table>
+                <h3>4. 高频考点速记</h3>
+                <ul>
+                    <li><strong>软件系统的分类</strong>：系统软件和应用软件</li>
+                    <li><strong>系统软件的核心</strong>：操作系统</li>
+                    <li><strong>系统软件与应用软件的本质区别</strong></li>
+                    <li><strong>常见操作系统的例子</strong></li>
+                    <li><strong>\u201C裸机\u201D的定义</strong>：没有安装任何软件的计算机</li>
+                    <li>软件 = 程序 + 数据 + 相关文档</li>
+                </ul>
+                <h3>5. 记忆口诀</h3>
+                <p style="text-align:center;font-weight:700;color:#fa8c16;font-size:17px;">
+                    软件系统两部分，系统应用分清楚<br>
+                    系统是基管电脑，应用服务解问题<br>
+                    系统核心是操作，Windows安卓和苹果<br>
+                    办公聊天多媒体，都是应用要牢记<br>
+                    程序数据加文档，构成软件全内容<br>
+                    没有软件是裸机，啥也干不了着急
+                </p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            completionData = null;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            completionData = null;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function getEffectiveQuestionIndex() {
+            if (wrongReviewMode && wrongQuestionIndices.length > 0) {
+                return wrongQuestionIndices[wrongReviewIndex];
+            }
+            return currentIndex;
+        }
+
+        function renderQuestion() {
+            const effectiveIndex = getEffectiveQuestionIndex();
+            const q = questions[effectiveIndex];
+            const contentArea = document.getElementById('quizContent');
+            const userAnswer = answers[effectiveIndex];
+
+            let html = '';
+            if (wrongReviewMode) {
+                html +=
+                    `<div style="background:#fff2f0;border:1px solid #f5222d;border-radius:8px;padding:12px 16px;margin-bottom:12px;text-align:center;color:#f5222d;font-weight:600;">🔴 错题回顾模式 · 第 <span id="wrongReviewPos">${wrongReviewIndex + 1}</span>/${wrongQuestionIndices.length} 题（原第 ${effectiveIndex + 1} 题）</div>`;
+            }
+            html +=
+                `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswer === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (userAnswer !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html +=
+                    `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+
+            if (userAnswer !== null) {
+                const isCorrect = userAnswer === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+
+            const allAnswered = answers.every(a => a !== null);
+            const isLastInMode = wrongReviewMode ?
+                (wrongReviewIndex === wrongQuestionIndices.length - 1) :
+                (effectiveIndex === questions.length - 1);
+
+            if (isLastInMode && allAnswered && !wrongReviewMode) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount / questions.length * 100);
+                saveToHistory(correctCount, accuracy);
+                completionData = { correctCount, accuracy };
+                const wrongCount = questions.length - correctCount;
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            ${wrongCount > 0 ? `<button class="action-btn" style="background:linear-gradient(135deg,#f5222d,#ff7875);color:white;" onclick="startWrongReview()">回看错题 (${wrongCount}题)</button>` : ''}
+                            ${wrongCount > 0 ? `<button class="action-btn" style="background:linear-gradient(135deg,#52c41a,#73d13d);color:white;" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题CSV</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            if (wrongReviewMode && isLastInMode && allAnswered) {
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🔍</div>
+                        <h1 class="completion-title">错题回顾完成！</h1>
+                        <p style="color: var(--text-secondary);">已回顾全部 ${wrongQuestionIndices.length} 道错题</p>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="exitWrongReview()">返回完成界面</button>
+                            <button class="action-btn" style="background:linear-gradient(135deg,#52c41a,#73d13d);color:white;" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题CSV</button>
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            const effectiveIndex = getEffectiveQuestionIndex();
+            if (answers[effectiveIndex] !== null) return;
+            answers[effectiveIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[effectiveIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block';
+                icon.classList.add('expanded'); } else { content.style.display = 'none';
+                icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() {
+            if (wrongReviewMode) {
+                if (wrongReviewIndex > 0) { wrongReviewIndex--;
+                    renderQuestion();
+                    updateNavButtons(); }
+            } else {
+                if (currentIndex > 0) { currentIndex--;
+                    renderQuestion();
+                    updateNavButtons(); }
+            }
+        }
+
+        function nextQuestion() {
+            if (wrongReviewMode) {
+                if (wrongReviewIndex < wrongQuestionIndices.length - 1) { wrongReviewIndex++;
+                    renderQuestion();
+                    updateNavButtons(); }
+            } else {
+                if (currentIndex < questions.length - 1) { currentIndex++;
+                    renderQuestion();
+                    updateNavButtons(); }
+            }
+        }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            if (wrongReviewMode) {
+                document.getElementById('currentNum').textContent = wrongReviewIndex + 1;
+                document.getElementById('answeredCount').textContent = wrongQuestionIndices.length;
+                document.getElementById('totalCount').textContent = wrongQuestionIndices.length;
+                document.getElementById('progressFill').style.width =
+                    `${((wrongReviewIndex + 1) / wrongQuestionIndices.length) * 100}%`;
+            } else {
+                document.getElementById('currentNum').textContent = currentIndex + 1;
+                const answeredCount = answers.filter(a => a !== null).length;
+                document.getElementById('answeredCount').textContent = answeredCount;
+                document.getElementById('totalCount').textContent = questions.length;
+                document.getElementById('progressFill').style.width = `${(answeredCount / questions.length) * 100}%`;
+            }
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            if (wrongReviewMode) {
+                const isLastWrong = wrongReviewIndex === wrongQuestionIndices.length - 1;
+                footerContent.innerHTML = `
+                    <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${wrongReviewIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                    <button class="nav-btn" style="background:#fff2f0;color:#f5222d;border:1px solid #f5222d;flex:0.7;" onclick="exitWrongReview()">退出回顾</button>
+                    <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLastWrong ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+                `;
+            } else {
+                const isLast = currentIndex === questions.length - 1 && answers.every(a => a !== null);
+                footerContent.innerHTML = `
+                    <button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button>
+                    <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${isLast ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>
+                `;
+            }
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered';
+                let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct';
+                        statusText = '正确'; } else { statusClass = 'wrong';
+                        statusText = '错误'; }
+                }
+                if (index === currentIndex && !wrongReviewMode) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q
+                            .answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q
+                        .answer)) return;
+                }
+                html +=
+                    `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) {
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            completionData = null;
+            currentIndex = index;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            toggleSheet();
+        }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show');
+                panel.classList.remove('show'); } else { overlay.classList.add('show');
+                panel.classList.add('show');
+                renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML =
+                    `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`
+                    ; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short',
+                    day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html +=
+                    `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount,
+                accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(
+            saved) : []; }
+
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers =
+                    [...history[index].answers];
+                currentIndex = 0;
+                wrongReviewMode = false;
+                wrongQuestionIndices = [];
+                wrongReviewIndex = 0;
+                completionData = null;
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                saveAnswers();
+                renderQuestion();
+                updateNavButtons();
+                toggleHistory();
+                showToast('已加载历史记录'); } }
+
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 &&
+            index < history.length) { history.splice(index, 1);
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+            renderHistory();
+            showToast('记录已删除'); } }
+
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return;
+        localStorage.removeItem(STORAGE_KEY_HISTORY);
+            renderHistory();
+            showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers);
+                currentIndex = data.currentIndex || 0;
+                answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings);
+                fontSize = settings.fontSize || 16;
+                document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+                document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+                document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0;
+                answers = new Array(questions.length).fill(null);
+                wrongReviewMode = false;
+                wrongQuestionIndices = [];
+                wrongReviewIndex = 0;
+                completionData = null;
+                localStorage.removeItem(STORAGE_KEY_ANSWERS);
+                currentPage = 'quiz';
+                document.getElementById('knowledgePage').classList.add('hidden');
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('questionInfo').style.display = 'block';
+                document.getElementById('pageTitle').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'block';
+                renderQuestion();
+                updateNavButtons(); } }
+
+        function showHome() {
+            if (wrongReviewMode) {
+                exitWrongReview();
+            } else if (currentPage === 'quiz') {
+                if (confirm('返回主页将丢失当前进度，确定吗？')) {
+                    switchToKnowledgePage();
+                }
+            } else {
+                showToast('已在首页');
+            }
+        }
+
+        function startWrongReview() {
+            wrongQuestionIndices = [];
+            answers.forEach((a, i) => {
+                if (a !== null && a !== questions[i].answer) {
+                    wrongQuestionIndices.push(i);
+                }
+            });
+            if (wrongQuestionIndices.length === 0) {
+                showToast('没有错题，太棒了！');
+                return;
+            }
+            wrongReviewMode = true;
+            wrongReviewIndex = 0;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast(`进入错题回顾模式，共 ${wrongQuestionIndices.length} 道错题`);
+        }
+
+        function exitWrongReview() {
+            wrongReviewMode = false;
+            wrongQuestionIndices = [];
+            wrongReviewIndex = 0;
+            currentIndex = questions.length - 1;
+            currentPage = 'quiz';
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function exportWrongCSV() {
+            const wrongData = [];
+            questions.forEach((q, i) => {
+                if (answers[i] !== null && answers[i] !== q.answer) {
+                    const userOpt = q.options[answers[i]];
+                    const correctOpt = q.options[q.answer];
+                    const analysisPlain = q.analysis.replace(/<[^>]+>/g, '').replace(/\u201C/g, '\u201C')
+                        .replace(/\u201D/g, '\u201D').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+                    wrongData.push({
+                        number: i + 1,
+                        type: q.type,
+                        stem: q.stem,
+                        userChoice: userOpt ? (userOpt.label + '. ' + userOpt.text) : '',
+                        correctAnswer: correctOpt ? (correctOpt.label + '. ' + correctOpt.text) :
+                            '',
+                        analysis: analysisPlain
+                    });
+                }
+            });
+            if (wrongData.length === 0) {
+                showToast('没有错题可导出！');
+                return;
+            }
+            const BOM = '\uFEFF';
+            let csvContent = BOM + '题号,类型,题干,你的选择,正确答案,解析\n';
+            wrongData.forEach(row => {
+                const escapedStem = '"' + (row.stem || '').replace(/"/g, '""') + '"';
+                const escapedUser = '"' + (row.userChoice || '').replace(/"/g, '""') + '"';
+                const escapedCorrect = '"' + (row.correctAnswer || '').replace(/"/g, '""') + '"';
+                const escapedAnalysis = '"' + (row.analysis || '').replace(/"/g, '""') + '"';
+                csvContent +=
+                    `${row.number},${row.type},${escapedStem},${escapedUser},${escapedCorrect},${escapedAnalysis}\n`;
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '错题导出_计算机软件系统_' + new Date().toISOString().slice(0, 10) + '.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('错题CSV已导出！');
+        }
+
+        function showToast(message) { const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>

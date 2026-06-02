@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>计算机硬件系统刷题</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary-color: #4a90e2; --primary-light: #e6f7ff; --success-color: #52c41a; --success-light: #f6ffed;
+            --error-color: #f5222d; --error-light: #fff2f0; --warning-color: #faad14; --warning-light: #fffbe6;
+            --text-primary: #333333; --text-secondary: #666666; --text-light: #999999; --bg-main: #f5f7fa;
+            --bg-card: #ffffff; --border-color: #e8e8e8; --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12); --font-size-base: 16px; --font-size-small: 14px;
+            --font-size-large: 18px; --radius: 12px; --radius-sm: 8px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--bg-main); color: var(--text-primary); font-size: var(--font-size-base); line-height: 1.6; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); transition: font-size 0.3s ease; }
+        .app-container { max-width: 430px; margin: 0 auto; background-color: var(--bg-main); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); z-index: 200; box-shadow: var(--shadow); }
+        .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .left-section { display: flex; align-items: center; gap: 12px; }
+        .back-btn, .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 50%; cursor: pointer; transition: all 0.3s ease; }
+        .back-btn:active, .icon-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.3); }
+        .question-info { text-align: center; flex: 1; }
+        .question-number { font-size: 18px; font-weight: 600; }
+        .progress-text { font-size: 12px; opacity: 0.9; }
+        .right-section { display: flex; gap: 8px; }
+        .progress-bar { height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: white; border-radius: 2px; transition: width 0.3s ease; }
+        .content-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 140px; }
+        .knowledge-page { display: block; animation: fadeIn 0.3s ease; }
+        .knowledge-page.hidden { display: none; }
+        .knowledge-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+        .knowledge-title { font-size: 20px; font-weight: 700; color: var(--primary-color); margin-bottom: 16px; text-align: center; line-height: 1.4; }
+        .knowledge-content { font-size: var(--font-size-base); line-height: 1.8; color: var(--text-primary); }
+        .knowledge-content h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; color: var(--primary-color); padding-left: 10px; border-left: 4px solid var(--primary-color); }
+        .knowledge-content p { margin-bottom: 10px; }
+        .knowledge-content ul { margin: 8px 0 12px 18px; }
+        .knowledge-content li { margin-bottom: 6px; }
+        .knowledge-content .highlight { background: var(--primary-light); padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+        .knowledge-table { width: 100%; border-collapse: collapse; margin: 12px 0 4px; font-size: 13px; }
+        .knowledge-table th, .knowledge-table td { border: 1px solid var(--border-color); padding: 8px 6px; text-align: center; }
+        .knowledge-table th { background: #f5f7fb; font-weight: 700; color: var(--text-secondary); }
+        .start-quiz-btn { width: 100%; height: 56px; background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; border: none; border-radius: var(--radius-sm); font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .start-quiz-btn:active { transform: scale(0.98); }
+        .question-card, .analysis-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .question-type { display: inline-block; padding: 4px 12px; background: var(--primary-light); color: var(--primary-color); border-radius: 20px; font-size: 12px; font-weight: 500; margin-bottom: 12px; }
+        .question-stem { font-size: var(--font-size-large); font-weight: 500; line-height: 1.7; margin-bottom: 16px; color: var(--text-primary); }
+        .formula { background: #fafafa; padding: 16px; border-radius: var(--radius-sm); margin: 16px 0; font-family: 'Courier New', monospace; text-align: center; border-left: 4px solid var(--primary-color); overflow-x: auto; }
+        .question-image { width: 100%; max-width: 100%; border-radius: var(--radius-sm); margin: 16px 0; display: block; }
+        .options-container { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .option-item { display: flex; align-items: flex-start; padding: 16px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; min-height: 56px; position: relative; }
+        .option-item::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: var(--radius-sm); pointer-events: none; }
+        .option-item:hover { border-color: var(--primary-color); }
+        .option-item.selected { border-color: var(--primary-color); background: var(--primary-light); transform: scale(1.01); }
+        .option-item.correct { border-color: var(--success-color); background: var(--success-light); }
+        .option-item.wrong { border-color: var(--error-color); background: var(--error-light); }
+        .option-label { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; margin-right: 12px; transition: all 0.3s ease; }
+        .selected .option-label { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .correct .option-label { background: var(--success-color); color: white; border-color: var(--success-color); }
+        .wrong .option-label { background: var(--error-color); color: white; border-color: var(--error-color); }
+        .option-text { flex: 1; padding-top: 2px; }
+        .analysis-card { padding: 0; margin-top: 16px; overflow: hidden; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+        .analysis-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: #fafafa; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .analysis-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-primary); }
+        .result-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .result-badge.correct { background: var(--success-light); color: var(--success-color); }
+        .result-badge.wrong { background: var(--error-light); color: var(--error-color); }
+        .toggle-icon { transition: transform 0.3s ease; }
+        .toggle-icon.expanded { transform: rotate(180deg); }
+        .analysis-content { padding: 20px; font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.8; }
+        .analysis-content p { margin-bottom: 10px; }
+        .analysis-content strong { color: var(--text-primary); font-size: 15px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-card); padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08); z-index: 150; }
+        .footer.hidden { transform: translateY(100%); }
+        .footer-content { max-width: 430px; margin: 0 auto; display: flex; gap: 12px; }
+        .nav-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .nav-btn:active { transform: scale(0.98); }
+        .prev-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .prev-btn:not(:disabled):hover { background: #e8e8e8; }
+        .next-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .next-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sheet-overlay, .history-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 300; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .sheet-overlay.show, .history-overlay.show { display: block; opacity: 1; }
+        .sheet-panel, .history-panel { position: fixed; background: var(--bg-card); z-index: 400; transition: transform 0.3s ease; overflow-y: auto; }
+        .sheet-panel { bottom: 0; left: 50%; right: auto; border-radius: 20px 20px 0 0; padding: 20px; padding-bottom: max(20px, env(safe-area-inset-bottom)); transform: translate(-50%, 100%); max-height: 70vh; width: min(430px, 100%); }
+        .sheet-panel.show { transform: translate(-50%, 0); }
+        .history-panel { top: 0; right: 0; bottom: 0; width: 85%; max-width: 360px; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); transform: translateX(100%); }
+        .history-panel.show { transform: translateX(0); }
+        .sheet-header, .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .sheet-title, .history-title { font-size: 18px; font-weight: 600; }
+        .close-sheet { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border-radius: 50%; cursor: pointer; }
+        .sheet-filters { display: flex; gap: 8px; margin-bottom: 16px; }
+        .filter-btn, .clear-history { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .filter-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .filter-btn.active { background: var(--primary-color); color: white; }
+        .clear-history { background: #fff2f0; color: var(--error-color); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+        .sheet-item { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 2px solid var(--border-color); background: white; }
+        .sheet-item.unanswered { border-color: var(--border-color); color: var(--text-secondary); }
+        .sheet-item.correct { border-color: var(--success-color); background: var(--success-light); color: var(--success-color); }
+        .sheet-item.wrong { border-color: var(--error-color); background: var(--error-light); color: var(--error-color); }
+        .sheet-item.current { border-width: 3px; border-color: var(--primary-color); transform: scale(1.05); }
+        .sheet-number { font-size: 16px; }
+        .sheet-status { font-size: 10px; margin-top: 2px; }
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        .history-item { background: #fafafa; border-radius: var(--radius-sm); padding: 16px; border-left: 4px solid var(--primary-color); transition: all 0.3s ease; }
+        .history-item:active { transform: scale(0.98); }
+        .history-date { font-size: 12px; color: var(--text-light); margin-bottom: 8px; }
+        .history-stats { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .history-stat { text-align: center; }
+        .history-value { font-size: 18px; font-weight: 700; color: var(--primary-color); }
+        .history-label { font-size: 11px; color: var(--text-light); }
+        .history-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .history-action-btn { flex: 1; padding: 8px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s ease; }
+        .review-btn { background: var(--primary-color); color: white; }
+        .delete-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .completion-screen { text-align: center; padding: 40px 20px; animation: fadeIn 0.5s ease; }
+        .completion-icon { width: 80px; height: 80px; background: linear-gradient(135deg, var(--success-color), #73d13d); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); }
+        .stats { display: flex; justify-content: center; gap: 24px; margin: 24px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary-color); }
+        .stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+        .action-btn { flex: 1; height: 48px; border: none; border-radius: var(--radius-sm); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .restart-btn { background: linear-gradient(135deg, var(--primary-color), #6ba8ff); color: white; }
+        .history-view-btn { background: #f5f5f5; color: var(--text-secondary); }
+        .review-wrong-btn { background: #faad14; color: white; }
+        .export-wrong-btn { background: #f5222d; color: white; }
+        .toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 1000; animation: toastIn 0.3s ease; }
+        @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+        @media (min-width: 768px) { .app-container { border-radius: 20px; margin: 20px auto; min-height: calc(100vh - 40px); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); } .footer { position: static; border-radius: 0 0 20px 20px; } .sheet-panel { border-radius: 20px; bottom: 20px; max-height: 60vh; } }
+        @media (max-width: 360px) { .sheet-grid { grid-template-columns: repeat(5, 1fr); gap: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">计算机硬件系统</div>
+                        <div class="progress-text">信息技术 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: "单选题",
+                stem: "计算机硬件系统的核心部件是（  ）",
+                options: [
+                    { label: "A", text: "存储器" },
+                    { label: "B", text: "输入设备" },
+                    { label: "C", text: "CPU" },
+                    { label: "D", text: "输出设备" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>CPU（中央处理器）由运算器和控制器组成，负责执行所有指令和处理数据，是计算机硬件系统的<span style="color:#f5222d;font-weight:700;">核心部件</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>CPU被称为“计算机的大脑”，所有运算和控制工作都由它完成。</p>
+                <p><strong>💡 解题思路：</strong>看到“核心、大脑”等词直接选CPU。</p>
+                <p><strong>🧠 记忆口诀：</strong>CPU是核心，运算加控制。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "CPU由（  ）组成",
+                options: [
+                    { label: "A", text: "运算器和存储器" },
+                    { label: "B", text: "控制器和存储器" },
+                    { label: "C", text: "运算器和控制器" },
+                    { label: "D", text: "输入设备和输出设备" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>CPU = <span style="color:#f5222d;font-weight:700;">运算器 + 控制器</span>，这是标准组成。</p>
+                <p><strong>📚 知识点讲解：</strong>运算器负责算术/逻辑运算，控制器是指挥中心。</p>
+                <p><strong>💡 解题思路：</strong>排除带“存储器”的选项，因为存储器是独立部件。</p>
+                <p><strong>🧠 记忆口诀：</strong>CPU两大件，运算加控制。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "负责完成算术运算和逻辑运算的部件是（  ）",
+                options: [
+                    { label: "A", text: "运算器" },
+                    { label: "B", text: "控制器" },
+                    { label: "C", text: "存储器" },
+                    { label: "D", text: "输入设备" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">运算器</span>的唯一功能就是完成算术运算和逻辑运算。</p>
+                <p><strong>📚 知识点讲解：</strong>运算器是计算机的计算中心。</p>
+                <p><strong>💡 解题思路：</strong>题中有“运算”二字，直接选运算器。</p>
+                <p><strong>🧠 记忆口诀：</strong>运算器管计算，控制器管指挥。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "负责协调控制计算机各部件工作的部件是（  ）",
+                options: [
+                    { label: "A", text: "运算器" },
+                    { label: "B", text: "控制器" },
+                    { label: "C", text: "存储器" },
+                    { label: "D", text: "输出设备" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">控制器</span>是计算机的指挥中心，所有部件听从它的协调。</p>
+                <p><strong>📚 知识点讲解：</strong>控制器读取指令、分析指令、控制各部件工作。</p>
+                <p><strong>💡 解题思路：</strong>“协调控制”就是控制器的职责。</p>
+                <p><strong>🧠 记忆口诀：</strong>控制器是司令，部件听指挥。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于内存储器的是（  ）",
+                options: [
+                    { label: "A", text: "硬盘" },
+                    { label: "B", text: "U盘" },
+                    { label: "C", text: "内存条" },
+                    { label: "D", text: "光盘" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">内存条</span>就是RAM，属于内存储器。其他选项都是外存储器。</p>
+                <p><strong>📚 知识点讲解：</strong>内存储器直接与CPU交换数据，速度快但断电丢失。</p>
+                <p><strong>💡 解题思路：</strong>内存条是典型的内存储器。</p>
+                <p><strong>🧠 记忆口诀：</strong>内存条是内存储器，外存硬盘U盘光盘。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于外存储器的是（  ）",
+                options: [
+                    { label: "A", text: "RAM" },
+                    { label: "B", text: "ROM" },
+                    { label: "C", text: "固态硬盘" },
+                    { label: "D", text: "CPU缓存" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">固态硬盘（SSD）</span>是外存储器，用于长期存储。</p>
+                <p><strong>📚 知识点讲解：</strong>RAM、ROM、CPU缓存都属于内存储器。</p>
+                <p><strong>💡 解题思路：</strong>硬盘类（HDD/SSD）都是外存。</p>
+                <p><strong>🧠 记忆口诀：</strong>固态硬盘外存，长期保存数据。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "RAM的特点是（  ）",
+                options: [
+                    { label: "A", text: "只能读不能写" },
+                    { label: "B", text: "断电后数据不丢失" },
+                    { label: "C", text: "可读写，断电后数据丢失" },
+                    { label: "D", text: "容量大，速度慢" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>RAM可以任意读写，但<span style="color:#f5222d;font-weight:700;">断电后数据全部丢失</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>RAM就是我们日常说的“内存条”，易失性存储。</p>
+                <p><strong>💡 解题思路：</strong>抓住“可读写、断电丢”这个关键特征。</p>
+                <p><strong>🧠 记忆口诀：</strong>RAM可读写，断电数据跑。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "ROM的特点是（  ）",
+                options: [
+                    { label: "A", text: "只能读不能写" },
+                    { label: "B", text: "断电后数据丢失" },
+                    { label: "C", text: "可读写，断电后数据不丢失" },
+                    { label: "D", text: "容量大，速度快" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>ROM是只读存储器，<span style="color:#f5222d;font-weight:700;">只能读不能写</span>，断电不丢失。</p>
+                <p><strong>📚 知识点讲解：</strong>ROM通常固化BIOS等启动程序。</p>
+                <p><strong>💡 解题思路：</strong>“只读”是ROM最显著的特点。</p>
+                <p><strong>🧠 记忆口诀：</strong>ROM只读存，断电数据留。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机断电后，下列存储器中数据会丢失的是（  ）",
+                options: [
+                    { label: "A", text: "ROM" },
+                    { label: "B", text: "RAM" },
+                    { label: "C", text: "硬盘" },
+                    { label: "D", text: "U盘" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>只有<span style="color:#f5222d;font-weight:700;">RAM</span>断电后数据会丢失，其他均不会丢失。</p>
+                <p><strong>📚 知识点讲解：</strong>ROM、硬盘、U盘属于非易失性存储。</p>
+                <p><strong>💡 解题思路：</strong>断电丢失是RAM的专属特征。</p>
+                <p><strong>🧠 记忆口诀：</strong>断电丢数据，一定是RAM。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机断电后，下列存储器中数据不会丢失的是（  ）",
+                options: [
+                    { label: "A", text: "内存条" },
+                    { label: "B", text: "CPU缓存" },
+                    { label: "C", text: "机械硬盘" },
+                    { label: "D", text: "寄存器" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">机械硬盘</span>是外存储器，断电后数据永久保存。</p>
+                <p><strong>📚 知识点讲解：</strong>内存条、CPU缓存、寄存器都是内存储器，断电数据丢失。</p>
+                <p><strong>💡 解题思路：</strong>硬盘就是用来长期存数据的。</p>
+                <p><strong>🧠 记忆口诀：</strong>硬盘存得久，断电不丢失。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "用于临时存储正在运行的程序和数据的存储器是（  ）",
+                options: [
+                    { label: "A", text: "硬盘" },
+                    { label: "B", text: "内存" },
+                    { label: "C", text: "U盘" },
+                    { label: "D", text: "光盘" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">内存</span>用于临时存储CPU正在处理的程序和数据。</p>
+                <p><strong>📚 知识点讲解：</strong>内存速度快，满足CPU高速处理需求。</p>
+                <p><strong>💡 解题思路：</strong>“临时、正在运行”必选内存。</p>
+                <p><strong>🧠 记忆口诀：</strong>内存是临时工，用完数据清空。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "用于长期存储文件、软件和系统的存储器是（  ）",
+                options: [
+                    { label: "A", text: "内存" },
+                    { label: "B", text: "CPU缓存" },
+                    { label: "C", text: "硬盘" },
+                    { label: "D", text: "寄存器" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">硬盘</span>容量大、断电不丢失，适合长期存储。</p>
+                <p><strong>📚 知识点讲解：</strong>硬盘是典型的外存储器。</p>
+                <p><strong>💡 解题思路：</strong>“长期存储”对应外存/硬盘。</p>
+                <p><strong>🧠 记忆口诀：</strong>硬盘仓库大，长期存放不丢失。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于输入设备的是（  ）",
+                options: [
+                    { label: "A", text: "显示器" },
+                    { label: "B", text: "打印机" },
+                    { label: "C", text: "键盘" },
+                    { label: "D", text: "音箱" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">键盘</span>用于向计算机输入文字和命令，属于输入设备。</p>
+                <p><strong>📚 知识点讲解：</strong>显示器、打印机、音箱都是输出设备。</p>
+                <p><strong>💡 解题思路：</strong>人能通过它向电脑发指令的就是输入设备。</p>
+                <p><strong>🧠 记忆口诀：</strong>键盘鼠标输入，显示器音箱输出。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列属于输出设备的是（  ）",
+                options: [
+                    { label: "A", text: "鼠标" },
+                    { label: "B", text: "扫描仪" },
+                    { label: "C", text: "摄像头" },
+                    { label: "D", text: "显示器" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">显示器</span>将计算机处理的结果展示出来，属于输出设备。</p>
+                <p><strong>📚 知识点讲解：</strong>鼠标、扫描仪、摄像头都是输入设备。</p>
+                <p><strong>💡 解题思路：</strong>显示信息给人看的设备就是输出设备。</p>
+                <p><strong>🧠 记忆口诀：</strong>显示器输出，眼睛看得见。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列设备中，既是输入设备又是输出设备的是（  ）",
+                options: [
+                    { label: "A", text: "键盘" },
+                    { label: "B", text: "鼠标" },
+                    { label: "C", text: "触摸屏" },
+                    { label: "D", text: "打印机" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">触摸屏</span>既可触摸输入，又可显示输出，具有双重功能。</p>
+                <p><strong>📚 知识点讲解：</strong>这是唯一常见的兼具输入/输出功能的设备。</p>
+                <p><strong>💡 解题思路：</strong>既能点又能看的设备就是触摸屏。</p>
+                <p><strong>🧠 记忆口诀：</strong>触摸屏，输入输出一身兼。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "冯·诺依曼体系结构的计算机由（  ）五大基本部件组成",
+                options: [
+                    { label: "A", text: "CPU、内存、硬盘、输入设备、输出设备" },
+                    { label: "B", text: "运算器、控制器、存储器、输入设备、输出设备" },
+                    { label: "C", text: "主机、显示器、键盘、鼠标、打印机" },
+                    { label: "D", text: "硬件系统、软件系统、操作系统、应用软件、驱动程序" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>冯·诺依曼五大部件：<span style="color:#f5222d;font-weight:700;">运算器、控制器、存储器、输入设备、输出设备</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>CPU是运算器+控制器，硬盘是存储器的一种。</p>
+                <p><strong>💡 解题思路：</strong>按原始定义回答，不要用现代部件代替。</p>
+                <p><strong>🧠 记忆口诀：</strong>运控存输入输出，五大部件记清楚。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机的“大脑”是指（  ）",
+                options: [
+                    { label: "A", text: "内存" },
+                    { label: "B", text: "硬盘" },
+                    { label: "C", text: "CPU" },
+                    { label: "D", text: "主板" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>CPU负责所有计算和控制，如同<span style="color:#f5222d;font-weight:700;">大脑</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>内存是临时记忆，硬盘是永久记忆，但CPU是处理中心。</p>
+                <p><strong>💡 解题思路：</strong>大脑负责思考，CPU负责运算控制。</p>
+                <p><strong>🧠 记忆口诀：</strong>CPU是大脑，计算控制全靠它。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于内存和外存的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "内存速度比外存快" },
+                    { label: "B", text: "内存容量比外存大" },
+                    { label: "C", text: "内存断电数据丢失" },
+                    { label: "D", text: "外存用于长期存储" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>内存容量<span style="color:#f5222d;font-weight:700;">比外存小</span>，通常8-32GB，而外存可达TB级别。</p>
+                <p><strong>📚 知识点讲解：</strong>内存追求速度，外存追求容量。</p>
+                <p><strong>💡 解题思路：</strong>容量大小是相反的，内存小外存大。</p>
+                <p><strong>🧠 记忆口诀：</strong>内存快又小，外存慢又大。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于RAM和ROM的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "RAM是只读存储器" },
+                    { label: "B", text: "ROM是随机存取存储器" },
+                    { label: "C", text: "RAM断电数据丢失" },
+                    { label: "D", text: "ROM可以任意读写" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">RAM断电数据丢失</span>是正确的，其他选项名称与特性均不符。</p>
+                <p><strong>📚 知识点讲解：</strong>RAM随机存取可读写，ROM只读不可写。</p>
+                <p><strong>💡 解题思路：</strong>抓住各自最显著特点。</p>
+                <p><strong>🧠 记忆口诀：</strong>RAM可读写断电丢，ROM只读断电留。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "主板的主要功能是（  ）",
+                options: [
+                    { label: "A", text: "处理数据" },
+                    { label: "B", text: "存储数据" },
+                    { label: "C", text: "连接所有硬件部件" },
+                    { label: "D", text: "输出结果" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>主板是计算机的“躯干”，<span style="color:#f5222d;font-weight:700;">连接所有硬件部件</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>主板提供插槽和接口，各部件通过主板进行通信。</p>
+                <p><strong>💡 解题思路：</strong>主板功能是连接和承载。</p>
+                <p><strong>🧠 记忆口诀：</strong>主板连所有，通信靠它走。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "显卡的主要功能是（  ）",
+                options: [
+                    { label: "A", text: "处理图像和视频数据" },
+                    { label: "B", text: "执行指令和处理数据" },
+                    { label: "C", text: "存储程序和数据" },
+                    { label: "D", text: "协调控制各部件工作" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>显卡（GPU）专门负责<span style="color:#f5222d;font-weight:700;">处理图像和视频数据</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>GPU并行处理能力强，擅长图形渲染。</p>
+                <p><strong>💡 解题思路：</strong>显卡与图形相关。</p>
+                <p><strong>🧠 记忆口诀：</strong>显卡图形处理，游戏视频靠它。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列设备中，属于输入设备的是（  ）",
+                options: [
+                    { label: "A", text: "音箱" },
+                    { label: "B", text: "绘图仪" },
+                    { label: "C", text: "扫描仪" },
+                    { label: "D", text: "投影仪" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">扫描仪</span>将纸质文件输入计算机，属于输入设备。</p>
+                <p><strong>📚 知识点讲解：</strong>音箱、绘图仪、投影仪都是输出设备。</p>
+                <p><strong>💡 解题思路：</strong>扫描仪是把外部信息“送入”电脑。</p>
+                <p><strong>🧠 记忆口诀：</strong>扫描仪输入，打印机输出。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列设备中，属于输出设备的是（  ）",
+                options: [
+                    { label: "A", text: "麦克风" },
+                    { label: "B", text: "手写板" },
+                    { label: "C", text: "摄像头" },
+                    { label: "D", text: "打印机" }
+                ],
+                answer: 3,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">打印机</span>将电脑中的文档打印出来，属于输出设备。</p>
+                <p><strong>📚 知识点讲解：</strong>麦克风、手写板、摄像头都是输入设备。</p>
+                <p><strong>💡 解题思路：</strong>打印机是出纸，属于输出。</p>
+                <p><strong>🧠 记忆口诀：</strong>打印机输出，文档变纸质。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机中速度最快的存储器是（  ）",
+                options: [
+                    { label: "A", text: "硬盘" },
+                    { label: "B", text: "内存" },
+                    { label: "C", text: "CPU缓存" },
+                    { label: "D", text: "U盘" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">CPU缓存</span>集成在CPU内部，速度比内存快得多。</p>
+                <p><strong>📚 知识点讲解：</strong>存储速度：CPU缓存 > 内存 > 硬盘/U盘。</p>
+                <p><strong>💡 解题思路：</strong>离CPU越近越快。</p>
+                <p><strong>🧠 记忆口诀：</strong>CPU缓存最快，内存次之，硬盘最慢。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机中容量最大的存储器通常是（  ）",
+                options: [
+                    { label: "A", text: "内存" },
+                    { label: "B", text: "CPU缓存" },
+                    { label: "C", text: "硬盘" },
+                    { label: "D", text: "寄存器" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">硬盘</span>的容量最大，通常几百GB到几TB。</p>
+                <p><strong>📚 知识点讲解：</strong>内存、缓存、寄存器容量相对很小。</p>
+                <p><strong>💡 解题思路：</strong>外存容量远超内存储器。</p>
+                <p><strong>🧠 记忆口诀：</strong>硬盘容量大，存放文件多。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "BIOS程序存储在（  ）中",
+                options: [
+                    { label: "A", text: "RAM" },
+                    { label: "B", text: "ROM" },
+                    { label: "C", text: "硬盘" },
+                    { label: "D", text: "内存" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>BIOS固化在主板上的<span style="color:#f5222d;font-weight:700;">ROM</span>芯片中，断电不丢失。</p>
+                <p><strong>📚 知识点讲解：</strong>ROM存储开机自检和引导程序。</p>
+                <p><strong>💡 解题思路：</strong>系统最底层的启动程序存储在ROM。</p>
+                <p><strong>🧠 记忆口诀：</strong>BIOS在ROM，开机就靠它。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "我们日常所说的“内存条”指的是（  ）",
+                options: [
+                    { label: "A", text: "ROM" },
+                    { label: "B", text: "RAM" },
+                    { label: "C", text: "硬盘" },
+                    { label: "D", text: "SSD" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>日常说的内存条就是<span style="color:#f5222d;font-weight:700;">RAM</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>RAM是随机存取存储器，插在主板内存插槽上。</p>
+                <p><strong>💡 解题思路：</strong>俗称内存条即RAM。</p>
+                <p><strong>🧠 记忆口诀：</strong>内存条就是RAM，临时存储跑得快。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于固态硬盘（SSD）的说法，正确的是（  ）",
+                options: [
+                    { label: "A", text: "比机械硬盘速度慢" },
+                    { label: "B", text: "比机械硬盘容量大" },
+                    { label: "C", text: "没有机械运动部件" },
+                    { label: "D", text: "断电后数据丢失" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>SSD采用闪存芯片，<span style="color:#f5222d;font-weight:700;">没有机械运动部件</span>，因此速度快、抗震。</p>
+                <p><strong>📚 知识点讲解：</strong>SSD速度比HDD快，但容量通常较小、价格较高，断电不丢失。</p>
+                <p><strong>💡 解题思路：</strong>固态硬盘无机械结构，区别于机械硬盘。</p>
+                <p><strong>🧠 记忆口诀：</strong>固态硬盘无马达，速度快又安静。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "计算机硬件系统中，负责将计算机内部信号转换为人类能识别的信号的是（  ）",
+                options: [
+                    { label: "A", text: "输入设备" },
+                    { label: "B", text: "输出设备" },
+                    { label: "C", text: "存储器" },
+                    { label: "D", text: "CPU" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong><span style="color:#f5222d;font-weight:700;">输出设备</span>将二进制结果转换为人能识别的文字、图像、声音。</p>
+                <p><strong>📚 知识点讲解：</strong>输入设备是反方向转换。</p>
+                <p><strong>💡 解题思路：</strong>“计算机→人”的方向是输出。</p>
+                <p><strong>🧠 记忆口诀：</strong>输出设备给人看，输入设备让人用。</p>`
+            },
+            {
+                type: "单选题",
+                stem: "下列关于计算机硬件系统的说法，错误的是（  ）",
+                options: [
+                    { label: "A", text: "由五大基本部件组成" },
+                    { label: "B", text: "CPU是核心部件" },
+                    { label: "C", text: "内存用于长期存储数据" },
+                    { label: "D", text: "输入设备实现人机交互" }
+                ],
+                answer: 2,
+                analysis: `<p><strong>🎯 答案解析：</strong>内存用于<span style="color:#f5222d;font-weight:700;">临时存储</span>，外存才用于长期存储，C错误。</p>
+                <p><strong>📚 知识点讲解：</strong>内存是临时工作区，外存是永久仓库。</p>
+                <p><strong>💡 解题思路：</strong>长期存储对应外存/硬盘，不是内存。</p>
+                <p><strong>🧠 记忆口诀：</strong>内存临时，外存永久。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "CPU由运算器和存储器组成。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。CPU由<span style="color:#f5222d;font-weight:700;">运算器和控制器</span>组成，存储器是独立部件。</p>
+                <p><strong>📚 知识点讲解：</strong>常见的混淆点，必须牢记CPU的组成。</p>
+                <p><strong>💡 解题思路：</strong>看到“存储器”在CPU组成中就是错误。</p>
+                <p><strong>🧠 记忆口诀：</strong>CPU两大件，运算加控制。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "RAM断电后数据会丢失，ROM断电后数据不会丢失。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。这是RAM和ROM最核心的区别，<span style="color:#f5222d;font-weight:700;">RAM易失，ROM非易失</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>考试必考，务必区分。</p>
+                <p><strong>💡 解题思路：</strong>RAM断电数据跑，ROM断电数据留。</p>
+                <p><strong>🧠 记忆口诀：</strong>RAM断电丢，ROM断电留。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "硬盘属于内存储器。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。硬盘是<span style="color:#f5222d;font-weight:700;">外存储器</span>，内存才是内存储器。</p>
+                <p><strong>📚 知识点讲解：</strong>内存在主机箱内但属于外存？不是，硬盘是外存，内存是内存条。</p>
+                <p><strong>💡 解题思路：</strong>硬盘是外存，用于长期保存。</p>
+                <p><strong>🧠 记忆口诀：</strong>硬盘是外存，内存条是内存。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "键盘和鼠标都是输出设备。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。键盘和鼠标是<span style="color:#f5222d;font-weight:700;">输入设备</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>输入是向电脑送信息，输出是电脑向人送结果。</p>
+                <p><strong>💡 解题思路：</strong>键盘鼠标操作电脑，是输入。</p>
+                <p><strong>🧠 记忆口诀：</strong>键盘鼠标输入，显示器音箱输出。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "触摸屏既是输入设备又是输出设备。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。触摸屏可触摸输入，也可显示输出，<span style="color:#f5222d;font-weight:700;">双重功能</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>常考的特殊设备。</p>
+                <p><strong>💡 解题思路：</strong>既能点又能看。</p>
+                <p><strong>🧠 记忆口诀：</strong>触摸屏，输入输出一身兼。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "内存的速度比外存快，容量也比外存大。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。内存速度快但<span style="color:#f5222d;font-weight:700;">容量小</span>，外存容量大。</p>
+                <p><strong>📚 知识点讲解：</strong>速度与容量通常成反比。</p>
+                <p><strong>💡 解题思路：</strong>内存容量比硬盘小得多。</p>
+                <p><strong>🧠 记忆口诀：</strong>内存快又小，外存慢又大。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "所有的存储器断电后数据都会丢失。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。ROM、硬盘、U盘等<span style="color:#f5222d;font-weight:700;">非易失性存储器</span>断电不丢失。</p>
+                <p><strong>📚 知识点讲解：</strong>只有RAM等易失性存储断电丢失。</p>
+                <p><strong>💡 解题思路：</strong>“所有”过于绝对。</p>
+                <p><strong>🧠 记忆口诀：</strong>外存和ROM，断电不丢失。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "运算器是计算机的指挥中心。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。<span style="color:#f5222d;font-weight:700;">控制器</span>是指挥中心，运算器是计算中心。</p>
+                <p><strong>📚 知识点讲解：</strong>两者功能不可混淆。</p>
+                <p><strong>💡 解题思路：</strong>指挥=控制器，计算=运算器。</p>
+                <p><strong>🧠 记忆口诀：</strong>控制器指挥，运算器计算。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "冯·诺依曼体系结构的五大部件是CPU、内存、硬盘、输入设备、输出设备。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 1,
+                analysis: `<p><strong>🎯 答案解析：</strong>错误。五大部件是<span style="color:#f5222d;font-weight:700;">运算器、控制器、存储器、输入设备、输出设备</span>。</p>
+                <p><strong>📚 知识点讲解：</strong>不能用现代组件名称替换原始定义。</p>
+                <p><strong>💡 解题思路：</strong>按冯·诺依曼原始结构回答。</p>
+                <p><strong>🧠 记忆口诀：</strong>运控存输入输出，才是冯氏五大件。</p>`
+            },
+            {
+                type: "判断题",
+                stem: "没有硬件的支持，软件无法运行。（  ）",
+                options: [
+                    { label: "A", text: "正确" },
+                    { label: "B", text: "错误" }
+                ],
+                answer: 0,
+                analysis: `<p><strong>🎯 答案解析：</strong>正确。硬件是软件运行的<span style="color:#f5222d;font-weight:700;">物质基础</span>，缺一不可。</p>
+                <p><strong>📚 知识点讲解：</strong>硬件与软件相互依存。</p>
+                <p><strong>💡 解题思路：</strong>基本常识。</p>
+                <p><strong>🧠 记忆口诀：</strong>硬件是体，软件是魂。</p>`
+            }
+        ];
+
+        const APP_ID = 'hardware_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let isReviewMode = false;
+        let wrongQuestionIndices = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '计算机硬件系统核心部件详解';
+            const content = `
+                <h3>📘 冯·诺依曼硬件体系</h3>
+                <p>计算机硬件系统由<strong>运算器、控制器、存储器、输入设备、输出设备</strong>五大基本部件组成，CPU是核心。</p>
+                <h3>⚙️ 中央处理器（CPU）</h3>
+                <p><strong>CPU = 运算器 + 控制器</strong>，负责执行所有指令和处理数据，被称为“计算机的大脑”。</p>
+                <h3>💾 存储器</h3>
+                <table class="knowledge-table">
+                    <thead><tr><th>类型</th><th>特点</th><th>例子</th></tr></thead>
+                    <tbody>
+                        <tr><td>内存 (RAM)</td><td>可读写、速度快、断电丢失</td><td>DDR4/DDR5 内存条</td></tr>
+                        <tr><td>只读存储器 (ROM)</td><td>只能读、断电不丢失</td><td>主板BIOS芯片</td></tr>
+                        <tr><td>外存 (硬盘等)</td><td>容量大、长期保存、断电不丢</td><td>SSD、HDD、U盘</td></tr>
+                    </tbody>
+                </table>
+                <h3>🖥️ 输入/输出设备</h3>
+                <p>输入设备（键盘、鼠标、扫描仪）向计算机送信息；输出设备（显示器、打印机、音箱）向人展示结果。<strong>触摸屏兼具输入输出功能。</strong></p>
+                <p><strong>主板</strong>连接所有部件，<strong>显卡</strong>处理图像，<strong>电源</strong>供电。</p>
+                <p><strong>记忆口诀：</strong>硬件五大件，运控存输输；CPU是核心，运算加控制；内存快又小，断电数据跑；外存慢又大，断电数据留。</p>
+            `;
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `
+                <button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>
+            `;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            isReviewMode = false;
+            wrongQuestionIndices = [];
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderQuestion() {
+            const contentArea = document.getElementById('quizContent');
+            if (isReviewMode && wrongQuestionIndices.length === 0) {
+                contentArea.innerHTML = `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">没有错题！</h1><p style="color: var(--text-secondary);">太厉害了，全部正确！</p><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button></div></div>`;
+                return;
+            }
+            const actualIndex = isReviewMode ? wrongQuestionIndices[currentIndex] : currentIndex;
+            const q = questions[actualIndex];
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[actualIndex] === idx;
+                const isCorrect = q.answer === idx;
+                let classes = ['option-item'];
+                if (answers[actualIndex] !== null) {
+                    if (isSelected && isCorrect) classes.push('correct');
+                    else if (isSelected && !isCorrect) classes.push('wrong');
+                    else if (isCorrect) classes.push('correct');
+                } else if (isSelected) {
+                    classes.push('selected');
+                }
+                html += `<div class="${classes.join(' ')}" onclick="selectOption(${idx})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`;
+            });
+            html += '</div></div>';
+            if (answers[actualIndex] !== null) {
+                const isCorrect = answers[actualIndex] === q.answer;
+                html += `
+                    <div class="analysis-card">
+                        <div class="analysis-header" onclick="toggleAnalysis(this)">
+                            <div class="analysis-title">📝 答案分析 <span class="result-badge ${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? '✓ 回答正确' : '✗ 回答错误'}</span></div>
+                            <div class="toggle-icon expanded">▼</div>
+                        </div>
+                        <div class="analysis-content" style="display: block;">${q.analysis}</div>
+                    </div>
+                `;
+            }
+            if (!isReviewMode && currentIndex === questions.length - 1 && answers.every(a => a !== null)) {
+                const correctCount = answers.filter((a, i) => a === questions[i].answer).length;
+                const accuracy = Math.round(correctCount/questions.length*100);
+                saveToHistory(correctCount, accuracy);
+                const wrongCount = questions.length - correctCount;
+                html += `
+                    <div class="completion-screen">
+                        <div class="completion-icon">🎉</div>
+                        <h1 class="completion-title">刷题完成！</h1>
+                        <p style="color: var(--text-secondary);">太棒了！你已经完成了所有题目</p>
+                        <div class="stats">
+                            <div class="stat-item"><div class="stat-value">${correctCount}/${questions.length}</div><div class="stat-label">答对题数</div></div>
+                            <div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button>
+                            <button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>
+                            ${wrongCount > 0 ? '<button class="action-btn review-wrong-btn" onclick="reviewWrongQuestions()">回看错题 ('+wrongCount+')</button>' : ''}
+                            ${wrongCount > 0 ? '<button class="action-btn export-wrong-btn" onclick="exportWrongCSV()">导出错题</button>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            contentArea.innerHTML = html;
+            updateHeader();
+            if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(idx) {
+            if (answers[currentIndex] !== null) return;
+            answers[currentIndex] = idx;
+            saveAnswers();
+            renderQuestion();
+            renderAnswerSheet();
+            updateNavButtons();
+            showToast(idx === questions[currentIndex].answer ? '回答正确！✓' : '回答错误 ✗');
+        }
+
+        function toggleAnalysis(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); }
+            else { content.style.display = 'none'; icon.classList.remove('expanded'); }
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } }
+        function nextQuestion() { if (currentIndex < (isReviewMode ? wrongQuestionIndices.length : questions.length) - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } }
+
+        function updateHeader() {
+            if (currentPage !== 'quiz') return;
+            const total = isReviewMode ? wrongQuestionIndices.length : questions.length;
+            document.getElementById('currentNum').textContent = currentIndex + 1;
+            const answeredCount = isReviewMode ? wrongQuestionIndices.filter(i => answers[i] !== null).length : answers.filter(a => a !== null).length;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('progressFill').style.width = `${(answeredCount / total) * 100}%`;
+        }
+
+        function updateNavButtons() {
+            const footerContent = document.getElementById('footerContent');
+            if (currentPage !== 'quiz') return;
+            const total = isReviewMode ? wrongQuestionIndices.length : questions.length;
+            footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${currentIndex === 0 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${currentIndex === total - 1 && answers.every(a => a !== null) ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`;
+        }
+
+        function changeFontSize(delta) {
+            fontSize = Math.max(14, Math.min(22, fontSize + delta));
+            document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`);
+            document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`);
+            document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`);
+            saveSettings();
+        }
+
+        function toggleSheet() {
+            const overlay = document.getElementById('sheetOverlay');
+            const panel = document.getElementById('sheetPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); }
+        }
+
+        function renderAnswerSheet() {
+            const grid = document.getElementById('sheetGrid');
+            let html = '';
+            questions.forEach((q, index) => {
+                let statusClass = 'unanswered'; let statusText = '未答';
+                if (answers[index] !== null) {
+                    if (answers[index] === q.answer) { statusClass = 'correct'; statusText = '正确'; }
+                    else { statusClass = 'wrong'; statusText = '错误'; }
+                }
+                if (index === currentIndex) { statusClass += ' current'; }
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'unanswered' && answers[index] !== null) return;
+                    if (currentFilter === 'correct' && (answers[index] === null || answers[index] !== q.answer)) return;
+                    if (currentFilter === 'wrong' && (answers[index] === null || answers[index] === q.answer)) return;
+                }
+                html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${index})"><div class="sheet-number">${index + 1}</div><div class="sheet-status">${statusText}</div></div>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        function filterQuestions(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnswerSheet();
+        }
+
+        function jumpToQuestion(index) { currentIndex = index; renderQuestion(); updateNavButtons(); toggleSheet(); }
+
+        function toggleHistory() {
+            const overlay = document.getElementById('historyOverlay');
+            const panel = document.getElementById('historyPanel');
+            if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); }
+            else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); }
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = getHistory();
+            if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; }
+            let html = '';
+            history.forEach((record, index) => {
+                const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function saveToHistory(correctCount, accuracy) {
+            const history = getHistory();
+            history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers] });
+            if (history.length > 50) history.pop();
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+        }
+
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; currentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() {
+            const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS);
+            if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); }
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+            if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); }
+        }
+
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); isReviewMode = false; wrongQuestionIndices = []; localStorage.removeItem(STORAGE_KEY_ANSWERS); renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+
+        function reviewWrongQuestions() {
+            wrongQuestionIndices = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && answers[i] !== q.answer) wrongQuestionIndices.push(i); });
+            if (wrongQuestionIndices.length === 0) { showToast('没有错题，太棒了！'); return; }
+            isReviewMode = true;
+            currentIndex = 0;
+            renderQuestion();
+            updateNavButtons();
+            showToast(`进入错题回顾，共${wrongQuestionIndices.length}题`);
+        }
+
+        function exportWrongCSV() {
+            const wrongItems = [];
+            questions.forEach((q, i) => { if (answers[i] !== null && answers[i] !== q.answer) wrongItems.push({index:i+1, q}); });
+            if (wrongItems.length === 0) { showToast('没有错题可导出'); return; }
+            let csv = '\uFEFF题目编号,题型,题目,选项,正确答案,用户答案,解析\n';
+            wrongItems.forEach(item => {
+                const q = item.q;
+                const optionStr = q.options.map(o=>`${o.label}.${o.text}`).join('；');
+                const correctAns = q.options[q.answer].label + '.' + q.options[q.answer].text;
+                const userAns = q.options[answers[item.index-1]].label + '.' + q.options[answers[item.index-1]].text;
+                const analysisText = q.analysis.replace(/<[^>]+>/g,'').replace(/"/g,'""');
+                csv += `"${item.index}","${q.type}","${q.stem}","${optionStr}","${correctAns}","${userAns}","${analysisText}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '错题记录.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('错题已导出');
+        }
+    </script>
+</body>
+</html>
