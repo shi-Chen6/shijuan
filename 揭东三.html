@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>汕头市潮南教师招聘敬一畏模拟题（一）</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --primary: #4A6CF7;
+            --primary-light: #EEF1FE;
+            --text: #1c1c1e;
+            --text-secondary: #555;
+            --text-light: #888;
+            --border: #e5e5ea;
+            --correct: #34C759;
+            --correct-bg: #E8F8ED;
+            --wrong: #FF3B30;
+            --wrong-bg: #FFECEB;
+            --selected-bg: #EBF0FF;
+            --selected-border: #4A6CF7;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            --radius: 14px;
+            --option-radius: 12px;
+            --font-base: 16px;
+            --font-sm: 14px;
+            --font-xs: 12px;
+            --font-lg: 18px;
+            --transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --tap-min: 44px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #e8e8ed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (min-width: 481px) {
+            body {
+                padding: 20px 0;
+                align-items: flex-start;
+            }
+            .app-container {
+                border-radius: 20px;
+                min-height: auto;
+                min-height: 100vh;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+        }
+
+        /* ========== 顶部导航栏 ========== */
+        .top-bar {
+            background: #fff;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            min-height: 52px;
+        }
+        .top-bar .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f5f5f7;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 17px;
+            color: var(--text);
+            flex-shrink: 0;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            min-width: 38px;
+        }
+        .top-bar .icon-btn:active {
+            background: #e0e0e5;
+            transform: scale(0.94);
+        }
+        .top-bar .title-area {
+            flex: 1;
+            min-width: 0;
+            padding-left: 4px;
+        }
+        .top-bar .section-label {
+            font-size: var(--font-xs);
+            color: var(--text-light);
+            line-height: 1.2;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .top-bar .question-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .font-size-indicator {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-light);
+            position: absolute;
+            bottom: 2px;
+            width: 100%;
+            text-align: center;
+            pointer-events: none;
+        }
+        .font-size-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* ========== 进度条 ========== */
+        .progress-wrap {
+            padding: 8px 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-xs);
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .progress-bar-outer {
+            height: 5px;
+            background: #e5e5ea;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* ========== 主内容区 ========== */
+        .main-content {
+            flex: 1;
+            padding: 14px 14px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+        }
+
+        /* 题目卡片 */
+        .question-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 18px 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .question-type-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.4px;
+        }
+        .badge-single { background: #EEF1FE; color: #4A6CF7; }
+        .badge-multiple { background: #FFF3E0; color: #E67E22; }
+        .badge-judge { background: #E8F5E9; color: #388E3C; }
+        .badge-short { background: #E3F2FD; color: #1976D2; }
+        .badge-discussion { background: #FCE4EC; color: #C2185B; }
+        .badge-case { background: #E8F5E9; color: #388E3C; }
+        .question-text {
+            font-size: var(--font-base);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .question-text .qn-inline {
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2px;
+        }
+
+        /* 选项区域 */
+        .options-area {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--option-radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            background: #fff;
+            min-height: var(--tap-min);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .option-item:active { transform: scale(0.985); background: #fafafa; }
+        .option-item.selected { border-color: var(--selected-border); background: var(--selected-bg); box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.08); }
+        .option-item.correct-reveal { border-color: var(--correct) !important; background: var(--correct-bg) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; animation: pulse-correct 0.5s ease; }
+        .option-item.wrong-reveal { border-color: var(--wrong) !important; background: var(--wrong-bg) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.08) !important; animation: shake 0.45s ease; }
+        .option-letter { width: 32px; height: 32px; border-radius: 50%; background: #f5f5f7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--text-secondary); flex-shrink: 0; transition: var(--transition); letter-spacing: 0; }
+        .option-item.selected .option-letter { background: var(--primary); color: #fff; }
+        .option-item.correct-reveal .option-letter { background: var(--correct); color: #fff; }
+        .option-item.wrong-reveal .option-letter { background: var(--wrong); color: #fff; }
+        .option-text { font-size: var(--font-base); color: var(--text); line-height: 1.5; flex: 1; letter-spacing: 0.2px; }
+        .option-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid #ccc; flex-shrink: 0; display: none; align-items: center; justify-content: center; transition: var(--transition); font-size: 13px; color: #fff; }
+        .option-item.multi-mode .option-check { display: flex; }
+        .option-item.multi-mode .option-letter { display: none; }
+        .option-item.multi-mode.checked .option-check { background: var(--primary); border-color: var(--primary); }
+        .option-item.multi-mode.correct-reveal .option-check { background: var(--correct); border-color: var(--correct); }
+        .option-item.multi-mode.wrong-reveal .option-check { background: var(--wrong); border-color: var(--wrong); }
+
+        /* 主观题输入区域 */
+        .essay-input-area {
+            margin-top: 16px;
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+        .essay-input-label {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 600;
+        }
+        .essay-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--option-radius);
+            font-size: var(--font-base);
+            line-height: 1.6;
+            resize: vertical;
+            transition: var(--transition);
+            background: #fff;
+            font-family: inherit;
+        }
+        .essay-textarea:focus {
+            outline: none;
+            border-color: var(--selected-border);
+            background: var(--selected-bg);
+        }
+        .essay-textarea.revealed {
+            background: #fafafc;
+        }
+        .essay-submit-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: var(--font-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: var(--tap-min);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.4px;
+        }
+        .essay-submit-btn:active {
+            opacity: 0.85;
+            transform: scale(0.99);
+        }
+        .essay-submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse-correct { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+
+        /* 提交按钮（多选） */
+        .submit-multi-btn {
+            display: none; width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: var(--font-base); font-weight: 600; cursor: pointer; transition: var(--transition); min-height: var(--tap-min); -webkit-tap-highlight-color: transparent; letter-spacing: 0.4px;
+        }
+        .submit-multi-btn:active { opacity: 0.85; transform: scale(0.97); }
+        .submit-multi-btn.visible { display: block; }
+
+        /* 答案和解析区 */
+        .result-area { display: none; background: #fff; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); animation: fadeInUp 0.35s ease; }
+        .result-area.visible { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: 700; font-size: var(--font-base); }
+        .result-header.correct { color: var(--correct); }
+        .result-header.wrong { color: var(--wrong); }
+        .result-icon { font-size: 22px; }
+        .correct-answer-display { font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: 8px; padding: 8px 12px; background: #f9f9fb; border-radius: 8px; }
+        .correct-answer-display strong { color: var(--correct); font-weight: 700; }
+        .analysis-toggle { display: flex; align-items: center; gap: 6px; font-size: var(--font-sm); font-weight: 600; color: var(--primary); cursor: pointer; padding: 8px 0; -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; min-height: 36px; }
+        .analysis-toggle .arrow-icon { transition: transform 0.3s ease; display: inline-block; font-size: 12px; }
+        .analysis-toggle.expanded .arrow-icon { transform: rotate(180deg); }
+        .analysis-content { display: none; font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.7; padding: 10px 12px; background: #fafafc; border-radius: 8px; border-left: 3px solid var(--primary); margin-top: 4px; letter-spacing: 0.2px; }
+        .analysis-content.expanded { display: block; animation: fadeInUp 0.3s ease; }
+
+        /* 底部导航 */
+        .nav-bottom { display: flex; gap: 10px; padding: 12px 16px; background: #fff; border-top: 1px solid var(--border); position: sticky; bottom: 0; z-index: 100; box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.04); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .nav-btn { flex: 1; padding: 13px 8px; border-radius: 12px; border: 2px solid var(--border); background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); min-height: var(--tap-min); -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .nav-btn:active { background: #f5f5f7; transform: scale(0.96); }
+        .nav-btn:disabled { opacity: 0.4; pointer-events: none; }
+        .nav-btn.primary-nav { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+        .nav-btn.primary-nav:active { background: #3b59d9; }
+
+        /* 覆盖层组件通用 */
+        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); z-index: 200; justify-content: center; align-items: flex-end; }
+        .overlay.visible { display: flex; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        /* 题目列表面板 */
+        .sheet-panel { background: #fff; width: 100%; max-width: 480px; max-height: 75vh; border-radius: 20px 20px 0 0; padding: 16px 14px 20px; overflow-y: auto; animation: slideUp 0.3s ease; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+        .sheet-handle { width: 40px; height: 5px; background: #d1d1d6; border-radius: 10px; margin: 0 auto 14px; }
+        .sheet-title { font-weight: 700; font-size: 16px; text-align: center; margin-bottom: 12px; color: var(--text); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+        .sheet-item { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); border: 2px solid transparent; -webkit-tap-highlight-color: transparent; min-width: 36px; min-height: 36px; }
+        .sheet-item.unanswered { background: #f0f0f5; color: #888; }
+        .sheet-item.correct-dot { background: #E8F8ED; color: var(--correct); border-color: var(--correct); }
+        .sheet-item.wrong-dot { background: #FFECEB; color: var(--wrong); border-color: var(--wrong); }
+        .sheet-item.current-dot { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2); font-weight: 700; }
+        .sheet-section-label { grid-column: 1 / -1; font-size: 11px; font-weight: 600; color: #999; text-align: left; padding: 6px 0 2px; letter-spacing: 0.3px; }
+        .sheet-close { display: block; width: 100%; padding: 12px; margin-top: 14px; background: #f5f5f7; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 15px; color: var(--text); -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; }
+
+        /* 结算面板 & 历史面板通用 */
+        .summary-panel { background: #fff; width: 100%; max-width: 380px; border-radius: 20px; padding: 24px 20px; text-align: center; animation: slideUp 0.3s ease; position: relative; margin: 0 20px; max-height: 85vh; display: flex; flex-direction: column; }
+        .summary-title { font-size: 20px; margin-bottom: 20px; color: var(--text); font-weight: 700; flex-shrink: 0; }
+        
+        /* 结算面板特有 */
+        .summary-stats { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-item span { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .stat-item label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+        .rate-list { text-align: left; margin-bottom: 24px; background: #f9f9fb; padding: 12px 16px; border-radius: 12px; }
+        .rate-item { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; color: var(--text-secondary); }
+        .rate-item span:last-child { font-weight: 700; color: var(--text); }
+        .summary-actions { display: flex; gap: 12px; }
+        .summary-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; transition: var(--transition); -webkit-tap-highlight-color: transparent; }
+        .btn-wrong { background: #FFF3E0; color: #E67E22; }
+        .btn-restart { background: #EEF1FE; color: #4A6CF7; }
+        .summary-btn:active { transform: scale(0.96); }
+
+        /* Toast */
+        .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; letter-spacing: 0.3px; }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="appContainer">
+        <div class="top-bar">
+            <button class="icon-btn" id="homeBtn" aria-label="首页">🏠</button>
+            <button class="icon-btn" id="historyBtn" aria-label="历史记录">🕒</button>
+            <button class="icon-btn" id="backBtn" aria-label="题目列表">☰</button>
+            <div class="title-area">
+                <div class="section-label" id="sectionLabel">第一部分 单选题</div>
+                <div class="question-num" id="questionNum">第 1/110 题</div>
+            </div>
+            <div class="font-size-wrapper">
+                <button class="icon-btn font-size-btn" id="fontSizeBtn" aria-label="调整字体">A</button>
+                <span class="font-size-indicator" id="fontSizeIndicator">中</span>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-info">
+                <span id="progressText">已答 0/110</span>
+                <span id="correctRate">正确率 -</span>
+            </div>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="question-card" id="questionCard">
+                <span class="question-type-badge badge-single" id="typeBadge">单选题</span>
+                <div class="question-text" id="questionText"></div>
+            </div>
+            <div class="options-area" id="optionsArea"></div>
+            <button class="submit-multi-btn" id="submitMultiBtn">确认提交答案</button>
+            <div class="result-area" id="resultArea">
+                <div class="result-header" id="resultHeader"></div>
+                <div class="correct-answer-display" id="correctAnswerDisplay"></div>
+                <div class="analysis-toggle" id="analysisToggle">
+                    📖 查看解析 <span class="arrow-icon">▾</span>
+                </div>
+                <div class="analysis-content" id="analysisContent"></div>
+            </div>
+        </div>
+
+        <div class="nav-bottom">
+            <button class="nav-btn" id="prevBtn" disabled>◀ 上一题</button>
+            <button class="nav-btn primary-nav" id="nextBtn">下一题 ▶</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">📋 题目列表</div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+            <button class="sheet-close primary-nav" id="viewSummaryBtn" style="margin-top: 14px; background: var(--primary); color: #fff; border:none;">📊 结束答题并查看报告</button>
+            <button class="sheet-close" id="sheetClose">关闭</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="summaryOverlay" style="align-items: center;">
+        <div class="summary-panel" id="summaryPanel">
+            <h2 class="summary-title">📊 答题报告</h2>
+            <div class="summary-stats">
+                <div class="stat-item"><span id="sumTotal">0</span><label>总题数</label></div>
+                <div class="stat-item"><span id="sumAnswered">0</span><label>已答题</label></div>
+                <div class="stat-item"><span id="sumCorrect">0</span><label>答对题</label></div>
+            </div>
+            <div class="rate-list">
+                <div class="rate-item"><span>单选题正确率</span><span id="rateSingle">0%</span></div>
+                <div class="rate-item"><span>多选题正确率</span><span id="rateMulti">0%</span></div>
+                <div class="rate-item"><span>判断题正确率</span><span id="rateJudge">0%</span></div>
+            </div>
+            <div class="summary-actions">
+                <button class="summary-btn btn-wrong" id="exportMistakesBtn" style="background:#4A6CF7; color:#fff;">导出错题</button>
+                <button class="summary-btn btn-wrong" id="viewMistakesBtn">📝 看错题</button>
+                <button class="summary-btn btn-restart" id="restartBtn">🔄 重新开始</button>
+            </div>
+            <button class="sheet-close" id="summaryClose" style="margin-top: 14px;">关闭</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="historyOverlay" style="align-items: center;">
+        <div class="summary-panel" id="historyPanel">
+            <h2 class="summary-title">🕒 历史答题记录</h2>
+            <div id="historyList" style="overflow-y: auto; flex: 1; text-align: left; padding: 4px 0;">
+                </div>
+            <button class="sheet-close" id="historyClose" style="margin-top: 14px; flex-shrink: 0;">关闭</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ==================== 题目数据 ====================
+const allQuestions = [
+    // 第一部分：单选题
+    { type: 'single', part: 1, num: 1, question: '设计教学法的提出者是()。', options: { A: '杜威', B: '华虚朋', C: '柏克赫斯特', D: '克伯屈' }, answer: 'D', analysis: '设计教学法由克伯屈提出，杜威为其理论基础。华虚朋提出文纳特卡制，柏克赫斯特提出道尔顿制。' },
+    { type: 'single', part: 1, num: 2, question: '"入芝兰之室,久而不闻其香;入鲍鱼之肆,久而不闻其臭。"这是()。', options: { A: '嗅觉适应的结果', B: '嗅觉对比的结果', C: '嗅觉补偿的结果', D: '嗅觉统合的结果' }, answer: 'A', analysis: '感觉适应是指由于刺激物持续作用于同一感受器，从而使感受性发生变化的现象。长时间闻一种气味导致嗅觉感受性下降，属于典型的嗅觉适应。' },
+    { type: 'single', part: 1, num: 3, question: '学生小李在放学期间,因闯红灯被汽车刮伤,学校()。', options: { A: '承担主要责任', B: '承担次要责任', C: '不承担责任', D: '承担部分责任' }, answer: 'C', analysis: '《学生伤害事故处理办法》规定，在学生自行上学、放学、返校、离校途中发生的事故，学校行为并无不当的，不承担事故责任。小李放学期间因自身违规被刮伤，学校无过错，不承担责任。' },
+    { type: 'single', part: 1, num: 4, question: '根据技能的性质和表现形式,通常把技能分为动作技能和()。', options: { A: '活动技能', B: '学习技能', C: '一般技能', D: '认知技能' }, answer: 'D', analysis: '根据技能的性质和表现形式，技能可分为动作技能（操作技能）和认知技能（心智技能）两大类。' },
+    { type: 'single', part: 1, num: 5, question: '当代教师素质能力的集中体现是()。', options: { A: '教师的个人修养', B: '教师的专业素养', C: '教师的个性品质', D: '师生关系' }, answer: 'B', analysis: '当代教师素质能力的集中体现是教师的专业素养，涵盖专业知识、专业能力、专业态度与职业道德等核心维度。' },
+    { type: 'single', part: 1, num: 6, question: '属于非测验的评价手段的是()。', options: { A: '观察', B: '判断', C: '反思', D: '分析' }, answer: 'A', analysis: '非测验的评价手段主要包括观察、访谈、档案袋评价、作品分析等，判断、反思、分析是思维过程，不属于专门的评价手段。' },
+    { type: 'single', part: 1, num: 7, question: '在Word的编辑状态下,当前输入的文字显示在()。', options: { A: '鼠标光标处', B: '插入点', C: '文件尾', D: '当前行尾' }, answer: 'B', analysis: '在Word编辑状态下，插入点是当前输入文字的显示位置，鼠标光标仅指示鼠标所在位置，不一定是输入位置。' },
+    { type: 'single', part: 1, num: 8, question: '下列关于Excel的分类汇总功能的说法,正确的是()。', options: { A: '在分类汇总前需要对按分类的列进行排序', B: '在分类汇总前不需要对按分类的列进行排序', C: '可以使用删除行操作来取消分类汇总的结果,恢复到汇总前的状态', D: '分类汇总的方式是求和' }, answer: 'A', analysis: 'Excel分类汇总必须先对分类列进行排序，否则无法正确按类别汇总；取消分类汇总需通过"分类汇总"对话框中的"全部删除"按钮，不能直接删除行；分类汇总方式包括求和、计数、平均值、最大值、最小值等多种。' },
+    { type: 'single', part: 1, num: 9, question: '第一个公开向神学挑战并宣告自然科学独立的科学家是()。', options: { A: '亚里士多德', B: '哥白尼', C: '伽利略', D: '牛顿' }, answer: 'B', analysis: '哥白尼提出"日心说"，公开挑战神学的"地心说"，标志着自然科学开始从神学中解放出来，宣告了自然科学的独立。' },
+    { type: 'single', part: 1, num: 10, question: '张仲景是东汉名医,被后世尊称为"医圣",他的著作()中记载有"人工呼吸法",奠定了中医治疗学的基础。', options: { A: '《景岳全书》', B: '《脉经》', C: '《伤寒杂病论》', D: '《神农本草经》' }, answer: 'C', analysis: '张仲景的《伤寒杂病论》奠定了中医辨证论治的基础，其中记载了人工呼吸法等急救方法。《景岳全书》是明代张介宾的著作，《脉经》是王叔和的著作，《神农本草经》是我国第一部药学专著。' },
+    { type: 'single', part: 1, num: 11, question: '统一要求与分类指导相结合原则适用于()。', options: { A: '所有学生', B: '有特殊才能的学生', C: '对教学内容"吃不饱"的学生', D: '对教学内容"吃不了"的学生' }, answer: 'A', analysis: '统一要求与分类指导相结合原则要求既要面向全体学生提出统一的基本要求，又要根据学生的个别差异进行针对性指导，因此适用于所有学生。' },
+    { type: 'single', part: 1, num: 12, question: '下列属于布鲁姆教学目标分类中动作技能目标的是()。', options: { A: '综合', B: '分析', C: '价值观念', D: '知觉' }, answer: 'D', analysis: '布鲁姆将教学目标分为认知、情感和动作技能三个领域。动作技能目标包括知觉、模仿、操作、准确、连贯、习惯化六个层次；综合、分析属于认知领域目标，价值观念属于情感领域目标。' },
+    { type: 'single', part: 1, num: 13, question: '1806年,德国赫尔巴特出版的()一书被誉为教育学独立的标志。', options: { A: '《教育学》', B: '《普通教育学》', C: '《论演说家的教育》', D: '《新教育大纲》' }, answer: 'B', analysis: '1806年赫尔巴特出版的《普通教育学》标志着教育学作为一门规范、独立的学科正式诞生。《论演说家的教育》是昆体良的著作，《新教育大纲》是杨贤江的著作。' },
+    { type: 'single', part: 1, num: 14, question: '激发、维持和指引个体学习活动的心理动因或内部动力称为()。', options: { A: '学习需要', B: '学习期待', C: '学习动机', D: '学习态度' }, answer: 'C', analysis: '学习动机是指激发、维持和指引个体学习活动的心理动因或内部动力。学习需要和学习期待是学习动机的两个基本构成成分。' },
+    { type: 'single', part: 1, num: 15, question: '下列原则既属于教育原则又属于德育原则的是()。', options: { A: '导向性原则', B: '因材施教原则', C: '直观性原则', D: '理论联系实际原则' }, answer: 'B', analysis: '因材施教原则既是教学原则，要求根据学生的个别差异进行教学；也是德育原则，要求根据学生的年龄特征和个性差异进行德育。导向性原则仅属于德育原则，直观性原则、理论联系实际原则仅属于教学原则。' },
+    { type: 'single', part: 1, num: 16, question: '老师采取画小红花,插小红旗等方式鼓励学生的德育方法是()。', options: { A: '品德评价法', B: '榜样示范法', C: '陶冶教育法', D: '实际锻炼法' }, answer: 'A', analysis: '品德评价法是通过对学生品德进行肯定或否定的评价而予以激励或抑制，促使其品德健康形成和发展的方法，包括奖励、惩罚、评比和操行评定等。画小红花、插小红旗属于奖励，是品德评价法的具体运用。' },
+    { type: 'single', part: 1, num: 17, question: '下列哪位作家不属于唐宋八大家?()', options: { A: '曾巩', B: '欧阳修', C: '柳宗元', D: '黄庭坚' }, answer: 'D', analysis: '唐宋八大家包括唐代的韩愈、柳宗元和宋代的欧阳修、苏洵、苏轼、苏辙、王安石、曾巩。黄庭坚是北宋著名文学家、书法家，属于"苏门四学士"之一，不属于唐宋八大家。' },
+    { type: 'single', part: 1, num: 18, question: '教师领导风格对课堂管理()。', options: { A: '有直接影响', B: '有间接影响', C: '没有影响' }, answer: 'A', analysis: '教师的领导风格对课堂管理有直接影响，权威型、民主型、放任型等不同领导风格会产生截然不同的课堂氛围和管理效果。' },
+    { type: 'single', part: 1, num: 19, question: '"道而弗牵,强而弗抑,开而弗达"所阐明的教学原则是()。', options: { A: '循序渐进原则', B: '直观性原则', C: '启发性原则' }, answer: 'C', analysis: '"道而弗牵，强而弗抑，开而弗达"出自《学记》，意思是引导学生而不牵着学生走，严格要求学生而不压抑学生，启发学生而不直接告诉学生答案，体现了启发性教学原则。' },
+    { type: 'single', part: 1, num: 20, question: '陈某担任某小学数学教师期间通过了硕士研究生入学考试,学校以陈某服务期未满,学校数学教师不足为由不批准陈某在职学习。陈某欲向当地县教育局提出申诉,认为学校剥夺了他的()。', options: { A: '教育教学权', B: '参加进修权', C: '获得报酬权', D: '指导评价权' }, answer: 'B', analysis: '《中华人民共和国教师法》规定，教师享有参加进修或者其他方式的培训的权利。学校以服务期未满为由不批准陈某在职学习，侵犯了其参加进修权。' },
+    { type: 'single', part: 1, num: 21, question: '"一个坏的教师奉送真理,一个好的教师则教人发现真理。"这句名言出自()。', options: { A: '裴斯泰洛齐', B: '赫尔巴特', C: '第斯多惠', D: '乌申斯基' }, answer: 'C', analysis: '这句名言出自德国教育家第斯多惠，强调了启发性教学的重要性，主张教师要引导学生主动探索知识。' },
+    { type: 'single', part: 1, num: 22, question: '一种学习对另一种学习起到积极的促进作用的迁移称为()。', options: { A: '负迁移', B: '正迁移', C: '横向迁移', D: '纵向迁移' }, answer: 'B', analysis: '根据迁移的性质和结果，迁移可分为正迁移和负迁移。正迁移是指一种学习对另一种学习起到积极的促进作用；负迁移是指一种学习对另一种学习产生消极的阻碍作用。' },
+    { type: 'single', part: 1, num: 23, question: '"活到老,学到老",要求教师坚持()的职业道德规范。', options: { A: '为人师表', B: '关爱学生', C: '终身学习', D: '教书育人' }, answer: 'C', analysis: '终身学习是教师职业道德规范的要求之一，要求教师崇尚科学精神，树立终身学习理念，拓宽知识视野，更新知识结构，不断提高专业素养和教育教学水平。"活到老，学到老"正是终身学习理念的体现。' },
+    { type: 'single', part: 1, num: 24, question: '人与人区别的主要方面,也是人格核心的是()。', options: { A: '情感', B: '意志', C: '性格', D: '气质' }, answer: 'C', analysis: '性格是指人的较稳定的态度与习惯化了的行为方式相结合而形成的人格特征，是人与人相互区别的主要方面，也是人格的核心。气质是人格的基础，但不决定人的社会价值和成就高低。' },
+    { type: 'single', part: 1, num: 25, question: '在没有安装Word文字处理软件的情况下,用IE浏览器打开一个Word文档,发生()。', options: { A: '打不开文件', B: '能够打开', C: 'Word自动安装', D: '调用别的程序打开' }, answer: 'A', analysis: 'IE浏览器本身不支持直接打开Word文档，在没有安装Word软件及相关插件的情况下，无法打开Word文档。' },
+    { type: 'single', part: 1, num: 26, question: '在下列教学组织形式中,有利于高效率、大面积培养学生的是()。', options: { A: '个别教学', B: '班级授课制', C: '道尔顿制', D: '分组教学' }, answer: 'B', analysis: '班级授课制是一种集体教学形式，它把一定数量的学生按年龄和知识程度编成固定的班级，根据周课表和作息时间表，安排教师有计划地向全班学生集体授课，有利于高效率、大面积培养学生。' },
+    { type: 'single', part: 1, num: 27, question: '只能进行自我中心思维的儿童,其认知发展处于()。', options: { A: '前运算阶段', B: '感知运动阶段', C: '具体运算阶段', D: '形式运算阶段' }, answer: 'A', analysis: '皮亚杰将儿童认知发展分为四个阶段：感知运动阶段（0-2岁）、前运算阶段（2-7岁）、具体运算阶段（7-11岁）、形式运算阶段（11岁以后）。前运算阶段儿童的思维具有自我中心性、不可逆性、泛灵论等特点。' },
+    { type: 'single', part: 1, num: 28, question: '教师领导风格对课堂管理()。', options: { A: '有直接影响', B: '有间接影响', C: '没有影响', D: '有一定影响' }, answer: 'A', analysis: '本题与第18题重复。教师的领导风格对课堂管理有直接影响，民主型领导风格通常能营造良好的课堂氛围，取得较好的管理效果。' },
+    { type: 'single', part: 1, num: 29, question: '教师按一定的教学要求向学生提出问题,要求学生回答,并通过问答的形式来引导学生获取或巩固知识的方法是()。', options: { A: '谈话法', B: '讨论法', C: '讲授法', D: '练习法' }, answer: 'A', analysis: '谈话法也叫问答法，是教师按一定的教学要求向学生提出问题，要求学生回答，并通过问答的形式来引导学生获取或巩固知识的方法。讨论法是学生在教师指导下为解决某个问题进行探讨、辩论，从而获取知识的方法。' },
+    { type: 'single', part: 1, num: 30, question: '学习效率和动机水平之间存在()。', options: { A: '线性关系', B: 'U型关系', C: '倒U型关系', D: '平行关系' }, answer: 'C', analysis: '耶克斯-多德森定律表明，学习效率和动机水平之间存在倒U型关系，中等强度的动机最有利于学习效率的提高，动机过高或过低都会降低学习效率。' },
+    { type: 'single', part: 1, num: 31, question: '在各学段中,数学课程安排了四个部分的课程内容:"数与代数""图形与几何""统计与概率"和()。', options: { A: '综合与实践', B: '空间', C: '问题解决', D: '计算' }, answer: 'A', analysis: '义务教育数学课程标准规定，数学课程内容包括"数与代数""图形与几何""统计与概率""综合与实践"四个部分。' },
+    { type: 'single', part: 1, num: 32, question: '下列哪个搜索关键词可以找到音频资源?()', options: { A: '故乡的云.bmp', B: '狼牙山.wav', C: '水晶.swf', D: '北戴河.doc' }, answer: 'B', analysis: '.wav是常见的音频文件格式；.bmp是位图图片文件格式；.swf是Flash动画文件格式；.doc是Word文档文件格式。' },
+    { type: 'single', part: 1, num: 33, question: '对于一个过分害怕猫的学生,我们可以让他先看猫的照片,谈论猫,再让他远远观看关在笼中的猫,让他靠近笼中的猫,最后让他用手触摸猫,逐步消除对猫的惧怕反应,这种方法在心理治疗中称为()。', options: { A: '松弛训练', B: '合理情绪疗法', C: '系统脱敏疗法', D: '肯定性训练' }, answer: 'C', analysis: '系统脱敏疗法是指当某些人对某事物、某环境产生敏感反应（害怕、焦虑、不安）时，在当事人身上发展起一种不相容的反应，使对本来可引起敏感反应的事物，不再发生敏感反应。其核心是逐步接近恐惧刺激，直至消除恐惧反应。' },
+    { type: 'single', part: 1, num: 34, question: '"为中华之崛起而读书"这样的学习动机属于()。', options: { A: '近景性内部动机', B: '近景性外部动机', C: '远景性内部动机', D: '远景性外部动机' }, answer: 'D', analysis: '根据动机的远近和作用时间的长短，学习动机可分为远景性动机和近景性动机；根据动机的来源，可分为内部动机和外部动机。"为中华之崛起而读书"是与国家前途命运相联系的远景性动机，同时是由外部诱因引起的外部动机。' },
+    { type: 'single', part: 1, num: 35, question: '我国《义务教育法》的立法宗旨是发展()。', options: { A: '专业教育', B: '基础教育', C: '中等教育', D: '职业教育' }, answer: 'B', analysis: '《中华人民共和国义务教育法》第一条规定，为了保障适龄儿童、少年接受义务教育的权利，保证义务教育的实施，提高全民族素质，根据宪法和教育法，制定本法。其立法宗旨是发展基础教育。' },
+    { type: 'single', part: 1, num: 36, question: '美国学者舒尔茨根据人力资本理论推算出教育水平对国民经济增长的贡献是()。', options: { A: '28%', B: '33%', C: '38%', D: '53%' }, answer: 'B', analysis: '美国经济学家舒尔茨通过人力资本理论计算得出，1929-1957年美国教育水平对国民经济增长的贡献为33%。' },
+    { type: 'single', part: 1, num: 37, question: '"榜样学习"的教育效应最适合的心理学解释理论是()。', options: { A: '强化说', B: '认知失调论', C: '从众说', D: '观察学习理论' }, answer: 'D', analysis: '班杜拉的观察学习理论认为，人的学习主要是通过观察他人的行为及其结果进行的，榜样学习是观察学习的典型形式。' },
+    { type: 'single', part: 1, num: 38, question: '《雀之灵》与《残春》同属于()。', options: { A: '独舞', B: '双人舞', C: '群舞', D: '三人舞' }, answer: 'A', analysis: '《雀之灵》是杨丽萍创作并表演的经典独舞，《残春》也是中国当代著名的独舞作品。' },
+    { type: 'single', part: 1, num: 39, question: '罗杰斯在其"以人为中心的治疗"中将"无条件积极关注"看做心理辅导的前提之一,这体现了学校心理辅导的()。', options: { A: '面向全体学生原则', B: '发展性原则', C: '尊重与理解学生原则', D: '尊重学生主体性原则' }, answer: 'C', analysis: '尊重与理解学生原则要求尊重学生的人格与尊严，理解学生的感受和想法。罗杰斯的"无条件积极关注"强调对来访者的尊重、接纳和理解，体现了这一原则。' },
+    // 第二部分：多选题
+    { type: 'multiple', part: 2, num: 1, question: '影响群体士气的因素有()。', options: { A: '群体成员的人数', B: '对群体目标的赞同', C: '对活动的满意度', D: '群体领导方式', E: '和谐的人际关系' }, answer: 'BCDE', analysis: '影响群体士气的因素主要包括：对群体目标的赞同程度、对活动的满意度、群体领导方式、和谐的人际关系、成员的归属感等。群体成员的人数不是影响士气的主要因素。' },
+    { type: 'multiple', part: 2, num: 2, question: '家庭环境的效应表现在()。', options: { A: '家长的职业类别', B: '家长的期望水平', C: '家长的文化程度', D: '家庭的自然结构', E: '家庭的气氛' }, answer: 'ABCDE', analysis: '家庭环境对学生的发展具有深远影响，其效应表现在家长的职业类别、家长的期望水平、家长的文化程度、家庭的自然结构、家庭的气氛、家庭的教养方式等多个方面。' },
+    { type: 'multiple', part: 2, num: 3, question: '下列课程属于综合课程的有()。', options: { A: '核心课程', B: '融合课程', C: '潜在课程', D: '活动课程', E: '广域课程' }, answer: 'ABE', analysis: '综合课程是指打破传统分科课程的知识领域，组合两个或两个以上的学科领域构成的课程，主要包括融合课程、广域课程、核心课程等。潜在课程即隐性课程，不属于综合课程；活动课程是与学科课程相对的课程类型。' },
+    { type: 'multiple', part: 2, num: 4, question: '小学教育在义务教育中的地位主要表现在()。', options: { A: '普及性', B: '免费性', C: '基础性', D: '强制性' }, answer: 'ACD', analysis: '小学教育在义务教育中的地位主要表现在普及性、基础性和强制性三个方面。免费性是义务教育的基本特征之一，但不是小学教育在义务教育中地位的核心表现。' },
+    { type: 'multiple', part: 2, num: 5, question: '学生具有三种最基本的内在动机,即()。', options: { A: '探索内驱力', B: '好奇内驱力', C: '胜任内驱力', D: '互惠内驱力', E: '尊重内驱力' }, answer: 'BCD', analysis: '布鲁纳认为，学生具有三种最基本的内在动机，即好奇内驱力（求知欲）、胜任内驱力（成功的欲望）和互惠内驱力（人与人之间和睦共处的需要）。' },
+    { type: 'multiple', part: 2, num: 6, question: '西欧中世纪主要学校类型是教会学校,分为()几个层次。', options: { A: '宫廷学校', B: '主教学校', C: '僧院学校', D: '大主教学校', E: '教区学校' }, answer: 'CDE', analysis: '西欧中世纪的教会学校主要分为僧院学校、大主教学校和教区学校三个层次。宫廷学校是世俗封建主为培养贵族子弟设立的学校，不属于教会学校。' },
+    { type: 'multiple', part: 2, num: 7, question: '按照所要测量的特征,测验可分为()。', options: { A: '创造力测验', B: '认知测验', C: '人格测验', D: '神经心理测验' }, answer: 'BC', analysis: '按照所要测量的特征，测验可分为认知测验和人格测验两大类。认知测验包括智力测验、特殊能力测验、创造力测验等；人格测验包括性格测验、气质测验等。神经心理测验是根据测验的目的和功能划分的类别。' },
+    { type: 'multiple', part: 2, num: 8, question: '下列描述符合少年期特征的是()。', options: { A: '具有半成熟半幼稚的特点', B: '充满着独立性和依赖性,自觉性和幼稚性错综的矛盾', C: '抽象思维已占主导地位', D: '成人感产生,独立性强烈' }, answer: 'ABCD', analysis: '少年期（初中阶段）是个体从童年期向青年期过渡的时期，具有半成熟半幼稚的特点，充满着独立性和依赖性、自觉性和幼稚性的矛盾；抽象思维已占主导地位，但仍以具体形象思维为支柱；成人感产生，独立性强烈，开始关注自我形象。' },
+    // 第三部分：判断题
+    { type: 'judge', part: 3, num: 1, question: '（题目缺失）', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '题干信息缺失，根据参考答案判断为正确。' },
+    { type: 'judge', part: 3, num: 2, question: '世界上第一项义务教育法是英国公布的。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '世界上第一项义务教育法是1619年德国魏玛公国公布的，规定父母应送其6-12岁的子女入学，否则政府将强迫其履行义务。' },
+    { type: 'judge', part: 3, num: 3, question: '充分反映孔子教育思想的著作是《论语》。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '《论语》是孔子及其弟子的言行录，集中体现了孔子的教育思想、政治思想、伦理思想等，是研究孔子思想最主要的文献。' },
+    { type: 'judge', part: 3, num: 4, question: '人的身心发展的年龄特征表明了个体发展具有顺序性。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '人的身心发展的年龄特征表明了个体发展具有阶段性，不同年龄阶段表现出不同的总体特征和主要矛盾。顺序性是指个体的身心发展是一个由低级到高级、由简单到复杂、由量变到质变的连续不断的发展过程。' },
+    { type: 'judge', part: 3, num: 5, question: '教学是进行智育的唯一途径。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '教学是进行智育的主要途径，但不是唯一途径，课外活动、社会实践、家庭教育等也是智育的重要途径。' },
+    { type: 'judge', part: 3, num: 6, question: '对于不成熟的学习者,通过锥形顶端的"言语符号"进行阅读学习是十分有效的方法。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '锥形顶端的"言语符号"是最抽象的学习材料，对于不成熟的学习者，应从具体直观的学习材料开始，逐步过渡到抽象的言语符号学习，符合从具体到抽象的认知规律。' },
+    { type: 'judge', part: 3, num: 7, question: '非正式群体对个体的影响是积极的还是消极的,主要取决于教师对它的管理。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '非正式群体对个体的影响是积极的还是消极的，主要取决于非正式群体的性质以及它与正式群体目标的一致程度，而非教师的管理。' },
+    { type: 'judge', part: 3, num: 8, question: '教师发展自己,提高专业文化水平是教师教育权的体现。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '教师发展自己、提高专业文化水平是教师参加进修权的体现。教育权是指教师进行教育教学活动，开展教育教学改革和实验的权利。' },
+    { type: 'judge', part: 3, num: 9, question: '态度和品德的结构是一致的,都是由认知、情感和行为三个方面所构成。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '态度和品德的结构具有一致性，都包括认知成分、情感成分和行为成分三个方面，其中情感成分是核心。' },
+    { type: 'judge', part: 3, num: 10, question: '为了使学生对教学内容更为形象的感知,教学中可以多采用参观法。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '参观法能使学生获得直观的感性认识，但不宜过多使用，否则会影响教学进度和系统知识的学习，应根据教学内容和学生实际合理运用。' },
+    { type: 'judge', part: 3, num: 11, question: '个体好奇心、求知欲越强,知识经验越丰富,活动的积极性越高,则越能发现常人所发现不了的问题。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '个体发现问题的能力受多种因素影响，好奇心、求知欲是发现问题的内在动力，知识经验是发现问题的基础，活动积极性是发现问题的保障。' },
+    { type: 'judge', part: 3, num: 12, question: '教学方法一旦形成,不会随着社会的变革而发生变化。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '教学方法会随着社会的变革、科学技术的发展、教育理念的更新以及学生身心发展特点的变化而不断发展变化。' },
+    { type: 'judge', part: 3, num: 13, question: '英国哲学家洛克的"白板说"是内因论的典型代表。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '洛克的"白板说"认为人的心灵如同白板，它本身没有内容，可以任人涂抹，强调外部环境对人的发展的决定作用，是外铄论的典型代表。' },
+    // 第四部分：论述题
+    { type: 'discussion', part: 4, num: 1, question: '课堂导入的类型和方法。', score: 8, answer: '课堂导入是教师在新的教学内容和教学活动开始时，引导学生迅速进入学习状态的行为方式，是课堂教学的重要环节。主要类型和方法：(1)直接导入：教师直接阐明本节课的学习目标、教学内容和教学安排，迅速将学生的注意力集中并自然地导向教学内容。(2)复习导入：通过复习旧知识，引导学生发现新旧知识之间的内在联系，从而自然地引出新知识。(3)直观导入：通过展示实物、模型、图片、视频、音频等直观教具，引导学生观察，激发学生的学习兴趣，引出新知识。(4)问题导入：教师提出富有启发性、挑战性的问题，引导学生思考，激发学生的求知欲。(5)情境导入：通过创设生动、形象的教学情境，使学生产生身临其境的感觉，激发学生的情感体验。(6)故事导入：通过讲述与教学内容相关的有趣故事、典故、传说等，吸引学生的注意力。(7)悬念导入：教师设置悬念，引起学生的好奇心和求知欲。(8)游戏导入：通过组织与教学内容相关的游戏活动，调动学生的积极性。课堂导入要做到针对性、趣味性、启发性、简洁性，时间一般控制在3-5分钟。', analysis: '课堂导入是教师在新的教学内容和教学活动开始时，引导学生迅速进入学习状态的行为方式。主要类型和方法包括：直接导入、复习导入、直观导入、问题导入、情境导入、故事导入、悬念导入、游戏导入等。课堂导入要做到针对性、趣味性、启发性、简洁性，时间一般控制在3-5分钟。' },
+    { type: 'discussion', part: 4, num: 2, question: '如何有效开展课后育人活动?', score: 8, answer: '课后育人活动是学校教育的重要组成部分，是落实立德树人根本任务、促进学生全面发展的重要途径。有效开展课后育人活动可从以下方面着手：(1)健全组织，明确责任：建立学校、年级、班级三级课后育人活动管理体系，明确各部门和人员的职责，制定完善的活动方案和管理制度。(2)丰富活动形式，满足多元需求：开展多样化的课后育人活动，包括学科社团活动、文体活动、志愿服务活动、科技创新活动、社会实践活动、劳动教育活动等。(3)家校社协同，拓展育人阵地：加强与家庭、社区的合作，充分利用家庭和社区的教育资源，形成家校社协同育人的合力。(4)关注个体差异，因材施教：根据学生的年龄特征、兴趣爱好和发展水平，设计不同层次、不同类型的活动，满足学生的个性化发展需求。(5)强化评价激励，促进全面发展：建立科学的课后育人活动评价体系，对学生的参与情况和活动成果进行全面、客观的评价，通过表彰奖励、成果展示等方式激励学生积极参与活动。', analysis: '有效开展课后育人活动可从以下方面着手：(1)健全组织，明确责任；(2)丰富活动形式，满足多元需求；(3)家校社协同，拓展育人阵地；(4)关注个体差异，因材施教；(5)强化评价激励，促进全面发展。' },
+    // 第五部分：案例分析题
+    { type: 'case', part: 5, num: 1, question: '教师观察交流发现学生网瘾，组织学习小组帮助学生改变。(1)分析教师行为（德育角度）。(2)网瘾的原因和解决办法。', score: 14, answer: '(1)教师行为的德育分析：①体现了关爱学生的教师职业道德规范。教师通过观察交流主动发现学生的问题，关心学生的身心健康和成长。②运用了集体教育与个别教育相结合的德育原则。教师组织学习小组，通过集体的力量影响和帮助学生，同时针对学生的个别问题进行针对性教育引导。③运用了疏导原则。教师没有简单粗暴地批评指责学生，而是通过交流了解情况，引导学生认识到网瘾的危害，帮助学生逐步改正错误。④体现了教书育人的教师职业道德规范。教师不仅关注学生的学习成绩，还关注学生的品德发展和身心健康。(2)网瘾的原因：①学生自身因素：自制力差、好奇心强、缺乏明确的学习目标和人生规划、人际交往能力不足、抗挫折能力弱等。②家庭因素：家庭教育方式不当、家庭关系不和谐、家长缺乏对孩子的陪伴和引导、家长自身沉迷网络等。③学校因素：学校教育方式单一、对学生的关注不够、缺乏有效的心理健康教育和引导、学业压力过大等。④社会因素：网络环境复杂、不良网络信息的诱惑、社会对网络的监管不到位等。解决办法：①学生自身：提高自制力，树立正确的网络观，合理安排上网时间；培养广泛的兴趣爱好；积极参加集体活动，提高人际交往能力；学会自我调节，增强抗挫折能力。②家庭方面：家长要加强对孩子的陪伴和引导，建立良好的亲子关系；采用科学的教育方式；监督孩子的上网行为；以身作则。③学校方面：加强心理健康教育；开展丰富多彩的课外活动；加强对学生的网络道德教育；减轻学生的学业压力。④社会方面：加强对网络环境的监管；完善相关法律法规；建设更多适合青少年的健康娱乐场所；营造良好的社会氛围。', analysis: '(1)教师行为的德育分析：体现了关爱学生、教书育人的职业道德规范，运用了集体教育与个别教育相结合、疏导原则等德育原则。(2)网瘾的原因包括学生自身因素、家庭因素、学校因素、社会因素。解决办法需要学生自身、家庭、学校、社会多方面协同努力。' }
+];
+            const TOTAL = allQuestions.length;
+
+            // ==================== 状态管理 ====================
+            const STORAGE_KEY = 'teacher_exam_jiedong3';
+            const HISTORY_KEY = 'teacher_exam_history_jiedong3';
+            const STATS_KEY = 'exam_stats_jiedong3';
+            let currentIndex = 0;
+            let userAnswers = {}; 
+            let revealedAnswers = {}; 
+            let fontSizeLevel = 1; 
+            let mistakeMode = false;
+            let mistakeList = [];
+            const fontSizeLabels = ['小', '中', '大', '超大', '超超大', '超超超大'];
+            const fontSizeBodyValues = ['14px', '16px', '18px', '20px', '22px', '24px'];
+            const fontSmValues = ['12px', '14px', '15px', '16px', '18px', '19px', '14px', '15px', '16px', '18px', '19px', '20px', '22px', '24px'];
+
+            function loadProgress() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const data = JSON.parse(raw);
+                        if (typeof data.currentIndex === 'number') currentIndex = data.currentIndex;
+                        if (data.userAnswers) userAnswers = data.userAnswers;
+                        if (data.revealedAnswers) revealedAnswers = data.revealedAnswers;
+                        if (typeof data.fontSizeLevel === 'number') fontSizeLevel = data.fontSizeLevel;
+                        if (typeof data.mistakeMode === 'boolean') mistakeMode = data.mistakeMode;
+                        if (data.mistakeList) mistakeList = data.mistakeList;
+                    }
+                } catch (e) {
+                    // ignore
+                }
+                if (currentIndex < 0 || currentIndex >= TOTAL) currentIndex = 0;
+            }
+
+            function saveProgress() {
+                try {
+                    const data = { currentIndex, userAnswers, revealedAnswers, fontSizeLevel, mistakeMode, mistakeList };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    
+                    let statsObj = {
+                        total: TOTAL,
+                        answered: 0,
+                        wrong: 0,
+                        wrongQuestions: []
+                    };
+
+                    allQuestions.forEach((q, i) => {
+                        const ua = userAnswers[i];
+                        
+                        if (ua !== undefined && ua !== null && (typeof ua === 'string' ? ua.length > 0 : ua.length > 0)) {
+                            statsObj.answered++;
+                            let isCorrect = false;
+                            
+                            if (q.type === 'multiple') {
+                                const correctSet = q.answer.split('').sort().join('');
+                                const userSet = (Array.isArray(ua) ? ua : []).sort().join('');
+                                isCorrect = correctSet === userSet;
+                            } else {
+                                isCorrect = ua === q.answer;
+                            }
+                            
+                            if (!isCorrect) {
+                                statsObj.wrong++;
+                                statsObj.wrongQuestions.push({
+                                    id: i + 1, 
+                                    num: q.num,
+                                    type: q.type,
+                                    question: q.question,
+                                    options: q.options,
+                                    correctAnswer: q.answer,
+                                    explanation: q.analysis
+                                });
+                            }
+                        }
+                    });
+                    
+                    localStorage.setItem(STATS_KEY, JSON.stringify(statsObj));
+                } catch (e) {}
+            }
+
+            function getWrongCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet !== userSet) count++;
+                    } else {
+                        if (ua !== q.answer) count++;
+                    }
+                }
+                return count;
+            }
+
+            // 新增：保存当前记录到历史
+            function archiveCurrentToHistory() {
+                const answered = getAnsweredCount();
+                if (answered > 0) {
+                    const record = {
+                        id: Date.now(),
+                        date: new Date().toLocaleString(),
+                        answered: answered,
+                        correct: getCorrectCount(),
+                        mistakes: generateMistakeList(),
+                        userAnswers: JSON.parse(JSON.stringify(userAnswers)),
+                        revealedAnswers: JSON.parse(JSON.stringify(revealedAnswers))
+                    };
+                    let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                    history.unshift(record); // 最新记录在最前
+                    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+                }
+            }
+
+            function getUserAnswer(index) { return userAnswers[index] || null; }
+            function setUserAnswer(index, answer) { userAnswers[index] = answer; saveProgress(); }
+            function isRevealed(index) { return !!revealedAnswers[index]; }
+            function setRevealed(index) { revealedAnswers[index] = true; saveProgress(); }
+
+            function getAnsweredCount() {
+                return Object.keys(userAnswers).filter(k => userAnswers[k] !== null && userAnswers[k] !== undefined &&
+                    (typeof userAnswers[k] === 'string' ? userAnswers[k].length > 0 : userAnswers[k].length > 0)).length;
+            }
+
+            function getCorrectCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    const isEssay = ['short', 'discussion', 'case'].includes(q.type);
+                    if (isEssay) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet === userSet) count++;
+                    } else {
+                        if (ua === q.answer) count++;
+                    }
+                }
+                return count;
+            }
+
+            // ==================== DOM 元素 ====================
+            const $ = (sel) => document.querySelector(sel);
+            const sectionLabel = $('#sectionLabel');
+            const questionNum = $('#questionNum');
+            const questionText = $('#questionText');
+            const typeBadge = $('#typeBadge');
+            const optionsArea = $('#optionsArea');
+            const submitMultiBtn = $('#submitMultiBtn');
+            const resultArea = $('#resultArea');
+            const resultHeader = $('#resultHeader');
+            const correctAnswerDisplay = $('#correctAnswerDisplay');
+            const analysisToggle = $('#analysisToggle');
+            const analysisContent = $('#analysisContent');
+            const prevBtn = $('#prevBtn');
+            const nextBtn = $('#nextBtn');
+            const progressBar = $('#progressBar');
+            const progressText = $('#progressText');
+            const correctRate = $('#correctRate');
+            const overlay = $('#overlay');
+            const sheetGrid = $('#sheetGrid');
+            const toast = $('#toast');
+
+            // ==================== 渲染函数 ====================
+            function getPartLabel(part) {
+                if (part === 1) return '第一部分 单选题';
+                if (part === 2) return '第二部分 多选题';
+                if (part === 3) return '第三部分 判断题';
+                if (part === 4) return '第四部分 简答题';
+                if (part === 5) return '第五部分 论述题';
+                if (part === 6) return '第六部分 案例分析题';
+                return '';
+            }
+
+            function getTypeBadgeClass(type) {
+                if (type === 'single') return 'badge-single';
+                if (type === 'multiple') return 'badge-multiple';
+                if (type === 'judge') return 'badge-judge';
+                if (type === 'short') return 'badge-short';
+                if (type === 'discussion') return 'badge-discussion';
+                if (type === 'case') return 'badge-case';
+                return 'badge-single';
+            }
+
+            function getTypeLabel(type) {
+                if (type === 'single') return '单选题';
+                if (type === 'multiple') return '多选题';
+                if (type === 'judge') return '判断题';
+                if (type === 'short') return '简答题';
+                if (type === 'discussion') return '论述题';
+                if (type === 'case') return '案例分析题';
+                return '单选题';
+            }
+
+            function applyFontSize() {
+                const bodyVal = fontSizeBodyValues[fontSizeLevel];
+                const smVal = fontSmValues[fontSizeLevel];
+                document.documentElement.style.setProperty('--font-base', bodyVal);
+                document.documentElement.style.setProperty('--font-sm', smVal);
+                $('#fontSizeIndicator').textContent = fontSizeLabels[fontSizeLevel];
+                if (questionText) questionText.style.fontSize = bodyVal;
+                if (analysisContent && analysisContent.classList.contains('expanded')) analysisContent.style.fontSize = smVal;
+                document.querySelectorAll('.option-text').forEach(el => el.style.fontSize = bodyVal);
+            }
+
+            function renderQuestion() {
+                const q = allQuestions[currentIndex];
+                sectionLabel.textContent = getPartLabel(q.part);
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    questionNum.textContent = `错题复习 ${currentPos + 1}/${mistakeList.length} (原题 ${q.num})`;
+                } else {
+                    questionNum.textContent = `第 ${q.num}/${TOTAL} 题`;
+                }
+                typeBadge.textContent = getTypeLabel(q.type);
+                typeBadge.className = 'question-type-badge ' + getTypeBadgeClass(q.type);
+                questionText.innerHTML = `<span class="qn-inline">${q.num}.</span> ${q.question}`;
+                questionText.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+
+                const isEssay = ['short', 'discussion', 'case'].includes(q.type);
+                const revealed = isRevealed(currentIndex);
+                const userAns = getUserAnswer(currentIndex);
+
+                if (isEssay) {
+                    renderEssayQuestion(q, revealed, userAns);
+                } else {
+                    optionsArea.innerHTML = '';
+                    const optionKeys = Object.keys(q.options);
+                    const isMulti = q.type === 'multiple';
+
+                    optionKeys.forEach(key => {
+                        const optDiv = document.createElement('div');
+                        optDiv.className = 'option-item';
+                        if (isMulti) optDiv.classList.add('multi-mode');
+                        optDiv.setAttribute('data-key', key);
+
+                        let isSelected = false;
+                        if (isMulti && Array.isArray(userAns)) isSelected = userAns.includes(key);
+                        else if (!isMulti && userAns === key) isSelected = true;
+                        
+                        if (isSelected && !revealed) optDiv.classList.add('selected');
+                        if (isMulti && isSelected && !revealed) optDiv.classList.add('checked');
+
+                        if (revealed) {
+                            const correctKeys = q.answer.split('');
+                            if (isMulti) {
+                                const wasSelected = Array.isArray(userAns) && userAns.includes(key);
+                                const isCorrectOption = correctKeys.includes(key);
+                                if (wasSelected && isCorrectOption) optDiv.classList.add('correct-reveal');
+                                else if (wasSelected && !isCorrectOption) optDiv.classList.add('wrong-reveal');
+                                else if (!wasSelected && isCorrectOption) optDiv.classList.add('correct-reveal');
+                            } else {
+                                if (key === q.answer) optDiv.classList.add('correct-reveal');
+                                if (key === userAns && userAns !== q.answer) optDiv.classList.add('wrong-reveal');
+                            }
+                        }
+
+                        const letterSpan = document.createElement('span');
+                        letterSpan.className = 'option-letter';
+                        letterSpan.textContent = key;
+                        optDiv.appendChild(letterSpan);
+
+                        if (isMulti) {
+                            const checkSpan = document.createElement('span');
+                            checkSpan.className = 'option-check';
+                            checkSpan.textContent = '✓';
+                            optDiv.appendChild(checkSpan);
+                        }
+
+                        const textSpan = document.createElement('span');
+                        textSpan.className = 'option-text';
+                        textSpan.textContent = q.options[key];
+                        textSpan.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+                        optDiv.appendChild(textSpan);
+
+                        optDiv.addEventListener('click', () => handleOptionClick(key, isMulti));
+                        optionsArea.appendChild(optDiv);
+                    });
+
+                    if (isMulti) {
+                        submitMultiBtn.classList.add('visible');
+                        submitMultiBtn.style.display = 'block';
+                        if (revealed) {
+                            submitMultiBtn.style.display = 'none';
+                            submitMultiBtn.classList.remove('visible');
+                        }
+                    } else {
+                        submitMultiBtn.classList.remove('visible');
+                        submitMultiBtn.style.display = 'none';
+                    }
+                }
+
+                if (revealed) showResultArea(q, userAns);
+                else {
+                    resultArea.classList.remove('visible');
+                    resultArea.style.display = 'none';
+                }
+
+                if (mistakeMode) {
+                    prevBtn.disabled = mistakeList.indexOf(currentIndex) === 0;
+                    nextBtn.textContent = mistakeList.indexOf(currentIndex) >= mistakeList.length - 1 ? '完成 ✓' : '下一题 ▶';
+                } else {
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.textContent = currentIndex >= TOTAL - 1 ? '完成 ✓' : '下一题 ▶';
+                }
+
+                updateProgressUI();
+                document.querySelector('.main-content').scrollTop = 0;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function renderEssayQuestion(q, revealed, userAns) {
+                optionsArea.innerHTML = `
+                    <div class="essay-input-area">
+                        <div class="essay-input-label">请输入您的答案${q.score ? `（${q.score}分）` : ''}</div>
+                        <textarea class="essay-textarea ${revealed ? 'revealed' : ''}" ${revealed && !mistakeMode ? 'readonly' : ''} placeholder="请输入您的答案...">${userAns || ''}</textarea>
+                        <button class="essay-submit-btn" id="essaySubmitBtn" ${revealed && !mistakeMode ? 'style="display:none;"' : ''}>提交答案</button>
+                        ${revealed && mistakeMode ? '<button class="essay-submit-btn" id="essayRetryBtn">重新作答</button>' : ''}
+                    </div>
+                `;
+                submitMultiBtn.classList.remove('visible');
+                submitMultiBtn.style.display = 'none';
+                
+                const textarea = optionsArea.querySelector('.essay-textarea');
+                textarea.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+                
+                const submitBtn = optionsArea.querySelector('#essaySubmitBtn');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', submitEssayAnswer);
+                }
+                
+                const retryBtn = optionsArea.querySelector('#essayRetryBtn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', retryEssayAnswer);
+                }
+            }
+
+            function submitEssayAnswer() {
+                const q = allQuestions[currentIndex];
+                const textarea = optionsArea.querySelector('.essay-textarea');
+                const answer = textarea.value.trim();
+                if (!answer) {
+                    showToast('请输入答案后再提交');
+                    return;
+                }
+                setUserAnswer(currentIndex, answer);
+                setRevealed(currentIndex);
+                renderQuestion();
+            }
+
+            function retryEssayAnswer() {
+                const q = allQuestions[currentIndex];
+                const userAns = getUserAnswer(currentIndex);
+                if (userAns && confirm('确定要重新作答吗？您当前的答案将会被清除。')) {
+                    setUserAnswer(currentIndex, '');
+                    setRevealed(currentIndex, false);
+                    revealedAnswers[currentIndex] = false;
+                    saveProgress();
+                    renderQuestion();
+                }
+            }
+
+            function handleOptionClick(key, isMulti) {
+                if (isRevealed(currentIndex)) return;
+
+                if (isMulti) {
+                    let currentSelection = getUserAnswer(currentIndex) || [];
+                    if (!Array.isArray(currentSelection)) currentSelection = [];
+                    const idx = currentSelection.indexOf(key);
+                    if (idx >= 0) currentSelection.splice(idx, 1);
+                    else currentSelection.push(key);
+                    setUserAnswer(currentIndex, currentSelection.length > 0 ? currentSelection : null);
+                    refreshOptionStyles();
+                } else {
+                    setUserAnswer(currentIndex, key);
+                    setRevealed(currentIndex);
+                    renderQuestion();
+                }
+            }
+
+            function refreshOptionStyles() {
+                const q = allQuestions[currentIndex];
+                const isMulti = q.type === 'multiple';
+                const userAns = getUserAnswer(currentIndex);
+                optionsArea.querySelectorAll('.option-item').forEach(item => {
+                    const key = item.getAttribute('data-key');
+                    item.classList.remove('selected', 'checked');
+                    if (isMulti && Array.isArray(userAns) && userAns.includes(key)) item.classList.add('selected', 'checked');
+                    else if (!isMulti && userAns === key) item.classList.add('selected');
+                });
+            }
+
+            function submitMultiAnswer() {
+                const q = allQuestions[currentIndex];
+                if (q.type !== 'multiple' || isRevealed(currentIndex)) return;
+                const userAns = getUserAnswer(currentIndex);
+                if (!userAns || userAns.length === 0) { showToast('请至少选择一个选项'); return; }
+                setRevealed(currentIndex);
+                renderQuestion();
+            }
+
+            function showResultArea(q, userAns) {
+                resultArea.classList.add('visible');
+                resultArea.style.display = 'block';
+                const isEssay = ['short', 'discussion', 'case'].includes(q.type);
+
+                if (isEssay) {
+                    resultHeader.className = 'result-header correct';
+                    resultHeader.innerHTML = '<span class="result-icon">📝</span> 参考答案';
+                    correctAnswerDisplay.innerHTML = '<strong>参考答案：</strong><br>' + q.answer.replace(/\(/g, '<br>(');
+                } else {
+                    let isCorrect = false;
+                    if (q.type === 'multiple') {
+                        const cs = q.answer.split('').sort().join('');
+                        const us = (Array.isArray(userAns) ? [...userAns] : []).sort().join('');
+                        isCorrect = cs === us;
+                    } else {
+                        isCorrect = userAns === q.answer;
+                    }
+
+                    if (isCorrect) {
+                        resultHeader.className = 'result-header correct';
+                        resultHeader.innerHTML = '<span class="result-icon">✅</span> 回答正确！';
+                    } else {
+                        resultHeader.className = 'result-header wrong';
+                        resultHeader.innerHTML = '<span class="result-icon">❌</span> 回答错误';
+                    }
+
+                    const answerLabels = q.answer.split('').map(k => `${k}：${q.options[k]}`).join('；');
+                    correctAnswerDisplay.innerHTML = '<strong>正确答案：</strong>' + answerLabels;
+                }
+                
+                analysisContent.innerHTML = q.analysis;
+                analysisContent.style.fontSize = fontSmValues[fontSizeLevel];
+                analysisContent.classList.remove('expanded');
+                analysisContent.style.display = 'none';
+                analysisToggle.classList.remove('expanded');
+                analysisToggle.querySelector('.arrow-icon').textContent = '▾';
+                analysisToggle.style.display = 'flex';
+            }
+
+            function toggleAnalysis() {
+                const isExpanded = analysisContent.classList.contains('expanded');
+                if (isExpanded) {
+                    analysisContent.classList.remove('expanded');
+                    analysisContent.style.display = 'none';
+                    analysisToggle.classList.remove('expanded');
+                    analysisToggle.querySelector('.arrow-icon').textContent = '▾';
+                } else {
+                    analysisContent.classList.add('expanded');
+                    analysisContent.style.display = 'block';
+                    analysisToggle.classList.add('expanded');
+                    analysisToggle.querySelector('.arrow-icon').textContent = '▴';
+                }
+            }
+
+            function updateProgressUI() {
+                const answered = getAnsweredCount();
+                const correct = getCorrectCount();
+                progressText.textContent = `已答 ${answered}/${TOTAL}`;
+                correctRate.textContent = answered > 0 ? `正确率 ${Math.round((correct / answered) * 100)}%` : '正确率 -';
+                progressBar.style.width = `${Math.round((answered / TOTAL) * 100)}%`;
+            }
+
+            function goToQuestion(index) {
+                if (index < 0 || index >= TOTAL) return;
+                currentIndex = index;
+                saveProgress();
+                renderQuestion();
+                closeOverlay();
+            }
+
+            function goNext() {
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    if (currentPos < mistakeList.length - 1) goToQuestion(mistakeList[currentPos + 1]);
+                    else {
+                        showToast(`已看完所有错题！`);
+                        showSummaryPanel();
+                    }
+                    return;
+                }
+                if (currentIndex < TOTAL - 1) goToQuestion(currentIndex + 1);
+                else showSummaryPanel();
+            }
+
+            function goPrev() {
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    if (currentPos > 0) goToQuestion(mistakeList[currentPos - 1]);
+                    return;
+                }
+                if (currentIndex > 0) goToQuestion(currentIndex - 1);
+            }
+
+            // ==================== 题单面板 ====================
+            function buildSheetGrid() {
+                sheetGrid.innerHTML = '';
+                let lastPart = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    if (q.part !== lastPart) {
+                        lastPart = q.part;
+                        const label = document.createElement('div');
+                        label.className = 'sheet-section-label';
+                        label.textContent = getPartLabel(q.part);
+                        sheetGrid.appendChild(label);
+                    }
+                    const item = document.createElement('div');
+                    item.className = 'sheet-item';
+                    item.textContent = q.num;
+                    const ua = userAnswers[i];
+                    if (revealedAnswers[i] && ua) {
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        item.classList.add(isCorrect ? 'correct-dot' : 'wrong-dot');
+                    } else if (ua) item.classList.add('correct-dot');
+                    else item.classList.add('unanswered');
+                    
+                    if (i === currentIndex && !mistakeMode) item.classList.add('current-dot');
+                    
+                    item.addEventListener('click', () => { mistakeMode = false; goToQuestion(i); });
+                    sheetGrid.appendChild(item);
+                }
+            }
+
+            function openOverlay() { buildSheetGrid(); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+            function closeOverlay() { overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+
+            let toastTimer;
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+            }
+
+            // ==================== 结算与错题记录 ====================
+            function generateMistakeList() {
+                let wrongIndices = [];
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (revealedAnswers[i] && ua) {
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        if (!isCorrect) wrongIndices.push(i);
+                    }
+                }
+                return wrongIndices;
+            }
+
+            function showSummaryPanel() {
+                let singleAns = 0, singleCorrect = 0, multiAns = 0, multiCorrect = 0, judgeAns = 0, judgeCorrect = 0, answered = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (ua && (typeof ua === 'string' ? ua.length > 0 : ua.length > 0)) {
+                        answered++;
+                        if (q.part === 1) singleAns++;
+                        else if (q.part === 2) multiAns++;
+                        else if (q.part === 3) judgeAns++;
+
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        if (isCorrect) {
+                            if (q.part === 1) singleCorrect++;
+                            else if (q.part === 2) multiCorrect++;
+                            else if (q.part === 3) judgeCorrect++;
+                        }
+                    }
+                }
+                
+                $('#sumTotal').textContent = TOTAL;
+                $('#sumAnswered').textContent = answered;
+                $('#sumCorrect').textContent = singleCorrect + multiCorrect + judgeCorrect;
+                $('#rateSingle').textContent = singleAns ? Math.round(singleCorrect/singleAns * 100) + '%' : '0%';
+                $('#rateMulti').textContent = multiAns ? Math.round(multiCorrect/multiAns * 100) + '%' : '0%';
+                $('#rateJudge').textContent = judgeAns ? Math.round(judgeCorrect/judgeAns * 100) + '%' : '0%';
+                
+                $('#summaryOverlay').classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ==================== 历史记录面板 ====================
+            function openHistoryPanel() {
+                const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                const listEl = $('#historyList');
+                listEl.innerHTML = '';
+                if (history.length === 0) {
+                    listEl.innerHTML = '<div style="text-align:center; color:#888; padding: 40px 0; font-size: 14px;">暂无历史记录<br><span style="font-size:12px; color:#aaa; margin-top:10px; display:inline-block;">（交卷并点击"重新开始"即可自动保存）</span></div>';
+                } else {
+                    history.forEach((rec, index) => {
+                        const rate = rec.answered > 0 ? Math.round((rec.correct / rec.answered) * 100) : 0;
+                        const item = document.createElement('div');
+                        item.style.cssText = 'background: #f9f9fb; padding: 14px; border-radius: 12px; margin-bottom: 12px; font-size: 14px; border: 1px solid #eee;';
+                        item.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; color: #333; font-weight: 700;">
+                                <span>${rec.date}</span>
+                                <span style="color: var(--primary);">正确率 ${rate}%</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; color: #666; font-size: 13px; margin-bottom: 12px; background: #fff; padding: 6px 10px; border-radius: 6px;">
+                                <span>已答: ${rec.answered}</span>
+                                <span>答对: <span style="color: var(--correct); font-weight: bold;">${rec.correct}</span></span>
+                                <span>错题: <span style="color: var(--wrong); font-weight: bold;">${rec.mistakes.length}</span></span>
+                            </div>
+                            <div style="display:flex; gap: 8px;">
+                                <button class="nav-btn load-btn" style="flex:1; min-height:36px; padding: 0;">加载记录</button>
+                                <button class="nav-btn primary-nav view-err-btn" style="flex:1; min-height:36px; padding: 0;" ${rec.mistakes.length === 0 ? 'disabled' : ''}>看错题</button>
+                                <button class="nav-btn del-btn" style="flex:0.5; min-height:36px; padding: 0; color: #FF3B30; border-color: #FFECEB; background: #FFECEB;">删除</button>
+                            </div>
+                        `;
+
+                        item.querySelector('.load-btn').addEventListener('click', () => {
+                            if (getAnsweredCount() > 0 && !confirm('加载历史记录将覆盖您当前的答题进度。\n建议您先在"答题报告"点击"重新开始"保存当前进度。\n\n确认覆盖并加载吗？')) return;
+                            userAnswers = rec.userAnswers || {};
+                            revealedAnswers = rec.revealedAnswers || {};
+                            mistakeMode = false;
+                            currentIndex = 0;
+                            saveProgress();
+                            $('#historyOverlay').classList.remove('visible');
+                            document.body.style.overflow = '';
+                            renderQuestion();
+                            showToast('✅ 历史记录加载成功');
+                        });
+
+                        item.querySelector('.view-err-btn').addEventListener('click', () => {
+                            if (getAnsweredCount() > 0 && !confirm('查看历史错题将暂时覆盖您当前的答题现场。\n确认查看吗？')) return;
+                            userAnswers = rec.userAnswers || {};
+                            revealedAnswers = rec.revealedAnswers || {};
+                            mistakeList = rec.mistakes;
+                            mistakeMode = true;
+                            currentIndex = mistakeList[0] !== undefined ? mistakeList[0] : 0;
+                            saveProgress();
+                            $('#historyOverlay').classList.remove('visible');
+                            document.body.style.overflow = '';
+                            renderQuestion();
+                            showToast(`进入历史错题模式，共 ${mistakeList.length} 题`);
+                        });
+
+                        item.querySelector('.del-btn').addEventListener('click', () => {
+                            if (confirm('确定要删除这条历史记录吗？')) {
+                                history.splice(index, 1);
+                                localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+                                openHistoryPanel(); // 刷新列表
+                            }
+                        });
+
+                        listEl.appendChild(item);
+                    });
+                }
+                $('#historyOverlay').classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ==================== 事件绑定 ====================
+            $('#homeBtn').addEventListener('click', () => window.location.href = 'index.html');
+            $('#backBtn').addEventListener('click', openOverlay);
+            $('#historyBtn').addEventListener('click', openHistoryPanel);
+            
+            $('#sheetClose').addEventListener('click', closeOverlay);
+            $('#viewSummaryBtn').addEventListener('click', () => { closeOverlay(); showSummaryPanel(); });
+            $('#summaryClose').addEventListener('click', () => { $('#summaryOverlay').classList.remove('visible'); document.body.style.overflow = ''; });
+            $('#historyClose').addEventListener('click', () => { $('#historyOverlay').classList.remove('visible'); document.body.style.overflow = ''; });
+            
+            $('.overlay').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('visible'); document.body.style.overflow = ''; } });
+            $('#historyOverlay').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('visible'); document.body.style.overflow = ''; } });
+            
+            $('#prevBtn').addEventListener('click', goPrev);
+            $('#nextBtn').addEventListener('click', goNext);
+            $('#submitMultiBtn').addEventListener('click', submitMultiAnswer);
+            $('#analysisToggle').addEventListener('click', toggleAnalysis);
+
+            $('#restartBtn').addEventListener('click', () => {
+                const ansCount = getAnsweredCount();
+                const msg = ansCount > 0 ? '确定要交卷并重新开始吗？\n\n您当前的进度将会被自动保存到历史记录中。' : '确定要清空答题记录，重新开始吗？';
+                if(confirm(msg)) {
+                    archiveCurrentToHistory(); // 归档
+                    userAnswers = {};
+                    revealedAnswers = {};
+                    mistakeMode = false;
+                    currentIndex = 0;
+                    saveProgress();
+                    $('#summaryOverlay').classList.remove('visible');
+                    document.body.style.overflow = '';
+                    renderQuestion();
+                    showToast(ansCount > 0 ? '✅ 已重新开始，进度已归档至历史记录' : '已重新开始');
+                }
+            });
+
+            $('#viewMistakesBtn').addEventListener('click', () => {
+                mistakeList = generateMistakeList();
+                if (mistakeList.length === 0) { showToast('太棒了，没有错题！'); return; }
+                mistakeMode = true;
+                currentIndex = mistakeList[0];
+                saveProgress();
+                $('#summaryOverlay').classList.remove('visible');
+                document.body.style.overflow = '';
+                renderQuestion();
+                showToast(`进入错题模式，共 ${mistakeList.length} 题`);
+            });
+
+            $('#fontSizeBtn').addEventListener('click', () => {
+                fontSizeLevel = (fontSizeLevel + 1) % 6;
+                applyFontSize();
+                saveProgress();
+                showToast(`字体大小：${fontSizeLabels[fontSizeLevel]}`);
+            });
+
+            // 键盘与滑动辅助
+            document.addEventListener('keydown', e => {
+                if ($('#overlay').classList.contains('visible') || $('#summaryOverlay').classList.contains('visible') || $('#historyOverlay').classList.contains('visible')) return;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+            });
+
+            let touchStartX = 0, touchStartY = 0;
+            document.addEventListener('touchstart', e => {
+                if (e.target.closest('.overlay') || e.target.closest('.sheet-panel') || e.target.closest('.summary-panel')) return;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            document.addEventListener('touchend', e => {
+                if (e.target.closest('.overlay') || e.target.closest('.sheet-panel') || e.target.closest('.summary-panel')) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+                    if (dx < -30) goNext();
+                    else if (dx > 30) goPrev();
+                }
+            });
+
+            // ==================== 初始化 ====================
+            function init() {
+                loadProgress();
+                applyFontSize();
+                renderQuestion();
+                updateProgressUI();
+            }
+
+            init();
+        
+
+// 新增导出错题为CSV功能
+            function escapeCSV(str) {
+                if (str === null || str === undefined) return '';
+                let s = String(str);
+                // 去除可能干扰的HTML标签
+                s = s.replace(/<[^>]+>/g, '');
+                s = s.replace(/"/g, '""');
+                if (s.indexOf(',') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('"') >= 0) {
+                    s = '"' + s + '"';
+                }
+                return s;
+            }
+
+            const exportMistakesBtn = $('#exportMistakesBtn');
+            if(exportMistakesBtn) {
+                exportMistakesBtn.addEventListener('click', () => {
+                    const mistakes = typeof generateMistakeList === 'function' ? generateMistakeList() : (typeof mistakeList !== 'undefined' ? mistakeList : []);
+                    if (!mistakes || mistakes.length === 0) {
+                        if(typeof showToast === 'function') showToast('没有错题可以导出哦！');
+                        else alert('没有错题可以导出哦！');
+                        return;
+                    }
+                    
+                    let csvContent = '\uFEFF题目,类型,选项,正确答案,解析\n';
+                    
+                    mistakes.forEach(idx => {
+                        const q = typeof allQuestions !== 'undefined' ? allQuestions[idx] : null;
+                        if (!q) return;
+                        
+                        let qTypeLabel = q.type;
+                        if(typeof getTypeLabel === 'function') qTypeLabel = getTypeLabel(q.type);
+                        else {
+                            if(q.type === 'single') qTypeLabel = '单选题';
+                            if(q.type === 'multiple') qTypeLabel = '多选题';
+                            if(q.type === 'judge') qTypeLabel = '判断题';
+                        }
+                        
+                        let optionsStr = '';
+                        if (q.options) {
+                            for (let key in q.options) {
+                                // 保证选项内容在一行或者带双引号
+                                optionsStr += key + ': ' + q.options[key] + '  ';
+                            }
+                        }
+                        
+                        const rowStr = [
+                            q.question || '',
+                            qTypeLabel || '',
+                            optionsStr.trim(),
+                            q.answer || '',
+                            q.analysis || ''
+                        ].map(escapeCSV).join(',');
+                        
+                        csvContent += rowStr + '\n';
+                    });
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', document.title + '错题.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+
+})();
+    
+            </script>
+</body>
+</html>

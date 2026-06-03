@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>汕头市潮南教师招聘敬一畏模拟题（一）</title>
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --primary: #4A6CF7;
+            --primary-light: #EEF1FE;
+            --text: #1c1c1e;
+            --text-secondary: #555;
+            --text-light: #888;
+            --border: #e5e5ea;
+            --correct: #34C759;
+            --correct-bg: #E8F8ED;
+            --wrong: #FF3B30;
+            --wrong-bg: #FFECEB;
+            --selected-bg: #EBF0FF;
+            --selected-border: #4A6CF7;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            --radius: 14px;
+            --option-radius: 12px;
+            --font-base: 16px;
+            --font-sm: 14px;
+            --font-xs: 12px;
+            --font-lg: 18px;
+            --transition: 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --tap-min: 44px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #e8e8ed;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (min-width: 481px) {
+            body {
+                padding: 20px 0;
+                align-items: flex-start;
+            }
+            .app-container {
+                border-radius: 20px;
+                min-height: auto;
+                min-height: 100vh;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+        }
+
+        /* ========== 顶部导航栏 ========== */
+        .top-bar {
+            background: #fff;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            min-height: 52px;
+        }
+        .top-bar .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f5f5f7;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 17px;
+            color: var(--text);
+            flex-shrink: 0;
+            transition: var(--transition);
+            -webkit-tap-highlight-color: transparent;
+            min-width: 38px;
+        }
+        .top-bar .icon-btn:active {
+            background: #e0e0e5;
+            transform: scale(0.94);
+        }
+        .top-bar .title-area {
+            flex: 1;
+            min-width: 0;
+            padding-left: 4px;
+        }
+        .top-bar .section-label {
+            font-size: var(--font-xs);
+            color: var(--text-light);
+            line-height: 1.2;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .top-bar .question-num {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .font-size-indicator {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-light);
+            position: absolute;
+            bottom: 2px;
+            width: 100%;
+            text-align: center;
+            pointer-events: none;
+        }
+        .font-size-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* ========== 进度条 ========== */
+        .progress-wrap {
+            padding: 8px 16px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-xs);
+            color: var(--text-light);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .progress-bar-outer {
+            height: 5px;
+            background: #e5e5ea;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* ========== 主内容区 ========== */
+        .main-content {
+            flex: 1;
+            padding: 14px 14px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+        }
+
+        /* 题目卡片 */
+        .question-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 18px 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .question-type-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.4px;
+        }
+        .badge-single { background: #EEF1FE; color: #4A6CF7; }
+        .badge-multiple { background: #FFF3E0; color: #E67E22; }
+        .badge-judge { background: #E8F5E9; color: #388E3C; }
+        .badge-short { background: #E3F2FD; color: #1976D2; }
+        .badge-discussion { background: #FCE4EC; color: #C2185B; }
+        .badge-case { background: #E8F5E9; color: #388E3C; }
+        .question-text {
+            font-size: var(--font-base);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .question-text .qn-inline {
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 2px;
+        }
+
+        /* 选项区域 */
+        .options-area {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--option-radius);
+            cursor: pointer;
+            transition: all var(--transition);
+            background: #fff;
+            min-height: var(--tap-min);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .option-item:active { transform: scale(0.985); background: #fafafa; }
+        .option-item.selected { border-color: var(--selected-border); background: var(--selected-bg); box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.08); }
+        .option-item.correct-reveal { border-color: var(--correct) !important; background: var(--correct-bg) !important; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.1) !important; animation: pulse-correct 0.5s ease; }
+        .option-item.wrong-reveal { border-color: var(--wrong) !important; background: var(--wrong-bg) !important; box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.08) !important; animation: shake 0.45s ease; }
+        .option-letter { width: 32px; height: 32px; border-radius: 50%; background: #f5f5f7; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--text-secondary); flex-shrink: 0; transition: var(--transition); letter-spacing: 0; }
+        .option-item.selected .option-letter { background: var(--primary); color: #fff; }
+        .option-item.correct-reveal .option-letter { background: var(--correct); color: #fff; }
+        .option-item.wrong-reveal .option-letter { background: var(--wrong); color: #fff; }
+        .option-text { font-size: var(--font-base); color: var(--text); line-height: 1.5; flex: 1; letter-spacing: 0.2px; }
+        .option-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid #ccc; flex-shrink: 0; display: none; align-items: center; justify-content: center; transition: var(--transition); font-size: 13px; color: #fff; }
+        .option-item.multi-mode .option-check { display: flex; }
+        .option-item.multi-mode .option-letter { display: none; }
+        .option-item.multi-mode.checked .option-check { background: var(--primary); border-color: var(--primary); }
+        .option-item.multi-mode.correct-reveal .option-check { background: var(--correct); border-color: var(--correct); }
+        .option-item.multi-mode.wrong-reveal .option-check { background: var(--wrong); border-color: var(--wrong); }
+
+        /* 主观题输入区域 */
+        .essay-input-area {
+            margin-top: 16px;
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+        .essay-input-label {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 600;
+        }
+        .essay-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--option-radius);
+            font-size: var(--font-base);
+            line-height: 1.6;
+            resize: vertical;
+            transition: var(--transition);
+            background: #fff;
+            font-family: inherit;
+        }
+        .essay-textarea:focus {
+            outline: none;
+            border-color: var(--selected-border);
+            background: var(--selected-bg);
+        }
+        .essay-textarea.revealed {
+            background: #fafafc;
+        }
+        .essay-submit-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: var(--font-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: var(--tap-min);
+            -webkit-tap-highlight-color: transparent;
+            letter-spacing: 0.4px;
+        }
+        .essay-submit-btn:active {
+            opacity: 0.85;
+            transform: scale(0.99);
+        }
+        .essay-submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse-correct { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
+
+        /* 提交按钮（多选） */
+        .submit-multi-btn {
+            display: none; width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-size: var(--font-base); font-weight: 600; cursor: pointer; transition: var(--transition); min-height: var(--tap-min); -webkit-tap-highlight-color: transparent; letter-spacing: 0.4px;
+        }
+        .submit-multi-btn:active { opacity: 0.85; transform: scale(0.97); }
+        .submit-multi-btn.visible { display: block; }
+
+        /* 答案和解析区 */
+        .result-area { display: none; background: #fff; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); animation: fadeInUp 0.35s ease; }
+        .result-area.visible { display: block; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: 700; font-size: var(--font-base); }
+        .result-header.correct { color: var(--correct); }
+        .result-header.wrong { color: var(--wrong); }
+        .result-icon { font-size: 22px; }
+        .correct-answer-display { font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: 8px; padding: 8px 12px; background: #f9f9fb; border-radius: 8px; }
+        .correct-answer-display strong { color: var(--correct); font-weight: 700; }
+        .analysis-toggle { display: flex; align-items: center; gap: 6px; font-size: var(--font-sm); font-weight: 600; color: var(--primary); cursor: pointer; padding: 8px 0; -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; min-height: 36px; }
+        .analysis-toggle .arrow-icon { transition: transform 0.3s ease; display: inline-block; font-size: 12px; }
+        .analysis-toggle.expanded .arrow-icon { transform: rotate(180deg); }
+        .analysis-content { display: none; font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.7; padding: 10px 12px; background: #fafafc; border-radius: 8px; border-left: 3px solid var(--primary); margin-top: 4px; letter-spacing: 0.2px; }
+        .analysis-content.expanded { display: block; animation: fadeInUp 0.3s ease; }
+
+        /* 底部导航 */
+        .nav-bottom { display: flex; gap: 10px; padding: 12px 16px; background: #fff; border-top: 1px solid var(--border); position: sticky; bottom: 0; z-index: 100; box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.04); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        .nav-btn { flex: 1; padding: 13px 8px; border-radius: 12px; border: 2px solid var(--border); background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); min-height: var(--tap-min); -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .nav-btn:active { background: #f5f5f7; transform: scale(0.96); }
+        .nav-btn:disabled { opacity: 0.4; pointer-events: none; }
+        .nav-btn.primary-nav { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 700; }
+        .nav-btn.primary-nav:active { background: #3b59d9; }
+
+        /* 覆盖层组件通用 */
+        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); z-index: 200; justify-content: center; align-items: flex-end; }
+        .overlay.visible { display: flex; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        /* 题目列表面板 */
+        .sheet-panel { background: #fff; width: 100%; max-width: 480px; max-height: 75vh; border-radius: 20px 20px 0 0; padding: 16px 14px 20px; overflow-y: auto; animation: slideUp 0.3s ease; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+        .sheet-handle { width: 40px; height: 5px; background: #d1d1d6; border-radius: 10px; margin: 0 auto 14px; }
+        .sheet-title { font-weight: 700; font-size: 16px; text-align: center; margin-bottom: 12px; color: var(--text); }
+        .sheet-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+        .sheet-item { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; transition: var(--transition); border: 2px solid transparent; -webkit-tap-highlight-color: transparent; min-width: 36px; min-height: 36px; }
+        .sheet-item.unanswered { background: #f0f0f5; color: #888; }
+        .sheet-item.correct-dot { background: #E8F8ED; color: var(--correct); border-color: var(--correct); }
+        .sheet-item.wrong-dot { background: #FFECEB; color: var(--wrong); border-color: var(--wrong); }
+        .sheet-item.current-dot { border-color: var(--primary) !important; box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2); font-weight: 700; }
+        .sheet-section-label { grid-column: 1 / -1; font-size: 11px; font-weight: 600; color: #999; text-align: left; padding: 6px 0 2px; letter-spacing: 0.3px; }
+        .sheet-close { display: block; width: 100%; padding: 12px; margin-top: 14px; background: #f5f5f7; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 15px; color: var(--text); -webkit-tap-highlight-color: transparent; letter-spacing: 0.3px; }
+
+        /* 结算面板 & 历史面板通用 */
+        .summary-panel { background: #fff; width: 100%; max-width: 380px; border-radius: 20px; padding: 24px 20px; text-align: center; animation: slideUp 0.3s ease; position: relative; margin: 0 20px; max-height: 85vh; display: flex; flex-direction: column; }
+        .summary-title { font-size: 20px; margin-bottom: 20px; color: var(--text); font-weight: 700; flex-shrink: 0; }
+        
+        /* 结算面板特有 */
+        .summary-stats { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-item span { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .stat-item label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+        .rate-list { text-align: left; margin-bottom: 24px; background: #f9f9fb; padding: 12px 16px; border-radius: 12px; }
+        .rate-item { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; color: var(--text-secondary); }
+        .rate-item span:last-child { font-weight: 700; color: var(--text); }
+        .summary-actions { display: flex; gap: 12px; }
+        .summary-btn { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 15px; cursor: pointer; border: none; transition: var(--transition); -webkit-tap-highlight-color: transparent; }
+        .btn-wrong { background: #FFF3E0; color: #E67E22; }
+        .btn-restart { background: #EEF1FE; color: #4A6CF7; }
+        .summary-btn:active { transform: scale(0.96); }
+
+        /* Toast */
+        .toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; letter-spacing: 0.3px; }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="appContainer">
+        <div class="top-bar">
+            <button class="icon-btn" id="homeBtn" aria-label="首页">🏠</button>
+            <button class="icon-btn" id="historyBtn" aria-label="历史记录">🕒</button>
+            <button class="icon-btn" id="backBtn" aria-label="题目列表">☰</button>
+            <div class="title-area">
+                <div class="section-label" id="sectionLabel">第一部分 单选题</div>
+                <div class="question-num" id="questionNum">第 1/110 题</div>
+            </div>
+            <div class="font-size-wrapper">
+                <button class="icon-btn font-size-btn" id="fontSizeBtn" aria-label="调整字体">A</button>
+                <span class="font-size-indicator" id="fontSizeIndicator">中</span>
+            </div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-info">
+                <span id="progressText">已答 0/110</span>
+                <span id="correctRate">正确率 -</span>
+            </div>
+            <div class="progress-bar-outer">
+                <div class="progress-bar-inner" id="progressBar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="question-card" id="questionCard">
+                <span class="question-type-badge badge-single" id="typeBadge">单选题</span>
+                <div class="question-text" id="questionText"></div>
+            </div>
+            <div class="options-area" id="optionsArea"></div>
+            <button class="submit-multi-btn" id="submitMultiBtn">确认提交答案</button>
+            <div class="result-area" id="resultArea">
+                <div class="result-header" id="resultHeader"></div>
+                <div class="correct-answer-display" id="correctAnswerDisplay"></div>
+                <div class="analysis-toggle" id="analysisToggle">
+                    📖 查看解析 <span class="arrow-icon">▾</span>
+                </div>
+                <div class="analysis-content" id="analysisContent"></div>
+            </div>
+        </div>
+
+        <div class="nav-bottom">
+            <button class="nav-btn" id="prevBtn" disabled>◀ 上一题</button>
+            <button class="nav-btn primary-nav" id="nextBtn">下一题 ▶</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">📋 题目列表</div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+            <button class="sheet-close primary-nav" id="viewSummaryBtn" style="margin-top: 14px; background: var(--primary); color: #fff; border:none;">📊 结束答题并查看报告</button>
+            <button class="sheet-close" id="sheetClose">关闭</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="summaryOverlay" style="align-items: center;">
+        <div class="summary-panel" id="summaryPanel">
+            <h2 class="summary-title">📊 答题报告</h2>
+            <div class="summary-stats">
+                <div class="stat-item"><span id="sumTotal">0</span><label>总题数</label></div>
+                <div class="stat-item"><span id="sumAnswered">0</span><label>已答题</label></div>
+                <div class="stat-item"><span id="sumCorrect">0</span><label>答对题</label></div>
+            </div>
+            <div class="rate-list">
+                <div class="rate-item"><span>单选题正确率</span><span id="rateSingle">0%</span></div>
+                <div class="rate-item"><span>多选题正确率</span><span id="rateMulti">0%</span></div>
+                <div class="rate-item"><span>判断题正确率</span><span id="rateJudge">0%</span></div>
+            </div>
+            <div class="summary-actions">
+                <button class="summary-btn btn-wrong" id="exportMistakesBtn" style="background:#4A6CF7; color:#fff;">导出错题</button>
+                <button class="summary-btn btn-wrong" id="viewMistakesBtn">📝 看错题</button>
+                <button class="summary-btn btn-restart" id="restartBtn">🔄 重新开始</button>
+            </div>
+            <button class="sheet-close" id="summaryClose" style="margin-top: 14px;">关闭</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="historyOverlay" style="align-items: center;">
+        <div class="summary-panel" id="historyPanel">
+            <h2 class="summary-title">🕒 历史答题记录</h2>
+            <div id="historyList" style="overflow-y: auto; flex: 1; text-align: left; padding: 4px 0;">
+                </div>
+            <button class="sheet-close" id="historyClose" style="margin-top: 14px; flex-shrink: 0;">关闭</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ==================== 题目数据 ====================
+const allQuestions = [
+    // 第一部分：单选题
+    { type: 'single', part: 1, num: 1, question: '"让学校的每一面墙都开口说话"、"让学校的一草一木，一砖一石都发挥教育影响"。这体现的德育方法是()', options: { A: '说服法', B: '榜样法', C: '锻炼法', D: '陶冶法' }, answer: 'D', analysis: '陶冶法是通过创设良好的情境，潜移默化地培养学生品德的方法。环境熏陶、潜移默化的教育影响属于情感陶冶法的典型应用。' },
+    { type: 'single', part: 1, num: 2, question: '体态语言不能在教学信息传递占主导地位，是因为它()', options: { A: '稍纵即逝', B: '表意不准', C: '难以重复', D: '直观性差' }, answer: 'B', analysis: '体态语言具有多义性、模糊性的特点，表意不够准确，无法单独承担主要的教学信息传递任务，只能作为辅助手段。' },
+    { type: 'single', part: 1, num: 3, question: '数学家高斯少年时自己发现了用首尾相加，将连加变为乘法的方法，快速解决1~100的连加问题是一种()。', options: { A: '真创造', B: '假创造', C: '种创造', D: '类创造' }, answer: 'D', analysis: '类创造是指对个人而言是新发现，但并非人类首创的创造活动。高斯的发现对他个人来说是全新的，但并非人类历史上的首次创造，属于类创造。' },
+    { type: 'single', part: 1, num: 4, question: '学生渴望充分发挥自己的潜能，希望自己越来越成为所希望的人物，完成与自己能力相称的一切活动。根据马斯洛的需要层次理论，这属于()。', options: { A: '自我实现的需要', B: '尊重的需要', C: '求知的需要', D: '审美的需要' }, answer: 'A', analysis: '自我实现的需要是马斯洛需要层次理论的最高层次，指个体希望充分发挥自己的潜能，实现个人理想和抱负，成为自己所期望的人物。' },
+    { type: 'single', part: 1, num: 5, question: '()是个体对一个问题所达到的全部认识状态，包括问题的起始状态、目标状态以及由前者过渡到后者的各中间状态和有关的操作。', options: { A: '问题', B: '问题解决', C: '理解问题', D: '问题空间' }, answer: 'D', analysis: '问题空间是个体对一个问题所达到的全部认识状态，由问题的起始状态、目标状态以及从起始状态到目标状态的中间状态和操作步骤构成。' },
+    { type: 'single', part: 1, num: 6, question: '《中华人民共和国教育法》的制定机关是()', options: { A: '全国人民代表大会', B: '全国人民代表大会常务委员会', C: '国务院', D: '国务院教育行政部门' }, answer: 'A', analysis: '《中华人民共和国教育法》是我国教育领域的基本法律，由全国人民代表大会制定和修改。' },
+    { type: 'single', part: 1, num: 7, question: '把一定数量的学生按年龄与知识程度编成固定的班级，根据周课表和作息时间表，安排教师有计划地向全班学生集体上课，这种教学组织形式是()。', options: { A: '设计教学法', B: '道尔顿制', C: '班级授课制', D: '分组教学制' }, answer: 'C', analysis: '班级授课制是一种集体教学形式，其核心特征是固定班级、固定课表、固定教师、集体上课。' },
+    { type: 'single', part: 1, num: 8, question: '"跳一跳，摘桃子"是讲教学目标的设计要()', options: { A: '内容具有科学性和思想性', B: '便于检测', C: '系统完整', D: '难度适中' }, answer: 'D', analysis: '"跳一跳，摘桃子"体现了维果茨基的最近发展区理论，强调教学目标的设计要难度适中，既不能过易也不能过难，让学生通过努力能够达成。' },
+    { type: 'single', part: 1, num: 9, question: '我国义务教育应当坚持()', options: { A: '以国家办学为主', B: '以企事业办学为主', C: '以学校办学为主', D: '以社会力量办学为主' }, answer: 'A', analysis: '我国义务教育实行国务院领导，省、自治区、直辖市人民政府统筹规划实施，县级人民政府为主管理的体制，坚持以国家办学为主。' },
+    { type: 'single', part: 1, num: 10, question: '教师关爱学生的核心是()。', options: { A: '爱护全体学生', B: '公平对待学生', C: '建立平等关系', D: '尊重学生人格' }, answer: 'D', analysis: '关爱学生的核心是尊重学生的人格，平等公正对待学生，保护学生的合法权益，促进学生全面发展。' },
+    { type: 'single', part: 1, num: 11, question: '发明地动仪的是()。', options: { A: '张衡', B: '布鲁诺', C: '哥白尼', D: '毕昇' }, answer: 'A', analysis: '东汉科学家张衡发明了世界上最早的地动仪，用于测定地震方位。' },
+    { type: 'single', part: 1, num: 12, question: '提出"不愤不启，不悱不发"思想的教育家是()', options: { A: '孟子', B: '孔子', C: '老子', D: '荀子' }, answer: 'B', analysis: '"不愤不启，不悱不发"出自《论语·述而》，是孔子提出的启发性教学原则。' },
+    { type: 'single', part: 1, num: 13, question: '根据迁移过程中所需的内在心理机制的不同而进行划分，迁移可分为()。', options: { A: '正迁移和负迁移', B: '水平迁移和垂直迁移', C: '一般迁移与具体迁移', D: '同化性迁移、顺应性迁移与重组性迁移' }, answer: 'D', analysis: '根据迁移过程中所需的内在心理机制的不同，迁移可分为同化性迁移、顺应性迁移和重组性迁移。同化性迁移是指不改变原有的认知结构，直接将原有的认知经验应用到本质特征相同的一类事物中；顺应性迁移是指将原有认知经验应用于新情境中时，需调整原有的经验或对新旧经验加以概括；重组性迁移是指重新组合原有认知系统中某些构成要素或成分，调整各成分间的关系或建立新的联系，从而应用于新情境。' },
+    { type: 'single', part: 1, num: 14, question: '某校教室张贴着这样一句名言：给我一个支点，我将撬动整个地球。这句名言出自()', options: { A: '阿基米德', B: '牛顿', C: '达尔文', D: '爱因斯坦' }, answer: 'A', analysis: '"给我一个支点，我将撬动整个地球"是古希腊科学家阿基米德的名言，体现了杠杆原理。' },
+    { type: 'single', part: 1, num: 15, question: '社会学习品德理论是由()提出的。', options: { A: '埃里克森', B: '费斯廷格', C: '班杜拉', D: '皮亚杰' }, answer: 'C', analysis: '社会学习理论（观察学习理论）由班杜拉提出，该理论强调观察学习在品德形成中的重要作用。' },
+    { type: 'single', part: 1, num: 16, question: '教育目的可以发挥下列哪几种作用?()', options: { A: '导向、规范和权威作用', B: '激励、评价和统一作用', C: '导向、激励和评价作用', D: '宣传、引导和激励作用' }, answer: 'C', analysis: '教育目的具有三大核心作用：导向作用（为教育活动指明方向）、激励作用（激发教育者和受教育者的积极性）、评价作用（作为衡量教育活动效果的根本标准）。' },
+    { type: 'single', part: 1, num: 17, question: '心理学家指出压力状态下身体反应的三个阶段，其中第三阶段是()', options: { A: '警觉反应阶段', B: '抗拒阶段', C: '衰竭阶段' }, answer: 'C', analysis: '压力状态下身体反应的三个阶段依次为：警觉反应阶段、抗拒阶段、衰竭阶段。当压力持续时间过长，身体资源耗尽，就会进入衰竭阶段。' },
+    { type: 'single', part: 1, num: 18, question: '教育行政复议的书面形式申请应在()日内提出复议申请书。', options: { A: '10', B: '30', C: '50', D: '60' }, answer: 'D', analysis: '根据《行政复议法》规定，公民、法人或者其他组织认为具体行政行为侵犯其合法权益的，可以自知道该具体行政行为之日起60日内提出行政复议申请。' },
+    { type: 'single', part: 1, num: 19, question: '教师职业道德区别于其他职业道德的显著标志就是()', options: { A: '为人师表', B: '清正廉洁', C: '敬业爱业', D: '团结协作' }, answer: 'A', analysis: '为人师表是教师职业道德区别于其他职业道德的显著标志，要求教师以身作则，成为学生的表率。' },
+    { type: 'single', part: 1, num: 20, question: '"教育一定要成为一种学业，否则无所希望"；"教育的方法必须成为一种科学，否则决不能成为一种有系统的学问"。这正是()的"教育学"超出他的前人和同代人的地方。', options: { A: '培根', B: '夸美纽斯', C: '康德', D: '赫尔巴特' }, answer: 'C', analysis: '康德最早将教育学列入大学课程，强调教育学必须成为一门科学，系统阐述了教育的理论和方法。' },
+    { type: 'single', part: 1, num: 21, question: '经典性条件反射学习理论的创立者是巴甫洛夫和()', options: { A: '华生', B: '桑代克', C: '斯金纳', D: '班杜拉' }, answer: 'A', analysis: '经典性条件反射学习理论由俄国生理学家巴甫洛夫创立，美国心理学家华生将其应用于心理学研究，成为行为主义的基础。' },
+    { type: 'single', part: 1, num: 22, question: '刺激一反应的联结学习理论最初的代表人物是()', options: { A: '桑代克', B: '华生', C: '斯金纳', D: '布鲁纳' }, answer: 'A', analysis: '桑代克是联结主义学习理论的创始人，通过饿猫开笼取食实验提出了试误说，认为学习是刺激与反应之间建立联结的过程。' },
+    { type: 'single', part: 1, num: 23, question: '在下列教学方法中，以陶冶为主的方法是()', options: { A: '讨论法', B: '参观法', C: '实验法', D: '情景教学法' }, answer: 'D', analysis: '情景教学法是通过创设生动、形象的教学情境，使学生在潜移默化中获得知识、陶冶情感的教学方法，属于以陶冶为主的教学方法。' },
+    { type: 'single', part: 1, num: 24, question: '心理学家提出了发展的关键期或最佳期的概念，其依据是身心发展的()', options: { A: '顺序性', B: '阶段性', C: '不平衡性', D: '互补性' }, answer: 'C', analysis: '个体身心发展的不平衡性表现为同一方面的发展在不同年龄阶段是不均衡的，不同方面的发展速度也不同。发展的关键期或最佳期正是基于身心发展的不平衡性提出的，指在某一时期个体对某种刺激特别敏感，过了这一时期，同样的刺激对其影响很小或没有影响。' },
+    { type: 'single', part: 1, num: 25, question: '各级人民政府及其有关部门依法维护学校周边秩序，保护学生、教师、学校的合法权益，为学校提供()。', options: { A: '制度保障', B: '安全保障', C: '经费保障', D: '卫生保障' }, answer: 'B', analysis: '《中华人民共和国义务教育法》规定，各级人民政府及其有关部门依法维护学校周边秩序，保护学生、教师、学校的合法权益，为学校提供安全保障。' },
+    { type: 'single', part: 1, num: 26, question: '我国封建社会后期教育的主要内容是()。', options: { A: '六艺', B: '八股文', C: '自然科学', D: '四书、五经' }, answer: 'D', analysis: '我国封建社会后期（宋元明清时期）教育的核心内容是四书五经，科举考试也主要围绕四书五经命题。' },
+    { type: 'single', part: 1, num: 27, question: '某些学生为了得到老师或父母的奖励，避免受到老师或父母的惩罚而努力学习，这种学习动机属于()。', options: { A: '高尚动机', B: '低级动机', C: '内部动机', D: '外部动机' }, answer: 'D', analysis: '外部动机是指由外部诱因引起的动机，如为了获得奖励、避免惩罚等。题干中学生为了得到奖励或避免惩罚而学习，属于外部动机。' },
+    // 第二部分：多选题
+    { type: 'multiple', part: 2, num: 1, question: '德育目标具备的特征是()', options: { A: '阶级性', B: '历史性', C: '社会性', D: '价值性', E: '教育性' }, answer: 'ABCD', analysis: '德育目标具有阶级性（不同阶级有不同的德育目标）、历史性（不同历史时期德育目标不同）、社会性（反映社会发展的要求）和价值性（体现一定的价值取向）。' },
+    { type: 'multiple', part: 2, num: 2, question: '我国教师的资格条件必须包括的要素有()。', options: { A: '必须是中国公民', B: '必须有良好的思想道德品质', C: '必须具有规定的学历，或国家教师资格考试合格', D: '必须具有教育教学的能力', E: '必须体格达标' }, answer: 'ABCD', analysis: '《中华人民共和国教师法》规定，中国公民凡遵守宪法和法律，热爱教育事业，具有良好的思想品德，具备本法规定的学历或者经国家教师资格考试合格，有教育教学能力，经认定合格的，可以取得教师资格。' },
+    { type: 'multiple', part: 2, num: 3, question: '课程管理有审定制、固定制和多样化自由选择几种模式，统整各自优势，课程一般结构发生了变化，体现在()。', options: { A: '保持原有特色的优势', B: '强调统一基础上增加灵活性', C: '在多样性基础上增加调控', D: '采用导向式管理', E: '建立与学生自主探索学习方式相一致的课程结构' }, answer: 'BC', analysis: '统整不同课程管理模式的优势后，课程结构的变化主要体现在：强调统一基础上增加灵活性，在多样性基础上增加调控，实现统一性与多样性的结合。' },
+    { type: 'multiple', part: 2, num: 4, question: '下列属于影响学生心理健康的因素有()', options: { A: '学习负担过重', B: '恐怖小说', C: '情绪不稳', D: '不良习惯', E: '交友不慎' }, answer: 'ABDE', analysis: '影响学生心理健康的因素包括：学习负担过重、不良读物（如恐怖小说）、不良生活习惯、不良交友等。情绪不稳是心理健康问题的表现，而非影响因素。' },
+    { type: 'multiple', part: 2, num: 5, question: '中小学教育评价的内容包括以下哪几方面?()', options: { A: '学生发展评定', B: '管理水平评价', C: '学生活动效果评价', D: '教师授课质量评价', E: '课程和教材评价' }, answer: 'ABCDE', analysis: '中小学教育评价是全面的评价，包括学生发展评定、学校管理水平评价、学生活动效果评价、教师授课质量评价以及课程和教材评价等多个方面。' },
+    { type: 'multiple', part: 2, num: 6, question: '中学教学原则提出的依据有()', options: { A: '教育规律', B: '教学实践的经验', C: '教育专家的研究兴趣', D: '教育教学目的', E: '现代科学理论' }, answer: 'ABDE', analysis: '中学教学原则的提出依据包括：教育规律（客观依据）、教学实践的经验（实践依据）、教育教学目的（价值依据）以及现代科学理论（理论依据）。' },
+    { type: 'multiple', part: 2, num: 7, question: '我国现行的学校教育制度是()', options: { A: '学前教育', B: '初等教育', C: '中等教育', D: '高等教育', E: '学历教育' }, answer: 'ABCD', analysis: '我国现行的学校教育制度包括学前教育、初等教育、中等教育和高等教育四个层次，构成了我国国民教育体系的主体。' },
+    { type: 'multiple', part: 2, num: 8, question: '根据教学口语的信息流向可以将教学口语分为()', options: { A: '单向传输语言', B: '双向对话语言', C: '描述性语言', D: '说明性语言', E: '多向交流语言' }, answer: 'ABE', analysis: '根据教学口语的信息流向，可分为单向传输语言（教师讲、学生听）、双向对话语言（师生问答）和多向交流语言（学生讨论、小组交流）。' },
+    { type: 'multiple', part: 2, num: 9, question: '根据适当过度学习原则，如果一个学生学10次刚好记住一个英语单词，那么他的实际学习次数应该是()。', options: { A: '10次', B: '11次', C: '15次', D: '8次', E: '20次' }, answer: 'C', analysis: '过度学习是指在学习达到刚好成诵以后的附加学习。研究表明，过度学习程度达到150%时，记忆效果最好。因此，10次刚好记住的单词，实际学习15次效果最佳。' },
+    { type: 'multiple', part: 2, num: 10, question: '教师职业道德基本原则的构成要素有()', options: { A: '不耻下问', B: '教书育人', C: '为人师表', D: '献身教育', E: '钻研业务' }, answer: 'BCD', analysis: '教师职业道德基本原则的构成要素包括教书育人（根本任务）、为人师表（行为准则）和献身教育（职业理想）。' },
+    { type: 'multiple', part: 2, num: 11, question: '道德行为包括()。', options: { A: '道德行为技能', B: '道德行为习惯', C: '道德行为认知', D: '道德行为情感', E: '道德行为体验' }, answer: 'AB', analysis: '道德行为是个体在一定的道德认识指引和道德情感激励下所表现出来的对他人或社会具有道德意义的行为，包括道德行为技能和道德行为习惯两个方面。' },
+    { type: 'multiple', part: 2, num: 12, question: '课堂教学基本阶段的程序安排方式有()', options: { A: '渐进式', B: '开门见山', C: '交替式', D: '情感式', E: '逻辑式' }, answer: 'ACE', analysis: '课堂教学基本阶段的程序安排方式主要有渐进式（按照知识的逻辑顺序逐步展开）、交替式（讲练结合、师生互动交替进行）和逻辑式（按照问题解决的逻辑顺序安排教学）。' },
+    // 第三部分：判断题
+    { type: 'judge', part: 3, num: 1, question: '态度是一种内部准备状态，而不是实际反应本身。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '态度是个体对特定对象所持有的稳定的心理倾向，是一种内部准备状态，而非实际反应本身。' },
+    { type: 'judge', part: 3, num: 2, question: '班主任是班级的组织者、领导者和教育者，是学校办学思想的贯彻者，因而班主任是班级管理的中心。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '班级管理的中心是学生，班主任是班级管理的组织者、领导者和教育者，发挥主导作用。' },
+    { type: 'judge', part: 3, num: 3, question: '布鲁姆认为，当学生实际花在学习上的时间达不到其学习所需要的时间时，其学习程度便达不到要掌握的水平。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '布鲁姆的掌握学习理论认为，只要给学生足够的学习时间和适当的教学，几乎所有学生都能达到掌握的水平。' },
+    { type: 'judge', part: 3, num: 4, question: '尝试教学法的特点是教师先讲解然后学生尝试练习。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '尝试教学法的特点是"先练后讲"，即让学生先尝试练习，教师再根据学生的尝试情况进行讲解。' },
+    { type: 'judge', part: 3, num: 5, question: '学生学业成绩检测与评定的方法主要有考查和考试两种。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '学生学业成绩检测与评定的方法主要包括考查（如口头提问、作业检查、单元测验等）和考试（如期中考试、期末考试等）两种。' },
+    { type: 'judge', part: 3, num: 6, question: '教育心理学只研究学生的群体差异，不研究个体差异。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '教育心理学既研究学生的群体差异（如年龄差异、性别差异等），也研究个体差异（如认知方式差异、能力差异等）。' },
+    { type: 'judge', part: 3, num: 7, question: '严谨治学是教师自我完善的重要途径。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '严谨治学要求教师树立优良学风，刻苦钻研业务，不断学习新知识，提高专业素养和教育教学水平，是教师自我完善的重要途径。' },
+    { type: 'judge', part: 3, num: 8, question: '全国人大主管全国的教师工作。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '国务院教育行政部门主管全国的教师工作。' },
+    { type: 'judge', part: 3, num: 9, question: '施行义务教育的学校在教育教学和其它活动中，应当推广使用全国普通话。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '《中华人民共和国义务教育法》规定，学校及其他教育机构在教育教学中应当推广使用全国通用的普通话和规范字。' },
+    { type: 'judge', part: 3, num: 10, question: '学生管理区别于其他管理的一个显著特点是复杂性。()', options: { A: '正确', B: '错误' }, answer: 'B', analysis: '学生管理区别于其他管理的显著特点是育人性，即学生管理的根本目的是促进学生的全面发展。' },
+    { type: 'judge', part: 3, num: 11, question: '和概念的学习一样，课堂情境中学生学习原理的基本方式有发现式和接受式两种。()', options: { A: '正确', B: '错误' }, answer: 'A', analysis: '学生学习原理的基本方式包括接受式学习（教师系统讲解原理）和发现式学习（学生通过自主探究发现原理）两种。' },
+    // 第四部分：论述题
+    { type: 'discussion', part: 4, num: 1, question: '诊断性评价、形成性评价和终结性评价在教学实际中的作用?', score: 8, answer: '根据评价在教学过程中作用的不同，教学评价可分为诊断性评价、形成性评价和终结性评价，三者在教学实际中发挥着不同的作用：(1)诊断性评价：实施时间为教学活动开始前。核心作用：①了解学生的知识基础和能力水平，为因材施教提供依据；②发现学生学习中存在的问题及原因，制定针对性的教学策略；③对学生进行合理分班分组，优化教学资源配置。应用场景：新学期开始前的摸底考试、入学测验等。(2)形成性评价：实施时间为教学过程中。核心作用：①及时反馈教学信息，帮助教师调整教学进度和方法；②强化学生的学习，帮助学生发现自身问题，及时改进；③促进师生之间的交流与互动，提高教学效果。应用场景：课堂提问、单元测验、作业批改、课堂观察等。(3)终结性评价：实施时间为教学活动结束后。核心作用：①评定学生的学习成绩，判断学生是否达到教学目标的要求；②甄别学生的学习水平，为升学、就业等提供依据；③评价教师的教学效果，总结教学经验，改进教学工作。应用场景：期末考试、结业考试、毕业考试等。', analysis: '根据评价在教学过程中作用的不同，教学评价可分为诊断性评价、形成性评价和终结性评价。诊断性评价在活动前进行，用于了解基础和发现问题；形成性评价在过程中进行，用于及时反馈和改进；终结性评价在活动后进行，用于评定成绩和总结效果。' },
+    { type: 'discussion', part: 4, num: 2, question: '如何推进学生心理健康教育的开展?', score: 8, answer: '推进学生心理健康教育是落实立德树人根本任务、促进学生全面发展的重要举措，可从以下几个方面着手：(1)完善课程体系，普及心理健康知识：开设心理健康教育必修课和选修课，将心理健康教育融入各学科教学中，向学生普及心理健康知识，培养学生的心理调适能力。(2)建立专业机构，提供心理咨询服务：建立学校心理咨询室，配备专业的心理健康教师，为学生提供个体咨询、团体辅导等服务，及时解决学生的心理问题。同时，建立心理危机干预机制，对有严重心理问题的学生进行及时干预。(3)加强教师培训，提升全员育人能力：对全体教师进行心理健康教育培训，使教师掌握基本的心理健康知识和心理辅导技能，能够在日常教学中及时发现学生的心理问题，并进行初步的疏导。(4)加强家校协同，营造良好育人环境：通过家长会、家访、线上沟通等方式，向家长普及心理健康知识，引导家长树立正确的教育观念，关注孩子的心理健康，形成家校协同育人的合力。(5)建立学生心理档案，实施动态管理：为每位学生建立心理档案，记录学生的心理健康状况，定期进行心理测评，对学生的心理健康状况进行动态跟踪和管理。(6)开展丰富多彩的校园活动，促进学生身心健康：组织开展文体活动、社会实践活动、志愿服务活动等，丰富学生的课余生活，缓解学生的学习压力，促进学生的身心健康发展。', analysis: '推进学生心理健康教育可从以下方面着手：(1)完善课程体系，普及心理健康知识；(2)建立专业机构，提供心理咨询服务；(3)加强教师培训，提升全员育人能力；(4)加强家校协同，营造良好育人环境；(5)建立学生心理档案，实施动态管理；(6)开展丰富多彩的校园活动，促进学生身心健康。' },
+    // 第五部分：案例分析题
+    { type: 'case', part: 5, num: 1, question: '（题干缺失，根据问题作答）(1)用所学知识评析教师的做法。(2)在对后进学生进行激励时，老师要注意的事项有哪些?', score: 14, answer: '(1)教师做法评析（通用角度）：①若教师能够关注后进生的个体差异，采用鼓励、引导的方式进行教育，体现了关爱学生的教师职业道德规范和因材施教的教学原则；②若教师能够发现后进生的闪光点，及时给予肯定和表扬，运用了品德评价法和强化理论，能够激发学生的学习动机；③若教师能够耐心帮助后进生分析问题，制定个性化的学习计划，体现了教书育人的教师职业道德规范。(2)激励后进生的注意事项：①坚持正面教育为主，多表扬、少批评，善于发现后进生的闪光点，及时给予肯定和鼓励；②激励要具有针对性，根据后进生的个性特点和实际情况，采用不同的激励方式；③激励要适度，避免过度表扬导致学生骄傲自满，也要避免批评过多打击学生的自信心；④注重过程激励，不仅关注学生的学习结果，更要关注学生的学习过程和进步；⑤帮助学生树立自信心，引导学生正确认识自己，相信自己通过努力能够取得进步；⑥建立良好的师生关系，尊重学生的人格，与学生建立信任、和谐的师生关系。', analysis: '(1)教师做法评析从关爱学生、因材施教、品德评价法、强化理论等角度进行分析。(2)激励后进生需要注意坚持正面教育、针对性、适度性、过程激励、树立自信心、建立良好师生关系等。' },
+    { type: 'case', part: 5, num: 2, question: '材料一：孔子对两个弟子的不同回答，关于性格不同做事方法不同；材料二：关于智力差异理论，提到斯皮尔曼、加德纳、卡特尔。(1)在教学工作中因材施教要根据学生的哪些差异进行?(2)选择一种智力理论，在教学中如何利用该理论提高教学效果?', score: 14, answer: '(1)因材施教的依据：在教学工作中，因材施教应根据学生的以下差异进行：①认知差异：包括认知方式差异（如场独立型与场依存型、冲动型与沉思型等）、智力差异（如智力水平差异、智力类型差异等）；②性格差异：包括性格的态度特征、意志特征、情绪特征和理智特征差异；③兴趣差异：学生的兴趣爱好不同，对不同学科和活动的积极性不同；④学习能力差异：学生的学习基础、学习方法、学习速度等存在差异；⑤气质差异：学生的气质类型不同（如胆汁质、多血质、粘液质、抑郁质），行为表现和学习方式也不同。(2)加德纳多元智力理论的教学应用：加德纳的多元智力理论认为，人的智力结构中存在着九种相对独立的智力，包括语言智力、逻辑-数学智力、视觉-空间智力、音乐智力、身体-动觉智力、人际智力、内省智力、自然观察智力和存在智力。在教学中利用该理论提高教学效果的方法如下：①树立多元的学生观：每个学生都有自己的优势智力领域，教师要尊重学生的个体差异，发现每个学生的闪光点；②采用多元化的教学方法：根据不同智力类型的特点，采用多样化的教学方法；③设计多元化的教学活动：开展丰富多彩的教学活动，为学生提供展示不同智力的机会；④实施多元化的评价：改变传统的以纸笔测验为主的评价方式，采用多元化的评价方法，全面评价学生的发展；⑤促进学生优势智力的迁移：引导学生将优势智力领域的学习方法和态度迁移到弱势智力领域，促进学生的全面发展。', analysis: '(1)因材施教应根据学生的认知差异、性格差异、兴趣差异、学习能力差异、气质差异等进行。(2)选择加德纳多元智力理论，在教学中可通过树立多元学生观、采用多元化教学方法、设计多元化教学活动、实施多元化评价、促进优势智力迁移等方式提高教学效果。' }
+];
+            const TOTAL = allQuestions.length;
+
+            // ==================== 状态管理 ====================
+            const STORAGE_KEY = 'teacher_exam_jiedong4';
+            const HISTORY_KEY = 'teacher_exam_history_jiedong4';
+            const STATS_KEY = 'exam_stats_jiedong4';
+            let currentIndex = 0;
+            let userAnswers = {}; 
+            let revealedAnswers = {}; 
+            let fontSizeLevel = 1; 
+            let mistakeMode = false;
+            let mistakeList = [];
+            const fontSizeLabels = ['小', '中', '大', '超大', '超超大', '超超超大'];
+            const fontSizeBodyValues = ['14px', '16px', '18px', '20px', '22px', '24px'];
+            const fontSmValues = ['12px', '14px', '15px', '16px', '18px', '19px', '14px', '15px', '16px', '18px', '19px', '20px', '22px', '24px'];
+
+            function loadProgress() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (raw) {
+                        const data = JSON.parse(raw);
+                        if (typeof data.currentIndex === 'number') currentIndex = data.currentIndex;
+                        if (data.userAnswers) userAnswers = data.userAnswers;
+                        if (data.revealedAnswers) revealedAnswers = data.revealedAnswers;
+                        if (typeof data.fontSizeLevel === 'number') fontSizeLevel = data.fontSizeLevel;
+                        if (typeof data.mistakeMode === 'boolean') mistakeMode = data.mistakeMode;
+                        if (data.mistakeList) mistakeList = data.mistakeList;
+                    }
+                } catch (e) {
+                    // ignore
+                }
+                if (currentIndex < 0 || currentIndex >= TOTAL) currentIndex = 0;
+            }
+
+            function saveProgress() {
+                try {
+                    const data = { currentIndex, userAnswers, revealedAnswers, fontSizeLevel, mistakeMode, mistakeList };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                    
+                    let statsObj = {
+                        total: TOTAL,
+                        answered: 0,
+                        wrong: 0,
+                        wrongQuestions: []
+                    };
+
+                    allQuestions.forEach((q, i) => {
+                        const ua = userAnswers[i];
+                        
+                        if (ua !== undefined && ua !== null && (typeof ua === 'string' ? ua.length > 0 : ua.length > 0)) {
+                            statsObj.answered++;
+                            let isCorrect = false;
+                            
+                            if (q.type === 'multiple') {
+                                const correctSet = q.answer.split('').sort().join('');
+                                const userSet = (Array.isArray(ua) ? ua : []).sort().join('');
+                                isCorrect = correctSet === userSet;
+                            } else {
+                                isCorrect = ua === q.answer;
+                            }
+                            
+                            if (!isCorrect) {
+                                statsObj.wrong++;
+                                statsObj.wrongQuestions.push({
+                                    id: i + 1, 
+                                    num: q.num,
+                                    type: q.type,
+                                    question: q.question,
+                                    options: q.options,
+                                    correctAnswer: q.answer,
+                                    explanation: q.analysis
+                                });
+                            }
+                        }
+                    });
+                    
+                    localStorage.setItem(STATS_KEY, JSON.stringify(statsObj));
+                } catch (e) {}
+            }
+
+            function getWrongCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet !== userSet) count++;
+                    } else {
+                        if (ua !== q.answer) count++;
+                    }
+                }
+                return count;
+            }
+
+            // 新增：保存当前记录到历史
+            function archiveCurrentToHistory() {
+                const answered = getAnsweredCount();
+                if (answered > 0) {
+                    const record = {
+                        id: Date.now(),
+                        date: new Date().toLocaleString(),
+                        answered: answered,
+                        correct: getCorrectCount(),
+                        mistakes: generateMistakeList(),
+                        userAnswers: JSON.parse(JSON.stringify(userAnswers)),
+                        revealedAnswers: JSON.parse(JSON.stringify(revealedAnswers))
+                    };
+                    let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                    history.unshift(record); // 最新记录在最前
+                    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+                }
+            }
+
+            function getUserAnswer(index) { return userAnswers[index] || null; }
+            function setUserAnswer(index, answer) { userAnswers[index] = answer; saveProgress(); }
+            function isRevealed(index) { return !!revealedAnswers[index]; }
+            function setRevealed(index) { revealedAnswers[index] = true; saveProgress(); }
+
+            function getAnsweredCount() {
+                return Object.keys(userAnswers).filter(k => userAnswers[k] !== null && userAnswers[k] !== undefined &&
+                    (typeof userAnswers[k] === 'string' ? userAnswers[k].length > 0 : userAnswers[k].length > 0)).length;
+            }
+
+            function getCorrectCount() {
+                let count = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (!ua) continue;
+                    const isEssay = ['short', 'discussion', 'case'].includes(q.type);
+                    if (isEssay) continue;
+                    if (q.type === 'multiple') {
+                        const correctSet = q.answer.split('').sort().join('');
+                        const userSet = [...ua].sort().join('');
+                        if (correctSet === userSet) count++;
+                    } else {
+                        if (ua === q.answer) count++;
+                    }
+                }
+                return count;
+            }
+
+            // ==================== DOM 元素 ====================
+            const $ = (sel) => document.querySelector(sel);
+            const sectionLabel = $('#sectionLabel');
+            const questionNum = $('#questionNum');
+            const questionText = $('#questionText');
+            const typeBadge = $('#typeBadge');
+            const optionsArea = $('#optionsArea');
+            const submitMultiBtn = $('#submitMultiBtn');
+            const resultArea = $('#resultArea');
+            const resultHeader = $('#resultHeader');
+            const correctAnswerDisplay = $('#correctAnswerDisplay');
+            const analysisToggle = $('#analysisToggle');
+            const analysisContent = $('#analysisContent');
+            const prevBtn = $('#prevBtn');
+            const nextBtn = $('#nextBtn');
+            const progressBar = $('#progressBar');
+            const progressText = $('#progressText');
+            const correctRate = $('#correctRate');
+            const overlay = $('#overlay');
+            const sheetGrid = $('#sheetGrid');
+            const toast = $('#toast');
+
+            // ==================== 渲染函数 ====================
+            function getPartLabel(part) {
+                if (part === 1) return '第一部分 单选题';
+                if (part === 2) return '第二部分 多选题';
+                if (part === 3) return '第三部分 判断题';
+                if (part === 4) return '第四部分 简答题';
+                if (part === 5) return '第五部分 论述题';
+                if (part === 6) return '第六部分 案例分析题';
+                return '';
+            }
+
+            function getTypeBadgeClass(type) {
+                if (type === 'single') return 'badge-single';
+                if (type === 'multiple') return 'badge-multiple';
+                if (type === 'judge') return 'badge-judge';
+                if (type === 'short') return 'badge-short';
+                if (type === 'discussion') return 'badge-discussion';
+                if (type === 'case') return 'badge-case';
+                return 'badge-single';
+            }
+
+            function getTypeLabel(type) {
+                if (type === 'single') return '单选题';
+                if (type === 'multiple') return '多选题';
+                if (type === 'judge') return '判断题';
+                if (type === 'short') return '简答题';
+                if (type === 'discussion') return '论述题';
+                if (type === 'case') return '案例分析题';
+                return '单选题';
+            }
+
+            function applyFontSize() {
+                const bodyVal = fontSizeBodyValues[fontSizeLevel];
+                const smVal = fontSmValues[fontSizeLevel];
+                document.documentElement.style.setProperty('--font-base', bodyVal);
+                document.documentElement.style.setProperty('--font-sm', smVal);
+                $('#fontSizeIndicator').textContent = fontSizeLabels[fontSizeLevel];
+                if (questionText) questionText.style.fontSize = bodyVal;
+                if (analysisContent && analysisContent.classList.contains('expanded')) analysisContent.style.fontSize = smVal;
+                document.querySelectorAll('.option-text').forEach(el => el.style.fontSize = bodyVal);
+            }
+
+            function renderQuestion() {
+                const q = allQuestions[currentIndex];
+                sectionLabel.textContent = getPartLabel(q.part);
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    questionNum.textContent = `错题复习 ${currentPos + 1}/${mistakeList.length} (原题 ${q.num})`;
+                } else {
+                    questionNum.textContent = `第 ${q.num}/${TOTAL} 题`;
+                }
+                typeBadge.textContent = getTypeLabel(q.type);
+                typeBadge.className = 'question-type-badge ' + getTypeBadgeClass(q.type);
+                questionText.innerHTML = `<span class="qn-inline">${q.num}.</span> ${q.question}`;
+                questionText.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+
+                const isEssay = ['short', 'discussion', 'case'].includes(q.type);
+                const revealed = isRevealed(currentIndex);
+                const userAns = getUserAnswer(currentIndex);
+
+                if (isEssay) {
+                    renderEssayQuestion(q, revealed, userAns);
+                } else {
+                    optionsArea.innerHTML = '';
+                    const optionKeys = Object.keys(q.options);
+                    const isMulti = q.type === 'multiple';
+
+                    optionKeys.forEach(key => {
+                        const optDiv = document.createElement('div');
+                        optDiv.className = 'option-item';
+                        if (isMulti) optDiv.classList.add('multi-mode');
+                        optDiv.setAttribute('data-key', key);
+
+                        let isSelected = false;
+                        if (isMulti && Array.isArray(userAns)) isSelected = userAns.includes(key);
+                        else if (!isMulti && userAns === key) isSelected = true;
+                        
+                        if (isSelected && !revealed) optDiv.classList.add('selected');
+                        if (isMulti && isSelected && !revealed) optDiv.classList.add('checked');
+
+                        if (revealed) {
+                            const correctKeys = q.answer.split('');
+                            if (isMulti) {
+                                const wasSelected = Array.isArray(userAns) && userAns.includes(key);
+                                const isCorrectOption = correctKeys.includes(key);
+                                if (wasSelected && isCorrectOption) optDiv.classList.add('correct-reveal');
+                                else if (wasSelected && !isCorrectOption) optDiv.classList.add('wrong-reveal');
+                                else if (!wasSelected && isCorrectOption) optDiv.classList.add('correct-reveal');
+                            } else {
+                                if (key === q.answer) optDiv.classList.add('correct-reveal');
+                                if (key === userAns && userAns !== q.answer) optDiv.classList.add('wrong-reveal');
+                            }
+                        }
+
+                        const letterSpan = document.createElement('span');
+                        letterSpan.className = 'option-letter';
+                        letterSpan.textContent = key;
+                        optDiv.appendChild(letterSpan);
+
+                        if (isMulti) {
+                            const checkSpan = document.createElement('span');
+                            checkSpan.className = 'option-check';
+                            checkSpan.textContent = '✓';
+                            optDiv.appendChild(checkSpan);
+                        }
+
+                        const textSpan = document.createElement('span');
+                        textSpan.className = 'option-text';
+                        textSpan.textContent = q.options[key];
+                        textSpan.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+                        optDiv.appendChild(textSpan);
+
+                        optDiv.addEventListener('click', () => handleOptionClick(key, isMulti));
+                        optionsArea.appendChild(optDiv);
+                    });
+
+                    if (isMulti) {
+                        submitMultiBtn.classList.add('visible');
+                        submitMultiBtn.style.display = 'block';
+                        if (revealed) {
+                            submitMultiBtn.style.display = 'none';
+                            submitMultiBtn.classList.remove('visible');
+                        }
+                    } else {
+                        submitMultiBtn.classList.remove('visible');
+                        submitMultiBtn.style.display = 'none';
+                    }
+                }
+
+                if (revealed) showResultArea(q, userAns);
+                else {
+                    resultArea.classList.remove('visible');
+                    resultArea.style.display = 'none';
+                }
+
+                if (mistakeMode) {
+                    prevBtn.disabled = mistakeList.indexOf(currentIndex) === 0;
+                    nextBtn.textContent = mistakeList.indexOf(currentIndex) >= mistakeList.length - 1 ? '完成 ✓' : '下一题 ▶';
+                } else {
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.textContent = currentIndex >= TOTAL - 1 ? '完成 ✓' : '下一题 ▶';
+                }
+
+                updateProgressUI();
+                document.querySelector('.main-content').scrollTop = 0;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function renderEssayQuestion(q, revealed, userAns) {
+                optionsArea.innerHTML = `
+                    <div class="essay-input-area">
+                        <div class="essay-input-label">请输入您的答案${q.score ? `（${q.score}分）` : ''}</div>
+                        <textarea class="essay-textarea ${revealed ? 'revealed' : ''}" ${revealed && !mistakeMode ? 'readonly' : ''} placeholder="请输入您的答案...">${userAns || ''}</textarea>
+                        <button class="essay-submit-btn" id="essaySubmitBtn" ${revealed && !mistakeMode ? 'style="display:none;"' : ''}>提交答案</button>
+                        ${revealed && mistakeMode ? '<button class="essay-submit-btn" id="essayRetryBtn">重新作答</button>' : ''}
+                    </div>
+                `;
+                submitMultiBtn.classList.remove('visible');
+                submitMultiBtn.style.display = 'none';
+                
+                const textarea = optionsArea.querySelector('.essay-textarea');
+                textarea.style.fontSize = fontSizeBodyValues[fontSizeLevel];
+                
+                const submitBtn = optionsArea.querySelector('#essaySubmitBtn');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', submitEssayAnswer);
+                }
+                
+                const retryBtn = optionsArea.querySelector('#essayRetryBtn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', retryEssayAnswer);
+                }
+            }
+
+            function submitEssayAnswer() {
+                const q = allQuestions[currentIndex];
+                const textarea = optionsArea.querySelector('.essay-textarea');
+                const answer = textarea.value.trim();
+                if (!answer) {
+                    showToast('请输入答案后再提交');
+                    return;
+                }
+                setUserAnswer(currentIndex, answer);
+                setRevealed(currentIndex);
+                renderQuestion();
+            }
+
+            function retryEssayAnswer() {
+                const q = allQuestions[currentIndex];
+                const userAns = getUserAnswer(currentIndex);
+                if (userAns && confirm('确定要重新作答吗？您当前的答案将会被清除。')) {
+                    setUserAnswer(currentIndex, '');
+                    setRevealed(currentIndex, false);
+                    revealedAnswers[currentIndex] = false;
+                    saveProgress();
+                    renderQuestion();
+                }
+            }
+
+            function handleOptionClick(key, isMulti) {
+                if (isRevealed(currentIndex)) return;
+
+                if (isMulti) {
+                    let currentSelection = getUserAnswer(currentIndex) || [];
+                    if (!Array.isArray(currentSelection)) currentSelection = [];
+                    const idx = currentSelection.indexOf(key);
+                    if (idx >= 0) currentSelection.splice(idx, 1);
+                    else currentSelection.push(key);
+                    setUserAnswer(currentIndex, currentSelection.length > 0 ? currentSelection : null);
+                    refreshOptionStyles();
+                } else {
+                    setUserAnswer(currentIndex, key);
+                    setRevealed(currentIndex);
+                    renderQuestion();
+                }
+            }
+
+            function refreshOptionStyles() {
+                const q = allQuestions[currentIndex];
+                const isMulti = q.type === 'multiple';
+                const userAns = getUserAnswer(currentIndex);
+                optionsArea.querySelectorAll('.option-item').forEach(item => {
+                    const key = item.getAttribute('data-key');
+                    item.classList.remove('selected', 'checked');
+                    if (isMulti && Array.isArray(userAns) && userAns.includes(key)) item.classList.add('selected', 'checked');
+                    else if (!isMulti && userAns === key) item.classList.add('selected');
+                });
+            }
+
+            function submitMultiAnswer() {
+                const q = allQuestions[currentIndex];
+                if (q.type !== 'multiple' || isRevealed(currentIndex)) return;
+                const userAns = getUserAnswer(currentIndex);
+                if (!userAns || userAns.length === 0) { showToast('请至少选择一个选项'); return; }
+                setRevealed(currentIndex);
+                renderQuestion();
+            }
+
+            function showResultArea(q, userAns) {
+                resultArea.classList.add('visible');
+                resultArea.style.display = 'block';
+                const isEssay = ['short', 'discussion', 'case'].includes(q.type);
+
+                if (isEssay) {
+                    resultHeader.className = 'result-header correct';
+                    resultHeader.innerHTML = '<span class="result-icon">📝</span> 参考答案';
+                    correctAnswerDisplay.innerHTML = '<strong>参考答案：</strong><br>' + q.answer.replace(/\(/g, '<br>(');
+                } else {
+                    let isCorrect = false;
+                    if (q.type === 'multiple') {
+                        const cs = q.answer.split('').sort().join('');
+                        const us = (Array.isArray(userAns) ? [...userAns] : []).sort().join('');
+                        isCorrect = cs === us;
+                    } else {
+                        isCorrect = userAns === q.answer;
+                    }
+
+                    if (isCorrect) {
+                        resultHeader.className = 'result-header correct';
+                        resultHeader.innerHTML = '<span class="result-icon">✅</span> 回答正确！';
+                    } else {
+                        resultHeader.className = 'result-header wrong';
+                        resultHeader.innerHTML = '<span class="result-icon">❌</span> 回答错误';
+                    }
+
+                    const answerLabels = q.answer.split('').map(k => `${k}：${q.options[k]}`).join('；');
+                    correctAnswerDisplay.innerHTML = '<strong>正确答案：</strong>' + answerLabels;
+                }
+                
+                analysisContent.innerHTML = q.analysis;
+                analysisContent.style.fontSize = fontSmValues[fontSizeLevel];
+                analysisContent.classList.remove('expanded');
+                analysisContent.style.display = 'none';
+                analysisToggle.classList.remove('expanded');
+                analysisToggle.querySelector('.arrow-icon').textContent = '▾';
+                analysisToggle.style.display = 'flex';
+            }
+
+            function toggleAnalysis() {
+                const isExpanded = analysisContent.classList.contains('expanded');
+                if (isExpanded) {
+                    analysisContent.classList.remove('expanded');
+                    analysisContent.style.display = 'none';
+                    analysisToggle.classList.remove('expanded');
+                    analysisToggle.querySelector('.arrow-icon').textContent = '▾';
+                } else {
+                    analysisContent.classList.add('expanded');
+                    analysisContent.style.display = 'block';
+                    analysisToggle.classList.add('expanded');
+                    analysisToggle.querySelector('.arrow-icon').textContent = '▴';
+                }
+            }
+
+            function updateProgressUI() {
+                const answered = getAnsweredCount();
+                const correct = getCorrectCount();
+                progressText.textContent = `已答 ${answered}/${TOTAL}`;
+                correctRate.textContent = answered > 0 ? `正确率 ${Math.round((correct / answered) * 100)}%` : '正确率 -';
+                progressBar.style.width = `${Math.round((answered / TOTAL) * 100)}%`;
+            }
+
+            function goToQuestion(index) {
+                if (index < 0 || index >= TOTAL) return;
+                currentIndex = index;
+                saveProgress();
+                renderQuestion();
+                closeOverlay();
+            }
+
+            function goNext() {
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    if (currentPos < mistakeList.length - 1) goToQuestion(mistakeList[currentPos + 1]);
+                    else {
+                        showToast(`已看完所有错题！`);
+                        showSummaryPanel();
+                    }
+                    return;
+                }
+                if (currentIndex < TOTAL - 1) goToQuestion(currentIndex + 1);
+                else showSummaryPanel();
+            }
+
+            function goPrev() {
+                if (mistakeMode) {
+                    let currentPos = mistakeList.indexOf(currentIndex);
+                    if (currentPos > 0) goToQuestion(mistakeList[currentPos - 1]);
+                    return;
+                }
+                if (currentIndex > 0) goToQuestion(currentIndex - 1);
+            }
+
+            // ==================== 题单面板 ====================
+            function buildSheetGrid() {
+                sheetGrid.innerHTML = '';
+                let lastPart = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    if (q.part !== lastPart) {
+                        lastPart = q.part;
+                        const label = document.createElement('div');
+                        label.className = 'sheet-section-label';
+                        label.textContent = getPartLabel(q.part);
+                        sheetGrid.appendChild(label);
+                    }
+                    const item = document.createElement('div');
+                    item.className = 'sheet-item';
+                    item.textContent = q.num;
+                    const ua = userAnswers[i];
+                    if (revealedAnswers[i] && ua) {
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        item.classList.add(isCorrect ? 'correct-dot' : 'wrong-dot');
+                    } else if (ua) item.classList.add('correct-dot');
+                    else item.classList.add('unanswered');
+                    
+                    if (i === currentIndex && !mistakeMode) item.classList.add('current-dot');
+                    
+                    item.addEventListener('click', () => { mistakeMode = false; goToQuestion(i); });
+                    sheetGrid.appendChild(item);
+                }
+            }
+
+            function openOverlay() { buildSheetGrid(); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+            function closeOverlay() { overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+
+            let toastTimer;
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+            }
+
+            // ==================== 结算与错题记录 ====================
+            function generateMistakeList() {
+                let wrongIndices = [];
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (revealedAnswers[i] && ua) {
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        if (!isCorrect) wrongIndices.push(i);
+                    }
+                }
+                return wrongIndices;
+            }
+
+            function showSummaryPanel() {
+                let singleAns = 0, singleCorrect = 0, multiAns = 0, multiCorrect = 0, judgeAns = 0, judgeCorrect = 0, answered = 0;
+                for (let i = 0; i < TOTAL; i++) {
+                    const q = allQuestions[i];
+                    const ua = userAnswers[i];
+                    if (ua && (typeof ua === 'string' ? ua.length > 0 : ua.length > 0)) {
+                        answered++;
+                        if (q.part === 1) singleAns++;
+                        else if (q.part === 2) multiAns++;
+                        else if (q.part === 3) judgeAns++;
+
+                        let isCorrect = q.type === 'multiple' 
+                            ? q.answer.split('').sort().join('') === (Array.isArray(ua)?ua:[]).sort().join('')
+                            : ua === q.answer;
+                        if (isCorrect) {
+                            if (q.part === 1) singleCorrect++;
+                            else if (q.part === 2) multiCorrect++;
+                            else if (q.part === 3) judgeCorrect++;
+                        }
+                    }
+                }
+                
+                $('#sumTotal').textContent = TOTAL;
+                $('#sumAnswered').textContent = answered;
+                $('#sumCorrect').textContent = singleCorrect + multiCorrect + judgeCorrect;
+                $('#rateSingle').textContent = singleAns ? Math.round(singleCorrect/singleAns * 100) + '%' : '0%';
+                $('#rateMulti').textContent = multiAns ? Math.round(multiCorrect/multiAns * 100) + '%' : '0%';
+                $('#rateJudge').textContent = judgeAns ? Math.round(judgeCorrect/judgeAns * 100) + '%' : '0%';
+                
+                $('#summaryOverlay').classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ==================== 历史记录面板 ====================
+            function openHistoryPanel() {
+                const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+                const listEl = $('#historyList');
+                listEl.innerHTML = '';
+                if (history.length === 0) {
+                    listEl.innerHTML = '<div style="text-align:center; color:#888; padding: 40px 0; font-size: 14px;">暂无历史记录<br><span style="font-size:12px; color:#aaa; margin-top:10px; display:inline-block;">（交卷并点击"重新开始"即可自动保存）</span></div>';
+                } else {
+                    history.forEach((rec, index) => {
+                        const rate = rec.answered > 0 ? Math.round((rec.correct / rec.answered) * 100) : 0;
+                        const item = document.createElement('div');
+                        item.style.cssText = 'background: #f9f9fb; padding: 14px; border-radius: 12px; margin-bottom: 12px; font-size: 14px; border: 1px solid #eee;';
+                        item.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; color: #333; font-weight: 700;">
+                                <span>${rec.date}</span>
+                                <span style="color: var(--primary);">正确率 ${rate}%</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; color: #666; font-size: 13px; margin-bottom: 12px; background: #fff; padding: 6px 10px; border-radius: 6px;">
+                                <span>已答: ${rec.answered}</span>
+                                <span>答对: <span style="color: var(--correct); font-weight: bold;">${rec.correct}</span></span>
+                                <span>错题: <span style="color: var(--wrong); font-weight: bold;">${rec.mistakes.length}</span></span>
+                            </div>
+                            <div style="display:flex; gap: 8px;">
+                                <button class="nav-btn load-btn" style="flex:1; min-height:36px; padding: 0;">加载记录</button>
+                                <button class="nav-btn primary-nav view-err-btn" style="flex:1; min-height:36px; padding: 0;" ${rec.mistakes.length === 0 ? 'disabled' : ''}>看错题</button>
+                                <button class="nav-btn del-btn" style="flex:0.5; min-height:36px; padding: 0; color: #FF3B30; border-color: #FFECEB; background: #FFECEB;">删除</button>
+                            </div>
+                        `;
+
+                        item.querySelector('.load-btn').addEventListener('click', () => {
+                            if (getAnsweredCount() > 0 && !confirm('加载历史记录将覆盖您当前的答题进度。\n建议您先在"答题报告"点击"重新开始"保存当前进度。\n\n确认覆盖并加载吗？')) return;
+                            userAnswers = rec.userAnswers || {};
+                            revealedAnswers = rec.revealedAnswers || {};
+                            mistakeMode = false;
+                            currentIndex = 0;
+                            saveProgress();
+                            $('#historyOverlay').classList.remove('visible');
+                            document.body.style.overflow = '';
+                            renderQuestion();
+                            showToast('✅ 历史记录加载成功');
+                        });
+
+                        item.querySelector('.view-err-btn').addEventListener('click', () => {
+                            if (getAnsweredCount() > 0 && !confirm('查看历史错题将暂时覆盖您当前的答题现场。\n确认查看吗？')) return;
+                            userAnswers = rec.userAnswers || {};
+                            revealedAnswers = rec.revealedAnswers || {};
+                            mistakeList = rec.mistakes;
+                            mistakeMode = true;
+                            currentIndex = mistakeList[0] !== undefined ? mistakeList[0] : 0;
+                            saveProgress();
+                            $('#historyOverlay').classList.remove('visible');
+                            document.body.style.overflow = '';
+                            renderQuestion();
+                            showToast(`进入历史错题模式，共 ${mistakeList.length} 题`);
+                        });
+
+                        item.querySelector('.del-btn').addEventListener('click', () => {
+                            if (confirm('确定要删除这条历史记录吗？')) {
+                                history.splice(index, 1);
+                                localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+                                openHistoryPanel(); // 刷新列表
+                            }
+                        });
+
+                        listEl.appendChild(item);
+                    });
+                }
+                $('#historyOverlay').classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // ==================== 事件绑定 ====================
+            $('#homeBtn').addEventListener('click', () => window.location.href = 'index.html');
+            $('#backBtn').addEventListener('click', openOverlay);
+            $('#historyBtn').addEventListener('click', openHistoryPanel);
+            
+            $('#sheetClose').addEventListener('click', closeOverlay);
+            $('#viewSummaryBtn').addEventListener('click', () => { closeOverlay(); showSummaryPanel(); });
+            $('#summaryClose').addEventListener('click', () => { $('#summaryOverlay').classList.remove('visible'); document.body.style.overflow = ''; });
+            $('#historyClose').addEventListener('click', () => { $('#historyOverlay').classList.remove('visible'); document.body.style.overflow = ''; });
+            
+            $('.overlay').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('visible'); document.body.style.overflow = ''; } });
+            $('#historyOverlay').addEventListener('click', function(e) { if (e.target === this) { this.classList.remove('visible'); document.body.style.overflow = ''; } });
+            
+            $('#prevBtn').addEventListener('click', goPrev);
+            $('#nextBtn').addEventListener('click', goNext);
+            $('#submitMultiBtn').addEventListener('click', submitMultiAnswer);
+            $('#analysisToggle').addEventListener('click', toggleAnalysis);
+
+            $('#restartBtn').addEventListener('click', () => {
+                const ansCount = getAnsweredCount();
+                const msg = ansCount > 0 ? '确定要交卷并重新开始吗？\n\n您当前的进度将会被自动保存到历史记录中。' : '确定要清空答题记录，重新开始吗？';
+                if(confirm(msg)) {
+                    archiveCurrentToHistory(); // 归档
+                    userAnswers = {};
+                    revealedAnswers = {};
+                    mistakeMode = false;
+                    currentIndex = 0;
+                    saveProgress();
+                    $('#summaryOverlay').classList.remove('visible');
+                    document.body.style.overflow = '';
+                    renderQuestion();
+                    showToast(ansCount > 0 ? '✅ 已重新开始，进度已归档至历史记录' : '已重新开始');
+                }
+            });
+
+            $('#viewMistakesBtn').addEventListener('click', () => {
+                mistakeList = generateMistakeList();
+                if (mistakeList.length === 0) { showToast('太棒了，没有错题！'); return; }
+                mistakeMode = true;
+                currentIndex = mistakeList[0];
+                saveProgress();
+                $('#summaryOverlay').classList.remove('visible');
+                document.body.style.overflow = '';
+                renderQuestion();
+                showToast(`进入错题模式，共 ${mistakeList.length} 题`);
+            });
+
+            $('#fontSizeBtn').addEventListener('click', () => {
+                fontSizeLevel = (fontSizeLevel + 1) % 6;
+                applyFontSize();
+                saveProgress();
+                showToast(`字体大小：${fontSizeLabels[fontSizeLevel]}`);
+            });
+
+            // 键盘与滑动辅助
+            document.addEventListener('keydown', e => {
+                if ($('#overlay').classList.contains('visible') || $('#summaryOverlay').classList.contains('visible') || $('#historyOverlay').classList.contains('visible')) return;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+            });
+
+            let touchStartX = 0, touchStartY = 0;
+            document.addEventListener('touchstart', e => {
+                if (e.target.closest('.overlay') || e.target.closest('.sheet-panel') || e.target.closest('.summary-panel')) return;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            document.addEventListener('touchend', e => {
+                if (e.target.closest('.overlay') || e.target.closest('.sheet-panel') || e.target.closest('.summary-panel')) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+                    if (dx < -30) goNext();
+                    else if (dx > 30) goPrev();
+                }
+            });
+
+            // ==================== 初始化 ====================
+            function init() {
+                loadProgress();
+                applyFontSize();
+                renderQuestion();
+                updateProgressUI();
+            }
+
+            init();
+        
+
+// 新增导出错题为CSV功能
+            function escapeCSV(str) {
+                if (str === null || str === undefined) return '';
+                let s = String(str);
+                // 去除可能干扰的HTML标签
+                s = s.replace(/<[^>]+>/g, '');
+                s = s.replace(/"/g, '""');
+                if (s.indexOf(',') >= 0 || s.indexOf('\n') >= 0 || s.indexOf('"') >= 0) {
+                    s = '"' + s + '"';
+                }
+                return s;
+            }
+
+            const exportMistakesBtn = $('#exportMistakesBtn');
+            if(exportMistakesBtn) {
+                exportMistakesBtn.addEventListener('click', () => {
+                    const mistakes = typeof generateMistakeList === 'function' ? generateMistakeList() : (typeof mistakeList !== 'undefined' ? mistakeList : []);
+                    if (!mistakes || mistakes.length === 0) {
+                        if(typeof showToast === 'function') showToast('没有错题可以导出哦！');
+                        else alert('没有错题可以导出哦！');
+                        return;
+                    }
+                    
+                    let csvContent = '\uFEFF题目,类型,选项,正确答案,解析\n';
+                    
+                    mistakes.forEach(idx => {
+                        const q = typeof allQuestions !== 'undefined' ? allQuestions[idx] : null;
+                        if (!q) return;
+                        
+                        let qTypeLabel = q.type;
+                        if(typeof getTypeLabel === 'function') qTypeLabel = getTypeLabel(q.type);
+                        else {
+                            if(q.type === 'single') qTypeLabel = '单选题';
+                            if(q.type === 'multiple') qTypeLabel = '多选题';
+                            if(q.type === 'judge') qTypeLabel = '判断题';
+                        }
+                        
+                        let optionsStr = '';
+                        if (q.options) {
+                            for (let key in q.options) {
+                                // 保证选项内容在一行或者带双引号
+                                optionsStr += key + ': ' + q.options[key] + '  ';
+                            }
+                        }
+                        
+                        const rowStr = [
+                            q.question || '',
+                            qTypeLabel || '',
+                            optionsStr.trim(),
+                            q.answer || '',
+                            q.analysis || ''
+                        ].map(escapeCSV).join(',');
+                        
+                        csvContent += rowStr + '\n';
+                    });
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', document.title + '错题.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+
+})();
+    
+            </script>
+</body>
+</html>

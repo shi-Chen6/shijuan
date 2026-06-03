@@ -366,14 +366,38 @@
             background: #f0f0f0;
             color: #aaa;
         }
+
+        /* 区域选择标签样式 */
+        .region-tab {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .region-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .region-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <header>
-        <h1>📖 潮南区试卷导航中心</h1>
-        <p>实时同步您的刷题进度与错题记录</p>
+        <h1>📖 教师招聘试卷导航中心</h1>
+        <p>潮南区 · 揭东区 · 大亚湾 - 实时同步您的刷题进度与错题记录</p>
         <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
             <button class="exam-action" onclick="openSortModal()" style="border: none; cursor: pointer; background: #f59e0b;">自定义排序</button>
             <button class="exam-action" onclick="exportData()" style="border: none; cursor: pointer;">导出记录</button>
@@ -388,15 +412,23 @@
         </div>
     </header>
 
+    <!-- 区域选择标签 -->
+    <div style="max-width: 800px; margin: 0 auto 20px auto; display: flex; gap: 12px; overflow-x: auto; padding: 8px 0;">
+        <button id="tabAll" class="region-tab active" onclick="filterByRegion('all')">全部</button>
+        <button id="tabChaonan" class="region-tab" onclick="filterByRegion('chaonan')">🏆 潮南区</button>
+        <button id="tabJiedong" class="region-tab" onclick="filterByRegion('jiedong')">📌 揭东区</button>
+        <button id="tabDayawan" class="region-tab" onclick="filterByRegion('dayawan')">🌊 大亚湾</button>
+    </div>
+
     <div class="global-stats" id="globalStats">
         <!-- 全局统计动态渲染 -->
     </div>
-
+<!--
     <div style="max-width:800px;margin:0 auto 16px auto;">
         <div id="chartContainer" style="background:white;border-radius:12px;padding:12px;box-shadow:var(--shadow);">
             <canvas id="studyChart" style="width:100%;height:220px"></canvas>
         </div>
-    </div>
+    </div>-->
 
     <div class="search-container">
         <input type="text" id="searchInput" class="search-input" placeholder="🔍 快速搜索试卷... (如：真题、模拟)" oninput="renderDashboard()">
@@ -424,25 +456,50 @@
 
     <script>
         const defaultExams = [
-             { id: 13, title: '密卷（一）', link: '密卷一.html', key: 'exam_stats_jy5' },
-            { id: 14, title: '密卷（二）', link: '密卷二.html', key: 'exam_stats_jy6' },
-            { id: 15, title: '密卷（三）', link: '密卷三.html', key: 'exam_stats_jy7' },
-            { id: 16, title: '中公（一）', link: '中公一.html', key: 'exam_stats_jy8' },
-            { id: 17, title: '中公（二）', link: '中公二.html', key: 'exam_stats_jy9' },
-            { id: 18, title: '中公（三）', link: '中公三.html', key: 'exam_stats_jy10' },
-            { id: 5, title: '潮南教师招聘真题（一）', link: '真题1.html', key: 'exam_stats_5' },
-            { id: 6, title: '潮南教师招聘真题（二）', link: '真题2.html', key: 'exam_stats_6' },
-            { id: 7, title: '潮南教师招聘真题（三）', link: '真题3.html', key: 'exam_stats_7' },
-            { id: 8, title: '潮南教师招聘真题（四）', link: '真题4.html', key: 'exam_stats_8' },
-            { id: 1, title: '潮南教师招聘模拟题（一）', link: '模拟1.html', key: 'exam_stats_1' },
-            { id: 2, title: '潮南教师招聘模拟题（二）', link: '模拟2.html', key: 'exam_stats_2' },
-            { id: 3, title: '潮南教师招聘模拟题（三）', link: '模拟3.html', key: 'exam_stats_3' },
-            { id: 4, title: '潮南教师招聘模拟题（四）', link: '模拟4.html', key: 'exam_stats_4' },
-            { id: 9, title: '敬一畏模拟题（一）', link: '敬一畏模拟1.html', key: 'exam_stats_jy1' },
-            { id: 10, title: '敬一畏模拟题（二）', link: '敬一畏模拟2.html', key: 'exam_stats_jy2' },
-            { id: 11, title: '敬一畏模拟题（三）', link: '敬一畏模拟3.html', key: 'exam_stats_jy3' },
-            { id: 12, title: '敬一畏模拟题（四）', link: '敬一畏模拟4.html', key: 'exam_stats_jy4' },
+         // 揭东区试卷
+            { id: 19, title: '揭东教师招聘真题（一）', link: '揭东一.html', key: 'exam_stats_jiedong1', region: 'jiedong' },
+            { id: 20, title: '揭东教师招聘真题（二）', link: '揭东二.html', key: 'exam_stats_jiedong2', region: 'jiedong' },
+            { id: 21, title: '揭东教师招聘真题（三）', link: '揭东三.html', key: 'exam_stats_jiedong3', region: 'jiedong' },
+            { id: 22, title: '揭东教师招聘真题（四）', link: '揭东四.html', key: 'exam_stats_jiedong4', region: 'jiedong' },
+            { id: 23, title: '揭东教师招聘真题（五）', link: '揭东五.html', key: 'exam_stats_jiedong5', region: 'jiedong' },
+            // 潮南区试卷
+            { id: 5, title: '潮南教师招聘真题（一）', link: '真题1.html', key: 'exam_stats_5', region: 'chaonan' },
+            { id: 6, title: '潮南教师招聘真题（二）', link: '真题2.html', key: 'exam_stats_6', region: 'chaonan' },
+            { id: 7, title: '潮南教师招聘真题（三）', link: '真题3.html', key: 'exam_stats_7', region: 'chaonan' },
+            { id: 8, title: '潮南教师招聘真题（四）', link: '真题4.html', key: 'exam_stats_8', region: 'chaonan' },
+            { id: 1, title: '潮南教师招聘模拟题（一）', link: '模拟1.html', key: 'exam_stats_1', region: 'chaonan' },
+            { id: 2, title: '潮南教师招聘模拟题（二）', link: '模拟2.html', key: 'exam_stats_2', region: 'chaonan' },
+            { id: 3, title: '潮南教师招聘模拟题（三）', link: '模拟3.html', key: 'exam_stats_3', region: 'chaonan' },
+            { id: 4, title: '潮南教师招聘模拟题（四）', link: '模拟4.html', key: 'exam_stats_4', region: 'chaonan' },
+            { id: 13, title: '密卷（一）', link: '密卷一.html', key: 'exam_stats_jy5', region: 'chaonan' },
+            { id: 14, title: '密卷（二）', link: '密卷二.html', key: 'exam_stats_jy6', region: 'chaonan' },
+            { id: 15, title: '密卷（三）', link: '密卷三.html', key: 'exam_stats_jy7', region: 'chaonan' },
+            { id: 16, title: '中公（一）', link: '中公一.html', key: 'exam_stats_jy8', region: 'chaonan' },
+            { id: 17, title: '中公（二）', link: '中公二.html', key: 'exam_stats_jy9', region: 'chaonan' },
+            { id: 18, title: '中公（三）', link: '中公三.html', key: 'exam_stats_jy10', region: 'chaonan' },
+            { id: 9, title: '敬一畏模拟题（一）', link: '敬一畏模拟1.html', key: 'exam_stats_jy1', region: 'chaonan' },
+            { id: 10, title: '敬一畏模拟题（二）', link: '敬一畏模拟2.html', key: 'exam_stats_jy2', region: 'chaonan' },
+            { id: 11, title: '敬一畏模拟题（三）', link: '敬一畏模拟3.html', key: 'exam_stats_jy3', region: 'chaonan' },
+            { id: 12, title: '敬一畏模拟题（四）', link: '敬一畏模拟4.html', key: 'exam_stats_jy4', region: 'chaonan' },
+           
         ];
+        
+        let currentRegion = 'all';
+        
+        function filterByRegion(region) {
+            currentRegion = region;
+            document.querySelectorAll('.region-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('tab' + region.charAt(0).toUpperCase() + region.slice(1)).classList.add('active');
+            renderDashboard();
+        }
+        
+        function getFilteredExams() {
+            let filtered = currentRegion === 'all' ? exams : exams.filter(exam => exam.region === currentRegion);
+            return [...filtered].sort((a, b) => {
+                const regionOrder = { 'jiedong': 0, 'chaonan': 1, 'dayawan': 2 };
+                return (regionOrder[a.region] || 99) - (regionOrder[b.region] || 99);
+            });
+        }
 
         let exams = [];
         const savedOrder = localStorage.getItem('exams_order');
@@ -521,130 +578,6 @@
                 event.target.value = '';
             };
             reader.readAsText(file);
-        }
-
-        function renderDashboard() {
-            const dashboard = document.getElementById('dashboard');
-            dashboard.innerHTML = '';
-
-            exams.forEach((exam, index) => {
-                const statStr = localStorage.getItem(exam.key);
-                let stats = null;
-                
-                if (statStr) {
-                    try {
-                        stats = JSON.parse(statStr);
-                    } catch(e) {
-                        console.error('JSON parse error for', exam.key);
-                    }
-                }
-
-                const card = document.createElement('div');
-                card.className = 'exam-card';
-                card.draggable = true;
-                
-                // 拖拽事件监听
-                card.addEventListener('dragstart', function(e) {
-                    draggedIndex = index;
-                    this.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                });
-
-                card.addEventListener('dragend', function() {
-                    this.classList.remove('dragging');
-                    document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('drag-over'));
-                });
-
-                card.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                });
-
-                card.addEventListener('dragenter', function(e) {
-                    e.preventDefault();
-                    if (index !== draggedIndex) {
-                        this.classList.add('drag-over');
-                    }
-                });
-
-                card.addEventListener('dragleave', function(e) {
-                    this.classList.remove('drag-over');
-                });
-
-                card.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    this.classList.remove('drag-over');
-                    if (draggedIndex === -1 || draggedIndex === index) return;
-                    
-                    const draggedItem = exams[draggedIndex];
-                    exams.splice(draggedIndex, 1);
-                    // 重新计算目标索引
-                    let targetIndex = index;
-                    if (draggedIndex < index) {
-                        targetIndex -= 0; // 因为从前面移除不影响后面的相对顺序，如果我们要在目标前面插入
-                    }
-                    exams.splice(targetIndex, 0, draggedItem);
-                    saveOrder();
-                    renderDashboard();
-                });
-
-                if (!stats || !stats.total) { // 未作答或暂无数据
-                    card.innerHTML = `
-                        <div class="exam-header">
-                            <div class="exam-title">${exam.title}</div>
-                            <a href="${exam.link}" class="exam-action">开始答题</a>
-                        </div>
-                        <div class="no-data">暂无答题记录，请开始刷题吧！</div>
-                    `;
-                } else {
-                    const progressPercent = Math.round((stats.answered / stats.total) * 100) || 0;
-                    const wrongCount = stats.wrong || 0;
-                    
-                    let wrongTagsHtml = '';
-                    if (stats.wrongQuestions && stats.wrongQuestions.length > 0) {
-                        wrongTagsHtml = stats.wrongQuestions.map(wq => `<span class="wrong-tag">第${wq.num}题</span>`).join('');
-                    } else if (wrongCount === 0 && stats.answered > 0) {
-                        wrongTagsHtml = `<span style="font-size:12px;color:var(--success);">🎉 全对，太棒了！</span>`;
-                    }
-                    
-                    card.innerHTML = `
-                        <div class="exam-header">
-                            <div class="exam-title">${exam.title}</div>
-                            <a href="${exam.link}" class="exam-action">${stats.answered > 0 ? '继续答题' : '开始答题'}</a>
-                        </div>
-                        
-                        <div class="progress-container">
-                            <div class="progress-header">
-                                <span>答题进度</span>
-                                <span>${stats.answered} / ${stats.total} (${progressPercent}%)</span>
-                            </div>
-                            <div class="progress-bar-bg">
-                                <div class="progress-bar-fill" style="width: ${progressPercent}%"></div>
-                            </div>
-                        </div>
-
-                        <div class="stat-grid">
-                            <div class="stat-item">
-                                <div class="stat-label">已答题目</div>
-                                <div class="stat-value value-success">${stats.answered}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">错题数量</div>
-                                <div class="stat-value value-danger">${wrongCount}</div>
-                            </div>
-                        </div>
-
-                        <div class="wrong-list-container">
-                            <div class="wrong-list-title">错题记录</div>
-                            <div class="wrong-tags">
-                                ${(stats.answered === 0) ? '<span style="font-size:12px;color:#888;">暂无数据</span>' : wrongTagsHtml}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                dashboard.appendChild(card);
-            });
         }
 
         // 初始化和实时更新
@@ -740,9 +673,9 @@
             const q = (document.getElementById('searchInput') && document.getElementById('searchInput').value || '').trim().toLowerCase();
             const dashboard = document.getElementById('dashboard');
             dashboard.innerHTML = '';
+            const filteredExams = getFilteredExams().filter(exam => !q || exam.title.toLowerCase().includes(q));
 
-            exams.forEach((exam, index) => {
-                if (q && !exam.title.toLowerCase().includes(q)) return; // 过滤
+            filteredExams.forEach((exam, index) => {
 
                 const statStr = localStorage.getItem(exam.key);
                 let stats = null;
@@ -757,53 +690,63 @@
 
                 const card = document.createElement('div');
                 card.className = 'exam-card';
-                card.draggable = true;
                 
-                // 拖拽事件监听
-                card.addEventListener('dragstart', function(e) {
-                    draggedIndex = index;
-                    this.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                });
-
-                card.addEventListener('dragend', function() {
-                    this.classList.remove('dragging');
-                    document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('drag-over'));
-                });
-
-                card.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                });
-
-                card.addEventListener('dragenter', function(e) {
-                    e.preventDefault();
-                    if (index !== draggedIndex) {
-                        this.classList.add('drag-over');
-                    }
-                });
-
-                card.addEventListener('dragleave', function(e) {
-                    this.classList.remove('drag-over');
-                });
-
-                card.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    this.classList.remove('drag-over');
-                    if (draggedIndex === -1 || draggedIndex === index) return;
+                // 拖拽事件监听 - 只在全部显示时允许拖拽排序
+                if (currentRegion === 'all') {
+                    card.draggable = true;
+                    const originalIndex = exams.findIndex(e => e.id === exam.id);
                     
-                    const draggedItem = exams[draggedIndex];
-                    exams.splice(draggedIndex, 1);
-                    // 重新计算目标索引
-                    let targetIndex = index;
-                    if (draggedIndex < index) {
-                        targetIndex -= 0;
-                    }
-                    exams.splice(targetIndex, 0, draggedItem);
-                    saveOrder();
-                    renderDashboard();
-                    renderGlobalStats();
-                });
+                    card.addEventListener('dragstart', function(e) {
+                        draggedIndex = originalIndex;
+                        this.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+
+                    card.addEventListener('dragend', function() {
+                        this.classList.remove('dragging');
+                        document.querySelectorAll('.exam-card').forEach(c => c.classList.remove('drag-over'));
+                    });
+
+                    card.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                    });
+
+                    card.addEventListener('dragenter', function(e) {
+                        e.preventDefault();
+                        const currentIdx = exams.findIndex(e => e.id === exam.id);
+                        if (draggedIndex !== -1 && draggedIndex !== currentIdx) {
+                            this.classList.add('drag-over');
+                        }
+                    });
+
+                    card.addEventListener('dragleave', function(e) {
+                        this.classList.remove('drag-over');
+                    });
+
+                    card.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        this.classList.remove('drag-over');
+                        if (draggedIndex === -1) return;
+                        
+                        const targetIndex = exams.findIndex(e => e.id === exam.id);
+                        if (draggedIndex === targetIndex) return;
+                        
+                        const draggedItem = exams[draggedIndex];
+                        exams.splice(draggedIndex, 1);
+                        let newTargetIndex = exams.findIndex(e => e.id === exam.id);
+                        if (newTargetIndex === -1) newTargetIndex = exams.length;
+                        if (draggedIndex < targetIndex && draggedIndex < newTargetIndex) {
+                            newTargetIndex--;
+                        }
+                        exams.splice(newTargetIndex, 0, draggedItem);
+                        saveOrder();
+                        renderDashboard();
+                        renderGlobalStats();
+                    });
+                } else {
+                    card.draggable = false;
+                }
 
                 // 卡片内容
                 const statHtml = (!stats || !stats.total) ? `
