@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>布鲁姆教育思想刷题训练</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 90px;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0 10px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .wrong-review-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-csv-btn {
+            background: linear-gradient(135deg, #52c41a, #73d13d);
+            color: white;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">布鲁姆教育目标分类</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [ { "type": "单选题", "stem": "教育目标分类学的提出者是（  ）", "options": [{"label":"A","text":"布鲁姆"},{"label":"B","text":"布鲁纳"},{"label":"C","text":"加涅"},{"label":"D","text":"奥苏贝尔"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。布鲁姆提出教育目标分类学；布鲁纳提出认知发现学习理论；加涅提出学习结果分类；奥苏贝尔提出有意义接受学习理论。<br><strong>📚 知识点讲解：</strong>布鲁姆（Benjamin Bloom）是美国当代著名教育家、心理学家，教育目标分类学创始人。注意区分名字相近的人物：布鲁姆（目标分类）vs 布鲁纳（发现学习）。<br><strong>💡 解题思路：</strong>题干问教育目标分类学的提出者，直接对应布鲁姆。B项布鲁纳是认知发现学习；C项加涅是学习结果分类；D项奥苏贝尔是有意义接受学习。记住\u201c布鲁姆=目标分类\u201d即可。<br><strong>🧠 记忆口诀：</strong>\u201c布鲁姆目标分类学，认知情感动作域；布鲁纳发现学习论，加涅结果分类明。\u201d" }, { "type": "单选题", "stem": "布鲁姆将教育目标分为三大领域，不包括下列哪一项（  ）", "options": [{"label":"A","text":"认知领域"},{"label":"B","text":"情感领域"},{"label":"C","text":"动作技能领域"},{"label":"D","text":"意志领域"}], "answer": 3, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>D</strong>。布鲁姆将教育目标分为认知、情感、动作技能三大领域，不包括意志领域。<br><strong>📚 知识点讲解：</strong>布鲁姆教育目标分类的三大领域：认知领域（知识智力技能）、情感领域（态度价值观）、动作技能领域（操作技能）。意志领域不属于布鲁姆的分类框架。<br><strong>💡 解题思路：</strong>A、B、C都是布鲁姆的三大领域。D项意志领域是干扰项，不属于布鲁姆分类。<br><strong>🧠 记忆口诀：</strong>\u201c认知情感动作技，三大领域布鲁姆；意志不在分类中，熟记三域不混淆。\u201d" }, { "type": "单选题", "stem": "布鲁姆认知领域目标中，最低水平的认知是（  ）", "options": [{"label":"A","text":"知识"},{"label":"B","text":"领会"},{"label":"C","text":"应用"},{"label":"D","text":"评价"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。知识（识记）是布鲁姆认知领域的最低水平，仅需回忆、重现已学内容。<br><strong>📚 知识点讲解：</strong>认知领域六级从低到高：知识→领会→应用→分析→综合→评价。知识层级仅涉及记忆重现，不需要理解或应用。<br><strong>💡 解题思路：</strong>题干问\u201c最低水平的认知\u201d，直接对应知识。B项领会是最低水平的理解，但知识比领会更低。<br><strong>🧠 记忆口诀：</strong>\u201c知识识记最低层，回忆重现仅记忆；领会理解始入门，六级递进认知深。\u201d" }, { "type": "单选题", "stem": "布鲁姆认知领域目标中，最高水平的认知是（  ）", "options": [{"label":"A","text":"分析"},{"label":"B","text":"综合"},{"label":"C","text":"评价"},{"label":"D","text":"应用"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。评价是布鲁姆认知领域的最高水平，需要对事物做出价值判断，是最高级的认知技能。<br><strong>📚 知识点讲解：</strong>布鲁姆原版分类中，评价位于金字塔顶端。安德森修订版将创造列为最高，但教综考试以布鲁姆原版为准，评价为最高。<br><strong>💡 解题思路：</strong>认知六级顺序：知识→领会→应用→分析→综合→评价。评价是最后一级。A分析、B综合都低于评价。<br><strong>🧠 记忆口诀：</strong>\u201c评价认知最高阶，价值判断定优劣；知领应分综评序，六级递进记心间。\u201d" }, { "type": "单选题", "stem": "学生能够背诵古诗、默写数学公式，这属于布鲁姆认知目标中的（  ）", "options": [{"label":"A","text":"知识"},{"label":"B","text":"领会"},{"label":"C","text":"应用"},{"label":"D","text":"分析"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。背诵、默写属于记忆重现，是知识层级的典型表现，对应最低认知水平。<br><strong>📚 知识点讲解：</strong>知识层级的核心行为动词：背诵、说出、识别、默写、复述。这些行为都只需回忆信息，不涉及理解或应用。<br><strong>💡 解题思路：</strong>\u201c背诵\u201d\u201c默写\u201d是典型的记忆行为，直接对应知识层级。B领会需要用自己的话解释；C应用需要解决问题；D分析需要拆解结构。<br><strong>🧠 记忆口诀：</strong>\u201c背诵默写属知识，识记重现最低层；若要理解需领会，应用解题更高层。\u201d" }, { "type": "单选题", "stem": "学生能用自己的话解释课文大意、概括文章主旨，这属于布鲁姆认知目标中的（  ）", "options": [{"label":"A","text":"知识"},{"label":"B","text":"领会"},{"label":"C","text":"应用"},{"label":"D","text":"分析"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。用自己的话解释、概括，说明学生理解了知识的含义，属于领会层级，是最低水平的理解。<br><strong>📚 知识点讲解：</strong>领会（理解）的核心行为动词：解释、概括、转述、换算、推断。学生能用自己的语言重新表述信息，表明已把握内在含义。<br><strong>💡 解题思路：</strong>\u201c用自己的话解释\u201d是领会的标志性行为。A知识只需背诵；C应用要解决问题；D分析要拆解结构。解释课文大意属于领会。<br><strong>🧠 记忆口诀：</strong>\u201c领会理解转述释，概括推断明含义；最低理解是领会，高于知识需转译。\u201d" }, { "type": "单选题", "stem": "布鲁姆认知领域中，最低水平的理解是（  ）", "options": [{"label":"A","text":"知识"},{"label":"B","text":"领会"},{"label":"C","text":"应用"},{"label":"D","text":"分析"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。领会是最低水平的理解，仅要求把握知识含义；知识仅需记忆，不涉及理解。<br><strong>📚 知识点讲解：</strong>认知领域层级中，知识是纯记忆（不涉及理解），领会是理解的起点。因此最低水平的理解是领会。<br><strong>💡 解题思路：</strong>题干问\u201c最低水平的理解\u201d，知识不涉及理解，排除A。领会是理解的最低层次。C应用是高水平理解；D分析更高。<br><strong>🧠 记忆口诀：</strong>\u201c知识仅记非理解，领会方为理解初；最低理解是领会，应用分析更高层。\u201d" }, { "type": "单选题", "stem": "学生运用课堂上学到的公式解应用题，这属于布鲁姆认知目标中的（  ）", "options": [{"label":"A","text":"领会"},{"label":"B","text":"应用"},{"label":"C","text":"分析"},{"label":"D","text":"综合"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。将学到的公式用到新的应用题情境中，解决具体问题，属于应用层级。<br><strong>📚 知识点讲解：</strong>应用的核心是将所学知识迁移到新情境中解决实际问题。行为动词：运用、解决、计算、操作、证明。<br><strong>💡 解题思路：</strong>\u201c用公式解应用题\u201d是典型的应用。A领会只是理解公式；C分析是拆解题目结构；D综合是整合创造新方案。<br><strong>🧠 记忆口诀：</strong>\u201c应用知识解新题，迁移情境是关键；领会只是懂含义，应用方能解决问题。\u201d" }, { "type": "单选题", "stem": "学生能够分析文章的段落结构、区分事件的因果关系，这属于布鲁姆认知目标中的（  ）", "options": [{"label":"A","text":"应用"},{"label":"B","text":"分析"},{"label":"C","text":"综合"},{"label":"D","text":"评价"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。拆解文章结构、区分因果关系，是将整体拆分为部分并分析逻辑，属于分析层级。<br><strong>📚 知识点讲解：</strong>分析的核心是将整体材料拆解为组成部分，理解其结构、逻辑与内在关系。行为动词：分析、区分、辨别、梳理、找出。<br><strong>💡 解题思路：</strong>\u201c分析段落结构\u201d\u201c区分因果关系\u201d直接对应分析层级。A应用是解决问题；C综合是整合创新；D评价是价值判断。<br><strong>🧠 记忆口诀：</strong>\u201c分析拆解明结构，区分因果辨逻辑；应用解决分析拆，综合整合评价判。\u201d" }, { "type": "单选题", "stem": "学生自主设计一份实验方案、撰写一篇原创作文，这属于布鲁姆认知目标中的（  ）", "options": [{"label":"A","text":"分析"},{"label":"B","text":"综合"},{"label":"C","text":"评价"},{"label":"D","text":"应用"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。设计方案、创作作文，是将零散要素整合为新的产物，属于综合层级，强调创造性。<br><strong>📚 知识点讲解：</strong>综合的核心是将零散知识、要素整合为新的整体，形成新的方案或产物。行为动词：编写、设计、创作、拟定、构建。<br><strong>💡 解题思路：</strong>\u201c自主设计\u201d\u201c原创撰写\u201d是典型的综合行为。A分析是拆解；C评价是判断优劣；D应用是运用已有知识解决问题。<br><strong>🧠 记忆口诀：</strong>\u201c综合整合创新物，设计方案原创作；分析拆解评价判，综合创造更高阶。\u201d" }, { "type": "单选题", "stem": "学生能够评判一篇文章的优劣、评价一个实验方案的合理性，这属于布鲁姆认知目标中的（  ）", "options": [{"label":"A","text":"综合"},{"label":"B","text":"评价"},{"label":"C","text":"分析"},{"label":"D","text":"应用"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。评判优劣、评价合理性，是做出价值判断，属于评价层级，是最高认知水平。<br><strong>📚 知识点讲解：</strong>评价的核心是对材料、方案做出价值判断，评定其优劣、合理性。行为动词：评价、评判、鉴赏、比较、证明。<br><strong>💡 解题思路：</strong>\u201c评判优劣\u201d\u201c评价合理性\u201d直接对应评价层级。A综合是创造新产物；C分析是拆解结构；D应用是解决问题。<br><strong>🧠 记忆口诀：</strong>\u201c评价判断定优劣，价值评判最高层；综合创造评价判，认知六级评价顶。\u201d" }, { "type": "单选题", "stem": "下列认知目标层级中，水平最高的是（  ）", "options": [{"label":"A","text":"领会"},{"label":"B","text":"应用"},{"label":"C","text":"分析"},{"label":"D","text":"综合"}], "answer": 3, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>D</strong>。认知领域从低到高依次为：知识→领会→应用→分析→综合→评价，四个选项中综合水平最高。<br><strong>📚 知识点讲解：</strong>六级顺序需牢记：知识(识记) < 领会(理解) < 应用 < 分析 < 综合 < 评价。综合高于分析、应用、领会。<br><strong>💡 解题思路：</strong>按顺序排列：领会(2) < 应用(3) < 分析(4) < 综合(5)，因此综合最高。<br><strong>🧠 记忆口诀：</strong>\u201c知领应分综评序，综合高于分析层；评价最高综合次，六级递进要记清。\u201d" }, { "type": "单选题", "stem": "下列认知目标层级中，水平最低的是（  ）", "options": [{"label":"A","text":"应用"},{"label":"B","text":"分析"},{"label":"C","text":"领会"},{"label":"D","text":"知识"}], "answer": 3, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>D</strong>。四个选项中，知识是最低水平的认知，仅需记忆重现。<br><strong>📚 知识点讲解：</strong>知识层级位于认知领域金字塔最底层，只需要回忆和重现已学过的信息，不涉及任何理解或应用。<br><strong>💡 解题思路：</strong>顺序：知识 < 领会 < 应用 < 分析，所以知识最低。<br><strong>🧠 记忆口诀：</strong>\u201c知识识记最底层，领会理解上一层；应用更高分析上，六级递进步步升。\u201d" }, { "type": "单选题", "stem": "布鲁姆情感领域目标中，最低水平是（  ）", "options": [{"label":"A","text":"接受"},{"label":"B","text":"反应"},{"label":"C","text":"价值化"},{"label":"D","text":"组织"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。接受（注意）是情感领域的最低水平，仅要求学生愿意关注、留意。<br><strong>📚 知识点讲解：</strong>情感领域五级从低到高：接受→反应→价值化→组织→价值体系个性化。接受只是被动留意，尚未主动参与。<br><strong>💡 解题思路：</strong>情感领域以\u201c接受\u201d为起点。B反应是主动参与；C价值化是认可价值观；D组织是整合价值观。<br><strong>🧠 记忆口诀：</strong>\u201c接受最低仅留意，反应主动参与来；价值化认组织整，个性化成最高阶。\u201d" }, { "type": "单选题", "stem": "布鲁姆情感领域目标中，最高水平是（  ）", "options": [{"label":"A","text":"价值化"},{"label":"B","text":"组织"},{"label":"C","text":"价值体系个性化"},{"label":"D","text":"反应"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。价值体系个性化是情感领域的最高水平，价值观念完全内化为稳定的人格特质。<br><strong>📚 知识点讲解：</strong>价值体系个性化意味着价值观已融入个人性格和行为方式，成为稳定的品质，如一贯诚实守信。<br><strong>💡 解题思路：</strong>五级顺序：接受→反应→价值化→组织→价值体系个性化。最后一级最高。<br><strong>🧠 记忆口诀：</strong>\u201c价值个性化最高，内化性格行为稳；接受反应价值化，组织个性五级成。\u201d" }, { "type": "单选题", "stem": "学生主动举手回答问题、积极参与课堂活动，从中获得愉悦感，这属于情感目标的（  ）", "options": [{"label":"A","text":"接受"},{"label":"B","text":"反应"},{"label":"C","text":"价值化"},{"label":"D","text":"组织"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。主动参与活动并获得满足感，属于反应层级，比被动的接受层级更高。<br><strong>📚 知识点讲解：</strong>反应层级强调学生从被动注意到主动参与，并从中获得积极情感体验。行为如主动举手、积极参与讨论。<br><strong>💡 解题思路：</strong>\u201c主动举手\u201d\u201c积极参与\u201d是反应层级的表现。A接受只是被动留意；C价值化是认可价值观。<br><strong>🧠 记忆口诀：</strong>\u201c反应主动参与乐，举手发言积极行；接受被动仅留意，反应主动情感生。\u201d" }, { "type": "单选题", "stem": "学生认同诚实守信的价值观，主动践行、帮助他人，这属于情感目标的（  ）", "options": [{"label":"A","text":"反应"},{"label":"B","text":"价值化"},{"label":"C","text":"组织"},{"label":"D","text":"价值体系个性化"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。认可价值观并主动践行，说明学生接纳了该价值，属于价值化层级。<br><strong>📚 知识点讲解：</strong>价值化是指学生认可某一价值观念，并主动在日常生活中践行。例如认同诚实守信，主动帮助他人。<br><strong>💡 解题思路：</strong>\u201c认同并践行\u201d是价值化的关键。A反应只是主动参与，不一定涉及价值观；C组织是整合多种价值观。<br><strong>🧠 记忆口诀：</strong>\u201c价值化认价值观，主动践行在日常；反应参与未定值，价值化方内化始。\u201d" }, { "type": "单选题", "stem": "学生形成了稳定的道德品质，一贯言行一致、诚实守信，这属于情感目标的（  ）", "options": [{"label":"A","text":"价值化"},{"label":"B","text":"组织"},{"label":"C","text":"价值体系个性化"},{"label":"D","text":"反应"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。形成稳定的道德品质、一贯践行，说明价值已经内化为个性的一部分，属于价值体系个性化。<br><strong>📚 知识点讲解：</strong>价值体系个性化是情感领域的最高水平，价值观完全融入人格，成为稳定的性格特征和行为方式。<br><strong>💡 解题思路：</strong>\u201c稳定的道德品质\u201d\u201c一贯践行\u201d说明已经达到个性化。A价值化只是认可；B组织是整合多种价值观。<br><strong>🧠 记忆口诀：</strong>\u201c价值个性化为峰，稳定品质一贯行；价值认可是初步，个性内化最高层。\u201d" }, { "type": "单选题", "stem": "布鲁姆动作技能领域中，最低水平是（  ）", "options": [{"label":"A","text":"知觉"},{"label":"B","text":"模仿"},{"label":"C","text":"操作"},{"label":"D","text":"准确"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。知觉是动作技能领域的最低水平，仅停留在认知了解层面，尚未开始动作操作。<br><strong>📚 知识点讲解：</strong>动作技能六级从低到高：知觉→模仿→操作→准确→连贯→习惯化。知觉只是了解动作要领，产生动作意向。<br><strong>💡 解题思路：</strong>顺序中知觉是第一级。B模仿是照着做；C操作是独立完成；D准确是动作精准。<br><strong>🧠 记忆口诀：</strong>\u201c知觉最低知要领，模仿照做准确低；操作独立准确高，连贯习惯化最高。\u201d" }, { "type": "单选题", "stem": "布鲁姆动作技能领域中，最高水平是（  ）", "options": [{"label":"A","text":"准确"},{"label":"B","text":"连贯"},{"label":"C","text":"习惯化"},{"label":"D","text":"操作"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。习惯化是动作技能领域的最高水平，动作达到自动化、下意识的程度。<br><strong>📚 知识点讲解：</strong>习惯化意味着动作已高度熟练，无需刻意注意就能自动完成，如熟练体操动作可下意识完成。<br><strong>💡 解题思路：</strong>六级顺序最后一级是习惯化。A准确是第四级；B连贯是第五级；D操作是第三级。<br><strong>🧠 记忆口诀：</strong>\u201c习惯化最高自动，无需注意下意识；准确连贯依次进，六级技能习惯顶。\u201d" }, { "type": "单选题", "stem": "学生看着老师的示范，了解体操动作的要领，这属于动作技能目标的（  ）", "options": [{"label":"A","text":"知觉"},{"label":"B","text":"模仿"},{"label":"C","text":"操作"},{"label":"D","text":"准确"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。看示范、了解动作要领，属于认知层面的知觉阶段，尚未开始模仿动作。<br><strong>📚 知识点讲解：</strong>知觉阶段是通过观察、听讲等方式了解动作要领和相关知识，产生动作意向。这是动作学习的起点。<br><strong>💡 解题思路：</strong>\u201c看示范\u201d\u201c了解要领\u201d属于知觉。B模仿是照着做动作；C操作是独立完成。<br><strong>🧠 记忆口诀：</strong>\u201c知觉观摹知要领，模仿照做动作生；操作独立准确精，连贯习惯化自动。\u201d" }, { "type": "单选题", "stem": "学生能照着老师的样子，重复做出体操动作，熟练度低，这属于动作技能目标的（  ）", "options": [{"label":"A","text":"知觉"},{"label":"B","text":"模仿"},{"label":"C","text":"操作"},{"label":"D","text":"准确"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。照着示范重复动作，是模仿层级的典型表现，动作熟练度、准确度较低。<br><strong>📚 知识点讲解：</strong>模仿阶段学生根据示范重复动作，但动作生硬、不熟练、误差较大。这是动作技能学习的第二步。<br><strong>💡 解题思路：</strong>\u201c照着做\u201d\u201c熟练度低\u201d对应模仿。A知觉只是了解；C操作是独立完成且基本正确。<br><strong>🧠 记忆口诀：</strong>\u201c模仿照做熟练低，动作生硬误差大；知觉了解模仿做，操作独立准确来。\u201d" }, { "type": "单选题", "stem": "学生能独立、准确地完成整套体操动作，误差很少，这属于动作技能目标的（  ）", "options": [{"label":"A","text":"操作"},{"label":"B","text":"准确"},{"label":"C","text":"连贯"},{"label":"D","text":"习惯化"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。独立完成且误差少、动作精准，属于准确层级。<br><strong>📚 知识点讲解：</strong>准确阶段动作已熟练掌握，能够独立完成且精度高、误差少，但尚未达到流畅连贯的程度。<br><strong>💡 解题思路：</strong>\u201c误差很少\u201d强调准确性。A操作是能独立完成但不一定精准；C连贯强调流畅性。<br><strong>🧠 记忆口诀：</strong>\u201c准确动作误差少，独立完成精度高；操作独立准确精，连贯流畅更进阶。\u201d" }, { "type": "单选题", "stem": "学生的体操动作流畅协调、节奏自然，能一气呵成完成，这属于动作技能目标的（  ）", "options": [{"label":"A","text":"准确"},{"label":"B","text":"连贯"},{"label":"C","text":"习惯化"},{"label":"D","text":"操作"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。动作流畅协调、一气呵成，强调动作的连贯性，属于连贯层级。<br><strong>📚 知识点讲解：</strong>连贯阶段动作不仅准确，而且流畅协调，能按节奏连贯完成，动作之间衔接自然。<br><strong>💡 解题思路：</strong>\u201c流畅协调\u201d\u201c一气呵成\u201d是连贯的典型描述。A准确是精度高；C习惯化是自动化。<br><strong>🧠 记忆口诀：</strong>\u201c连贯流畅协调好，一气呵成节奏佳；准确精到连贯顺，习惯自动化最高。\u201d" }, { "type": "单选题", "stem": "掌握学习理论的提出者是（  ）", "options": [{"label":"A","text":"布鲁姆"},{"label":"B","text":"斯金纳"},{"label":"C","text":"布鲁纳"},{"label":"D","text":"瓦根舍因"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。掌握学习理论由布鲁姆提出；斯金纳是程序教学代表；布鲁纳是发现学习代表；瓦根舍因是范例教学代表。<br><strong>📚 知识点讲解：</strong>布鲁姆的掌握学习理论强调\u201c只要给足够的时间和适当的教学，几乎所有学生都能掌握所学内容\u201d。<br><strong>💡 解题思路：</strong>掌握学习=布鲁姆。B斯金纳是行为主义；C布鲁纳是认知发现；D瓦根舍因是范例教学。<br><strong>🧠 记忆口诀：</strong>\u201c布鲁姆掌握学习论，足够时间适教学；斯金纳程序教学法，布鲁纳发现学习倡。\u201d" }, { "type": "单选题", "stem": "布鲁姆掌握学习理论的核心假设是（  ）", "options": [{"label":"A","text":"只要给足够的时间和适当的教学，几乎所有学生都能掌握内容"},{"label":"B","text":"学生的能力差异决定了学习成绩的差异"},{"label":"C","text":"学习是刺激与反应的联结"},{"label":"D","text":"学习是主动建构认知结构的过程"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。掌握学习的核心假设是足够时间+适当教学，几乎所有学生都能掌握学习内容。<br><strong>📚 知识点讲解：</strong>布鲁姆认为学生的能力差异只影响学习速度，不影响最终掌握程度，只要给予足够的时间和适当的教学，95%以上的学生都能达标。<br><strong>💡 解题思路：</strong>B是传统智力差异论；C是行为主义观点；D是建构主义观点。A是掌握学习的核心。<br><strong>🧠 记忆口诀：</strong>\u201c足够时间适教学，人人都能达目标；能力差异仅速度，掌握学习信全员。\u201d" }, { "type": "单选题", "stem": "布鲁姆认为，影响学习结果的核心变量是（  ）", "options": [{"label":"A","text":"学生的智力水平"},{"label":"B","text":"学习时间"},{"label":"C","text":"教师的教学水平"},{"label":"D","text":"学习环境"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。布鲁姆认为学习时间是影响学习结果的核心变量，能力差异只影响学习速度，不影响最终掌握程度。<br><strong>📚 知识点讲解：</strong>掌握学习理论的核心变量是学习时间。只要有足够的时间，几乎所有学生都能达到掌握水平。<br><strong>💡 解题思路：</strong>掌握学习强调时间的决定性作用。A智力不是核心变量；C、D是影响因素但非布鲁姆强调的核心。<br><strong>🧠 记忆口诀：</strong>\u201c学习时间核心变，能力差异仅速度；足够时间人皆可，掌握学习信时间。\u201d" }, { "type": "单选题", "stem": "掌握学习中，判定学生达到掌握水平的正确率标准通常是（  ）", "options": [{"label":"A","text":"50%~60%"},{"label":"B","text":"60%~70%"},{"label":"C","text":"80%~90%"},{"label":"D","text":"95%以上"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。掌握学习通常以80%~90%的正确率作为达到掌握水平的标准。<br><strong>📚 知识点讲解：</strong>布鲁姆将单元测试正确率达到80%~90%定义为掌握。这一标准确保了学生对内容的充分掌握，而非仅及格。<br><strong>💡 解题思路：</strong>数字考点：80%~90%。A、B太低；D过于严苛。记住\u201c掌握=八九成\u201d。<br><strong>🧠 记忆口诀：</strong>\u201c掌握标准八九成，八十到九十为界；单元测试达标线，反馈矫正再提高。\u201d" }, { "type": "单选题", "stem": "掌握学习的核心环节是（  ）", "options": [{"label":"A","text":"定向导入"},{"label":"B","text":"集体授课"},{"label":"C","text":"形成性评价与反馈矫正"},{"label":"D","text":"总结性评价"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。形成性评价与反馈矫正是掌握学习的核心环节，通过诊断-矫正确保学生达标。<br><strong>📚 知识点讲解：</strong>掌握学习流程：定向→新授→形成性评价→矫正→总结性评价。形成性评价用于诊断问题，反馈矫正针对性辅导。<br><strong>💡 解题思路：</strong>掌握学习的灵魂是\u201c反馈矫正\u201d。A、B是常规环节；D是最终考核。C是核心。<br><strong>🧠 记忆口诀：</strong>\u201c形成评价来诊断，反馈矫正最关键；掌握学习核心环，诊断矫正保达标。\u201d" }, { "type": "单选题", "stem": "掌握学习中，用于诊断学生掌握情况、提供反馈的评价方式是（  ）", "options": [{"label":"A","text":"形成性评价"},{"label":"B","text":"总结性评价"},{"label":"C","text":"诊断性评价"},{"label":"D","text":"相对性评价"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。形成性评价在教学过程中进行，用于诊断学习情况、提供反馈，是掌握学习的核心评价方式。<br><strong>📚 知识点讲解：</strong>形成性评价是在教学过程中实施的评价，目的是诊断学习问题、提供反馈以改进教学。总结性评价是在教学结束后评定最终成绩。<br><strong>💡 解题思路：</strong>掌握学习强调过程中的诊断与反馈，对应形成性评价。B总结性评价是最终考核；C诊断性评价在教学前。<br><strong>🧠 记忆口诀：</strong>\u201c形成评价过程中，诊断反馈促达标；总结评价最后考，诊断评价在教学前。\u201d" }, { "type": "单选题", "stem": "下列关于掌握学习的表述，错误的是（  ）", "options": [{"label":"A","text":"面向全体学生，关注后进生"},{"label":"B","text":"核心是提升学生的智力水平"},{"label":"C","text":"以教学目标为核心导向"},{"label":"D","text":"强调反馈矫正的重要性"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。掌握学习的核心是通过足够时间让学生达标，而非提升智力；学生的智力差异只影响学习速度。<br><strong>📚 知识点讲解：</strong>掌握学习不认为学习差异源于智力，而是学习时间不足。它面向全体学生，核心是让所有学生达标。<br><strong>💡 解题思路：</strong>A、C、D都是正确表述。B错误在于掌握学习不将智力作为核心变量。<br><strong>🧠 记忆口诀：</strong>\u201c掌握学习非智育，时间足够是关键；面向全体重后进，反馈矫正目标导。\u201d" }, { "type": "单选题", "stem": "按照布鲁姆认知目标分类，\u201c找出议论文的中心论点和分论点\u201d属于哪一层级（  ）", "options": [{"label":"A","text":"领会"},{"label":"B","text":"应用"},{"label":"C","text":"分析"},{"label":"D","text":"综合"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。找出中心论点和分论点，是将文章拆解为部分并梳理结构，属于分析层级。<br><strong>📚 知识点讲解：</strong>分析是将整体拆解为部分，理解各部分的逻辑关系。\u201c找出论点论据\u201d是典型的分析行为。<br><strong>💡 解题思路：</strong>\u201c找出\u201d\u201c区分\u201d文章结构属于分析。A领会是理解全文；B应用是用议论文知识；D综合是写议论文。<br><strong>🧠 记忆口诀：</strong>\u201c分析拆解找论点，梳理结构明逻辑；领会理解全文意，综合创造新文章。\u201d" }, { "type": "单选题", "stem": "按照布鲁姆认知目标分类，\u201c将文言文翻译成现代汉语\u201d属于哪一层级（  ）", "options": [{"label":"A","text":"知识"},{"label":"B","text":"领会"},{"label":"C","text":"应用"},{"label":"D","text":"分析"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。翻译文言文是用自己的话转述原文含义，考查对文本的理解，属于领会层级。<br><strong>📚 知识点讲解：</strong>领会（理解）的核心是用自己的语言重新表述信息。文言文翻译本质上是理解后的语言转换。<br><strong>💡 解题思路：</strong>\u201c翻译\u201d是领会的典型行为动词之一。A知识是背诵原文；C应用是用文言文知识写句子；D分析是拆解句式结构。<br><strong>🧠 记忆口诀：</strong>\u201c翻译转述属领会，理解含义再表达；背诵原文是知识，应用分析更高层。\u201d" }, { "type": "单选题", "stem": "按照布鲁姆认知目标分类，\u201c用勾股定理计算直角三角形的边长\u201d属于哪一层级（  ）", "options": [{"label":"A","text":"领会"},{"label":"B","text":"应用"},{"label":"C","text":"分析"},{"label":"D","text":"综合"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。用定理计算边长，是将知识应用到具体问题中，属于应用层级。<br><strong>📚 知识点讲解：</strong>应用是将学到的原理、公式运用到新情境中解决实际问题。行为动词：运用、计算、解决。<br><strong>💡 解题思路：</strong>\u201c用\u2026计算\u201d是应用的标志。A领会是理解定理含义；C分析是拆解三角形结构；D综合是设计新的几何问题。<br><strong>🧠 记忆口诀：</strong>\u201c应用定理解新题，迁移情境是关键；领会理解定理义，应用方能算边长。\u201d" }, { "type": "单选题", "stem": "按照布鲁姆认知目标分类，\u201c比较两篇文章的写作风格，评判其优劣\u201d属于哪一层级（  ）", "options": [{"label":"A","text":"分析"},{"label":"B","text":"综合"},{"label":"C","text":"评价"},{"label":"D","text":"应用"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。评判优劣、做价值判断，属于评价层级。<br><strong>📚 知识点讲解：</strong>评价是对事物做出价值判断，评定其优劣、合理性。比较并评判是典型的评价行为。<br><strong>💡 解题思路：</strong>\u201c评判优劣\u201d直接对应评价。A分析是拆解文章结构；B综合是整合创造新文章；D应用是运用写作技巧。<br><strong>🧠 记忆口诀：</strong>\u201c评价判断定优劣，价值评判最高层；比较风格判高下，评价层级展智慧。\u201d" }, { "type": "单选题", "stem": "下列教学目标中，属于布鲁姆认知领域\u201c综合\u201d层级的是（  ）", "options": [{"label":"A","text":"能背诵《静夜思》全诗"},{"label":"B","text":"能解释\u201c光合作用\u201d的含义"},{"label":"C","text":"能设计一份班级春游活动方案"},{"label":"D","text":"能分析实验失败的原因"}], "answer": 2, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。设计活动方案是整合要素、创造新方案，属于综合层级。A属于知识，B属于领会，D属于分析。<br><strong>📚 知识点讲解：</strong>综合是将零散知识、要素整合为新的整体或方案。行为动词：设计、创作、编写、拟定。<br><strong>💡 解题思路：</strong>\u201c设计\u201d是综合的标志词。A背诵→知识；B解释→领会；D分析原因→分析。<br><strong>🧠 记忆口诀：</strong>\u201c综合设计创方案，整合要素成新篇；背诵知识解释会，分析原因属分析。\u201d" }, { "type": "单选题", "stem": "下列关于布鲁姆认知领域目标的排序，正确的是（  ）", "options": [{"label":"A","text":"知识→领会→应用→分析→综合→评价"},{"label":"B","text":"知识→应用→领会→分析→评价→综合"},{"label":"C","text":"领会→知识→应用→分析→综合→评价"},{"label":"D","text":"知识→领会→分析→应用→评价→综合"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。认知领域从低到高的正确顺序为：知识→领会→应用→分析→综合→评价。<br><strong>📚 知识点讲解：</strong>六级顺序是教招必考点。口诀\u201c知领应分综评\u201d帮助记忆。综合在评价之前，分析在应用之后。<br><strong>💡 解题思路：</strong>B应用在领会前错；C知识应在领会前；D应用在分析前。只有A顺序完全正确。<br><strong>🧠 记忆口诀：</strong>\u201c知领应分综评价，六级递进认知升；知识领会应用起，分析综合评价顶。\u201d" }, { "type": "单选题", "stem": "下列情感领域目标的排序，正确的是（  ）", "options": [{"label":"A","text":"接受→反应→价值化→组织→价值体系个性化"},{"label":"B","text":"反应→接受→价值化→组织→价值体系个性化"},{"label":"C","text":"接受→价值化→反应→组织→价值体系个性化"},{"label":"D","text":"接受→反应→组织→价值化→价值体系个性化"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。情感领域从低到高的正确顺序为：接受→反应→价值化→组织→价值体系个性化。<br><strong>📚 知识点讲解：</strong>五级顺序：接受（注意）→反应（主动参与）→价值化（认可价值观）→组织（整合价值观）→价值体系个性化（内化为性格）。<br><strong>💡 解题思路：</strong>B反应不应在接受前；C价值化不应在反应前；D组织不应在价值化前。A顺序正确。<br><strong>🧠 记忆口诀：</strong>\u201c接反价组个化序，情感五级递进升；接受留意反应参，价值组织个性化。\u201d" }, { "type": "单选题", "stem": "下列动作技能领域目标的排序，正确的是（  ）", "options": [{"label":"A","text":"知觉→模仿→操作→准确→连贯→习惯化"},{"label":"B","text":"知觉→操作→模仿→准确→连贯→习惯化"},{"label":"C","text":"模仿→知觉→操作→准确→连贯→习惯化"},{"label":"D","text":"知觉→模仿→准确→操作→连贯→习惯化"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。动作技能领域从低到高的正确顺序为：知觉→模仿→操作→准确→连贯→习惯化。<br><strong>📚 知识点讲解：</strong>六级顺序：知觉（了解要领）→模仿（照着做）→操作（独立完成）→准确（精度高）→连贯（流畅协调）→习惯化（自动化）。<br><strong>💡 解题思路：</strong>B操作不应在模仿前；C知觉应在模仿前；D准确不应在操作前。A顺序正确。<br><strong>🧠 记忆口诀：</strong>\u201c知模操准连习惯，动作六级递进成；知觉了解模仿做，操作准确连贯化。\u201d" }, { "type": "单选题", "stem": "提出\u201c目标教学法\u201d，主张以教学目标为核心开展教、学、评一体化的教育家是（  ）", "options": [{"label":"A","text":"布鲁姆"},{"label":"B","text":"泰勒"},{"label":"C","text":"布鲁纳"},{"label":"D","text":"赞可夫"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。布鲁姆的目标分类学衍生出目标教学法，以教学目标为核心实现教、学、评一体化。<br><strong>📚 知识点讲解：</strong>目标教学法源于布鲁姆的目标分类学，核心是\u201c目标导向、教学达标、评价反馈\u201d，是我国中小学常用的教学模式之一。<br><strong>💡 解题思路：</strong>目标教学法与布鲁姆的目标分类学直接关联。B泰勒是课程评价之父；C布鲁纳是发现学习；D赞可夫是发展性教学。<br><strong>🧠 记忆口诀：</strong>\u201c布鲁姆目标教学法，教学评价一体化；泰勒课程评价父，布鲁纳发现学习倡。\u201d" }, { "type": "判断题", "stem": "布鲁姆是美国教育家，提出了著名的认知发现学习理论。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。认知发现学习理论是<strong>布鲁纳</strong>提出的；布鲁姆的核心理论是教育目标分类学与掌握学习。<br><strong>📚 知识点讲解：</strong>布鲁姆（Bloom）与布鲁纳（Bruner）名字相似但理论不同。布鲁姆→目标分类+掌握学习；布鲁纳→认知发现学习。<br><strong>💡 解题思路：</strong>题干将布鲁纳的理论安在布鲁姆头上，属于张冠李戴。<br><strong>🧠 记忆口诀：</strong>\u201c布鲁姆目标分类学，布鲁纳发现学习论；名字相似理论异，人物理论要对应。\u201d" }, { "type": "判断题", "stem": "布鲁姆将教育目标分为认知、情感、意志三大领域。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。布鲁姆将教育目标分为认知、情感、<strong>动作技能</strong>三大领域，不包括意志领域。<br><strong>📚 知识点讲解：</strong>三大领域：认知（知识智力）、情感（态度价值观）、动作技能（操作技能）。意志不属于布鲁姆分类。<br><strong>💡 解题思路：</strong>\u201c意志\u201d是干扰项，正确应为\u201c动作技能\u201d。<br><strong>🧠 记忆口诀：</strong>\u201c认知情感动作技，三大领域布鲁姆；意志不在分类中，熟记三域不混淆。\u201d" }, { "type": "判断题", "stem": "布鲁姆认知领域目标中，最低水平的理解是知识。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。最低水平的理解是<strong>领会</strong>；知识是最低认知水平，仅涉及记忆，不涉及理解。<br><strong>📚 知识点讲解：</strong>知识层级只需回忆重现，不要求理解。领会才是理解的起点，是最低水平的理解。<br><strong>💡 解题思路：</strong>题干混淆了\u201c最低认知水平\u201d和\u201c最低理解水平\u201d。知识是认知最低层，但不属于理解层次。<br><strong>🧠 记忆口诀：</strong>\u201c知识识记非理解，领会方为理解初；最低理解是领会，知识仅记不需懂。\u201d" }, { "type": "判断题", "stem": "学生能够默写单词、背诵定义，属于认知目标中的领会层级。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。默写、背诵属于记忆重现，对应<strong>知识</strong>层级；领会是理解层面的目标。<br><strong>📚 知识点讲解：</strong>知识层级的行为动词：背诵、默写、复述、识别。领会的行为动词：解释、概括、转述。<br><strong>💡 解题思路：</strong>\u201c默写\u201d\u201c背诵\u201d是典型的记忆行为，属于知识而非领会。<br><strong>🧠 记忆口诀：</strong>\u201c背诵默写属知识，理解转述方领会；知识记忆最低层，领会理解上一层。\u201d" }, { "type": "判断题", "stem": "应用是布鲁姆认知领域中最高水平的认知目标。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。认知领域最高水平的目标是<strong>评价</strong>，而非应用。应用只是第三层级。<br><strong>📚 知识点讲解：</strong>认知六级：知识(1)→领会(2)→应用(3)→分析(4)→综合(5)→评价(6)。评价是最高层。<br><strong>💡 解题思路：</strong>应用只是中等层级，上面还有分析、综合、评价。<br><strong>🧠 记忆口诀：</strong>\u201c评价认知最高层，应用仅第三层级；知领应分综评价，六级递进记顺序。\u201d" }, { "type": "判断题", "stem": "学生能用自己的话转述物理概念的含义，属于领会层级的目标。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。用自己的话转述概念，说明学生理解了知识含义，属于领会层级。<br><strong>📚 知识点讲解：</strong>领会（理解）的核心行为包括解释、转述、概括、推断。转述是理解的直接表现。<br><strong>💡 解题思路：</strong>题干描述与领会的定义完全吻合。<br><strong>🧠 记忆口诀：</strong>\u201c转述解释属领会，理解含义再表达；知识仅是能背诵，领会方能转述清。\u201d" }, { "type": "判断题", "stem": "分析是将整体拆解为部分，理解其结构与逻辑关系的认知水平。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。分析的核心就是将整体拆解为部分，理解各部分的结构、逻辑与内在关系。<br><strong>📚 知识点讲解：</strong>分析层级要求超越表面理解，深入事物的内部结构和逻辑关系。如分析文章段落结构、区分因果关系。<br><strong>💡 解题思路：</strong>题干对分析的定义准确无误。<br><strong>🧠 记忆口诀：</strong>\u201c分析拆解明结构，理解逻辑辨关系；整体拆成各部分，深入内部分析清。\u201d" }, { "type": "判断题", "stem": "综合层级强调对事物做出价值判断、评定优劣。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。做出价值判断、评定优劣是<strong>评价</strong>层级的特点；综合层级强调整合创造。<br><strong>📚 知识点讲解：</strong>综合是将零散要素整合为新的整体或方案，强调创造性。评价才是价值判断。<br><strong>💡 解题思路：</strong>题干将评价的特征安在综合头上，属于概念混淆。<br><strong>🧠 记忆口诀：</strong>\u201c综合整合创新物，评价判断定优劣；综合创造评价判，两层级特征要分清。\u201d" }, { "type": "判断题", "stem": "布鲁姆情感领域的最低水平是价值化。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。情感领域的最低水平是<strong>接受（注意）</strong>；价值化是第三层级。<br><strong>📚 知识点讲解：</strong>情感五级：接受→反应→价值化→组织→价值体系个性化。接受是最低水平。<br><strong>💡 解题思路：</strong>记住顺序：接受是第一级，价值化是第三级。<br><strong>🧠 记忆口诀：</strong>\u201c接受最低仅留意，价值化居第三层；情感五级接反价，组个化序递进升。\u201d" }, { "type": "判断题", "stem": "价值体系个性化是布鲁姆情感领域目标的最高水平。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。价值体系个性化是价值内化的最高程度，对应情感领域的最高水平。<br><strong>📚 知识点讲解：</strong>价值体系个性化意味着价值观已融入人格，成为稳定的性格特质和行为方式。<br><strong>💡 解题思路：</strong>题干表述完全正确。<br><strong>🧠 记忆口诀：</strong>\u201c价值个性化最高，内化性格行为稳；情感五级此为顶，一贯品行是标志。\u201d" }, { "type": "判断题", "stem": "布鲁姆动作技能领域的最高水平是连贯。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。动作技能领域的最高水平是<strong>习惯化</strong>；连贯是第五层级，尚未达到自动化。<br><strong>📚 知识点讲解：</strong>动作六级：知觉→模仿→操作→准确→连贯→习惯化。习惯化是自动化阶段，为最高水平。<br><strong>💡 解题思路：</strong>连贯之上还有习惯化。<br><strong>🧠 记忆口诀：</strong>\u201c习惯化是最高级，自动完成无需意；连贯流畅协调好，习惯化更上一层。\u201d" }, { "type": "判断题", "stem": "掌握学习理论认为，学生的能力差异是决定学习成绩的核心因素。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。掌握学习认为，<strong>学习时间</strong>是核心变量，能力差异只影响学习速度，不决定最终成绩。<br><strong>📚 知识点讲解：</strong>布鲁姆反对能力决定论，认为只要有足够的时间和适当的教学，几乎所有学生都能达标。<br><strong>💡 解题思路：</strong>题干是传统智力差异论的观点，与掌握学习核心假设相反。<br><strong>🧠 记忆口诀：</strong>\u201c学习时间核心变，能力差异仅速度；掌握学习反决定，时间足够皆可成。\u201d" }, { "type": "判断题", "stem": "掌握学习的核心是给学生足够的学习时间，几乎所有学生都能达到掌握水平。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。这是掌握学习的核心假设，只要时间足够、教学适当，几乎所有学生都能达标。<br><strong>📚 知识点讲解：</strong>掌握学习的核心理念是\u201c人人都能学好\u201d，关键在于提供足够的学习时间和针对性的教学支持。<br><strong>💡 解题思路：</strong>题干准确概括了掌握学习的核心思想。<br><strong>🧠 记忆口诀：</strong>\u201c足够时间适教学，人人都能达目标；掌握学习核心理，时间变量是关键。\u201d" }, { "type": "判断题", "stem": "掌握学习中，通常以60%的正确率作为掌握的标准。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。掌握学习的掌握标准通常是<strong>80%~90%</strong>的正确率，而非60%。<br><strong>📚 知识点讲解：</strong>布鲁姆设定的掌握标准是单元测试正确率达到80%~90%。60%只是及格线，远未达到掌握水平。<br><strong>💡 解题思路：</strong>数字考点：80%~90%。60%是错误的。<br><strong>🧠 记忆口诀：</strong>\u201c掌握标准八九成，八十到九十为界；六成只是及格线，掌握要求更高标。\u201d" }, { "type": "判断题", "stem": "形成性评价与反馈矫正是掌握学习的核心环节。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。通过形成性评价诊断问题，再进行针对性矫正，是掌握学习的核心环节。<br><strong>📚 知识点讲解：</strong>掌握学习的灵魂在于\u201c反馈矫正\u201d。形成性评价提供诊断信息，教师根据反馈进行针对性辅导。<br><strong>💡 解题思路：</strong>题干表述与掌握学习理论完全一致。<br><strong>🧠 记忆口诀：</strong>\u201c形成评价来诊断，反馈矫正最关键；掌握学习核心环，诊断矫正保达标。\u201d" }, { "type": "判断题", "stem": "掌握学习只针对学习困难的学生，是一种补差教学模式。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。掌握学习<strong>面向全体学生</strong>，核心是让所有学生都达到掌握标准，并非只针对后进生。<br><strong>📚 知识点讲解：</strong>掌握学习虽然重点帮扶后进生，但其根本理念是\u201c人人都能学好\u201d，面向全体，追求全员达标。<br><strong>💡 解题思路：</strong>\u201c只针对后进生\u201d是对掌握学习的片面理解。<br><strong>🧠 记忆口诀：</strong>\u201c掌握学习面全体，非仅补差后进生；人人都能达标准，全员达标是目标。\u201d" }, { "type": "判断题", "stem": "按照布鲁姆分类，\u201c评价\u201d的认知水平高于\u201c综合\u201d。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。认知领域从低到高为知识、领会、应用、分析、综合、评价，评价高于综合。<br><strong>📚 知识点讲解：</strong>在布鲁姆原版分类中，评价位于金字塔顶端，是最高级的认知技能。安德森修订版将创造列为最高，但教招考试以原版为准。<br><strong>💡 解题思路：</strong>六级顺序中评价是最后一级，高于综合。<br><strong>🧠 记忆口诀：</strong>\u201c评价认知最高层，综合创造次之层；知领应分综评价，评价位居金字塔顶。\u201d" }, { "type": "判断题", "stem": "学生主动参与课堂讨论、积极发言，属于情感目标中的接受层级。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 1, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。主动参与、积极发言属于<strong>反应</strong>层级；接受仅指被动留意、愿意关注。<br><strong>📚 知识点讲解：</strong>情感领域：接受（被动注意）→反应（主动参与）→价值化（认可价值观）→组织（整合价值观）→个性化（内化性格）。<br><strong>💡 解题思路：</strong>\u201c主动参与\u201d是反应层级的标志。接受只是被动留意。<br><strong>🧠 记忆口诀：</strong>\u201c反应主动参与乐，举手发言积极行；接受被动仅留意，反应主动情感生。\u201d" }, { "type": "判断题", "stem": "学生能独立完成实验操作，属于动作技能目标中的操作层级。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。能独立完成动作，对应动作技能领域的操作层级。<br><strong>📚 知识点讲解：</strong>操作阶段学生能独立按步骤完成动作，保证基本正确。这是动作技能学习的第三层级，高于知觉和模仿。<br><strong>💡 解题思路：</strong>\u201c独立完成\u201d是操作层级的关键特征。<br><strong>🧠 记忆口诀：</strong>\u201c操作独立能完成，基本正确按步骤；知觉模仿操作准，连贯习惯化更高。\u201d" }, { "type": "判断题", "stem": "布鲁姆的目标分类学为教学评价提供了标准化的依据，推动了教育评价的发展。（  ）", "options": [{"label":"A","text":"正确"},{"label":"B","text":"错误"}], "answer": 0, "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。布鲁姆的目标分类学为教学目标与评价提供了标准化框架，极大推动了教育评价的科学化发展。<br><strong>📚 知识点讲解：</strong>布鲁姆的教育目标分类学是现代教育评价理论的重要基石，使教学目标可操作、可测量、可评价。<br><strong>💡 解题思路：</strong>题干对布鲁姆理论贡献的评价客观准确。<br><strong>🧠 记忆口诀：</strong>\u201c目标分类标准化，教学评价有依据；布鲁姆奠基评价论，科学评价推动者。\u201d" } ];
+
+        // --- 核心防串联机制 ---
+        const APP_ID = 'bloom_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let multiSelectAnswers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let wrongReviewMode = false;
+        let wrongReviewIndices = [];
+        let wrongReviewCurrentIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '布鲁姆教育目标分类学与掌握学习';
+            const content = `<h3>一、人物定位与理论地位</h3>
+            <p>美国当代著名教育家、心理学家，<strong>教育目标分类学创始人</strong>，提出\u201c掌握学习\u201d理论，是现代教育评价理论的重要奠基人。</p>
+            <p>教综核心地位：教育目标分类是教学章节的超高频考点，常以例子反选、层级排序、地位单选形式考查；掌握学习是教学模式与教学评价模块的核心考点。</p>
+
+            <h3>二、核心考点1：教育目标分类学</h3>
+            <p>布鲁姆将教育目标分为<strong>认知、情感、动作技能</strong>三大领域，各领域按由低到高、由简到繁的顺序划分层级，层级间具有连续性、递进性，不可越级。</p>
+            <h3>1. 认知领域目标（★★★★★最高频）</h3>
+            <table class="knowledge-table">
+                <tr><th>层级</th><th>核心含义</th><th>常见行为动词</th><th>典型例子</th></tr>
+                <tr><td><strong>知识（识记）</strong></td><td>回忆、重现已学过的事实、概念等</td><td>背诵、说出、识别、默写</td><td>背诵古诗、默写公式</td></tr>
+                <tr><td><strong>领会（理解）</strong></td><td>把握知识内在含义，能用自己的话转述</td><td>解释、概括、转述、推断</td><td>概括文章主旨</td></tr>
+                <tr><td><strong>应用</strong></td><td>将所学迁移到新情境中解决实际问题</td><td>运用、解决、计算、操作</td><td>用公式解应用题</td></tr>
+                <tr><td><strong>分析</strong></td><td>将整体拆解为部分，理解结构与逻辑关系</td><td>分析、区分、辨别、梳理</td><td>分析段落结构</td></tr>
+                <tr><td><strong>综合</strong></td><td>整合零散知识形成新方案或产物</td><td>编写、设计、创作、拟定</td><td>写原创作文、设计方案</td></tr>
+                <tr><td><strong>评价</strong></td><td>对材料、方案做出价值判断，评定优劣</td><td>评价、评判、鉴赏、比较</td><td>评判文章优劣</td></tr>
+            </table>
+
+            <h3>2. 情感领域目标（★★中频）</h3>
+            <p>按价值内化程度由低到高：接受→反应→价值化→组织→价值体系个性化。</p>
+            <h3>3. 动作技能领域目标（★★低频）</h3>
+            <p>按动作发展水平由低到高：知觉→模仿→操作→准确→连贯→习惯化。</p>
+
+            <h3>三、核心考点2：掌握学习理论（★★★★高频）</h3>
+            <ul>
+                <li><strong>核心假设：</strong>只要给学生<strong>足够的学习时间</strong>和适当的教学，几乎所有学生都能掌握所学内容。</li>
+                <li><strong>掌握标准：</strong>单元测试正确率达到<strong>80%~90%</strong>即为掌握。</li>
+                <li><strong>核心变量：</strong>学习时间是影响学习结果的核心变量。</li>
+                <li><strong>核心环节：</strong>形成性评价与反馈矫正。</li>
+                <li><strong>教学流程：</strong>定向→新授→形成性评价→矫正→总结性评价。</li>
+            </ul>
+
+            <h3>四、高频易混点辨析</h3>
+            <table class="knowledge-table">
+                <tr><th>易混点</th><th>关键区分</th></tr>
+                <tr><td>知识 vs 领会</td><td>知识是\u201c记住\u201d，领会是\u201c懂了\u201d</td></tr>
+                <tr><td>应用 vs 分析</td><td>应用是\u201c用知识解决问题\u201d，分析是\u201c拆解整体找关系\u201d</td></tr>
+                <tr><td>综合 vs 评价</td><td>综合是\u201c整合创造新产物\u201d，评价是\u201c判断好坏做价值判断\u201d</td></tr>
+                <tr><td>布鲁姆 vs 加涅</td><td>布鲁姆：教育目标分类；加涅：学习结果分类</td></tr>
+            </table>
+
+            <h3>五、记忆口诀</h3>
+            <p style="text-align:center;font-weight:700;color:#4a90e2;font-size:15px;line-height:2;">
+                知领应分综评序，认知六级递进升；<br>接反价组个化情，情感五级内化深；<br>知模操准连习惯，动作六级自动化；<br>掌握学习时间足，形成评价矫正心。
+            </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            wrongReviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            wrongReviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function isMultiSelect(q) { return q.type === '多选题' || (Array.isArray(q.answer)); }
+        function getUserAnswer(index) { if (isMultiSelect(questions[index])) return multiSelectAnswers[index]; return answers[index]; }
+        function isAnswered(index) { if (isMultiSelect(questions[index])) return multiSelectAnswers[index] !== null && multiSelectAnswers[index].length > 0; return answers[index] !== null; }
+        function isAnswerCorrect(index) { const q = questions[index]; const userAns = getUserAnswer(index); if (userAns === null) return false; if (isMultiSelect(q)) { if (!Array.isArray(userAns) || userAns.length === 0) return false; const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer]; if (userAns.length !== correctArr.length) return false; const sortedUser = [...userAns].sort(); const sortedCorrect = [...correctArr].sort(); return sortedUser.every((v, i) => v === sortedCorrect[i]); } return userAns === q.answer; }
+
+        function renderQuestion() {
+            let idx = currentIndex; let q;
+            if (wrongReviewMode && wrongReviewIndices.length > 0) { idx = wrongReviewIndices[wrongReviewCurrentIndex]; q = questions[idx]; } else { q = questions[currentIndex]; }
+            const actualIndex = wrongReviewMode ? wrongReviewIndices[wrongReviewCurrentIndex] : currentIndex;
+            const contentArea = document.getElementById('quizContent'); const isMulti = isMultiSelect(q);
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, optIdx) => { let isSelected = false; if (isMulti) { const msa = multiSelectAnswers[actualIndex]; isSelected = (msa && msa.includes(optIdx)); } else { isSelected = (answers[actualIndex] === optIdx); } const userAns = getUserAnswer(actualIndex); const answered = (userAns !== null && (isMulti ? userAns.length > 0 : true)); let isCorrectOption = false; if (isMulti) { const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer]; isCorrectOption = correctArr.includes(optIdx); } else { isCorrectOption = (q.answer === optIdx); } let classes = ['option-item']; if (answered) { if (isSelected && isCorrectOption) classes.push('correct'); else if (isSelected && !isCorrectOption) classes.push('wrong'); else if (isCorrectOption) classes.push('correct'); } else if (isSelected) { classes.push('selected'); } html += `<div class="${classes.join(' ')}" onclick="selectOption(${optIdx}, ${actualIndex})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`; });
+            html += '</div></div>';
+            const userAns = getUserAnswer(actualIndex); const answered = (userAns !== null && (isMulti ? userAns.length > 0 : true));
+            if (answered) { const correct = isAnswerCorrect(actualIndex); html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${correct ? 'correct' : 'wrong'}">${correct ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`; }
+            const totalForCheck = wrongReviewMode ? wrongReviewIndices.length : questions.length;
+            const allDone = wrongReviewMode ? wrongReviewIndices.every(wi => isAnswered(wi)) : answers.every((a, i) => isAnswered(i));
+            if ((wrongReviewMode && wrongReviewCurrentIndex >= wrongReviewIndices.length - 1 && allDone) || (!wrongReviewMode && currentIndex === questions.length - 1 && allDone)) { const allIndices = wrongReviewMode ? wrongReviewIndices : [...Array(questions.length).keys()]; const correctCount = allIndices.filter(i => isAnswerCorrect(i)).length; const total = allIndices.length; const accuracy = Math.round(correctCount / total * 100); if (!wrongReviewMode) { saveToHistory(correctCount, accuracy); } html += `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">${wrongReviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color: var(--text-secondary);">${wrongReviewMode ? '你已经回顾了所有错题，继续加油！' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correctCount}/${total}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>${!wrongReviewMode ? `<button class="action-btn wrong-review-btn" onclick="startWrongReview()">回看错题</button>` : ''}${wrongReviewMode ? `<button class="action-btn export-csv-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题CSV</button>` : ''}${wrongReviewMode ? `<button class="action-btn history-view-btn" onclick="exitWrongReview()">退出回顾</button>` : ''}</div></div>`; }
+            contentArea.innerHTML = html; updateHeader(); if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(optIdx, actualIndex) { if (isAnswered(actualIndex)) return; const q = questions[actualIndex]; if (isMultiSelect(q)) { if (!multiSelectAnswers[actualIndex]) multiSelectAnswers[actualIndex] = []; const msa = multiSelectAnswers[actualIndex]; const pos = msa.indexOf(optIdx); if (pos >= 0) msa.splice(pos, 1); else msa.push(optIdx); if (msa.length === 0) multiSelectAnswers[actualIndex] = null; } else { answers[actualIndex] = optIdx; } saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); if (!isMultiSelect(q) || multiSelectAnswers[actualIndex] === null) { const correct = isAnswerCorrect(actualIndex); if (!isMultiSelect(q)) showToast(correct ? '回答正确！✓' : '回答错误 ✗'); } }
+        function toggleAnalysis(header) { const content = header.nextElementSibling; const icon = header.querySelector('.toggle-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); } else { content.style.display = 'none'; icon.classList.remove('expanded'); } }
+        function prevQuestion() { if (wrongReviewMode) { if (wrongReviewCurrentIndex > 0) { wrongReviewCurrentIndex--; renderQuestion(); updateNavButtons(); } } else { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } } }
+        function nextQuestion() { if (wrongReviewMode) { if (wrongReviewCurrentIndex < wrongReviewIndices.length - 1) { wrongReviewCurrentIndex++; renderQuestion(); updateNavButtons(); } } else { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } } }
+        function updateHeader() { if (currentPage !== 'quiz') return; const displayNum = wrongReviewMode ? wrongReviewCurrentIndex + 1 : currentIndex + 1; const totalNum = wrongReviewMode ? wrongReviewIndices.length : questions.length; document.getElementById('currentNum').textContent = displayNum; const answeredCount = (wrongReviewMode ? wrongReviewIndices : [...Array(questions.length).keys()]).filter(i => isAnswered(i)).length; document.getElementById('answeredCount').textContent = answeredCount; document.getElementById('totalCount').textContent = totalNum; document.getElementById('progressFill').style.width = `${(answeredCount / totalNum) * 100}%`; if (wrongReviewMode) { document.querySelector('.progress-text').innerHTML = `<span style="color:#ff7875;">错题回顾模式</span> | ${answeredCount}/${totalNum} 已答`; } else { document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answeredCount}</span>/<span id="totalCount">${totalNum}</span> 已答`; } }
+        function updateNavButtons() { const footerContent = document.getElementById('footerContent'); if (currentPage !== 'quiz') return; const totalForCheck = wrongReviewMode ? wrongReviewIndices.length : questions.length; const allDone = wrongReviewMode ? wrongReviewIndices.every(wi => isAnswered(wi)) : answers.every((a, i) => isAnswered(i)); const atEnd = wrongReviewMode ? wrongReviewCurrentIndex >= wrongReviewIndices.length - 1 : currentIndex >= questions.length - 1; const atStart = wrongReviewMode ? wrongReviewCurrentIndex === 0 : currentIndex === 0; footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${atStart ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${atEnd && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+        function changeFontSize(delta) { fontSize = Math.max(14, Math.min(22, fontSize + delta)); document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const overlay = document.getElementById('sheetOverlay'); const panel = document.getElementById('sheetPanel'); if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); } else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); } }
+        function renderAnswerSheet() { const grid = document.getElementById('sheetGrid'); const indices = wrongReviewMode ? wrongReviewIndices : [...Array(questions.length).keys()]; let html = ''; indices.forEach((qIndex, displayIdx) => { let statusClass = 'unanswered'; let statusText = '未答'; if (isAnswered(qIndex)) { if (isAnswerCorrect(qIndex)) { statusClass = 'correct'; statusText = '正确'; } else { statusClass = 'wrong'; statusText = '错误'; } } const currentActualIdx = wrongReviewMode ? wrongReviewIndices[wrongReviewCurrentIndex] : currentIndex; if (qIndex === currentActualIdx) statusClass += ' current'; if (currentFilter !== 'all') { if (currentFilter === 'unanswered' && isAnswered(qIndex)) return; if (currentFilter === 'correct' && (!isAnswered(qIndex) || !isAnswerCorrect(qIndex))) return; if (currentFilter === 'wrong' && (!isAnswered(qIndex) || isAnswerCorrect(qIndex))) return; } html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${qIndex})"><div class="sheet-number">${displayIdx + 1}</div><div class="sheet-status">${statusText}</div></div>`; }); grid.innerHTML = html; }
+        function filterQuestions(filter) { currentFilter = filter; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); event.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(index) { if (wrongReviewMode) { const pos = wrongReviewIndices.indexOf(index); if (pos >= 0) { wrongReviewCurrentIndex = pos; } else { currentIndex = index; wrongReviewMode = false; document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answers.filter(a=>a!==null).length}</span>/<span id="totalCount">${questions.length}</span> 已答`; } } else { currentIndex = index; } renderQuestion(); updateNavButtons(); toggleSheet(); }
+        function toggleHistory() { const overlay = document.getElementById('historyOverlay'); const panel = document.getElementById('historyPanel'); if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); } else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const list = document.getElementById('historyList'); const history = getHistory(); if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; } let html = ''; history.forEach((record, index) => { const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`; }); list.innerHTML = html; }
+        function saveToHistory(correctCount, accuracy) { const history = getHistory(); history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers], multiSelectAnswers: multiSelectAnswers.map(m => m ? [...m] : null) }); if (history.length > 50) history.pop(); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); }
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; if (history[index].multiSelectAnswers) multiSelectAnswers = history[index].multiSelectAnswers.map(m => m ? [...m] : null); currentIndex = 0; wrongReviewMode = false; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answers.filter(a=>a!==null).length}</span>/<span id="totalCount">${questions.length}</span> 已答`; showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, multiSelectAnswers: multiSelectAnswers.map(m => m ? [...m] : null), wrongReviewMode, wrongReviewIndices, wrongReviewCurrentIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() { const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS); if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); if (data.multiSelectAnswers) multiSelectAnswers = data.multiSelectAnswers.map(m => m ? [...m] : null); else multiSelectAnswers = new Array(questions.length).fill(null); if (data.wrongReviewMode) { wrongReviewMode = data.wrongReviewMode; wrongReviewIndices = data.wrongReviewIndices || []; wrongReviewCurrentIndex = data.wrongReviewCurrentIndex || 0; } } const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS); if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); } }
+        function startWrongReview() { wrongReviewIndices = []; for (let i = 0; i < questions.length; i++) { if (isAnswered(i) && !isAnswerCorrect(i)) wrongReviewIndices.push(i); } if (wrongReviewIndices.length === 0) { showToast('没有错题，太棒了！🎉'); return; } wrongReviewMode = true; wrongReviewCurrentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); document.querySelector('.progress-text').innerHTML = `<span style="color:#ff7875;">错题回顾模式</span> | 0/${wrongReviewIndices.length} 已答`; showToast(`共${wrongReviewIndices.length}道错题，开始回顾`); }
+        function exitWrongReview() { wrongReviewMode = false; wrongReviewIndices = []; wrongReviewCurrentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answers.filter(a=>a!==null).length}</span>/<span id="totalCount">${questions.length}</span> 已答`; showToast('已退出错题回顾模式'); }
+        function exportWrongCSV() { const wrongIndices = wrongReviewMode ? wrongReviewIndices : []; if (wrongIndices.length === 0) { for (let i = 0; i < questions.length; i++) { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); } } if (wrongIndices.length === 0) { showToast('没有错题可导出'); return; } let csvContent = '\uFEFF序号,题型,题目,选项,你的答案,正确答案,解析\n'; wrongIndices.forEach((qIdx, displayIdx) => { const q = questions[qIdx]; const userAns = getUserAnswer(qIdx); let userAnsStr = ''; if (isMultiSelect(q) && Array.isArray(userAns)) userAnsStr = userAns.map(i => q.options[i].label + '. ' + q.options[i].text).join('; '); else if (userAns !== null && !Array.isArray(userAns)) userAnsStr = q.options[userAns].label + '. ' + q.options[userAns].text; else userAnsStr = '未作答'; let correctAnsStr = ''; if (Array.isArray(q.answer)) correctAnsStr = q.answer.map(i => q.options[i].label + '. ' + q.options[i].text).join('; '); else correctAnsStr = q.options[q.answer].label + '. ' + q.options[q.answer].text; const optionsStr = q.options.map(o => o.label + '. ' + o.text).join(' | '); const stemClean = q.stem.replace(/"/g, '""').replace(/\n/g, ' '); const optionsClean = optionsStr.replace(/"/g, '""'); const userAnsClean = userAnsStr.replace(/"/g, '""'); const correctAnsClean = correctAnsStr.replace(/"/g, '""'); const analysisClean = q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""').replace(/\n/g, ' ').trim(); csvContent += `"${displayIdx+1}","${q.type}","${stemClean}","${optionsClean}","${userAnsClean}","${correctAnsClean}","${analysisClean}"\n`; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = '错题导出_' + new Date().toISOString().slice(0, 10) + '.csv'; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出！'); }
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); multiSelectAnswers = new Array(questions.length).fill(null); wrongReviewMode = false; wrongReviewIndices = []; wrongReviewCurrentIndex = 0; localStorage.removeItem(STORAGE_KEY_ANSWERS); document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">0</span>/<span id="totalCount">${questions.length}</span> 已答`; renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
