@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>巴甫洛夫教育思想刷题训练</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        :root {
+            --primary-color: #4a90e2;
+            --primary-light: #e6f7ff;
+            --success-color: #52c41a;
+            --success-light: #f6ffed;
+            --error-color: #f5222d;
+            --error-light: #fff2f0;
+            --warning-color: #faad14;
+            --warning-light: #fffbe6;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --bg-main: #f5f7fa;
+            --bg-card: #ffffff;
+            --border-color: #e8e8e8;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --font-size-base: 16px;
+            --font-size-small: 14px;
+            --font-size-large: 18px;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: env(safe-area-inset-bottom);
+            transition: font-size 0.3s ease;
+        }
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            padding: 12px 16px;
+            padding-top: max(12px, env(safe-area-inset-top));
+            z-index: 200;
+            box-shadow: var(--shadow);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .back-btn,
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-btn:active,
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .question-info {
+            text-align: center;
+            flex: 1;
+        }
+        .question-number {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .progress-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .right-section {
+            display: flex;
+            gap: 8px;
+        }
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 140px;
+        }
+        .knowledge-page {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        .knowledge-page.hidden {
+            display: none;
+        }
+        .knowledge-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .knowledge-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .knowledge-content {
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        .knowledge-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 18px 0 8px;
+            color: var(--primary-color);
+            padding-left: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+        .knowledge-content p {
+            margin-bottom: 10px;
+        }
+        .knowledge-content ul {
+            margin: 8px 0 12px 18px;
+        }
+        .knowledge-content li {
+            margin-bottom: 6px;
+        }
+        .knowledge-content .highlight {
+            background: var(--primary-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .knowledge-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 4px;
+            font-size: 13px;
+        }
+        .knowledge-table th,
+        .knowledge-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 6px;
+            text-align: center;
+        }
+        .knowledge-table th {
+            background: #f5f7fb;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        .start-quiz-btn {
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .start-quiz-btn:active {
+            transform: scale(0.98);
+        }
+        .question-card,
+        .analysis-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .question-type {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+        .question-stem {
+            font-size: var(--font-size-large);
+            font-weight: 500;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .formula {
+            background: #fafafa;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            border-left: 4px solid var(--primary-color);
+            overflow-x: auto;
+        }
+        .question-image {
+            width: 100%;
+            max-width: 100%;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            display: block;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 56px;
+            position: relative;
+        }
+        .option-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: var(--radius-sm);
+            pointer-events: none;
+        }
+        .option-item:hover {
+            border-color: var(--primary-color);
+        }
+        .option-item.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+            transform: scale(1.01);
+        }
+        .option-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+        }
+        .option-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+        }
+        .option-label {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .selected .option-label {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .correct .option-label {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .wrong .option-label {
+            background: var(--error-color);
+            color: white;
+            border-color: var(--error-color);
+        }
+        .option-text {
+            flex: 1;
+            padding-top: 2px;
+        }
+        .analysis-card {
+            padding: 0;
+            margin-top: 16px;
+            overflow: hidden;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 800px;
+            }
+        }
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fafafa;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .analysis-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .result-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .result-badge.correct {
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .result-badge.wrong {
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .analysis-content {
+            padding: 20px;
+            font-size: var(--font-size-small);
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        .analysis-content p {
+            margin-bottom: 10px;
+        }
+        .analysis-content strong {
+            color: var(--text-primary);
+            font-size: 15px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            padding: 16px;
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+            z-index: 150;
+        }
+        .footer.hidden {
+            transform: translateY(100%);
+        }
+        .footer-content {
+            max-width: 430px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+        .nav-btn {
+            flex: 1;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+        .prev-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .prev-btn:not(:disabled):hover {
+            background: #e8e8e8;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .sheet-overlay,
+        .history-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-overlay.show,
+        .history-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+        .sheet-panel,
+        .history-panel {
+            position: fixed;
+            background: var(--bg-card);
+            z-index: 400;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sheet-panel {
+            bottom: 0;
+            left: 50%;
+            right: auto;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            transform: translate(-50%, 100%);
+            max-height: 70vh;
+            width: min(430px, 100%);
+        }
+        .sheet-panel.show {
+            transform: translate(-50%, 0);
+        }
+        .history-panel {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 85%;
+            max-width: 360px;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            transform: translateX(100%);
+        }
+        .history-panel.show {
+            transform: translateX(0);
+        }
+        .sheet-header,
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sheet-title,
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .close-sheet {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .sheet-filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .filter-btn,
+        .clear-history {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        .clear-history {
+            background: #fff2f0;
+            color: var(--error-color);
+        }
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+        .sheet-item {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            background: white;
+        }
+        .sheet-item.unanswered {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sheet-item.correct {
+            border-color: var(--success-color);
+            background: var(--success-light);
+            color: var(--success-color);
+        }
+        .sheet-item.wrong {
+            border-color: var(--error-color);
+            background: var(--error-light);
+            color: var(--error-color);
+        }
+        .sheet-item.current {
+            border-width: 3px;
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        .sheet-number {
+            font-size: 16px;
+        }
+        .sheet-status {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .history-item {
+            background: #fafafa;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-date {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .history-stat {
+            text-align: center;
+        }
+        .history-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .history-label {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        .history-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .history-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .review-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+        .delete-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .completion-screen {
+            text-align: center;
+            padding: 40px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        .completion-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success-color), #73d13d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            color: white;
+        }
+        .completion-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-btn {
+            flex: 1;
+            min-width: 90px;
+            height: 48px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0 10px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, var(--primary-color), #6ba8ff);
+            color: white;
+        }
+        .history-view-btn {
+            background: #f5f5f5;
+            color: var(--text-secondary);
+        }
+        .wrong-review-btn {
+            background: linear-gradient(135deg, #f5222d, #ff7875);
+            color: white;
+        }
+        .export-csv-btn {
+            background: linear-gradient(135deg, #52c41a, #73d13d);
+            color: white;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        @media (min-width: 768px) {
+            .app-container {
+                border-radius: 20px;
+                margin: 20px auto;
+                min-height: calc(100vh - 40px);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            }
+            .footer {
+                position: static;
+                border-radius: 0 0 20px 20px;
+            }
+            .sheet-panel {
+                border-radius: 20px;
+                bottom: 20px;
+                max-height: 60vh;
+            }
+        }
+        @media (max-width: 360px) {
+            .sheet-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="left-section">
+                    <div class="back-btn" onclick="showHome()"><i class="fas fa-arrow-left"></i></div>
+                    <div class="question-info" id="questionInfo">
+                        <div class="question-number">第 <span id="currentNum">1</span> 题</div>
+                        <div class="progress-text"><span id="answeredCount">0</span>/<span id="totalCount">0</span> 已答</div>
+                    </div>
+                    <div class="question-info" id="pageTitle" style="display: none;">
+                        <div class="question-number">巴甫洛夫经典条件作用</div>
+                        <div class="progress-text">教育心理学 · 高频考点</div>
+                    </div>
+                </div>
+                <div class="right-section">
+                    <div class="icon-btn" onclick="toggleSheet()"><i class="fas fa-th-large"></i></div>
+                    <div class="icon-btn" onclick="toggleHistory()"><i class="fas fa-history"></i></div>
+                    <div class="icon-btn" onclick="changeFontSize(-1)"><i class="fas fa-font"></i>-</div>
+                    <div class="icon-btn" onclick="changeFontSize(1)"><i class="fas fa-font"></i>+</div>
+                </div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 5%"></div></div>
+        </header>
+
+        <main class="content-area" id="contentArea">
+            <div class="knowledge-page" id="knowledgePage">
+                <div class="knowledge-card">
+                    <div class="knowledge-title" id="knowledgeTitle"></div>
+                    <div class="knowledge-content" id="knowledgeContent"></div>
+                </div>
+            </div>
+            <div id="quizContent" style="display: none;"></div>
+        </main>
+
+        <footer class="footer"><div class="footer-content" id="footerContent"></div></footer>
+
+        <div class="sheet-overlay" id="sheetOverlay" onclick="toggleSheet()"></div>
+        <div class="sheet-panel" id="sheetPanel">
+            <div class="sheet-header">
+                <div class="sheet-title">答题卡</div>
+                <div class="close-sheet" onclick="toggleSheet()"><i class="fas fa-times"></i></div>
+            </div>
+            <div class="sheet-filters">
+                <button class="filter-btn active" onclick="filterQuestions('all')">全部</button>
+                <button class="filter-btn" onclick="filterQuestions('unanswered')">未答</button>
+                <button class="filter-btn" onclick="filterQuestions('correct')">正确</button>
+                <button class="filter-btn" onclick="filterQuestions('wrong')">错误</button>
+            </div>
+            <div class="sheet-grid" id="sheetGrid"></div>
+        </div>
+
+        <div class="history-overlay" id="historyOverlay" onclick="toggleHistory()"></div>
+        <div class="history-panel" id="historyPanel">
+            <div class="history-header">
+                <div class="history-title">历史记录</div>
+                <button class="clear-history" onclick="clearAllHistory()">清空</button>
+            </div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [{
+            "type": "单选题",
+            "stem": "经典性条件作用理论的提出者是（  ）",
+            "options": [{ "label": "A", "text": "巴甫洛夫" }, { "label": "B", "text": "斯金纳" }, { "label": "C", "text": "桑代克" }, { "label": "D", "text": "华生" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。巴甫洛夫提出经典性条件作用理论；斯金纳提出操作性条件作用理论；桑代克提出联结-试误说；华生是行为主义创始人。<br><strong>📚 知识点讲解：</strong>巴甫洛夫是俄国生理学家，因消化生理学研究获1904年诺贝尔奖。其经典实验\u201c狗的唾液分泌实验\u201d揭示了条件反射的形成机制。<br><strong>💡 解题思路：</strong>题干问经典性条件作用理论的提出者，直接对应巴甫洛夫。B项斯金纳是操作性条件作用；C项桑代克是试误说；D项华生是行为主义创始人。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫经典狗摇铃，斯金操作鼠压杆；桑代试误饿猫笼，华生行为主义倡。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫验证经典条件反射的经典实验是（  ）",
+            "options": [{ "label": "A", "text": "狗的唾液分泌实验" }, { "label": "B", "text": "饿猫迷笼实验" }, { "label": "C", "text": "小白鼠按压杠杆实验" }, { "label": "D", "text": "黑猩猩叠箱实验" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。狗的唾液分泌（摇铃）实验是巴甫洛夫的经典实验；饿猫迷笼是桑代克的，小白鼠按压杠杆是斯金纳的，黑猩猩叠箱是苛勒的。<br><strong>📚 知识点讲解：</strong>实验与人物对应是教招基础考点。巴甫洛夫用铃声与食物配对，使狗单独听到铃声也分泌唾液，证明了条件反射的建立。<br><strong>💡 解题思路：</strong>\u201c狗=巴甫洛夫\u201d是固定搭配。B→桑代克；C→斯金纳；D→苛勒。<br><strong>🧠 记忆口诀：</strong>\u201c狗唾巴甫洛，饿猫桑代克；鼠压斯金纳，猩猩叠箱苛。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "在巴甫洛夫的实验中，食物引发狗分泌唾液，这属于（  ）",
+            "options": [{ "label": "A", "text": "无条件反射" }, { "label": "B", "text": "条件反射" }, { "label": "C", "text": "操作性行为" }, { "label": "D", "text": "二级条件反射" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。食物引发唾液分泌是先天本能，不需要学习，属于无条件反射。<br><strong>📚 知识点讲解：</strong>无条件反射是生来就有的、不学而能的反射，如膝跳反射、吮吸反射等。条件反射则是后天通过学习形成的。<br><strong>💡 解题思路：</strong>食物是天然的刺激，直接引起唾液分泌，属于无条件反射。B项条件反射需要学习；C项操作性行为是个体主动发出；D项二级条件反射是在已有条件反射基础上建立的。<br><strong>🧠 记忆口诀：</strong>\u201c食物唾液无条件，先天本能不学能；铃声唾液条件反，后天学习配对成。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "实验中，铃声最初不能引发狗分泌唾液，此时铃声属于（  ）",
+            "options": [{ "label": "A", "text": "中性刺激" }, { "label": "B", "text": "无条件刺激" }, { "label": "C", "text": "条件刺激" }, { "label": "D", "text": "强化刺激" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。铃声最初不能引发唾液分泌，属于中性刺激；与食物反复配对后才转化为条件刺激。<br><strong>📚 知识点讲解：</strong>中性刺激是指最初不能引发目标反应的刺激。通过与无条件刺激反复配对，中性刺激获得信号意义，转化为条件刺激。<br><strong>💡 解题思路：</strong>题干\u201c最初不能引发\u201d，说明此时铃声尚未与食物建立联结，属于中性刺激。B项无条件刺激是食物；C项条件刺激是联结形成后的称呼。<br><strong>🧠 记忆口诀：</strong>\u201c铃声初起中性刺，配对食物化条件；单独呈现引分泌，条件刺激已形成。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "条件反射形成后，单独呈现铃声也能引发狗分泌唾液，此时铃声是（  ）",
+            "options": [{ "label": "A", "text": "条件刺激" }, { "label": "B", "text": "无条件刺激" }, { "label": "C", "text": "中性刺激" }, { "label": "D", "text": "无关刺激" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。条件反射形成后，能单独引发条件反应的刺激称为条件刺激。<br><strong>📚 知识点讲解：</strong>经过铃声与食物反复配对，铃声从原来的中性刺激转化为条件刺激（CS），能单独引发唾液分泌（条件反应CR）。<br><strong>💡 解题思路：</strong>题干\u201c条件反射形成后\u201d，此时铃声已经获得了信号意义，属于条件刺激。B项食物是无条件刺激；C项中性刺激是形成前。<br><strong>🧠 记忆口诀：</strong>\u201c配对完成铃变条，单独呈现唾液流；中性转条是获得，条件刺激唤反应。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "条件反射建立的过程被称为（  ）",
+            "options": [{ "label": "A", "text": "获得" }, { "label": "B", "text": "消退" }, { "label": "C", "text": "泛化" }, { "label": "D", "text": "分化" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。条件反射从无到有的建立过程称为获得。<br><strong>📚 知识点讲解：</strong>获得是中性刺激与无条件刺激反复配对，最终中性刺激单独也能引发反应的过程。获得需要中性刺激先于无条件刺激出现，且时间间隔较短。<br><strong>💡 解题思路：</strong>题干问\u201c建立过程\u201d，对应获得。B项消退是已建立条件反射的减弱；C项泛化是对相似刺激反应；D项分化是对差异刺激区分。<br><strong>🧠 记忆口诀：</strong>\u201c获得建立新联结，中性配无条成条；消退反复缺强化，泛化相似分化异。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "条件反射形成后，反复只给铃声不给食物，唾液分泌逐渐减少直至消失，这一现象是（  ）",
+            "options": [{ "label": "A", "text": "消退" }, { "label": "B", "text": "泛化" }, { "label": "C", "text": "分化" }, { "label": "D", "text": "获得" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。失去无条件刺激的强化，条件反应逐渐减弱消失，这一过程称为消退。<br><strong>📚 知识点讲解：</strong>消退不是永久丧失，只是暂时抑制。消退后经过休息，可能出现自然恢复。消退和自然恢复都是经典条件作用的重要规律。<br><strong>💡 解题思路：</strong>\u201c只给铃声不给食物\u201d即不再伴随无条件刺激，反应减弱消失属于消退。B泛化是对相似刺激反应；C分化是区分差异。<br><strong>🧠 记忆口诀：</strong>\u201c消退只因缺强化，条件反应渐消失；并非永久可恢复，自然重现休息后。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "消退的条件反射经过一段时间休息后，再次呈现条件刺激，反应会短暂恢复，这一现象是（  ）",
+            "options": [{ "label": "A", "text": "自然恢复" }, { "label": "B", "text": "泛化" }, { "label": "C", "text": "分化" }, { "label": "D", "text": "强化" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。消退后不经强化、短暂休息后反应自动重现，称为自然恢复。<br><strong>📚 知识点讲解：</strong>自然恢复表明消退不是简单的遗忘，而是暂时抑制。这一现象说明已建立的条件反射痕迹仍然存在。<br><strong>💡 解题思路：</strong>题干描述符合自然恢复的定义。B泛化是对相似刺激反应；C分化是对差异刺激区分；D强化是增强联结的过程。<br><strong>🧠 记忆口诀：</strong>\u201c消退休息自然回，短暂重现非永久；痕迹仍在暂抑制，自然恢复证此理。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "\u201c一朝被蛇咬，十年怕井绳\u201d体现的经典条件作用规律是（  ）",
+            "options": [{ "label": "A", "text": "刺激泛化" }, { "label": "B", "text": "刺激分化" }, { "label": "C", "text": "消退" }, { "label": "D", "text": "获得" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。被蛇咬后，对和蛇相似的井绳也产生恐惧，是对相似刺激做出相同反应，属于刺激泛化。<br><strong>📚 知识点讲解：</strong>泛化是对条件刺激相似的刺激做出相同反应，即\u201c分不清\u201d。典型例子还有杯弓蛇影、小孩怕所有穿白大褂的人。<br><strong>💡 解题思路：</strong>\u201c怕井绳\u201d是因为井绳与蛇相似，属于泛化。B分化是能区分差异；C消退是反应减弱；D获得是建立反射。<br><strong>🧠 记忆口诀：</strong>\u201c一朝蛇咬怕井绳，泛化相似分不清；杯弓蛇影亦如此，分化精准辨差异。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "学生能够准确区分\u201c银行\u201d和\u201c很行\u201d两个词语，这体现了（  ）",
+            "options": [{ "label": "A", "text": "刺激分化" }, { "label": "B", "text": "刺激泛化" }, { "label": "C", "text": "消退" }, { "label": "D", "text": "获得" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。能够区分相似的不同汉字，是对差异刺激做出不同反应，属于刺激分化。<br><strong>📚 知识点讲解：</strong>分化是通过选择性强化，只对条件刺激做出反应，对相似刺激不反应，即\u201c分得清\u201d。区分形近字、区分勇敢与鲁莽都是分化的典型体现。<br><strong>💡 解题思路：</strong>题干\u201c准确区分\u201d强调辨别差异，属于分化。B泛化是混淆相似事物；C消退是反应减弱；D获得是建立反射。<br><strong>🧠 记忆口诀：</strong>\u201c分化精准辨差异，银行很行分得清；泛化混淆相似物，分化训练辨能力。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列选项中，属于刺激泛化的是（  ）",
+            "options": [{ "label": "A", "text": "杯弓蛇影" }, { "label": "B", "text": "因材施教" }, { "label": "C", "text": "闻过则喜" }, { "label": "D", "text": "明辨是非" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。杯弓蛇影是把弓的倒影当成蛇，属于刺激泛化；其余三项均不涉及相似刺激的混淆。<br><strong>📚 知识点讲解：</strong>杯弓蛇影：客人将酒杯中的弓影误认为蛇，是典型的对相似刺激做出相同恐惧反应的泛化现象。<br><strong>💡 解题思路：</strong>B因材施教是对不同学生采用不同方法（可理解为分化应用）；C闻过则喜是态度；D明辨是非是认知判断。只有A涉及相似刺激混淆。<br><strong>🧠 记忆口诀：</strong>\u201c杯弓蛇影泛化典，弓影误蛇恐惧生；因材施教分化为，闻过则喜非此类。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列选项中，属于刺激分化的是（  ）",
+            "options": [{ "label": "A", "text": "区分形近字\u201c己\u201d\u201c已\u201d\u201c巳\u201d" }, { "label": "B", "text": "看到所有穿白大褂的人都害怕" }, { "label": "C", "text": "杯弓蛇影" }, { "label": "D", "text": "一朝被蛇咬，十年怕井绳" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。区分形近字是精准辨别差异，属于刺激分化；其余三项均为泛化现象。<br><strong>📚 知识点讲解：</strong>分化是对事物差异性的反应，泛化是对相似性的反应。区分形近字、分辨上课铃和下课铃都是分化的典型例子。<br><strong>💡 解题思路：</strong>B、C、D都是将相似刺激混淆，属于泛化。A是精准辨别差异，属于分化。<br><strong>🧠 记忆口诀：</strong>\u201c区分己已巳分化，泛化怕所有白褂；泛化混淆分化辨，相似差异各一端。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫提出的信号系统中，第一信号系统的刺激是（  ）",
+            "options": [{ "label": "A", "text": "具体物理刺激" }, { "label": "B", "text": "语言文字" }, { "label": "C", "text": "抽象符号" }, { "label": "D", "text": "观念概念" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。第一信号系统以具体的物理性刺激为信号，如声、光、味、形，是人和动物共有的。<br><strong>📚 知识点讲解：</strong>巴甫洛夫将条件反射分为两大信号系统：第一信号系统是具体实物刺激，第二信号系统是语言文字符号。这是人与动物的本质区别之一。<br><strong>💡 解题思路：</strong>题干问第一信号系统的刺激，对应具体物理刺激。B、C、D都属于第二信号系统的刺激。<br><strong>🧠 记忆口诀：</strong>\u201c一信具体物声光，人与动物共有之；二信语言文符号，人类特有抽象思。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "第二信号系统是以下哪一物种特有的（  ）",
+            "options": [{ "label": "A", "text": "人类" }, { "label": "B", "text": "哺乳动物" }, { "label": "C", "text": "脊椎动物" }, { "label": "D", "text": "高等动物" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。第二信号系统以语言文字为中介，是人类特有的条件反射系统，是人与动物的本质区别之一。<br><strong>📚 知识点讲解：</strong>动物只有第一信号系统，只能对具体物理刺激形成条件反射。人类既有第一信号系统，又有第二信号系统，可以进行抽象思维。<br><strong>💡 解题思路：</strong>题干问第二信号系统特有的物种，直接对应人类。其他选项都不具备语言文字能力。<br><strong>🧠 记忆口诀：</strong>\u201c二信人类独有之，语言文字为核心；动物仅有第一信，具体实物是信号。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列选项中，属于第一信号系统的是（  ）",
+            "options": [{ "label": "A", "text": "望梅生津" }, { "label": "B", "text": "谈虎色变" }, { "label": "C", "text": "画饼充饥" }, { "label": "D", "text": "谈梅生津" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。望梅生津是真的看到梅子这个具体事物引发唾液分泌，属于第一信号系统；其余三项均为第二信号系统。<br><strong>📚 知识点讲解：</strong>第一信号系统是具体实物刺激，如\u201c看到梅子\u201d\u201c听到铃声\u201d。第二信号系统是语言描述，如\u201c谈论梅子\u201d\u201c画饼\u201d。<br><strong>💡 解题思路：</strong>\u201c望梅\u201d是看到具体实物，属于第一信号。B、C、D都是通过语言或符号中介，属于第二信号。<br><strong>🧠 记忆口诀：</strong>\u201c望梅见实一信属，谈梅话虎二信归；具体实物第一信，语言符号第二信。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列选项中，属于第二信号系统的是（  ）",
+            "options": [{ "label": "A", "text": "谈虎色变" }, { "label": "B", "text": "看到红灯停车" }, { "label": "C", "text": "听到铃声进教室" }, { "label": "D", "text": "尝梅生津" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。谈虎色变是通过语言描述引发反应，以语言为中介，属于第二信号系统；B、C属于第一信号系统，D属于无条件反射。<br><strong>📚 知识点讲解：</strong>第二信号系统的刺激是语言、文字等抽象符号。谈虎色变、谈梅生津、画饼充饥、想到考试就焦虑都是典型例子。<br><strong>💡 解题思路：</strong>\u201c谈\u201d字表明是通过语言，属于第二信号。B看到红灯是具体光信号；C听到铃声是具体声音；D尝梅是味觉刺激。<br><strong>🧠 记忆口诀：</strong>\u201c谈虎色变二信典，语言描述引反应；红灯铃声一信属，尝梅生津无条件。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "\u201c望梅止渴\u201d的典故中，士兵听到曹操描述梅子就流口水，这属于（  ）",
+            "options": [{ "label": "A", "text": "第二信号系统" }, { "label": "B", "text": "第一信号系统" }, { "label": "C", "text": "无条件反射" }, { "label": "D", "text": "本能反应" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。典故中士兵是通过语言描述联想到梅子，并非真的看到梅子，以语言为中介，属于第二信号系统。<br><strong>📚 知识点讲解：</strong>\u201c望梅止渴\u201d是第二信号系统的经典案例。曹操说\u201c前面有梅林\u201d，士兵听到后口腔分泌唾液，是语言符号作为条件刺激引发的条件反射。<br><strong>💡 解题思路：</strong>题干强调的是\u201c听到描述\u201d，不是看到实物，因此属于第二信号系统。B第一信号需要看到实物；C无条件反射不需要学习。<br><strong>🧠 记忆口诀：</strong>\u201c望梅止渴二信典，语言描述引唾液；若真见梅一信属，尝梅生津无条件。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "真正看到梅子后流口水，这属于（  ）",
+            "options": [{ "label": "A", "text": "第一信号系统" }, { "label": "B", "text": "第二信号系统" }, { "label": "C", "text": "无条件反射" }, { "label": "D", "text": "高级条件作用" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。看到具体的梅子引发反应，刺激是具体实物，属于第一信号系统。<br><strong>📚 知识点讲解：</strong>第一信号系统是人和动物共有的，以具体物理刺激为信号。看到梅子（视觉刺激）分泌唾液，是经过学习形成的第一信号系统条件反射。<br><strong>💡 解题思路：</strong>题干\u201c看到梅子\u201d是具体实物刺激，属于第一信号系统。C无条件反射是尝到梅子分泌唾液；D高级条件作用是在已有条件反射基础上再建新反射。<br><strong>🧠 记忆口诀：</strong>\u201c见梅流津一信属，实物视觉引反应；尝梅生津无条件，天生本能不需学。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "高级神经活动类型学说的提出者是（  ）",
+            "options": [{ "label": "A", "text": "巴甫洛夫" }, { "label": "B", "text": "希波克拉底" }, { "label": "C", "text": "盖伦" }, { "label": "D", "text": "加德纳" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。巴甫洛夫提出高级神经活动类型学说；希波克拉底提出体液说；盖伦正式提出气质概念；加德纳提出多元智力理论。<br><strong>📚 知识点讲解：</strong>巴甫洛夫根据神经过程的强度、平衡性和灵活性划分了四种神经类型，直接对应四种气质类型，是气质的生理基础。<br><strong>💡 解题思路：</strong>题干问高级神经活动类型学说的提出者，对应巴甫洛夫。B希波克拉底是体液说；C盖伦是气质概念；D加德纳是多元智力。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫神经类型说，强度平衡灵活分；希波体液盖伦质，加德纳多元智力。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫划分高级神经活动类型的依据不包括（  ）",
+            "options": [{ "label": "A", "text": "神经过程的强度" }, { "label": "B", "text": "神经过程的平衡性" }, { "label": "C", "text": "神经过程的灵活性" }, { "label": "D", "text": "神经过程的速度" }],
+            "answer": 3,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>D</strong>。巴甫洛夫划分神经类型的三个维度是强度、平衡性、灵活性，不包括速度。<br><strong>📚 知识点讲解：</strong>强度指神经细胞的工作能力和耐力；平衡性指兴奋与抑制过程的相对力量；灵活性指兴奋与抑制转换的快慢。三者组合形成四种类型。<br><strong>💡 解题思路：</strong>A、B、C都是三个维度。D速度不是巴甫洛夫的分类依据。<br><strong>🧠 记忆口诀：</strong>\u201c强度平衡灵活三，神经类型据此分；速度并非巴氏维，三特性定四类型。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "强、不平衡的神经过程，对应的高级神经活动类型是（  ）",
+            "options": [{ "label": "A", "text": "不可遏制型" }, { "label": "B", "text": "活泼型" }, { "label": "C", "text": "安静型" }, { "label": "D", "text": "抑制型" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。强、不平衡对应不可遏制型（兴奋型），兴奋过程远强于抑制过程。<br><strong>📚 知识点讲解：</strong>不可遏制型的人精力旺盛、易冲动暴躁，对应气质类型是胆汁质。<br><strong>💡 解题思路：</strong>强、不平衡即兴奋强于抑制，不可遏制型。B活泼型是强、平衡、灵活；C安静型是强、平衡、不灵活；D抑制型是弱。<br><strong>🧠 记忆口诀：</strong>\u201c强不平衡不可遏，胆汁质人精力旺；活泼平衡灵活强，安静不灵粘液质。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "强、平衡、灵活的神经类型，对应气质类型是（  ）",
+            "options": [{ "label": "A", "text": "多血质" }, { "label": "B", "text": "胆汁质" }, { "label": "C", "text": "粘液质" }, { "label": "D", "text": "抑郁质" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。强、平衡、灵活对应活泼型，气质类型为多血质。<br><strong>📚 知识点讲解：</strong>多血质的人反应敏捷灵活、善于交际、适应性强。神经活动类型的组合是教招高频考点。<br><strong>💡 解题思路：</strong>强平衡灵活→活泼型→多血质。B胆汁质对应强不平衡；C粘液质对应强平衡不灵活；D抑郁质对应弱型。<br><strong>🧠 记忆口诀：</strong>\u201c活泼多血强平灵，安静粘液强平不；兴奋胆汁强不平，抑制抑郁神经弱。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "安静型高级神经活动类型对应的气质类型是（  ）",
+            "options": [{ "label": "A", "text": "粘液质" }, { "label": "B", "text": "多血质" }, { "label": "C", "text": "胆汁质" }, { "label": "D", "text": "抑郁质" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。安静型神经过程强、平衡、不灵活，对应粘液质。<br><strong>📚 知识点讲解：</strong>粘液质的人安静稳重、反应迟缓、耐受性强，情绪不易外露，是典型的安静型。<br><strong>💡 解题思路：</strong>安静型=粘液质，这是固定对应。B多血质是活泼型；C胆汁质是不可遏制型；D抑郁质是抑制型。<br><strong>🧠 记忆口诀：</strong>\u201c安静粘液稳而缓，活泼多血灵而敏；胆汁兴奋冲动盛，抑郁抑制敏感弱。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "抑郁质对应的高级神经活动类型是（  ）",
+            "options": [{ "label": "A", "text": "抑制型" }, { "label": "B", "text": "活泼型" }, { "label": "C", "text": "安静型" }, { "label": "D", "text": "不可遏制型" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。抑郁质对应的神经类型是抑制型（弱型），神经过程整体强度弱。<br><strong>📚 知识点讲解：</strong>抑郁质的人敏感细腻、情绪体验深刻、胆小孤僻。神经过程弱，容易疲劳，但感受性高。<br><strong>💡 解题思路：</strong>抑郁质=抑制型（弱型）。B活泼型对应多血质；C安静型对应粘液质；D不可遏制型对应胆汁质。<br><strong>🧠 记忆口诀：</strong>\u201c抑郁抑制神经弱，敏感细腻情绪深；胆汁兴奋不可遏，多血活泼粘液静。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "精力旺盛、脾气急躁、易冲动，对应的神经类型是（  ）",
+            "options": [{ "label": "A", "text": "不可遏制型" }, { "label": "B", "text": "活泼型" }, { "label": "C", "text": "安静型" }, { "label": "D", "text": "抑制型" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。不可遏制型对应胆汁质，核心特点是精力旺盛、易冲动、脾气急躁。<br><strong>📚 知识点讲解：</strong>不可遏制型的人兴奋过程占优势，抑制能力较弱，因此表现为容易激动、难以自制。<br><strong>💡 解题思路：</strong>题干描述是典型的胆汁质特征，对应不可遏制型。B活泼型是灵活多变；C安静型是稳重迟缓；D抑制型是敏感柔弱。<br><strong>🧠 记忆口诀：</strong>\u201c精力旺脾气急，不可遏胆汁质；活泼灵活多血属，安静稳重粘液质。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "安静稳重、反应迟缓、忍耐性强，对应的气质类型是（  ）",
+            "options": [{ "label": "A", "text": "粘液质" }, { "label": "B", "text": "多血质" }, { "label": "C", "text": "胆汁质" }, { "label": "D", "text": "抑郁质" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。粘液质的核心特点是安静稳重、反应迟缓、耐受性强，对应安静型神经类型。<br><strong>📚 知识点讲解：</strong>粘液质的人情绪稳定、内敛，做事踏实有耐心，但反应较慢。是典型的\u201c慢而稳\u201d型。<br><strong>💡 解题思路：</strong>题干\u201c安静稳重\u201d\u201c反应迟缓\u201d直接对应粘液质。B多血质是活泼敏捷；C胆汁质是急躁冲动；D抑郁质是敏感脆弱。<br><strong>🧠 记忆口诀：</strong>\u201c粘液稳重反应慢，忍耐力强情绪稳；多血灵活善交际，胆汁冲动情绪烈。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "痕迹衰退说的代表人物之一是（  ）",
+            "options": [{ "label": "A", "text": "巴甫洛夫" }, { "label": "B", "text": "奥苏贝尔" }, { "label": "C", "text": "弗洛伊德" }, { "label": "D", "text": "詹金斯" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。巴甫洛夫是痕迹衰退说的代表人物之一，该理论认为遗忘是神经痕迹衰退的结果。<br><strong>📚 知识点讲解：</strong>痕迹衰退说认为记忆的神经痕迹得不到强化就会逐渐衰退、消失。桑代克也是该理论的代表人物。二者的共同点是都强调不练习导致遗忘。<br><strong>💡 解题思路：</strong>巴甫洛夫的条件反射消退机制与痕迹衰退说一脉相承。B奥苏贝尔是同化说；C弗洛伊德是动机说；D詹金斯是干扰说。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫桑代痕迹说，不练痕迹自然消；奥苏同化弗动机，詹金干扰各不同。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "痕迹衰退说的核心观点是（  ）",
+            "options": [{ "label": "A", "text": "记忆痕迹因得不到强化而逐渐衰退" }, { "label": "B", "text": "遗忘是前后学习相互干扰的结果" }, { "label": "C", "text": "遗忘是情绪动机压抑的结果" }, { "label": "D", "text": "遗忘是知识同化简化的结果" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。痕迹衰退说的核心是记忆痕迹因得不到强化而逐渐衰退；B是干扰说，C是动机说，D是同化说。<br><strong>📚 知识点讲解：</strong>遗忘理论对比：痕迹衰退说（巴甫洛夫/桑代克）→不强化则衰退；干扰说→前摄/倒摄抑制；动机说（弗洛伊德）→压抑；同化说（奥苏贝尔）→知识同化。<br><strong>💡 解题思路：</strong>题干问痕迹衰退说，直接对应\u201c痕迹衰退\u201d。其余选项分别是干扰说、动机说、同化说的观点。<br><strong>🧠 记忆口诀：</strong>\u201c痕迹衰退不练消，干扰前后学习扰；动机压抑弗洛伊，同化简优奥苏贝尔。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "用已经形成的条件刺激作为新的无条件刺激，建立新的条件反射，这一现象称为（  ）",
+            "options": [{ "label": "A", "text": "高级条件作用" }, { "label": "B", "text": "泛化" }, { "label": "C", "text": "分化" }, { "label": "D", "text": "消退" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。在已有条件反射基础上建立新的二级条件反射，称为高级条件作用。<br><strong>📚 知识点讲解：</strong>例如先用铃声与食物建立一级条件反射，再将灯光与铃声配对，最终灯光也能单独引发唾液分泌，这就是二级条件作用。巴甫洛夫称之为高级条件作用。<br><strong>💡 解题思路：</strong>题干描述的是二级条件反射的建立过程，对应高级条件作用。B泛化是对相似刺激反应；C分化是对差异刺激区分；D消退是反应减弱。<br><strong>🧠 记忆口诀：</strong>\u201c高级条件再建联，已条当作新无条；铃声配食灯配铃，灯光也能引唾液。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列关于经典条件作用的说法，错误的是（  ）",
+            "options": [{ "label": "A", "text": "核心是刺激与刺激之间形成联结" }, { "label": "B", "text": "行为是被动诱发的应答性行为" }, { "label": "C", "text": "强化出现在行为之后" }, { "label": "D", "text": "消退后可能出现自然恢复" }],
+            "answer": 2,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>C</strong>。经典条件作用中，强化（无条件刺激）出现在行为反应之前，伴随中性刺激出现；强化出现在行为之后是操作性条件作用的特点。<br><strong>📚 知识点讲解：</strong>经典条件作用中，刺激在前、反应在后（S→R）；操作性条件作用中，反应在前、强化在后（R→S）。这是两者的核心区别。<br><strong>💡 解题思路：</strong>A、B、D都是正确表述。C项说\u201c强化出现在行为之后\u201d，这是操作性条件作用的特点，而非经典条件作用。<br><strong>🧠 记忆口诀：</strong>\u201c经典刺激先行反，操作反应先强化后；强化位置是区分，经典前操后不同。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于无条件反射的是（  ）",
+            "options": [{ "label": "A", "text": "膝跳反射" }, { "label": "B", "text": "听到铃声进教室" }, { "label": "C", "text": "谈虎色变" }, { "label": "D", "text": "看到红灯停车" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。膝跳反射是先天本能，属于无条件反射；其余三项均为后天习得的条件反射。<br><strong>📚 知识点讲解：</strong>无条件反射是生来就有、不学而能的反射，如膝跳反射、吮吸反射、眨眼反射等。条件反射是通过学习形成的。<br><strong>💡 解题思路：</strong>B、C、D都是后天经过学习形成的反射，需要条件刺激参与。只有A是先天反射。<br><strong>🧠 记忆口诀：</strong>\u201c无条件反射先天能，膝跳吮吸眨眼等；条件反射后天学，铃声红灯谈虎色。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列属于条件反射的是（  ）",
+            "options": [{ "label": "A", "text": "谈虎色变" }, { "label": "B", "text": "吮吸反射" }, { "label": "C", "text": "眨眼反射" }, { "label": "D", "text": "膝跳反射" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。谈虎色变是后天通过语言学习形成的条件反射；其余三项均为先天无条件反射。<br><strong>📚 知识点讲解：</strong>条件反射是后天习得的，是在无条件反射的基础上建立的。谈虎色变是典型的第二信号系统条件反射。<br><strong>💡 解题思路：</strong>B、C、D都是先天本能反射。A谈虎色变需要通过学习建立。<br><strong>🧠 记忆口诀：</strong>\u201c条件反射需学习，谈虎色变是典例；无条件反射天生有，吮吸眨眼膝跳等。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫的国籍是（  ）",
+            "options": [{ "label": "A", "text": "俄国" }, { "label": "B", "text": "美国" }, { "label": "C", "text": "瑞士" }, { "label": "D", "text": "德国" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。巴甫洛夫是俄国（苏联）生理学家、心理学家。<br><strong>📚 知识点讲解：</strong>巴甫洛夫（Ivan Pavlov，1849-1936）是俄国著名生理学家，1904年因消化生理学研究获得诺贝尔生理学或医学奖。<br><strong>💡 解题思路：</strong>巴甫洛夫=俄国。B美国是桑代克、斯金纳等；C瑞士是皮亚杰；D德国是冯特等。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫俄国生理家，诺奖得主条件反；桑代美国教心父，皮亚瑞士认知论。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列人物与理论对应正确的是（  ）",
+            "options": [{ "label": "A", "text": "巴甫洛夫——经典性条件作用理论" }, { "label": "B", "text": "斯金纳——完形顿悟说" }, { "label": "C", "text": "苛勒——操作性条件作用理论" }, { "label": "D", "text": "桑代克——认知发现说" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。B项完形顿悟说是苛勒的理论；C项操作性条件作用是斯金纳的理论；D项认知发现说是布鲁纳的理论。<br><strong>📚 知识点讲解：</strong>理论对应：巴甫洛夫→经典条件作用；斯金纳→操作条件作用；苛勒→完形顿悟说；桑代克→联结试误说；布鲁纳→认知发现说。<br><strong>💡 解题思路：</strong>逐项核查：A正确；B应为斯金纳→操作条件，苛勒→顿悟；C应为苛勒→顿悟，斯金纳→操作；D应为桑代克→试误，布鲁纳→发现。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫经典斯金操，苛勒顿悟桑代误；布鲁纳认知发现说，理论人物要对应。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "学生因为喜欢数学老师而喜欢上数学课，这一现象可以用（  ）解释。",
+            "options": [{ "label": "A", "text": "经典条件作用" }, { "label": "B", "text": "操作性条件作用" }, { "label": "C", "text": "观察学习" }, { "label": "D", "text": "认知建构" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。学生将对老师的喜爱（已有情绪反应）和数学课建立联结，属于经典条件作用中的情绪条件反射。<br><strong>📚 知识点讲解：</strong>老师（无条件刺激）引发喜爱（无条件反应），数学课（中性刺激）与老师反复配对后，数学课单独也能引发喜爱，这是经典条件作用的过程。<br><strong>💡 解题思路：</strong>题干描述的是情绪联结的建立过程，属于经典条件作用。B操作性条件作用强调行为与后果的联结；C观察学习是模仿；D认知建构强调主动建构。<br><strong>🧠 记忆口诀：</strong>\u201c喜欢老师爱上课，经典条件情绪联；配对形成新联结，操作后果观察仿。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "关于刺激泛化与分化的关系，下列说法正确的是（  ）",
+            "options": [{ "label": "A", "text": "泛化是对事物差异的反应，分化是对相似性的反应" }, { "label": "B", "text": "泛化和分化是互补的过程" }, { "label": "C", "text": "泛化比分化更高级" }, { "label": "D", "text": "有泛化就不可能有分化" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>B</strong>。泛化是对相似性的反应，分化是对差异性的反应，二者互补，共同构成完整的学习适应能力。<br><strong>📚 知识点讲解：</strong>泛化帮助我们将学习迁移到相似情境，分化帮助我们精准区分不同刺激。二者都是有机体适应环境的重要方式。<br><strong>💡 解题思路：</strong>A项说反了；C项泛化和分化没有高低之分；D项二者可以共存。B项正确描述了互补关系。<br><strong>🧠 记忆口诀：</strong>\u201c泛化相似分化异，互补适应两不误；泛化迁移分精准，共同学习适应力。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "下列选项中，不属于巴甫洛夫理论贡献的是（  ）",
+            "options": [{ "label": "A", "text": "提出操作性条件作用理论" }, { "label": "B", "text": "提出经典性条件作用理论" }, { "label": "C", "text": "提出信号系统理论" }, { "label": "D", "text": "提出高级神经活动类型学说" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。操作性条件作用理论是斯金纳提出的，并非巴甫洛夫的贡献。<br><strong>📚 知识点讲解：</strong>巴甫洛夫的理论贡献：经典条件作用、信号系统理论（第一、第二信号系统）、高级神经活动类型学说（气质生理基础）、痕迹衰退说。<br><strong>💡 解题思路：</strong>B、C、D都是巴甫洛夫的理论。A项操作性条件作用是斯金纳的。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫经典信系统，神经类型痕迹说；操作条件斯金纳，理论归属要分明。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "\u201c小孩第一次打针哭了，之后看到穿白大褂的医生就哭\u201d，这体现了（  ）",
+            "options": [{ "label": "A", "text": "刺激泛化" }, { "label": "B", "text": "刺激分化" }, { "label": "C", "text": "消退" }, { "label": "D", "text": "自然恢复" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。孩子把打针的恐惧泛化到所有穿白大褂的人身上，属于刺激泛化。<br><strong>📚 知识点讲解：</strong>打针的疼痛与白大褂形成联结后，孩子对与白大褂相似的其他穿白大褂的人也产生恐惧，这是典型的泛化现象。<br><strong>💡 解题思路：</strong>题干描述的是\u201c怕所有穿白大褂的人\u201d，即对相似刺激做出相同反应，属于泛化。B分化是能区分不同穿白大褂的人。<br><strong>🧠 记忆口诀：</strong>\u201c打针怕医泛所有，白大褂人均恐惧；泛化相似分不清，分化方能辨具体。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "经过训练，狗只对特定频率的铃声分泌唾液，对其他铃声不反应，这体现了（  ）",
+            "options": [{ "label": "A", "text": "刺激分化" }, { "label": "B", "text": "刺激泛化" }, { "label": "C", "text": "获得" }, { "label": "D", "text": "消退" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。只对特定铃声反应、对其他相似铃声不反应，是精准辨别差异，属于刺激分化。<br><strong>📚 知识点讲解：</strong>分化是通过选择性强化实现的：只对特定频率的铃声伴随食物，对其他频率铃声不伴随食物，狗便学会了区分。<br><strong>💡 解题思路：</strong>题干强调\u201c只对特定铃声反应\u201d，体现了辨别差异的能力，属于分化。B泛化是对所有相似铃声都反应。<br><strong>🧠 记忆口诀：</strong>\u201c分化精准辨频率，特定铃声才分泌；泛化混淆所有铃，分化训练辨差异。\u201d"
+        }, {
+            "type": "单选题",
+            "stem": "巴甫洛夫获得诺贝尔奖的领域是（  ）",
+            "options": [{ "label": "A", "text": "生理学" }, { "label": "B", "text": "心理学" }, { "label": "C", "text": "教育学" }, { "label": "D", "text": "哲学" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>正确答案为<strong>A</strong>。巴甫洛夫因在消化生理学领域的贡献获得1904年诺贝尔生理学或医学奖。<br><strong>📚 知识点讲解：</strong>巴甫洛夫最初研究消化生理，发现了条件反射现象，后来将研究方向转向高级神经活动。他的诺奖是生理学奖。<br><strong>💡 解题思路：</strong>巴甫洛夫=生理学诺奖。B心理学诺奖历史上没有；C教育学无诺奖；D哲学无诺奖。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫诺奖生理学，消化研究奠基业；条件反射后转向，心理理论亦辉煌。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "巴甫洛夫是美国著名心理学家，创立了操作性条件作用理论。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。巴甫洛夫是<strong>俄国</strong>生理学家，提出经典性条件作用理论；操作性条件作用是斯金纳的理论。<br><strong>📚 知识点讲解：</strong>巴甫洛夫国籍和理论归属是基础考点。国籍为俄国，理论为经典条件作用。美国心理学家斯金纳提出操作性条件作用。<br><strong>💡 解题思路：</strong>题干将国籍和理论都说错了。巴甫洛夫是俄国人，提出的是经典条件作用。<br><strong>🧠 记忆口诀：</strong>\u201c巴甫俄国经典论，斯金美国操作说；国籍理论两都错，俄国经典要记清。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "经典条件作用的核心是反应与强化之间形成联结。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。经典条件作用的核心是<strong>刺激与刺激</strong>之间形成联结；反应与强化的联结是操作性条件作用的核心。<br><strong>📚 知识点讲解：</strong>经典条件作用形成的是S-S（刺激-刺激）联结，如铃声与食物的联结。操作性条件作用形成的是R-S（反应-刺激）联结，如按压杠杆与食物的联结。<br><strong>💡 解题思路：</strong>题干将操作性条件作用的核心安在经典条件作用上，属于概念错配。<br><strong>🧠 记忆口诀：</strong>\u201c经典刺激联刺激，操作反应联结果；联结类型有不同，概念错配要警惕。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "食物引发唾液分泌属于无条件反射，是先天的本能行为。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。食物引发唾液分泌是先天的生理本能，属于无条件反射。<br><strong>📚 知识点讲解：</strong>无条件反射是生来就有的、不学而能的反射，由无条件刺激引起。食物是唾液分泌的无条件刺激，分泌唾液是无条件反应。<br><strong>💡 解题思路：</strong>题干表述与定义完全一致。<br><strong>🧠 记忆口诀：</strong>\u201c食物唾液无条件，先天本能不需学；铃声唾液条件反，后天配对才形成。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "条件反射是后天通过学习形成的，人和动物都可以形成。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。条件反射是后天学习形成的，人和动物都可以建立条件反射。<br><strong>📚 知识点讲解：</strong>经典条件反射在人和动物身上都可以建立，如巴甫洛夫的狗、人类的\u201c谈虎色变\u201d。但第二信号系统的条件反射只有人类能够建立。<br><strong>💡 解题思路：</strong>题干表述正确。条件反射的建立是学习的基本形式之一。<br><strong>🧠 记忆口诀：</strong>\u201c条件反射后天学，人与动物皆可成；二信系统人独有，语言符号是根本。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "消退是永久的，已经消退的条件反射不可能再恢复。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。消退不是永久的，经过休息后可能出现<strong>自然恢复</strong>，反应会短暂重现。<br><strong>📚 知识点讲解：</strong>消退不是遗忘或联结的彻底消除，而是暂时抑制。休息后条件刺激再次出现，反应可能自动恢复，这称为自然恢复。<br><strong>💡 解题思路：</strong>\u201c永久\u201d\u201c不可能再恢复\u201d是绝对化表述，与自然恢复现象矛盾。<br><strong>🧠 记忆口诀：</strong>\u201c消退非永久暂抑制，休息自然能恢复；痕迹仍在可重现，并非一退永不返。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "\u201c杯弓蛇影\u201d体现了经典条件作用中的刺激分化现象。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。杯弓蛇影是把相似的事物混淆，属于<strong>刺激泛化</strong>，而非分化。<br><strong>📚 知识点讲解：</strong>泛化是对相似刺激做出相同反应，分化是对差异刺激做出不同反应。杯弓蛇影是将弓影误认为蛇，是泛化。<br><strong>💡 解题思路：</strong>题干将泛化说成分化。杯弓蛇影是一朝被蛇咬之后对相似刺激的恐惧泛化。<br><strong>🧠 记忆口诀：</strong>\u201c杯弓蛇影是泛化，错把弓影当蛇怕；分化精准辨差异，泛化混淆相似物。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "刺激泛化能帮助我们把学习迁移到相似情境中。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。泛化能让我们把一种情境中学到的反应迁移到其他相似情境中，是学习迁移的基础之一。<br><strong>📚 知识点讲解：</strong>泛化的积极意义在于促进迁移，如学会骑自行车后更容易学习骑摩托车（操作要素相似）。但泛化也可能带来负面影响，如过度恐惧泛化。<br><strong>💡 解题思路：</strong>题干正确描述了泛化的积极功能。<br><strong>🧠 记忆口诀：</strong>\u201c泛化迁移相似境，学会一车助他车；过度泛化需警惕，分化训练辨差异。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "刺激分化能让我们对不同情境做出恰当的不同反应。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。分化能让我们精准区分不同刺激，做出恰当的差异化反应，避免盲目行动。<br><strong>📚 知识点讲解：</strong>分化的积极意义在于精准辨别，如学生能区分上课铃和下课铃，做出不同的行为反应。<br><strong>💡 解题思路：</strong>题干正确描述了分化的功能。<br><strong>🧠 记忆口诀：</strong>\u201c分化精准辨差异，不同情境不同应；上课下课铃不同，分化训练辨能力。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "第一信号系统是以语言文字为刺激的条件反射系统，是人类特有的。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。以语言文字为刺激、人类特有的是<strong>第二信号系统</strong>；第一信号系统是具体物理刺激，人和动物共有。<br><strong>📚 知识点讲解：</strong>信号系统：第一信号系统（具体实物刺激，人和动物共有）；第二信号系统（语言文字，人类特有）。题干将两者描述互换。<br><strong>💡 解题思路：</strong>\u201c语言文字、人类特有\u201d是第二信号系统的特征。题干安在第一信号系统上。<br><strong>🧠 记忆口诀：</strong>\u201c一信具体物声光，二信语言人类独；题干描述二信征，错安一信头上名。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "第二信号系统是人和动物共有的条件反射系统。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。第二信号系统是<strong>人类特有</strong>的，动物没有第二信号系统。<br><strong>📚 知识点讲解：</strong>动物只有第一信号系统，只能对具体物理刺激形成条件反射。人类兼具第一和第二信号系统，能进行抽象思维。<br><strong>💡 解题思路：</strong>题干将第二信号系统说成人和动物共有，违背了巴甫洛夫的原意。<br><strong>🧠 记忆口诀：</strong>\u201c二信人类独有之，动物仅有第一信；语言符号是界线，人兽之别在此分。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "\u201c谈梅生津\u201d属于第二信号系统的条件反射。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。谈梅生津是通过语言描述引发反应，以语言为中介，属于第二信号系统。<br><strong>📚 知识点讲解：</strong>\u201c谈梅生津\u201d和\u201c望梅止渴\u201d的典故类似，都是语言符号作为条件刺激引发的条件反射。<br><strong>💡 解题思路：</strong>题干\u201c谈\u201d字表明是通过语言，属于第二信号系统。<br><strong>🧠 记忆口诀：</strong>\u201c谈梅生津二信属，语言中介引唾液；望梅见实一信属，两信号系要分清。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "\u201c听到上课铃声走进教室\u201d属于第二信号系统。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。铃声是具体的声音刺激，属于物理性刺激，因此听到铃声进教室属于<strong>第一信号系统</strong>。<br><strong>📚 知识点讲解：</strong>第一信号系统的刺激是具体的物理刺激（声、光等）。铃声是声音刺激，属于第一信号系统。如果是\u201c听到有人说上课了\u201d才属于第二信号系统。<br><strong>💡 解题思路：</strong>区分第一和第二信号系统的关键是刺激的性质：具体实物/声音→第一信号；语言/文字/符号→第二信号。铃声是具体声音，属于第一信号。<br><strong>🧠 记忆口诀：</strong>\u201c铃声具体一信属，语言描述二信归；听到铃声进教室，非是语言符号因。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "巴甫洛夫提出了高级神经活动类型学说，是气质的重要生理基础。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。高级神经活动类型学说是气质重要的生理基础，解释了不同气质类型的神经机制。<br><strong>📚 知识点讲解：</strong>巴甫洛夫用神经过程的强度、平衡性、灵活性来解释四种气质类型，为气质的生理基础提供了科学依据。<br><strong>💡 解题思路：</strong>题干表述正确。<br><strong>🧠 记忆口诀：</strong>\u201c神经类型气质基，强度平衡灵活分；胆多粘抑四对应，巴甫学说奠基础。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "活泼型神经类型对应的气质是胆汁质。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。活泼型对应的气质是<strong>多血质</strong>；胆汁质对应不可遏制型。<br><strong>📚 知识点讲解：</strong>对应关系：活泼型→多血质；不可遏制型→胆汁质；安静型→粘液质；抑制型→抑郁质。<br><strong>💡 解题思路：</strong>题干对应错误。活泼型与胆汁质不匹配。<br><strong>🧠 记忆口诀：</strong>\u201c活泼多血灵活敏，胆汁兴奋不可遏；安静粘液稳而缓，抑郁抑制弱而敏。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "粘液质对应的神经过程特点是强、平衡、不灵活。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。粘液质对应安静型神经类型，特点是强、平衡、不灵活。<br><strong>📚 知识点讲解：</strong>安静型（粘液质）的人神经过程强而平衡，但灵活性差，表现为反应迟缓、耐受性强。<br><strong>💡 解题思路：</strong>题干对应正确。<br><strong>🧠 记忆口诀：</strong>\u201c粘液安静强平不，稳重迟缓耐受高；多血活泼强平灵，胆汁兴奋强不平。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "抑制型神经类型对应的气质是多血质。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。抑制型对应的气质是<strong>抑郁质</strong>；多血质对应活泼型。<br><strong>📚 知识点讲解：</strong>抑制型（弱型）的人神经过程整体强度弱，容易疲劳，对应抑郁质，敏感细腻。<br><strong>💡 解题思路：</strong>题干对应错误。抑制型是抑郁质。<br><strong>🧠 记忆口诀：</strong>\u201c抑郁抑制神经弱，敏感细腻情绪深；多血活泼强平灵，类型对应莫混淆。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "经典性条件作用中，强化出现在行为反应之前。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。经典条件作用中，无条件刺激（强化）伴随中性刺激出现，在行为反应之前，共同诱发反应。<br><strong>📚 知识点讲解：</strong>经典条件作用中，刺激在前、反应在后；操作性条件作用中，反应在前、强化在后。这是两者的核心区别。<br><strong>💡 解题思路：</strong>题干表述正确。经典条件作用中，强化（食物）和铃声同时或略后于铃声出现，但都在狗分泌唾液之前。<br><strong>🧠 记忆口诀：</strong>\u201c经典强化在反前，操作强化在反后；强化位置是区分，经典前操后不同。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "高级条件作用又称为二级条件作用，是在已有条件反射基础上建立的新反射。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。高级条件作用就是在一级条件反射基础上，建立二级、三级的新条件反射，又称二级条件作用。<br><strong>📚 知识点讲解：</strong>巴甫洛夫发现，已建立的条件刺激可以作为新的无条件刺激，与新的中性刺激配对，形成更高级的条件反射。这是高级条件作用。<br><strong>💡 解题思路：</strong>题干表述完全正确。<br><strong>🧠 记忆口诀：</strong>\u201c已条当作新无条，再配新刺建新联；二级条件高级作，层层递进反射链。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "巴甫洛夫的痕迹衰退说认为，遗忘是记忆痕迹得不到强化而逐渐衰退的结果。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 0,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>正确</strong>。这是痕迹衰退说的核心观点，与条件反射的消退机制一致。<br><strong>📚 知识点讲解：</strong>巴甫洛夫认为遗忘是记忆的神经痕迹因得不到强化而逐渐衰退、消失的结果。这一理论与桑代克的失用律一致。<br><strong>💡 解题思路：</strong>题干表述与痕迹衰退说完全一致。<br><strong>🧠 记忆口诀：</strong>\u201c痕迹衰退不练消，巴甫桑代同此论；消退机制相一致，不强化则痕迹消。\u201d"
+        }, {
+            "type": "判断题",
+            "stem": "操作性条件作用和经典性条件作用本质上是完全一样的，没有区别。（  ）",
+            "options": [{ "label": "A", "text": "正确" }, { "label": "B", "text": "错误" }],
+            "answer": 1,
+            "analysis": "<strong>🎯 答案解析：</strong>答案为<strong>错误</strong>。二者有本质区别：经典条件作用是被动的应答性行为，刺激在前反应在后；操作性条件作用是主动的操作行为，反应在前强化在后。<br><strong>📚 知识点讲解：</strong>经典条件作用形成S-S联结，操作性条件作用形成R-S联结。两者在行为类型、联结方式、强化位置等方面均有本质不同。<br><strong>💡 解题思路：</strong>\u201c完全一样\u201d是绝对化错误，二者有显著区别。<br><strong>🧠 记忆口诀：</strong>\u201c经典被动刺激前，操作主动反应先；联结方式亦不同，本质差异要分明。\u201d"
+        }];
+
+        const APP_ID = 'pavlov_quiz_1';
+        const STORAGE_KEY_ANSWERS = APP_ID + '_answers';
+        const STORAGE_KEY_SETTINGS = APP_ID + '_settings';
+        const STORAGE_KEY_HISTORY = APP_ID + '_history';
+
+        let currentIndex = 0;
+        let currentPage = 'learn';
+        let answers = new Array(questions.length).fill(null);
+        let multiSelectAnswers = new Array(questions.length).fill(null);
+        let fontSize = 16;
+        let currentFilter = 'all';
+        let wrongReviewMode = false;
+        let wrongReviewIndices = [];
+        let wrongReviewCurrentIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllData();
+            renderKnowledgePage();
+            switchToKnowledgePage();
+            renderQuestion();
+            renderAnswerSheet();
+            renderHistory();
+            updateNavButtons();
+        });
+
+        function renderKnowledgePage() {
+            const title = '巴甫洛夫经典性条件作用与信号系统';
+            const content = `<h3>一、人物定位与历史地位</h3>
+            <p>俄国生理学家、心理学家，<strong>高级神经活动学说创始人</strong>，经典性条件作用理论提出者，1904年诺贝尔生理学或医学奖获得者，是行为主义心理学的重要理论先驱。</p>
+            <p>教综核心地位：经典条件作用理论是学习心理模块的基础考点，信号系统理论、高级神经活动类型学说（气质生理基础）是单选题高频命题点。</p>
+
+            <h3>二、核心理论1：经典性条件作用理论</h3>
+            <p><strong>经典实验：狗的唾液分泌实验（摇铃实验）</strong></p>
+            <table class="knowledge-table">
+                <tr><th>概念</th><th>定义</th></tr>
+                <tr><td><strong>无条件反射</strong></td><td>先天本能、不学而能的反射。食物是无条件刺激（UCS），引发唾液分泌是无条件反应（UCR）</td></tr>
+                <tr><td><strong>中性刺激</strong></td><td>最初不能引发目标反应的刺激，如铃声</td></tr>
+                <tr><td><strong>条件反射</strong></td><td>中性刺激与无条件刺激反复配对后，单独出现也能引发反应。此时中性刺激转化为条件刺激（CS），反应为条件反应（CR）</td></tr>
+            </table>
+
+            <h3>三、经典条件作用的基本规律</h3>
+            <p><strong>获得与消退：</strong>获得是条件反射建立的过程；消退是反复只给条件刺激不伴随无条件刺激，反应逐渐消失；自然恢复是消退后经过休息，反应短暂重现。</p>
+            <p><strong>泛化与分化（★★★★★最高频考点）</strong></p>
+            <ul>
+                <li><strong>刺激泛化：</strong>对与条件刺激相似的刺激做出相同反应，即“分不清”。例：一朝被蛇咬，十年怕井绳。</li>
+                <li><strong>刺激分化：</strong>通过选择性强化，只对条件刺激反应，对相似刺激不反应，即“分得清”。例：区分形近字。</li>
+            </ul>
+
+            <h3>四、核心理论2：信号系统理论（★★★★高频）</h3>
+            <table class="knowledge-table">
+                <tr><th>信号系统</th><th>刺激性质</th><th>所属物种</th><th>典型例子</th></tr>
+                <tr><td><strong>第一信号系统</strong></td><td>具体物理性刺激（声、光、味、形）</td><td>人和动物共有</td><td>望梅生津、听到铃声进教室</td></tr>
+                <tr><td><strong>第二信号系统</strong></td><td>语言、文字、符号等抽象刺激</td><td>人类特有</td><td>谈虎色变、画饼充饥、谈梅生津</td></tr>
+            </table>
+
+            <h3>五、核心理论3：高级神经活动类型学说（气质的生理基础）</h3>
+            <table class="knowledge-table">
+                <tr><th>高级神经活动类型</th><th>神经过程特性</th><th>对应气质类型</th><th>核心行为特点</th></tr>
+                <tr><td>不可遏制型（兴奋型）</td><td>强、不平衡</td><td>胆汁质</td><td>精力旺盛，易冲动暴躁</td></tr>
+                <tr><td>活泼型</td><td>强、平衡、灵活</td><td>多血质</td><td>反应敏捷灵活，善于交际</td></tr>
+                <tr><td>安静型</td><td>强、平衡、不灵活</td><td>粘液质</td><td>安静稳重，耐受性强</td></tr>
+                <tr><td>抑制型（弱型）</td><td>弱</td><td>抑郁质</td><td>敏感细腻，胆小孤僻</td></tr>
+            </table>
+
+            <h3>六、高频易混点辨析</h3>
+            <table class="knowledge-table">
+                <tr><th>易混点</th><th>关键区分</th></tr>
+                <tr><td>经典 vs 操作</td><td>经典：刺激在前，反应在后；操作：反应在前，强化在后</td></tr>
+                <tr><td>无条件反射 vs 条件反射</td><td>无条件：先天本能；条件：后天习得</td></tr>
+                <tr><td>第一信号 vs 第二信号</td><td>第一信号：具体物理刺激（人和动物共有）；第二信号：语言文字（人类特有）</td></tr>
+            </table>
+
+            <h3>七、记忆口诀</h3>
+            <p style="text-align:center;font-weight:700;color:#4a90e2;font-size:15px;line-height:2;">
+                巴甫洛夫狗摇铃，经典条件从此生；<br>获得消退与泛分，自然恢复也可能；<br>一信号是具体物，二信号靠语言文；<br>神经类型分四种，胆多粘抑对应准。
+            </p>`;
+
+            document.getElementById('knowledgeTitle').textContent = title;
+            document.getElementById('knowledgeContent').innerHTML = content;
+        }
+
+        function switchToKnowledgePage() {
+            currentPage = 'learn';
+            wrongReviewMode = false;
+            document.getElementById('knowledgePage').classList.remove('hidden');
+            document.getElementById('quizContent').style.display = 'none';
+            document.getElementById('questionInfo').style.display = 'none';
+            document.getElementById('pageTitle').style.display = 'block';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.getElementById('footerContent').innerHTML = `<button class="start-quiz-btn" onclick="startQuiz()"><i class="fas fa-play-circle"></i> 我已学完，开始刷题</button>`;
+        }
+
+        function startQuiz() {
+            currentPage = 'quiz';
+            wrongReviewMode = false;
+            document.getElementById('knowledgePage').classList.add('hidden');
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('questionInfo').style.display = 'block';
+            document.getElementById('pageTitle').style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'block';
+            renderQuestion();
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function isMultiSelect(q) { return q.type === '多选题' || (Array.isArray(q.answer)); }
+        function getUserAnswer(index) { if (isMultiSelect(questions[index])) return multiSelectAnswers[index]; return answers[index]; }
+        function isAnswered(index) { if (isMultiSelect(questions[index])) return multiSelectAnswers[index] !== null && multiSelectAnswers[index].length > 0; return answers[index] !== null; }
+        function isAnswerCorrect(index) { const q = questions[index]; const userAns = getUserAnswer(index); if (userAns === null) return false; if (isMultiSelect(q)) { if (!Array.isArray(userAns) || userAns.length === 0) return false; const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer]; if (userAns.length !== correctArr.length) return false; const sortedUser = [...userAns].sort(); const sortedCorrect = [...correctArr].sort(); return sortedUser.every((v, i) => v === sortedCorrect[i]); } return userAns === q.answer; }
+
+        function renderQuestion() {
+            let idx = currentIndex; let q;
+            if (wrongReviewMode && wrongReviewIndices.length > 0) { idx = wrongReviewIndices[wrongReviewCurrentIndex]; q = questions[idx]; } else { q = questions[currentIndex]; }
+            const actualIndex = wrongReviewMode ? wrongReviewIndices[wrongReviewCurrentIndex] : currentIndex;
+            const contentArea = document.getElementById('quizContent'); const isMulti = isMultiSelect(q);
+            let html = `<div class="question-card"><span class="question-type">${q.type}</span><div class="question-stem">${q.stem}</div>`;
+            if (q.image) { html += `<img src="${q.image}" alt="题目图片" class="question-image">`; }
+            html += `<div class="options-container">`;
+            q.options.forEach((opt, optIdx) => { let isSelected = false; if (isMulti) { const msa = multiSelectAnswers[actualIndex]; isSelected = (msa && msa.includes(optIdx)); } else { isSelected = (answers[actualIndex] === optIdx); } const userAns = getUserAnswer(actualIndex); const answered = (userAns !== null && (isMulti ? userAns.length > 0 : true)); let isCorrectOption = false; if (isMulti) { const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer]; isCorrectOption = correctArr.includes(optIdx); } else { isCorrectOption = (q.answer === optIdx); } let classes = ['option-item']; if (answered) { if (isSelected && isCorrectOption) classes.push('correct'); else if (isSelected && !isCorrectOption) classes.push('wrong'); else if (isCorrectOption) classes.push('correct'); } else if (isSelected) { classes.push('selected'); } html += `<div class="${classes.join(' ')}" onclick="selectOption(${optIdx}, ${actualIndex})"><div class="option-label">${opt.label}</div><div class="option-text">${opt.text}</div></div>`; });
+            html += '</div></div>';
+            const userAns = getUserAnswer(actualIndex); const answered = (userAns !== null && (isMulti ? userAns.length > 0 : true));
+            if (answered) { const correct = isAnswerCorrect(actualIndex); html += `<div class="analysis-card"><div class="analysis-header" onclick="toggleAnalysis(this)"><div class="analysis-title">📝 答案分析 <span class="result-badge ${correct ? 'correct' : 'wrong'}">${correct ? '✓ 回答正确' : '✗ 回答错误'}</span></div><div class="toggle-icon expanded">▼</div></div><div class="analysis-content" style="display: block;">${q.analysis}</div></div>`; }
+            const totalForCheck = wrongReviewMode ? wrongReviewIndices.length : questions.length;
+            const allDone = wrongReviewMode ? wrongReviewIndices.every(wi => isAnswered(wi)) : answers.every((a, i) => isAnswered(i));
+            if ((wrongReviewMode && wrongReviewCurrentIndex >= wrongReviewIndices.length - 1 && allDone) || (!wrongReviewMode && currentIndex === questions.length - 1 && allDone)) { const allIndices = wrongReviewMode ? wrongReviewIndices : [...Array(questions.length).keys()]; const correctCount = allIndices.filter(i => isAnswerCorrect(i)).length; const total = allIndices.length; const accuracy = Math.round(correctCount / total * 100); if (!wrongReviewMode) { saveToHistory(correctCount, accuracy); } html += `<div class="completion-screen"><div class="completion-icon">🎉</div><h1 class="completion-title">${wrongReviewMode ? '错题回顾完成！' : '刷题完成！'}</h1><p style="color: var(--text-secondary);">${wrongReviewMode ? '你已经回顾了所有错题，继续加油！' : '太棒了！你已经完成了所有题目'}</p><div class="stats"><div class="stat-item"><div class="stat-value">${correctCount}/${total}</div><div class="stat-label">答对题数</div></div><div class="stat-item"><div class="stat-value">${accuracy}%</div><div class="stat-label">正确率</div></div></div><div class="action-buttons"><button class="action-btn restart-btn" onclick="restartQuiz()">重新开始</button><button class="action-btn history-view-btn" onclick="toggleHistory()">查看历史</button>${!wrongReviewMode ? `<button class="action-btn wrong-review-btn" onclick="startWrongReview()">回看错题</button>` : ''}${wrongReviewMode ? `<button class="action-btn export-csv-btn" onclick="exportWrongCSV()"><i class="fas fa-download"></i> 导出错题CSV</button>` : ''}${wrongReviewMode ? `<button class="action-btn history-view-btn" onclick="exitWrongReview()">退出回顾</button>` : ''}</div></div>`; }
+            contentArea.innerHTML = html; updateHeader(); if (window.MathJax) { MathJax.typeset(); }
+        }
+
+        function selectOption(optIdx, actualIndex) { if (isAnswered(actualIndex)) return; const q = questions[actualIndex]; if (isMultiSelect(q)) { if (!multiSelectAnswers[actualIndex]) multiSelectAnswers[actualIndex] = []; const msa = multiSelectAnswers[actualIndex]; const pos = msa.indexOf(optIdx); if (pos >= 0) msa.splice(pos, 1); else msa.push(optIdx); if (msa.length === 0) multiSelectAnswers[actualIndex] = null; } else { answers[actualIndex] = optIdx; } saveAnswers(); renderQuestion(); renderAnswerSheet(); updateNavButtons(); if (!isMultiSelect(q) || multiSelectAnswers[actualIndex] === null) { const correct = isAnswerCorrect(actualIndex); if (!isMultiSelect(q)) showToast(correct ? '回答正确！✓' : '回答错误 ✗'); } }
+        function toggleAnalysis(header) { const content = header.nextElementSibling; const icon = header.querySelector('.toggle-icon'); if (content.style.display === 'none') { content.style.display = 'block'; icon.classList.add('expanded'); } else { content.style.display = 'none'; icon.classList.remove('expanded'); } }
+        function prevQuestion() { if (wrongReviewMode) { if (wrongReviewCurrentIndex > 0) { wrongReviewCurrentIndex--; renderQuestion(); updateNavButtons(); } } else { if (currentIndex > 0) { currentIndex--; renderQuestion(); updateNavButtons(); } } }
+        function nextQuestion() { if (wrongReviewMode) { if (wrongReviewCurrentIndex < wrongReviewIndices.length - 1) { wrongReviewCurrentIndex++; renderQuestion(); updateNavButtons(); } } else { if (currentIndex < questions.length - 1) { currentIndex++; renderQuestion(); updateNavButtons(); } } }
+        function updateHeader() { if (currentPage !== 'quiz') return; const displayNum = wrongReviewMode ? wrongReviewCurrentIndex + 1 : currentIndex + 1; const totalNum = wrongReviewMode ? wrongReviewIndices.length : questions.length; document.getElementById('currentNum').textContent = displayNum; const answeredCount = (wrongReviewMode ? wrongReviewIndices : [...Array(questions.length).keys()]).filter(i => isAnswered(i)).length; document.getElementById('answeredCount').textContent = answeredCount; document.getElementById('totalCount').textContent = totalNum; document.getElementById('progressFill').style.width = `${(answeredCount / totalNum) * 100}%`; if (wrongReviewMode) { document.querySelector('.progress-text').innerHTML = `<span style="color:#ff7875;">错题回顾模式</span> | ${answeredCount}/${totalNum} 已答`; } else { document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answeredCount}</span>/<span id="totalCount">${totalNum}</span> 已答`; } }
+        function updateNavButtons() { const footerContent = document.getElementById('footerContent'); if (currentPage !== 'quiz') return; const totalForCheck = wrongReviewMode ? wrongReviewIndices.length : questions.length; const allDone = wrongReviewMode ? wrongReviewIndices.every(wi => isAnswered(wi)) : answers.every((a, i) => isAnswered(i)); const atEnd = wrongReviewMode ? wrongReviewCurrentIndex >= wrongReviewIndices.length - 1 : currentIndex >= questions.length - 1; const atStart = wrongReviewMode ? wrongReviewCurrentIndex === 0 : currentIndex === 0; footerContent.innerHTML = `<button class="nav-btn prev-btn" id="prevBtn" onclick="prevQuestion()" ${atStart ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> 上一题</button><button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" ${atEnd && allDone ? 'disabled' : ''}>下一题 <i class="fas fa-chevron-right"></i></button>`; }
+        function changeFontSize(delta) { fontSize = Math.max(14, Math.min(22, fontSize + delta)); document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); saveSettings(); }
+        function toggleSheet() { const overlay = document.getElementById('sheetOverlay'); const panel = document.getElementById('sheetPanel'); if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); } else { overlay.classList.add('show'); panel.classList.add('show'); renderAnswerSheet(); } }
+        function renderAnswerSheet() { const grid = document.getElementById('sheetGrid'); const indices = wrongReviewMode ? wrongReviewIndices : [...Array(questions.length).keys()]; let html = ''; indices.forEach((qIndex, displayIdx) => { let statusClass = 'unanswered'; let statusText = '未答'; if (isAnswered(qIndex)) { if (isAnswerCorrect(qIndex)) { statusClass = 'correct'; statusText = '正确'; } else { statusClass = 'wrong'; statusText = '错误'; } } const currentActualIdx = wrongReviewMode ? wrongReviewIndices[wrongReviewCurrentIndex] : currentIndex; if (qIndex === currentActualIdx) statusClass += ' current'; if (currentFilter !== 'all') { if (currentFilter === 'unanswered' && isAnswered(qIndex)) return; if (currentFilter === 'correct' && (!isAnswered(qIndex) || !isAnswerCorrect(qIndex))) return; if (currentFilter === 'wrong' && (!isAnswered(qIndex) || isAnswerCorrect(qIndex))) return; } html += `<div class="sheet-item ${statusClass}" onclick="jumpToQuestion(${qIndex})"><div class="sheet-number">${displayIdx + 1}</div><div class="sheet-status">${statusText}</div></div>`; }); grid.innerHTML = html; }
+        function filterQuestions(filter) { currentFilter = filter; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active')); event.target.classList.add('active'); renderAnswerSheet(); }
+        function jumpToQuestion(index) { if (wrongReviewMode) { const pos = wrongReviewIndices.indexOf(index); if (pos >= 0) { wrongReviewCurrentIndex = pos; } else { currentIndex = index; wrongReviewMode = false; document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answers.filter(a=>a!==null).length}</span>/<span id="totalCount">${questions.length}</span> 已答`; } } else { currentIndex = index; } renderQuestion(); updateNavButtons(); toggleSheet(); }
+        function toggleHistory() { const overlay = document.getElementById('historyOverlay'); const panel = document.getElementById('historyPanel'); if (panel.classList.contains('show')) { overlay.classList.remove('show'); panel.classList.remove('show'); } else { overlay.classList.add('show'); panel.classList.add('show'); renderHistory(); } }
+        function renderHistory() { const list = document.getElementById('historyList'); const history = getHistory(); if (history.length === 0) { list.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div>暂无历史记录</div><div style="font-size: 12px; margin-top: 8px;">完成一套题后会自动保存记录</div></div>`; return; } let html = ''; history.forEach((record, index) => { const dateStr = new Date(record.timestamp).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); html += `<div class="history-item"><div class="history-date">${dateStr}</div><div class="history-stats"><div class="history-stat"><div class="history-value">${record.correctCount}/${record.totalCount}</div><div class="history-label">答对题数</div></div><div class="history-stat"><div class="history-value">${record.accuracy}%</div><div class="history-label">正确率</div></div></div><div class="history-actions"><button class="history-action-btn review-btn" onclick="reviewHistory(${index})">回顾</button><button class="history-action-btn delete-btn" onclick="deleteHistory(${index})">删除</button></div></div>`; }); list.innerHTML = html; }
+        function saveToHistory(correctCount, accuracy) { const history = getHistory(); history.unshift({ timestamp: new Date().getTime(), totalCount: questions.length, correctCount: correctCount, accuracy: accuracy, answers: [...answers], multiSelectAnswers: multiSelectAnswers.map(m => m ? [...m] : null) }); if (history.length > 50) history.pop(); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); }
+        function getHistory() { const saved = localStorage.getItem(STORAGE_KEY_HISTORY); return saved ? JSON.parse(saved) : []; }
+        function reviewHistory(index) { const history = getHistory(); if (index >= 0 && index < history.length) { answers = [...history[index].answers]; if (history[index].multiSelectAnswers) multiSelectAnswers = history[index].multiSelectAnswers.map(m => m ? [...m] : null); currentIndex = 0; wrongReviewMode = false; saveAnswers(); renderQuestion(); updateNavButtons(); toggleHistory(); document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answers.filter(a=>a!==null).length}</span>/<span id="totalCount">${questions.length}</span> 已答`; showToast('已加载历史记录'); } }
+        function deleteHistory(index) { if (!confirm('确定要删除这条记录吗？')) return; const history = getHistory(); if (index >= 0 && index < history.length) { history.splice(index, 1); localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history)); renderHistory(); showToast('记录已删除'); } }
+        function clearAllHistory() { if (!confirm('确定要清空所有历史记录吗？')) return; localStorage.removeItem(STORAGE_KEY_HISTORY); renderHistory(); showToast('历史记录已清空'); }
+        function saveAnswers() { localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify({ currentIndex, answers, multiSelectAnswers: multiSelectAnswers.map(m => m ? [...m] : null), wrongReviewMode, wrongReviewIndices, wrongReviewCurrentIndex })); }
+        function saveSettings() { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({ fontSize })); }
+        function loadAllData() { const savedAnswers = localStorage.getItem(STORAGE_KEY_ANSWERS); if (savedAnswers) { const data = JSON.parse(savedAnswers); currentIndex = data.currentIndex || 0; answers = data.answers || new Array(questions.length).fill(null); if (data.multiSelectAnswers) multiSelectAnswers = data.multiSelectAnswers.map(m => m ? [...m] : null); else multiSelectAnswers = new Array(questions.length).fill(null); if (data.wrongReviewMode) { wrongReviewMode = data.wrongReviewMode; wrongReviewIndices = data.wrongReviewIndices || []; wrongReviewCurrentIndex = data.wrongReviewCurrentIndex || 0; } } const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS); if (savedSettings) { const settings = JSON.parse(savedSettings); fontSize = settings.fontSize || 16; document.documentElement.style.setProperty('--font-size-base', `${fontSize}px`); document.documentElement.style.setProperty('--font-size-small', `${fontSize-2}px`); document.documentElement.style.setProperty('--font-size-large', `${fontSize+2}px`); } }
+        function startWrongReview() { wrongReviewIndices = []; for (let i = 0; i < questions.length; i++) { if (isAnswered(i) && !isAnswerCorrect(i)) wrongReviewIndices.push(i); } if (wrongReviewIndices.length === 0) { showToast('没有错题，太棒了！🎉'); return; } wrongReviewMode = true; wrongReviewCurrentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); document.querySelector('.progress-text').innerHTML = `<span style="color:#ff7875;">错题回顾模式</span> | 0/${wrongReviewIndices.length} 已答`; showToast(`共${wrongReviewIndices.length}道错题，开始回顾`); }
+        function exitWrongReview() { wrongReviewMode = false; wrongReviewIndices = []; wrongReviewCurrentIndex = 0; saveAnswers(); renderQuestion(); updateNavButtons(); document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">${answers.filter(a=>a!==null).length}</span>/<span id="totalCount">${questions.length}</span> 已答`; showToast('已退出错题回顾模式'); }
+        function exportWrongCSV() { const wrongIndices = wrongReviewMode ? wrongReviewIndices : []; if (wrongIndices.length === 0) { for (let i = 0; i < questions.length; i++) { if (isAnswered(i) && !isAnswerCorrect(i)) wrongIndices.push(i); } } if (wrongIndices.length === 0) { showToast('没有错题可导出'); return; } let csvContent = '\uFEFF序号,题型,题目,选项,你的答案,正确答案,解析\n'; wrongIndices.forEach((qIdx, displayIdx) => { const q = questions[qIdx]; const userAns = getUserAnswer(qIdx); let userAnsStr = ''; if (isMultiSelect(q) && Array.isArray(userAns)) userAnsStr = userAns.map(i => q.options[i].label + '. ' + q.options[i].text).join('; '); else if (userAns !== null && !Array.isArray(userAns)) userAnsStr = q.options[userAns].label + '. ' + q.options[userAns].text; else userAnsStr = '未作答'; let correctAnsStr = ''; if (Array.isArray(q.answer)) correctAnsStr = q.answer.map(i => q.options[i].label + '. ' + q.options[i].text).join('; '); else correctAnsStr = q.options[q.answer].label + '. ' + q.options[q.answer].text; const optionsStr = q.options.map(o => o.label + '. ' + o.text).join(' | '); const stemClean = q.stem.replace(/"/g, '""').replace(/\n/g, ' '); const optionsClean = optionsStr.replace(/"/g, '""'); const userAnsClean = userAnsStr.replace(/"/g, '""'); const correctAnsClean = correctAnsStr.replace(/"/g, '""'); const analysisClean = q.analysis.replace(/<[^>]+>/g, '').replace(/"/g, '""').replace(/\n/g, ' ').trim(); csvContent += `"${displayIdx+1}","${q.type}","${stemClean}","${optionsClean}","${userAnsClean}","${correctAnsClean}","${analysisClean}"\n`; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = '错题导出_' + new Date().toISOString().slice(0, 10) + '.csv'; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); showToast('错题CSV已导出！'); }
+        function restartQuiz() { if (confirm('确定要重新开始吗？当前进度将被清除。')) { currentIndex = 0; answers = new Array(questions.length).fill(null); multiSelectAnswers = new Array(questions.length).fill(null); wrongReviewMode = false; wrongReviewIndices = []; wrongReviewCurrentIndex = 0; localStorage.removeItem(STORAGE_KEY_ANSWERS); document.querySelector('.progress-text').innerHTML = `<span id="answeredCount">0</span>/<span id="totalCount">${questions.length}</span> 已答`; renderQuestion(); updateNavButtons(); } }
+        function showHome() { if (confirm('返回主页将丢失当前进度，确定吗？')) { window.location.href = 'index.html'; } }
+        function showToast(message) { const toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 1500); }
+    </script>
+</body>
+</html>
